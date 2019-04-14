@@ -6,5 +6,4 @@ public enum FingerPosition {
     MIDDLE,
     RING,
     LITTLE;
-
 }

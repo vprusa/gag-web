@@ -1,6 +1,9 @@
 
 package cz.muni.fi.gag.app.web.domain;
 
-public class FingerSensorOffset extends SensorOffset {
+import javax.persistence.Entity;
 
+@Entity
+public class FingerSensorOffset extends SensorOffset {
+		private FingerPosition position;
 }
