@@ -64,7 +64,7 @@
 											"top": 35,
 											"width": 823,
 											"height": 13,
-											"text": "domain"
+											"text": "cz.muni.fi.gag.app.web.domain"
 										},
 										{
 											"_type": "LabelView",
@@ -200,9 +200,9 @@
 											"font": "Arial;13;0",
 											"left": -112,
 											"top": -32,
-											"width": 96.0908203125,
+											"width": 217.4833984375,
 											"height": 13,
-											"text": "(from domain)"
+											"text": "(from cz.muni.fi.gag.app.web.domain)"
 										},
 										{
 											"_type": "LabelView",
@@ -412,9 +412,9 @@
 											"font": "Arial;13;0",
 											"left": -48,
 											"top": -32,
-											"width": 96.0908203125,
+											"width": 217.4833984375,
 											"height": 13,
-											"text": "(from domain)"
+											"text": "(from cz.muni.fi.gag.app.web.domain)"
 										},
 										{
 											"_type": "LabelView",
@@ -1159,9 +1159,9 @@
 											"font": "Arial;13;0",
 											"left": -1168,
 											"top": 640,
-											"width": 96.0908203125,
+											"width": 217.4833984375,
 											"height": 13,
-											"text": "(from domain)"
+											"text": "(from cz.muni.fi.gag.app.web.domain)"
 										},
 										{
 											"_type": "LabelView",
@@ -1760,9 +1760,9 @@
 											"font": "Arial;13;0",
 											"left": -440,
 											"top": -264,
-											"width": 96.0908203125,
+											"width": 217.4833984375,
 											"height": 13,
-											"text": "(from domain)"
+											"text": "(from cz.muni.fi.gag.app.web.domain)"
 										},
 										{
 											"_type": "LabelView",
@@ -2048,9 +2048,9 @@
 											"font": "Arial;13;0",
 											"left": -112,
 											"top": -56,
-											"width": 80.9072265625,
+											"width": 217.4833984375,
 											"height": 13,
-											"text": "(from domain)"
+											"text": "(from cz.muni.fi.gag.app.web.domain)"
 										},
 										{
 											"_type": "LabelView",
@@ -2246,9 +2246,9 @@
 											"font": "Arial;13;0",
 											"left": -704,
 											"top": 296,
-											"width": 80.9072265625,
+											"width": 217.4833984375,
 											"height": 13,
-											"text": "(from domain)"
+											"text": "(from cz.muni.fi.gag.app.web.domain)"
 										},
 										{
 											"_type": "LabelView",
@@ -2462,9 +2462,9 @@
 											"font": "Arial;13;0",
 											"left": -1160,
 											"top": -496,
-											"width": 96.0908203125,
+											"width": 217.4833984375,
 											"height": 13,
-											"text": "(from domain)"
+											"text": "(from cz.muni.fi.gag.app.web.domain)"
 										},
 										{
 											"_type": "LabelView",
@@ -2716,9 +2716,9 @@
 											"font": "Arial;13;0",
 											"left": -1096,
 											"top": 112,
-											"width": 96.0908203125,
+											"width": 217.4833984375,
 											"height": 13,
-											"text": "(from domain)"
+											"text": "(from cz.muni.fi.gag.app.web.domain)"
 										},
 										{
 											"_type": "LabelView",
@@ -3465,9 +3465,9 @@
 											},
 											"visible": false,
 											"font": "Arial;13;0",
-											"width": 80.9072265625,
+											"width": 217.4833984375,
 											"height": 13,
-											"text": "(from domain)"
+											"text": "(from cz.muni.fi.gag.app.web.domain)"
 										},
 										{
 											"_type": "LabelView",
@@ -3635,9 +3635,9 @@
 											"font": "Arial;13;0",
 											"left": -1176,
 											"top": -144,
-											"width": 80.9072265625,
+											"width": 217.4833984375,
 											"height": 13,
-											"text": "(from domain)"
+											"text": "(from cz.muni.fi.gag.app.web.domain)"
 										},
 										{
 											"_type": "LabelView",
@@ -4097,9 +4097,9 @@
 											"font": "Arial;13;0",
 											"left": -48,
 											"top": 248,
-											"width": 96.0908203125,
+											"width": 217.4833984375,
 											"height": 13,
-											"text": "(from domain)"
+											"text": "(from cz.muni.fi.gag.app.web.domain)"
 										},
 										{
 											"_type": "LabelView",
@@ -4294,9 +4294,9 @@
 											},
 											"visible": false,
 											"font": "Arial;13;0",
-											"width": 67.88818359375,
+											"width": 217.4833984375,
 											"height": 13,
-											"text": "(from class)"
+											"text": "(from cz.muni.fi.gag.app.web.domain)"
 										},
 										{
 											"_type": "LabelView",
@@ -4566,7 +4566,7 @@
 					"_parent": {
 						"$ref": "AAAAAAFF+qBWK6M3Z8Y="
 					},
-					"name": "domain",
+					"name": "cz.muni.fi.gag.app.web.domain",
 					"ownedElements": [
 						{
 							"_type": "UMLClass",
@@ -4914,20 +4914,6 @@
 									},
 									"target": {
 										"$ref": "AAAAAAFp+8THWfPlhXU="
-									}
-								},
-								{
-									"_type": "UMLDependency",
-									"_id": "AAAAAAFqAjWbRoh9srM=",
-									"_parent": {
-										"$ref": "AAAAAAFp+6+BcOMqq50="
-									},
-									"name": "position",
-									"source": {
-										"$ref": "AAAAAAFp+6+BcOMqq50="
-									},
-									"target": {
-										"$ref": "AAAAAAFqAjFCgIRF3tA="
 									}
 								}
 							],
@@ -10459,24 +10445,6 @@
 							]
 						},
 						{
-							"_type": "UMLEnumeration",
-							"_id": "AAAAAAFqAjFCgIRF3tA=",
-							"_parent": {
-								"$ref": "AAAAAAFqAM6kmvTj2bc="
-							},
-							"name": "SensorPosition",
-							"literals": [
-								{
-									"_type": "UMLEnumerationLiteral",
-									"_id": "AAAAAAFqAjXa+oljv6s=",
-									"_parent": {
-										"$ref": "AAAAAAFqAjFCgIRF3tA="
-									},
-									"name": "WRIST"
-								}
-							]
-						},
-						{
 							"_type": "UMLClass",
 							"_id": "AAAAAAFqBfIn998EyB8=",
 							"_parent": {
@@ -10617,35 +10585,35 @@
 									"type": "String"
 								}
 							]
+						},
+						{
+							"_type": "UMLEnumeration",
+							"_id": "AAAAAAFqG9U7UP5EF3s=",
+							"_parent": {
+								"$ref": "AAAAAAFqAM6kmvTj2bc="
+							},
+							"name": "UserType",
+							"literals": [
+								{
+									"_type": "UMLEnumerationLiteral",
+									"_id": "AAAAAAFqG9VlDv66c7s=",
+									"_parent": {
+										"$ref": "AAAAAAFqG9U7UP5EF3s="
+									},
+									"name": "ADMIN"
+								},
+								{
+									"_type": "UMLEnumerationLiteral",
+									"_id": "AAAAAAFqG9WDPv8hDUk=",
+									"_parent": {
+										"$ref": "AAAAAAFqG9U7UP5EF3s="
+									},
+									"name": "ANONYMOUS"
+								}
+							]
 						}
 					],
 					"stereotype": "root"
-				},
-				{
-					"_type": "UMLEnumeration",
-					"_id": "AAAAAAFqG9U7UP5EF3s=",
-					"_parent": {
-						"$ref": "AAAAAAFF+qBWK6M3Z8Y="
-					},
-					"name": "UserType",
-					"literals": [
-						{
-							"_type": "UMLEnumerationLiteral",
-							"_id": "AAAAAAFqG9VlDv66c7s=",
-							"_parent": {
-								"$ref": "AAAAAAFqG9U7UP5EF3s="
-							},
-							"name": "ADMIN"
-						},
-						{
-							"_type": "UMLEnumerationLiteral",
-							"_id": "AAAAAAFqG9WDPv8hDUk=",
-							"_parent": {
-								"$ref": "AAAAAAFqG9U7UP5EF3s="
-							},
-							"name": "ANONYMOUS"
-						}
-					]
 				}
 			]
 		},
