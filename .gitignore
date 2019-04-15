@@ -1,0 +1,7 @@
+# JBoss Studio junk files
+.project
+bin/
+.settings/
+
+target/
+.classpath
