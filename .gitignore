@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # JBoss Studio junk files
 .project
 bin/
@@ -5,3 +6,6 @@ bin/
 
 target/
 .classpath
+=======
+target
+>>>>>>> Maven modularization
