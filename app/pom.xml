@@ -5,12 +5,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>cz.gag.web</groupId>
+		<groupId>cz.muni.fi.gag.web</groupId>
 		<artifactId>gag-web-parent</artifactId>
 		<version>1.0-SNAPSHOT</version>
 	</parent>
 
-	<groupId>cz.gag.web</groupId>
+	<groupId>cz.muni.fi.gag.web</groupId>
 	<artifactId>gag-web-app</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<packaging>war</packaging>

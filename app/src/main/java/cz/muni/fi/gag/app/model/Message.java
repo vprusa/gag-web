@@ -1,4 +1,4 @@
-package cz.muni.fi.gag.app.web.model;
+package cz.muni.fi.gag.app.model;
 
 import java.util.Date;
 

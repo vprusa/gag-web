@@ -1,4 +1,4 @@
-package cz.muni.fi.gag.app.web.store;
+package cz.muni.fi.gag.app.store;
 
 import java.util.Collections;
 import java.util.LinkedList;
