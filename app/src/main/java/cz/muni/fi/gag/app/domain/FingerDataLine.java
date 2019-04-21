@@ -17,4 +17,12 @@ public class FingerDataLine extends DataLine {
 	 */
 	@Enumerated(EnumType.ORDINAL)
 	private FingerPosition position;
+
+	public FingerPosition getPosition() {
+		return position;
+	}
+
+	public void setPosition(FingerPosition position) {
+		this.position = position;
+	}
 }
