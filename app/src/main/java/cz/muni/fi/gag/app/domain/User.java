@@ -1,4 +1,4 @@
-package cz.muni.fi.gag.app.web.domain;
+package cz.muni.fi.gag.app.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

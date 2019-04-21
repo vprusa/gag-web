@@ -1,4 +1,4 @@
-package cz.muni.fi.gag.app.web.rest;
+package cz.muni.fi.gag.app.rest;
 
 import javax.ws.rs.ApplicationPath;
 

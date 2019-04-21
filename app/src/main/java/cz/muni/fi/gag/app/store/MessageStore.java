@@ -1,4 +1,4 @@
-package cz.muni.fi.gag.app.web.store;
+package cz.muni.fi.gag.app.store;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -6,18 +6,16 @@ import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import cz.muni.fi.gag.app.web.model.Message;
-
 @ApplicationScoped
 public class MessageStore {
 
-    private List<Message> messages = Collections.synchronizedList(new LinkedList<>());
+    private List<cz.muni.fi.gag.app.model.Message> messages = Collections.synchronizedList(new LinkedList<>());
 
-    public List<Message> getMessages() {
+    public List<cz.muni.fi.gag.app.model.Message> getMessages() {
         return Collections.unmodifiableList(messages);
     }
 
-    public void addMessage(Message message) {
+    public void addMessage(cz.muni.fi.gag.app.model.Message message) {
         messages.add(message);
     }
 }

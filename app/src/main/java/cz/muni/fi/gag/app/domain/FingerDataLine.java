@@ -1,5 +1,4 @@
-
-package cz.muni.fi.gag.app.web.domain;
+package cz.muni.fi.gag.app.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
