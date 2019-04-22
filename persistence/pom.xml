@@ -13,6 +13,11 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>org.clojars.hozumi</groupId>
+			<artifactId>toxiclibscore</artifactId>
+			<version>0022</version>
+		</dependency>
+		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
 			<scope>provided</scope>
@@ -47,6 +52,16 @@
 			</testResource>
 		</testResources>
 	</build>
+	
+	
+    <repositories>
+        <repository>
+            <id>clojars</id>
+            <name>clojars</name>
+            <url>http://clojars.org/repo/</url>
+        </repository>
+    </repositories>
+	
 
 </project>
 
