@@ -1,4 +1,4 @@
-package cz.muni.fi.gag.app.domain;
+package cz.muni.fi.gag.web.entity;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

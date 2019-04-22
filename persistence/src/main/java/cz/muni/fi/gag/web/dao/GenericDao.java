@@ -1,4 +1,4 @@
-package cz.muni.fi.gag.app.dao;
+package cz.muni.fi.gag.web.dao;
 
 import java.util.List;
 import java.util.Optional;
