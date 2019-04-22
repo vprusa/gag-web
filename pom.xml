@@ -259,5 +259,13 @@
 		<!-- <module>api</module> <module>dao</module> <module>services-and-facades</module> -->
         <module>app</module>
         <module>persistence</module>
-	</modules>
+    </modules>
+    
+    <repositories>
+        <repository>
+            <id>clojars</id>
+            <name>clojars</name>
+            <url>http://clojars.org/repo/</url>
+        </repository>
+    </repositories>
 </project>

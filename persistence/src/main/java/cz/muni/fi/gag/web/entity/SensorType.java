@@ -1,9 +1,7 @@
 package cz.muni.fi.gag.web.entity;
 
 public enum SensorType {
-	// TODO this is named QUAT-GYRO in the class diagram but javac does not permit 
-	// enum instances with hyphens
-    QUAT,
+    QUAT_GYRO,
     MAG,
     ACC;
 }
