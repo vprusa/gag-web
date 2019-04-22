@@ -1,4 +1,4 @@
-package cz.muni.fi.gag.app.dao.impl;
+package cz.muni.fi.gag.web.dao.impl;
 
 import java.util.List;
 import java.util.Optional;
@@ -6,7 +6,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
-import cz.muni.fi.gag.app.dao.GenericDao;
+import cz.muni.fi.gag.web.dao.GenericDao;
 
 /**
  * This class provides the most primitive and straight-forward implementation
@@ -44,7 +44,7 @@ public abstract class AbstractGenericDao<T> implements GenericDao<T> {
 	    @Override
 	    public Optional<T> find(long id) {
 	        T result = em.find(type, id);
-	        return result == null ? Optional.empty() : Optional.ofNullable(result);
+	        return (Optional<T>) (result == null ? Optional.empty() : Optional.ofNullable(result));
 	    }
 	
 	    @Override
