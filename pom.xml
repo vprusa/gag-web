@@ -253,19 +253,39 @@
 
 			</plugins>
 		</pluginManagement>
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>3.0.0</version>
+				<executions>
+					<execution>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<configLocation>pb162_codestyle.xml</configLocation>
+					<failsOnError>true</failsOnError>
+				</configuration>
+			</plugin>
+		</plugins>
 	</build>
 
 	<modules>
 		<!-- <module>api</module> <module>dao</module> <module>services-and-facades</module> -->
-        <module>app</module>
-        <module>persistence</module>
-    </modules>
-    
-    <repositories>
-        <repository>
-            <id>clojars</id>
-            <name>clojars</name>
-            <url>http://clojars.org/repo/</url>
-        </repository>
-    </repositories>
+		<module>app</module>
+		<module>persistence</module>
+	</modules>
+
+	<repositories>
+		<repository>
+			<id>clojars</id>
+			<name>clojars</name>
+			<url>http://clojars.org/repo/</url>
+		</repository>
+	</repositories>
 </project>

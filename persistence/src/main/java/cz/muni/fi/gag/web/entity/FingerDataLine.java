@@ -3,35 +3,38 @@ package cz.muni.fi.gag.web.entity;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+//import javax.persistence.GeneratedValue;
+//import javax.persistence.GenerationType;
+//import javax.persistence.Id;
 
 import toxi.geom.Quaternion;
 
+/**
+ * @author Vojtech Prusa
+ *
+ */
 @Entity
 public class FingerDataLine extends DataLine {
-	
+
     // TODO wrapper/converter?
     private Quaternion quat;
-    
+
     private short accX;
 
     private short accY;
 
     private short accZ;
-    
-    
-	@Enumerated(EnumType.ORDINAL)
-	private FingerPosition position;
 
-	public FingerPosition getPosition() {
-		return position;
-	}
+    @Enumerated(EnumType.ORDINAL)
+    private FingerPosition position;
 
-	public void setPosition(FingerPosition position) {
-		this.position = position;
-	}
+    public FingerPosition getPosition() {
+        return position;
+    }
+
+    public void setPosition(FingerPosition position) {
+        this.position = position;
+    }
 
     /**
      * Getter
@@ -104,6 +107,5 @@ public class FingerDataLine extends DataLine {
     public void setZ(short z) {
         this.accZ = z;
     }
-	
-	
+
 }

@@ -6,6 +6,10 @@ import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
 
+/**
+ * @author Nobody Nobody
+ *
+ */
 @ApplicationScoped
 public class MessageStore {
 
