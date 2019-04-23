@@ -7,6 +7,10 @@ import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 import javax.websocket.Session;
 
+/**
+ * @author Nobody Nobody
+ *
+ */
 @ApplicationScoped
 public class SessionStore {
 

@@ -13,7 +13,7 @@
     <module name="TreeWalker">
         <!-- Checks for Javadoc comments.                     -->
         <!-- See http://checkstyle.sf.net/config_javadoc.html -->
-        <module name="JavadocMethod">
+<!--        <module name="JavadocMethod">
             <property name="scope" value="public"/>
             <property name="allowMissingPropertyJavadoc" value="true"/>
         </module>
@@ -23,7 +23,7 @@
         <module name="JavadocStyle">
             <property name="scope" value="public"/>
             <property name="checkFirstSentence" value="false"/>
-        </module>
+        </module> -->
         <module name="WriteTag">
             <property name="tag" value="@author"/>
             <property name="tagFormat" value="..* ..*"/>
@@ -74,9 +74,9 @@
         <module name="LeftCurly">
             <property name="option" value="eol"/>
         </module>
-        <module name="NeedBraces">
+        <!--  <module name="NeedBraces">
             <property name="allowSingleLineStatement" value="true"/>
-        </module>
+        </module> -->
         <module name="RightCurly"/>
 
         <!-- Checks for common coding problems               -->
@@ -91,7 +91,7 @@
         <!-- See http://checkstyle.sf.net/config_design.html -->
         <module name="FinalClass"/>
         <module name="InterfaceIsType"/>
-        <module name="VisibilityModifier"/>
+        <!-- <module name="VisibilityModifier"/> -->
 
         <!-- Miscellaneous other checks.                   -->
         <!-- See http://checkstyle.sf.net/config_misc.html -->

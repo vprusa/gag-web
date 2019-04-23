@@ -2,6 +2,10 @@ package cz.muni.fi.gag.app.model;
 
 import java.util.Date;
 
+/**
+ * @author Nobody Nobody
+ *
+ */
 public class Message {
 
     private String name;

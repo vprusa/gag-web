@@ -2,9 +2,13 @@ package cz.muni.fi.gag.web.entity;
 
 import javax.persistence.Entity;
 
+/**
+ * @author Vojtech Prusa
+ *
+ */
 @Entity
 public class WristDataLine extends FingerDataLine {
-	
+
     private short magX;
 
     private short magY;
@@ -64,7 +68,5 @@ public class WristDataLine extends FingerDataLine {
     public void setMagZ(short magZ) {
         this.magZ = magZ;
     }
-    
-    
 
 }

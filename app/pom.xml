@@ -91,48 +91,17 @@
 					<target>1.8</target>
 				</configuration>
 			</plugin>
-			<!--  
-			<plugin>
-				<groupId>com.github.eirslett</groupId>
-				<artifactId>frontend-maven-plugin</artifactId>
-				<version>${frontend-maven-plugin.version}</version>
-				<executions>
-					<execution>
-						<id>install node and yarn</id>
-						<goals>
-							<goal>install-node-and-yarn</goal>
-						</goals>
-						<phase>generate-resources</phase>
-					</execution>
-					<execution>
-						<id>yarn install</id>
-						<goals>
-							<goal>yarn</goal>
-						</goals>
-						<phase>compile</phase>
-						<configuration>
-							<arguments>install</arguments>
-						</configuration>
-					</execution>
-					<execution>
-						<id>ng build</id>
-						<goals>
-							<goal>yarn</goal>
-						</goals>
-						<phase>generate-resources</phase>
-						<configuration>
-							<arguments>run build-${environment}</arguments>
-						</configuration>
-					</execution>
-				</executions>
-				<configuration>
-					<nodeVersion>${node.version}</nodeVersion>
-					<yarnVersion>${yarn.version}</yarnVersion>
-					<workingDirectory>frontend</workingDirectory>
-					<installDirectory>target</installDirectory>
-				</configuration>
-			</plugin>
-			-->
+			<!-- <plugin> <groupId>com.github.eirslett</groupId> <artifactId>frontend-maven-plugin</artifactId> 
+				<version>${frontend-maven-plugin.version}</version> <executions> <execution> 
+				<id>install node and yarn</id> <goals> <goal>install-node-and-yarn</goal> 
+				</goals> <phase>generate-resources</phase> </execution> <execution> <id>yarn 
+				install</id> <goals> <goal>yarn</goal> </goals> <phase>compile</phase> <configuration> 
+				<arguments>install</arguments> </configuration> </execution> <execution> 
+				<id>ng build</id> <goals> <goal>yarn</goal> </goals> <phase>generate-resources</phase> 
+				<configuration> <arguments>run build-${environment}</arguments> </configuration> 
+				</execution> </executions> <configuration> <nodeVersion>${node.version}</nodeVersion> 
+				<yarnVersion>${yarn.version}</yarnVersion> <workingDirectory>frontend</workingDirectory> 
+				<installDirectory>target</installDirectory> </configuration> </plugin> -->
 			<plugin>
 				<artifactId>maven-war-plugin</artifactId>
 				<version>2.1.1</version>
@@ -145,7 +114,7 @@
 					</webResources>
 				</configuration>
 			</plugin>
-			 
+
 			<plugin>
 				<groupId>org.wildfly.plugins</groupId>
 				<artifactId>wildfly-maven-plugin</artifactId>

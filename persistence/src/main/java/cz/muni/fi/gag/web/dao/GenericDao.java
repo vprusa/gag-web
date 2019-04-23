@@ -7,6 +7,8 @@ import java.util.Optional;
  * Provides basic operations with entities on the database level.
  *
  * @author Miloslav Zezulka
+ * 
+ * @AbstractGenericDao
  */
 public interface GenericDao<T> {
 

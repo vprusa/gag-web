@@ -1,7 +1,9 @@
 package cz.muni.fi.gag.web.entity;
 
+/**
+ * @author Vojtech Prusa
+ *
+ */
 public enum UserType {
-    ADMIN,
-    REGISTERED,
-    ANONYMOUS;
+    ADMIN, REGISTERED, ANONYMOUS;
 }
