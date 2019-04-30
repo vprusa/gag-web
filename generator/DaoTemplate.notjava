@@ -1,0 +1,14 @@
+package cz.muni.fi.gag.web.dao;
+
+import cz.muni.fi.gag.web.entity.{{tablename}};
+
+/**
+ *
+ * @author Vojtech Prusa
+ *
+ * @{{tablename}}DaoImpl
+ *
+ */
+public interface {{tablename}}Dao extends GenericDao<{{tablename}}> {
+
+}
