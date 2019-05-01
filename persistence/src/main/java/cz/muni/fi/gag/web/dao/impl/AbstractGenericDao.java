@@ -3,8 +3,9 @@ package cz.muni.fi.gag.web.dao.impl;
 import java.util.List;
 import java.util.Optional;
 
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 
 import cz.muni.fi.gag.web.dao.GenericDao;
 
@@ -19,33 +20,43 @@ import cz.muni.fi.gag.web.dao.GenericDao;
  */
 public abstract class AbstractGenericDao<T> implements GenericDao<T> {
 
-    @Inject
+    //@Inject
+    // TODO move to its own class?
+    @PersistenceContext(name="name")
     protected EntityManager em;
-
+/*
+    @Produces
+    public EntityManager entityManager(){
+      return em;
+    }*/
+    
     private final Class<T> type;
 
     public AbstractGenericDao(Class<T> entityType) {
         type = entityType;
     }
 
+    @Transactional
     @Override
     public T create(final T entity) {
         em.persist(entity);
         return entity;
     }
-
+    
+    @Transactional
     @Override
     public T update(final T entity) {
         return em.merge(entity);
     }
 
+    @Transactional
     @Override
     public void remove(long id) {
         em.remove(em.getReference(type, id));
     }
 
     @Override
-    public Optional<T> find(long id) {
+    public Optional<T> find(Long id) {
         T result = em.find(type, id);
         return (Optional<T>) (result == null ? Optional.empty() : Optional.ofNullable(result));
     }

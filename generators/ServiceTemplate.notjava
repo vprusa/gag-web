@@ -1,0 +1,15 @@
+package cz.muni.fi.gag.web.service;
+
+import cz.muni.fi.gag.web.entity.{{tablename}};
+import cz.muni.fi.gag.web.service.generic.GenericCRUDService;
+
+/**
+ *
+ * @author Vojtech Prusa
+ *
+ * @{{tablename}}ServiceImpl
+ *
+ */
+public interface {{tablename}}Service extends GenericCRUDService<{{tablename}}> {
+
+}

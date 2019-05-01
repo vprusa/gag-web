@@ -4,9 +4,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -16,11 +13,7 @@ import javax.validation.constraints.NotNull;
  */
 @Entity
 @Table(name = "Users")
-public class User {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private long id;
+public class User extends AbstractEntity {
 
     @NotNull
     @Column(nullable = false, unique = true)
@@ -29,14 +22,6 @@ public class User {
     @NotNull
     @Enumerated(EnumType.ORDINAL)
     private UserType type;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getThirdPartyId() {
         return thirdPartyId;
