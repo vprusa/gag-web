@@ -40,7 +40,7 @@ public abstract class GenericDaoImpl<T> implements GenericDao<T>, Serializable {
     }
 
     @Override
-    public Optional<T> find(long id) {
+    public Optional<T> find(Long id) {
         return Optional.ofNullable(em.find(type, id));
     }
 

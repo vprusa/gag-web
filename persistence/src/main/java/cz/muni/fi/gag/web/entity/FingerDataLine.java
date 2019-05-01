@@ -7,7 +7,7 @@ import javax.persistence.Enumerated;
 //import javax.persistence.GenerationType;
 //import javax.persistence.Id;
 
-import toxi.geom.Quaternion;
+//import toxi.geom.Quaternion;
 
 /**
  * @author Vojtech Prusa
@@ -17,7 +17,12 @@ import toxi.geom.Quaternion;
 public class FingerDataLine extends DataLine {
 
     // TODO wrapper/converter?
-    private Quaternion quat;
+    // private Quaternion quat;
+
+    private float quatA;
+    private float quatX;
+    private float quatY;
+    private float quatZ;
 
     private short accX;
 
@@ -39,19 +44,73 @@ public class FingerDataLine extends DataLine {
     /**
      * Getter
      *
-     * @return quat instance
+     * @return quatA instance
      */
-    public Quaternion getQuat() {
-        return quat;
+    public float getQuatA() {
+        return quatA;
     }
 
     /**
      * Setter
      * 
-     * @param quat instance
+     * @param quatA instance
      */
-    public void setQuat(Quaternion quat) {
-        this.quat = quat;
+    public void setQuatA(float quatA) {
+        this.quatA = quatA;
+    }
+
+    /**
+     * Getter
+     *
+     * @return quatX instance
+     */
+    public float getQuatX() {
+        return quatX;
+    }
+
+    /**
+     * Setter
+     * 
+     * @param quatX instance
+     */
+    public void setQuatX(float quatX) {
+        this.quatX = quatX;
+    }
+
+    /**
+     * Getter
+     *
+     * @return quatY instance
+     */
+    public float getQuatY() {
+        return quatY;
+    }
+
+    /**
+     * Setter
+     * 
+     * @param quatY instance
+     */
+    public void setQuatY(float quatY) {
+        this.quatY = quatY;
+    }
+
+    /**
+     * Getter
+     *
+     * @return quatZ instance
+     */
+    public float getQuatZ() {
+        return quatZ;
+    }
+
+    /**
+     * Setter
+     * 
+     * @param quatZ instance
+     */
+    public void setQuatZ(float quatZ) {
+        this.quatZ = quatZ;
     }
 
     /**
@@ -106,6 +165,67 @@ public class FingerDataLine extends DataLine {
      */
     public void setZ(short z) {
         this.accZ = z;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + accX;
+        result = prime * result + accY;
+        result = prime * result + accZ;
+        result = prime * result + ((position == null) ? 0 : position.hashCode());
+        result = prime * result + Float.floatToIntBits(quatA);
+        result = prime * result + Float.floatToIntBits(quatX);
+        result = prime * result + Float.floatToIntBits(quatY);
+        result = prime * result + Float.floatToIntBits(quatZ);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!super.equals(obj)) {
+            return false;
+        }
+        if (!(obj instanceof FingerDataLine)) {
+            return false;
+        }
+        FingerDataLine other = (FingerDataLine) obj;
+        if (accX != other.accX) {
+            return false;
+        }
+        if (accY != other.accY) {
+            return false;
+        }
+        if (accZ != other.accZ) {
+            return false;
+        }
+        if (position != other.position) {
+            return false;
+        }
+        if (Float.floatToIntBits(quatA) != Float.floatToIntBits(other.quatA)) {
+            return false;
+        }
+        if (Float.floatToIntBits(quatX) != Float.floatToIntBits(other.quatX)) {
+            return false;
+        }
+        if (Float.floatToIntBits(quatY) != Float.floatToIntBits(other.quatY)) {
+            return false;
+        }
+        if (Float.floatToIntBits(quatZ) != Float.floatToIntBits(other.quatZ)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "FingerDataLine [quatA=" + quatA + ", quatX=" + quatX + ", quatY=" + quatY + ", quatZ=" + quatZ
+                + ", accX=" + accX + ", accY=" + accY + ", accZ=" + accZ + ", position=" + position + "]"
+                + super.toString();
     }
 
 }

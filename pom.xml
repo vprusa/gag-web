@@ -9,6 +9,9 @@
 	<version>1.0-SNAPSHOT</version>
 
 	<properties>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.source>1.8</maven.compiler.source>
+
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>8</java.version>
@@ -199,6 +202,15 @@
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.6.1</version>
+					<configuration>
+						<source>1.8</source>
+						<target>1.8</target>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
 					<configuration>
 						<argLine>-Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
@@ -250,11 +262,28 @@
 						</execution>
 					</executions>
 				</plugin>
-
 			</plugins>
 		</pluginManagement>
 		<plugins>
-
+			<plugin>
+				<groupId>com.googlecode.maven-download-plugin</groupId>
+				<artifactId>download-maven-plugin</artifactId>
+				<version>1.4.1</version>
+				<executions>
+					<execution>
+						<id>install-jbpm</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<url>https://download.jboss.org/wildfly/12.0.0.Final/wildfly-12.0.0.Final.zip</url>
+							<unpack>true</unpack>
+							<outputDirectory>${project.build.directory}/</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
@@ -276,9 +305,9 @@
 	</build>
 
 	<modules>
-		<!-- <module>api</module> <module>dao</module> <module>services-and-facades</module> -->
 		<module>app</module>
 		<module>persistence</module>
+		<module>services</module>
 	</modules>
 
 	<repositories>
@@ -287,5 +316,7 @@
 			<name>clojars</name>
 			<url>http://clojars.org/repo/</url>
 		</repository>
+
 	</repositories>
+	
 </project>

@@ -48,7 +48,7 @@ public interface GenericDao<T> {
      * @return Optional constructed with the entity of id {@code id} or
      * Optional.empty() if no such entry exists.
      */
-    Optional<T> find(long id);
+    Optional<T> find(Long id);
     
     /**
      * Returns all entries of the given type {@code T} present in the database.

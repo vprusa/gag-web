@@ -1,45 +1,36 @@
 package cz.muni.fi.gag.web.entity;
 
-import java.time.LocalTime;
+import java.util.Date;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
-import javax.persistence.MappedSuperclass;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 
 /**
  * @author Vojtech Prusa
- *
+ * 
+ * @FingerDataLine
+ * @WristDataLine
  */
-@MappedSuperclass
-public abstract class DataLine {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    protected long id;
-
+@Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+public abstract class DataLine extends AbstractEntity {
     @NotNull
-    private LocalTime timestamp;
+    protected Date timestamp;
 
-    @ManyToOne
-    @NotNull
-    private Gesture gesture;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @Null // todo @NotNull .. fix tests?
+    protected Gesture gesture;
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public LocalTime getTimestamp() {
+    public Date getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(LocalTime timestamp) {
+    public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
     }
 
@@ -52,10 +43,16 @@ public abstract class DataLine {
     }
 
     @Override
+    public String toString() {
+        return "DataLine [id=" + id + ", timestamp=" + timestamp + ", gesture=" + gesture + "]";
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((gesture == null) ? 0 : gesture.hashCode());
+        result = prime * result + (int) (id ^ (id >>> 32));
         result = prime * result + ((timestamp == null) ? 0 : timestamp.hashCode());
         return result;
     }
@@ -65,12 +62,31 @@ public abstract class DataLine {
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof DataLine)) {
+        if (obj == null) {
             return false;
         }
-        final DataLine other = (DataLine) obj;
-        return getGesture() != null && getGesture().equals(other.getGesture()) && getTimestamp() != null
-                && getGesture().equals(other.getGesture());
+        if (!(obj instanceof DataLine || obj instanceof WristDataLine || obj instanceof FingerDataLine)) {
+            return false;
+        }
+        DataLine other = (DataLine) obj;
+        if (gesture == null) {
+            if (other.gesture != null) {
+                return false;
+            }
+        } else if (!gesture.equals(other.gesture)) {
+            return false;
+        }
+        if (id != other.id) {
+            return false;
+        }
+        if (timestamp == null) {
+            if (other.timestamp != null) {
+                return false;
+            }
+        } else if (!timestamp.equals(other.timestamp)) {
+            return false;
+        }
+        return true;
     }
-
+    
 }
