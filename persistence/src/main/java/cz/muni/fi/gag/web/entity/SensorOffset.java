@@ -11,6 +11,9 @@ import javax.validation.constraints.NotNull;
 /**
  * @author Vojtech Prusa
  *
+ * @FingerSensorOffset
+ * @WristSensorOffset
+ *
  */
 //@MappedSuperclass
 @Entity
@@ -26,7 +29,8 @@ public abstract class SensorOffset extends AbstractEntity {
 
     private short z;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER ) //LAZY)
+
     @NotNull
     @JoinColumn(name = "offsets")
     private HandDevice device;

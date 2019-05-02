@@ -13,16 +13,18 @@ import cz.muni.fi.gag.web.dao.GenericDao;
  * This class provides the most primitive and straight-forward implementation of
  * persistence.
  * 
- * @author Miloslav Zezulka
+ * @author Miloslav Zezulka, Vojtech Prusa
  * 
  * @DataLineDaoImpl
- *
+ * @FingerSensorOffsetDaoImpl 
+ * 
+ * TODO add @Transactional as annotation on class itself not methods?
  */
 public abstract class AbstractGenericDao<T> implements GenericDao<T> {
 
     //@Inject
     // TODO move to its own class?
-    @PersistenceContext(name="name")
+    @PersistenceContext //(name="name")
     protected EntityManager em;
 /*
     @Produces
@@ -55,12 +57,14 @@ public abstract class AbstractGenericDao<T> implements GenericDao<T> {
         em.remove(em.getReference(type, id));
     }
 
+    @Transactional
     @Override
     public Optional<T> find(Long id) {
         T result = em.find(type, id);
         return (Optional<T>) (result == null ? Optional.empty() : Optional.ofNullable(result));
     }
 
+    @Transactional
     @Override
     public List<T> findAll() {
         return em.createQuery("FROM " + type.getName(), type).getResultList();

@@ -17,17 +17,18 @@ import cz.muni.fi.gag.web.dao.FingerDataLineDao;
 import cz.muni.fi.gag.web.entity.FingerDataLine;
 import cz.muni.fi.gag.web.entity.FingerPosition;
 
-import javax.inject.Inject;
-
 import java.util.Date;
 import java.util.logging.Logger;
+
+import javax.inject.Inject;
 
 /**
  * @author Vojtech Prusa
  *
  */
+//@ArquillianSuiteDeployment
 @RunWith(Arquillian.class)
-public class FingerDataLineTest {
+public class FingerDataLineTest extends TestBase {
 
     private static Logger log = Logger.getLogger(FingerDataLineTest.class.getSimpleName());
 
@@ -40,10 +41,10 @@ public class FingerDataLineTest {
     }
 
     @Inject
-    private FingerDataLineDao fignerDataLineDao;
+    public FingerDataLineDao fignerDataLineDao;
 
     @Inject
-    private FingerDataLineService fingerDataLineService;
+    public FingerDataLineService fingerDataLineService;
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -98,6 +99,7 @@ public class FingerDataLineTest {
         // log.info(testFingerDataLine2.equals(fingerDataLineService.findById(testFingerDataLine2.getId()).get())
         // + "");
         Assert.assertEquals(testFingerDataLine2, fingerDataLineService.findById(testFingerDataLine2.getId()).get());
+        after();
     }
 
 }
