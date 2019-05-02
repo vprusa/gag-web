@@ -1,6 +1,6 @@
 package cz.muni.fi.gag.web.entity;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -20,7 +20,7 @@ import javax.validation.constraints.NotNull;
 public class Gesture extends AbstractEntity {
 
     @NotNull
-    private LocalDateTime dateCreated;
+    private Date dateCreated;
 
     @NotNull
     private String userAlias;
@@ -32,11 +32,11 @@ public class Gesture extends AbstractEntity {
     @OneToMany(mappedBy = "gesture", orphanRemoval = false)
     private List<DataLine> data = new ArrayList<>();
 
-    public LocalDateTime getDateCreated() {
+    public Date getDateCreated() {
         return dateCreated;
     }
 
-    public void setDateCreated(LocalDateTime dateCreated) {
+    public void setDateCreated(Date dateCreated) {
         this.dateCreated = dateCreated;
     }
 

@@ -1,12 +1,12 @@
 package cz.muni.fi.gag.web.service.impl;
 
 import cz.muni.fi.gag.web.service.{{tablename}}Service;
+import cz.muni.fi.gag.web.service.generic.GenericCRUDServiceImpl;
 import cz.muni.fi.gag.web.dao.{{tablename}}Dao;
-import cz.muni.fi.gag.web.logging.LogMessages;
+import cz.muni.fi.gag.web.entity.{{tablename}};
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import java.util.List;
 
 /**
  *
@@ -14,43 +14,15 @@ import java.util.List;
  *
  */
 @Stateless
-public class {{tablename}}ServiceImpl implements {{tablename}}Service {
+public class {{tablename}}ServiceImpl extends GenericCRUDServiceImpl<{{tablename}}, {{tablename}}Dao>
+        implements {{tablename}}Service {
 
     @Inject
-    private {{tablename}}Dao {{Ltablename}}Dao;
+    protected {{tablename}}Dao genericDao;
 
     @Override
-    public {{tablename}} create({{tablename}} {{Ltablename}}) {
-        {{tablename}} created = {{Ltablename}}Dao.create({{Ltablename}});
-
-        LogMessages.infoCreate(this.getClass(), created);
-        return created;
-    }
-
-    @Override
-    public {{tablename}} update({{tablename}} {{Ltablename}}) {
-        {{tablename}} updated = {{Ltablename}}Dao.update({{Ltablename}});
-
-        LogMessages.infoUpdate(this.getClass(), {{Ltablename}});
-        return updated;
-    }
-
-    @Override
-    public void remove({{tablename}} {{Ltablename}}) throws IllegalArgumentException {
-        // TODO add fix for entity relationships
-
-        {{Ltablename}}Dao.remove({{Ltablename}}.getId());
-        LogMessages.infoRemove(this.getClass(), {{Ltablename}});
-    }
-
-    @Override
-    public {{tablename}} findById(Long id) {
-        return {{Ltablename}}Dao.find(id);
-    }
-
-    @Override
-    public List<{{tablename}}> findAll() {
-        return {{Ltablename}}Dao.findAll();
+    public {{tablename}}Dao getDao() {
+        return genericDao;
     }
 
 }

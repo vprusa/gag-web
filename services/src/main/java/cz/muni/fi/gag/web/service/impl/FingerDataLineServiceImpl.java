@@ -19,7 +19,7 @@ public class FingerDataLineServiceImpl extends GenericCRUDServiceImpl<FingerData
 
     @Inject
     protected FingerDataLineDao genericDao;
-    
+
     @Override
     public FingerDataLineDao getDao() {
         return genericDao;

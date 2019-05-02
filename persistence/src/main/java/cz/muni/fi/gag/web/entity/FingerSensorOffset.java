@@ -1,6 +1,8 @@
 package cz.muni.fi.gag.web.entity;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Table;
 
 /**
@@ -10,5 +12,26 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "fingerSensorOffset")
 public class FingerSensorOffset extends SensorOffset {
+    
+    @Enumerated(EnumType.ORDINAL)
     private FingerPosition position;
+
+    /**
+     * Getter
+     *
+     * @return position instance
+     */
+    public FingerPosition getPosition() {
+        return position;
+    }
+
+    /**
+     * Setter
+     * 
+     * @param position instance
+     */
+    public void setPosition(FingerPosition position) {
+        this.position = position;
+    }
+
 }

@@ -14,11 +14,12 @@ import javax.inject.Inject;
  *
  */
 @Stateless
-public class DataLineServiceImpl extends GenericCRUDServiceImpl<DataLine, DataLineDao> implements DataLineService {
+public class DataLineServiceImpl extends GenericCRUDServiceImpl<DataLine, DataLineDao>
+        implements DataLineService {
 
     @Inject
     protected DataLineDao genericDao;
-    
+
     @Override
     public DataLineDao getDao() {
         return genericDao;
