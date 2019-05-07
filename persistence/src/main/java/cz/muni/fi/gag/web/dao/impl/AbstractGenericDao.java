@@ -24,7 +24,7 @@ public abstract class AbstractGenericDao<T> implements GenericDao<T> {
 
     //@Inject
     // TODO move to its own class?
-    @PersistenceContext //(name="name")
+    @PersistenceContext//(name="gagEntityManager")
     protected EntityManager em;
 /*
     @Produces

@@ -15,7 +15,7 @@ import org.junit.runner.RunWith;
 
 import cz.muni.fi.gag.web.dao.UserDao;
 import cz.muni.fi.gag.web.entity.User;
-import cz.muni.fi.gag.web.entity.UserType;
+import cz.muni.fi.gag.web.entity.UserRole;
 
 import javax.inject.Inject;
 

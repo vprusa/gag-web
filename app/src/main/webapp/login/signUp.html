@@ -1,0 +1,141 @@
+<html >
+<head>
+  <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+  <meta charset="UTF-8">
+  <title>Sign Up Form</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    *:focus {
+      outline: none;
+    }
+    body {
+      font-family: Arial;
+      background-color: #3498DB;
+      padding: 50px;
+    }
+    .login {
+      margin: 20px auto;
+      width: 300px;
+    }
+    .login-screen {
+      background-color: #FFF;
+      padding: 20px;
+      border-radius: 5px
+    }
+
+    .app-title {
+      text-align: center;
+      color: #777;
+    }
+
+    .login-form {
+      text-align: center;
+    }
+    .control-group {
+      margin-bottom: 10px;
+    }
+
+    input {
+      text-align: center;
+      background-color: #ECF0F1;
+      border: 2px solid transparent;
+      border-radius: 3px;
+      font-size: 16px;
+      font-weight: 200;
+      padding: 10px 0;
+      width: 250px;
+      transition: border .5s;
+    }
+
+    input:focus {
+      border: 2px solid #3498DB;
+      box-shadow: none;
+    }
+
+    .btn {
+      border: 2px solid transparent;
+      background: #3498DB;
+      color: #ffffff;
+      font-size: 16px;
+      line-height: 25px;
+      padding: 10px 0;
+      text-decoration: none;
+      text-shadow: none;
+      border-radius: 3px;
+      box-shadow: none;
+      transition: 0.25s;
+      display: block;
+      width: 250px;
+    }
+
+    .btn:hover {
+      background-color: #2980B9;
+    }
+
+  </style>
+
+</head>
+
+<body>
+<div class="login">
+  <div class="login-screen">
+    <div class="app-title">
+      <h1>Sign Up</h1>
+    </div>
+
+    <div class="login-form">
+      <form id="formoid" action="/music/api/user/register" method=post>
+        <p><strong>Please enter your email: </strong>
+          <input type="text" id="email" name="email" size="25" required pattern=".+@.+\....?" title="email">
+        <p><p><strong>Please enter your first name: </strong>
+        <input type="text" size="25" name="firstName" id="firstName" required>
+        <p><p><strong>Please enter your last name: </strong>
+        <input type="text" size="25" name="lastName" id="lastName" required>
+        <p><p><strong>Please enter your password: </strong>
+        <input type="password" size="25" name="password" id="password" required>
+        <p></p>
+        <input class="btn btn-primary btn-large btn-block control-group" type="submit" value="Submit">
+        <p></p>
+        <input class="btn btn-primary btn-large btn-block control-group" type="button" value="Login" onclick="login()">
+      </form>
+  </div>
+</div>
+</div>
+<script type='text/javascript'>
+  function login() {
+      window.location = "../index.html";
+  }
+
+  $("#formoid").submit(function(event) {
+
+      event.preventDefault();
+
+      var $form = $( this ),
+          url = $form.attr( 'action' );
+
+      $.ajax({
+          url:url,
+          type:"POST",
+          data: JSON.stringify({
+              email: $('#email').val(),
+              passwordHash: $('#password').val(),
+              firstName: $('#firstName').val(),
+              lastName: $('#lastName').val()
+          }),
+          contentType:"application/json; charset=utf-8",
+          dataType:'json',
+          success: function(){
+              alert("You have been successfully sign up! Please log in.");
+              window.location = "../index.html";
+          }
+      });
+  });
+
+</script>
+
+</body>
+</html>

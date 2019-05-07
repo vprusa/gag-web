@@ -1,11 +1,12 @@
-<<<<<<< HEAD
 # JBoss Studio junk files
 .project
 bin/
 .settings/
-
 target/
 .classpath
-=======
 target
->>>>>>> Maven modularization
+app/.tern-project
+app/bower_components
+app/node_modules
+app/package-lock.json
+

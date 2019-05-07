@@ -13,4 +13,6 @@ import cz.muni.fi.gag.web.service.generic.GenericCRUDService;
  */
 public interface UserService extends GenericCRUDService<User, UserDao> {
 
+    User findByEmail(String email);
+
 }

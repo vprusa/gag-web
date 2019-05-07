@@ -16,7 +16,7 @@ import cz.muni.fi.gag.web.entity.HandDevice;
 import cz.muni.fi.gag.web.entity.SensorOffset;
 import cz.muni.fi.gag.web.entity.SensorType;
 import cz.muni.fi.gag.web.entity.User;
-import cz.muni.fi.gag.web.entity.UserType;
+import cz.muni.fi.gag.web.entity.UserRole;
 import cz.muni.fi.gag.web.entity.WristSensorOffset;
 
 /**
@@ -39,7 +39,7 @@ public class TestBase {
     public User buildUser() {
         User r = new User();
         r.setThirdPartyId("rand" + (++thirdPartyIdCounter));
-        r.setType(UserType.REGISTERED);
+        r.setType(UserRole.USER);
         return r;
     }
 
