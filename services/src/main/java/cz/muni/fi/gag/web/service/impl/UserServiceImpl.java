@@ -25,4 +25,10 @@ public class UserServiceImpl extends GenericCRUDServiceImpl<User, UserDao>
         return genericDao;
     }
 
+    @Override
+    public User findByEmail(String email) {
+        // TODO validate email ?
+        return getDao().findByEmail(email);
+    }
+
 }
