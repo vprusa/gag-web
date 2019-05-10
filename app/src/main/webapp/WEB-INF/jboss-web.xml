@@ -1,4 +1,4 @@
 <jboss-web>
-    <context-root>/gagweb</context-root>
-    <!-- <security-domain>GagWebDomain</security-domain> -->
+	<context-root>/gagweb</context-root>
+	<!-- <security-domain>GagWebDomain</security-domain> -->
 </jboss-web>
