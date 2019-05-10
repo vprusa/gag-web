@@ -1,26 +1,28 @@
-# Example application for PV243
+# Web app for (Gyro-Accelerometric|Gestures Automation) Glove
 
-### Building
+### Building/Running/Deploying
 
-```bash
-mvn package
 ```
-or 
-```bash
-make build
+mvn  wildfly:start wildfly:undeploy install wildfly:deploy
 ```
 
-### Running
+or
 
-After the project was build type
+```
+mvn  wildfly:start wildfly:undeploy install wildfly:deploy -DskipTests=true -Dcheckstyle.skip | tee app.log
+```
 
-```bash
-make open run
+#### Frontend 
+
+In dir 
+```
+./app
 ```
 
 
-#### Frontend missing
-
+Dir 
 ```
 ./frontend/*
 ```
+is deprecated 
+
