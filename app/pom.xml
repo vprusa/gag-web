@@ -28,6 +28,7 @@
 		<environment>prod</environment>
 		<jsf.version>2.1</jsf.version>
 		<infinispan.version>7.1.0.Final</infinispan.version>
+		<version.keycloak>6.0.1</version.keycloak>
 	</properties>
 
 	<dependencies>
@@ -50,54 +51,75 @@
 				</configuration>
 			</plugin>
 			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+
+			<plugin>
 				<groupId>org.wildfly.plugins</groupId>
 				<artifactId>wildfly-maven-plugin</artifactId>
+				<version>${version.wildfly.maven.plugin}</version>
 				<configuration>
-					<skip>false</skip>
 					<jboss-home>${project.parent.basedir}/wildfly-16.0.0.Final/</jboss-home>
-					<!-- <serverConfig>standalone-full.xml</serverConfig> <scripts> <script>../config/securityDomain.cli</script> 
-						</scripts> -->
+					<skip>false</skip>
 					<targetDir>
 						${project.basedir}/target/
 					</targetDir>
 					<filename>
 						gag-web-app-1.0-SNAPSHOT.war
 					</filename>
-					<!-- <serverConfig>standalone-full.xml</serverConfig> <scripts> <script>../config/securityDomain.cli</script> 
-						</scripts> -->
 				</configuration>
+				<executions>
+					<execution>
+						<id>keycloak</id>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<phase>prepare-package</phase>
+						<configuration>
+							<skip>true</skip>
+							<jbossHome>${project.parent.basedir}/keycloak-6.0.1</jbossHome>
+							<hostname>localhost</hostname>
+							<port>10090</port>
+							<serverArgs>
+								<serverArg>-Djboss.socket.binding.port-offset=100</serverArg>
+							</serverArgs>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.3</version>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<configuration>
+							<tasks>
+								<exec dir="${project.parent.basedir}/keycloak-6.0.1/bin/"
+									spawn="true" executable="bash">
+									<arg value="standalone.sh" />
+									<arg value="-Djboss.socket.binding.port-offset=100" />
+                                    <arg value="-Dkeycloak.migration.action=import" />
+                                    <arg value="-Dkeycloak.migration.provider=singleFile" />
+                                    <arg value="-Dkeycloak.migration.file=${project.parent.basedir}/config/google-identity-provider-realm.json" />
+                                    <arg value="-Dkeycloak.migration.strategy=OVERWRITE_EXISTING" />
+								</exec>
+							</tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		
+			<!-- https://mvnrepository.com/artifact/org.keycloak/keycloak-jaxrs-oauth-client -->
 		</plugins>
 	</build>
-
-	<profiles>
-		<profile>
-			<id>npm</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>exec-maven-plugin</artifactId>
-						<version>1.6.0</version>
-						<executions>
-							<execution>
-								<id>exec-npm-install</id>
-								<phase>generate-sources</phase>
-								<configuration>
-									<executable>npm</executable>
-									<arguments>
-										<argument>install</argument>
-									</arguments>
-								</configuration>
-								<goals>
-									<goal>exec</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
-
 </project>
