@@ -51,7 +51,7 @@ public class UserEndpoint {
     public Response register(User user) {
         Response.ResponseBuilder builder;
         try {
-            user.setType(UserRole.USER);
+            user.setRole(UserRole.USER);
             User created = userService.create(user);
             builder = Response.ok(created);
         } catch (Exception e) {
@@ -82,7 +82,7 @@ public class UserEndpoint {
         LOG.info("req.getRemoteUser()");
         LOG.info(req.getRemoteUser());
         try {
-            builder = Response.ok(userService.findByEmail(req.getRemoteUser()).getType());
+            builder = Response.ok(userService.findByEmail(req.getRemoteUser()).getRole());
         } catch (Exception e) {
             builder = Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage());
         }

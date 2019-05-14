@@ -74,7 +74,7 @@ public class TestBase {
     public User buildUser() {
         User r = new User();
         r.setThirdPartyId("rand" + (++thirdPartyIdCounter));
-        r.setType(UserRole.USER);
+        r.setRole(UserRole.USER);
         return r;
     }
 

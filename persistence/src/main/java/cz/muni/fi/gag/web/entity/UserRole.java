@@ -5,7 +5,7 @@ package cz.muni.fi.gag.web.entity;
  *
  */
 public enum UserRole {
-    ADMIN, USER, ANONYMOUS;
+    ANONYMOUS, USER, ADMIN;
 
     public static final String ADMIN_R = "ADMIN";
     public static final String USER_R = "USER";

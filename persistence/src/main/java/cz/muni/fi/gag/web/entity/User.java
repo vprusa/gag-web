@@ -21,7 +21,7 @@ public class User extends AbstractEntity {
 
     @NotNull
     @Enumerated(EnumType.ORDINAL)
-    private UserRole type;
+    private UserRole role;
 
     public String getThirdPartyId() {
         return thirdPartyId;
@@ -31,12 +31,12 @@ public class User extends AbstractEntity {
         this.thirdPartyId = thirdPartyId;
     }
 
-    public UserRole getType() {
-        return type;
+    public UserRole getRole() {
+        return role;
     }
 
-    public void setType(UserRole type) {
-        this.type = type;
+    public void setRole(UserRole type) {
+        this.role = type;
     }
 
     @Override
