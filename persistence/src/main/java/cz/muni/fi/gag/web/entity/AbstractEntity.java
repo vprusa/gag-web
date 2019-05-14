@@ -8,7 +8,9 @@ import javax.persistence.MappedSuperclass;
 /**
  * @author Vojtech Prusa
  * 
- * TODO fix like https://stackoverflow.com/questions/4045511/manytomany-in-an-abstract-mappedsuperclass ?
+ *         TODO fix like
+ *         https://stackoverflow.com/questions/4045511/manytomany-in-an-abstract-mappedsuperclass
+ *         ?
  * 
  * @DataLine
  * @FingerDataLine
@@ -25,7 +27,7 @@ import javax.persistence.MappedSuperclass;
 public abstract class AbstractEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;
 
     public Long getId() {
@@ -35,5 +37,5 @@ public abstract class AbstractEntity {
     public void setId(long id) {
         this.id = id;
     }
-    
+
 }

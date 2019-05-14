@@ -6,10 +6,13 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * @author Vojtech Prusa
@@ -29,7 +32,8 @@ public class Gesture extends AbstractEntity {
     @NotNull
     private User user;
 
-    @OneToMany(mappedBy = "gesture", orphanRemoval = false)
+    @OneToMany(mappedBy = "gesture", orphanRemoval = false, fetch = FetchType.EAGER)
+    @JsonIgnoreProperties({"gesture"})
     private List<DataLine> data = new ArrayList<>();
 
     public Date getDateCreated() {

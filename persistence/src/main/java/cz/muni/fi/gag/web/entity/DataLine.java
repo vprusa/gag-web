@@ -10,6 +10,8 @@ import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * @author Vojtech Prusa
  * 
@@ -17,12 +19,16 @@ import javax.validation.constraints.Null;
  * @WristDataLine
  */
 @Entity
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Inheritance(strategy = InheritanceType.JOINED)
+@JsonIgnoreProperties(value= {"gesture"})
 public abstract class DataLine extends AbstractEntity {
+
     @NotNull
     protected Date timestamp;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    // https://stackoverflow.com/questions/26957554/
+    // jsonmappingexception-could-not-initialize-proxy-no-session
+    @ManyToOne(fetch = FetchType.EAGER)
     @Null // todo @NotNull .. fix tests?
     protected Gesture gesture;
 
@@ -88,5 +94,5 @@ public abstract class DataLine extends AbstractEntity {
         }
         return true;
     }
-    
+
 }
