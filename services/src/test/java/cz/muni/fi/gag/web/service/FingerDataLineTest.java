@@ -34,12 +34,9 @@ public class FingerDataLineTest extends TestBase {
 
     @Deployment
     public static WebArchive deployment() {
-        return ShrinkWrap.create(WebArchive.class, FingerDataLineTest.class.getSimpleName() + ".war")
-                .addPackages(true, "cz.muni.fi.gag.web")
-                .addAsResource("test-persistence.xml", "META-INF/persistence.xml")
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+        return getDeployment(FingerDataLineTest.class);
     }
-
+    
     @Inject
     public FingerDataLineDao fignerDataLineDao;
 

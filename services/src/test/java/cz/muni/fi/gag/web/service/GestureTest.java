@@ -39,12 +39,8 @@ public class GestureTest extends TestBase {
 
     @Deployment
     public static WebArchive deployment() {
-        return ShrinkWrap.create(WebArchive.class, GestureTest.class.getSimpleName() + ".war")
-                .addPackages(true, "cz.muni.fi.gag.web")
-                .addAsResource("test-persistence.xml", "META-INF/persistence.xml")
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+        return getDeployment(GestureTest.class);
     }
-
     @Inject
     private GestureDao gestureDao;
 

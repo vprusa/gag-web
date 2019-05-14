@@ -25,17 +25,14 @@ import java.util.logging.Logger;
  * @author Vojtech Prusa
  *
  */
- @RunWith(Arquillian.class)
+@RunWith(Arquillian.class)
 public class UserTest extends TestBase {
 
     private static Logger log = Logger.getLogger(UserTest.class.getSimpleName());
 
     @Deployment
     public static WebArchive deployment() {
-          return ShrinkWrap.create(WebArchive.class, UserTest.class.getSimpleName() + ".war")
-                .addPackages(true, "cz.muni.fi.gag.web")
-                .addAsResource("test-persistence.xml", "META-INF/persistence.xml")
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+        return getDeployment(UserTest.class);
     }
 
     @Inject
@@ -77,10 +74,10 @@ public class UserTest extends TestBase {
         Assert.assertEquals(testUser2, userService.findById(testUser2.getId()).get());
     }
 
-    //@Test
+    // @Test
     public void testServiceValidUpdateThenFind() {
-      testServiceValidCreateThenFind();
-      // TODO ...
+        testServiceValidCreateThenFind();
+        // TODO ...
     }
 
 }
