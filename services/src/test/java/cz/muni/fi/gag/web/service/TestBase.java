@@ -1,10 +1,17 @@
 package cz.muni.fi.gag.web.service;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.inject.Inject;
+
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 
 import cz.muni.fi.gag.web.dao.FingerSensorOffsetDao;
 import cz.muni.fi.gag.web.dao.HandDeviceDao;
@@ -20,9 +27,37 @@ import cz.muni.fi.gag.web.entity.UserRole;
 import cz.muni.fi.gag.web.entity.WristSensorOffset;
 
 /**
- * @author Vojtech Prusa TODO ....
+ * @author Vojtech Prusa
  */
 public class TestBase {
+
+    private static Logger log = Logger.getLogger(TestBase.class.getSimpleName());
+
+    static String keycloakGroupId = "org.keycloak:";
+    static String keycloakVersion = ":6.0.1";
+
+    public static WebArchive getDeployment(Class clazz) {
+        File[] files = Maven.resolver()
+                .resolve(keycloakGroupId + "keycloak-core" + keycloakVersion,
+                        keycloakGroupId + "keycloak-common" + keycloakVersion,
+                        keycloakGroupId + "keycloak-adapter-core" + keycloakVersion,
+                        keycloakGroupId + "keycloak-adapter-spi" + keycloakVersion,
+                        keycloakGroupId + "keycloak-client-registration-api" + keycloakVersion)
+                .withTransitivity().asFile();
+
+        log.info("Dependency Files");
+
+        for (File file : files) {
+            log.info(file.getAbsolutePath());
+        }
+
+        // File[] keycloak
+
+        return ShrinkWrap.create(WebArchive.class, clazz.getSimpleName() + ".war")
+                .addPackages(true, "cz.muni.fi.gag.web")
+                .addAsResource("test-persistence.xml", "META-INF/persistence.xml")
+                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml").addAsLibraries(files);
+    }
 
     @Inject
     private UserDao userDao;

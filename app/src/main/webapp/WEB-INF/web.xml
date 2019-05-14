@@ -20,7 +20,6 @@
 			<web-resource-name>restricted</web-resource-name>
 			<url-pattern>/api/user/*</url-pattern>
 		</web-resource-collection>
-		<!-- OMIT auth-constraint -->
 	</security-constraint>
 
 	<security-constraint>
@@ -34,18 +33,24 @@
 			<role-name>USER</role-name>
 		</auth-constraint>
 	</security-constraint>
+	
+	<security-constraint>
+        <web-resource-collection>
+            <web-resource-name>restricted</web-resource-name>
+            <url-pattern>/public/*</url-pattern>
+        </web-resource-collection>
+    </security-constraint>
 
 	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>app</web-resource-name>
 			<url-pattern>/partials/logout.html</url-pattern>
 		</web-resource-collection>
-		<!-- OMIT auth-constraint -->
 	</security-constraint>
 
     <login-config>
         <auth-method>KEYCLOAK</auth-method>
-        <realm-name>internal</realm-name>
+        <!-- <realm-name>internal</realm-name> -->
     </login-config>
 
 	<!-- <login-config> <auth-method>FORM</auth-method> <realm-name>ApplicationRealm</realm-name> 

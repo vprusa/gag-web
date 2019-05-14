@@ -42,10 +42,7 @@ public class HandDeviceTest extends TestBase {
 
     @Deployment
     public static WebArchive deployment() {
-        return ShrinkWrap.create(WebArchive.class, HandDeviceTest.class.getSimpleName() + ".war")
-                .addPackages(true, "cz.muni.fi.gag.web")
-                .addAsResource("test-persistence.xml", "META-INF/persistence.xml")
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+        return getDeployment(HandDevice.class);
     }
 
     @Inject

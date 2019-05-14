@@ -33,12 +33,9 @@ public class WristDataLineTest extends TestBase {
 
     @Deployment
     public static WebArchive deployment() {
-        return ShrinkWrap.create(WebArchive.class, WristDataLineTest.class.getSimpleName() + ".war")
-                .addPackages(true, "cz.muni.fi.gag.web")
-                .addAsResource("test-persistence.xml", "META-INF/persistence.xml")
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+        return getDeployment(WristDataLineTest.class);
     }
-
+    
     @Inject
     private WristDataLineDao wristDataLineDao;
 

@@ -33,10 +33,7 @@ public class FingerSensorOffsetTest extends TestBase {
 
     @Deployment
     public static WebArchive deployment() {
-        return ShrinkWrap.create(WebArchive.class, FingerSensorOffsetTest.class.getSimpleName() + ".war")
-                .addPackages(true, "cz.muni.fi.gag.web")
-                .addAsResource("test-persistence.xml", "META-INF/persistence.xml")
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+        return getDeployment(FingerSensorOffsetTest.class);
     }
 
     @Inject
