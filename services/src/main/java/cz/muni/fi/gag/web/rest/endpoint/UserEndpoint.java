@@ -4,6 +4,8 @@ import cz.muni.fi.gag.web.entity.UserRole;
 import cz.muni.fi.gag.web.entity.User;
 import cz.muni.fi.gag.web.service.UserService;
 
+import java.util.Iterator;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
@@ -16,10 +18,13 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+
+import org.keycloak.KeycloakPrincipal;
 import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.adapters.AdapterDeploymentContext;
 import org.keycloak.adapters.KeycloakDeployment;
@@ -79,19 +84,75 @@ public class UserEndpoint {
     public Response getRole(@Context HttpServletRequest req) {
         Response.ResponseBuilder builder;
 
-        LOG.info("req.getRemoteUser()");
-        LOG.info(req.getRemoteUser());
         try {
-            builder = Response.ok(userService.findByEmail(req.getRemoteUser()).getRole());
+            builder = Response.ok(userService.findByIdentificator(req.getRemoteUser()).getRole());
         } catch (Exception e) {
             builder = Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage());
         }
         return builder.build();
     }
 
+    @Context
+    SecurityContext sc;
+
     @GET
-    public Response get() {
-        return Response.ok(userService.findAll()).build();
+    @Path("/currentdetail")
+    public Response currentdetail() {
+        if (sc.getUserPrincipal() instanceof KeycloakPrincipal) {
+            // https://stackoverflow.com/questions/31864062/
+            // fetch-logged-in-username-in-a-webapp-secured-with-keycloak
+            if (sc.getUserPrincipal() instanceof KeycloakPrincipal) {
+                @SuppressWarnings("unchecked")
+                KeycloakPrincipal<KeycloakSecurityContext> kp = (KeycloakPrincipal<KeycloakSecurityContext>) sc
+                        .getUserPrincipal();
+                return Response.ok(kp.getKeycloakSecurityContext().getIdToken()).build();
+            }
+        }
+        return Response.ok("noDetails").build();
+    }
+
+    @GET
+    @Path("/current")
+    public Response currentsimple() {
+        // https://stackoverflow.com/questions/31864062/
+        // fetch-logged-in-username-in-a-webapp-secured-with-keycloak
+
+        User currentUser = null;
+        if (sc.getUserPrincipal() instanceof KeycloakPrincipal) {
+            @SuppressWarnings("unchecked")
+            KeycloakPrincipal<KeycloakSecurityContext> kp = (KeycloakPrincipal<KeycloakSecurityContext>) sc
+                    .getUserPrincipal();
+            // this is how to get the real userName (or rather the login name)
+            User existingUser = null;
+            currentUser = new User();
+            AccessToken at = kp.getKeycloakSecurityContext().getToken();
+
+            currentUser.setThirdPartyIdAsEmail(at.getEmail());
+            // TODO fix should not be necessary here ..
+            if ((existingUser = userService.findByIdentificator(currentUser.getThirdPartyId())) == null) {
+                Set<String> currentUserRoles = at.getRealmAccess().getRoles();
+                currentUser.setRole(UserRole.ANONYMOUS);
+                Iterator<String> currentUserRolesIterator = currentUserRoles.iterator();
+                while (currentUserRolesIterator.hasNext()) {
+                    String role = currentUserRolesIterator.next();
+                    if (role.matches(UserRole.USER_R)) {
+                        currentUser.setRole(UserRole.USER);
+                    } else if (role.matches(UserRole.ADMIN_R)) {
+                        currentUser.setRole(UserRole.ADMIN);
+                    }
+                }
+                currentUser = userService.create(currentUser);
+                return Response.ok(currentUser).build();
+            }
+            return Response.ok(existingUser).build();
+        } else {
+            if (sc.getUserPrincipal() != null) {
+                currentUser = userService.findByIdentificator(sc.getUserPrincipal().getName());
+                return Response.ok(currentUser).build();
+            }
+        }
+        // TODO fix messages
+        return Response.ok("No user found").build();
     }
 
     // Some other methods copy-pasted from
@@ -165,5 +226,26 @@ public class UserEndpoint {
     private KeycloakSecurityContext getSession(HttpServletRequest req) {
         return (KeycloakSecurityContext) req.getAttribute(KeycloakSecurityContext.class.getName());
     }
+
+    // https://stackoverflow.com/questions/31864062/fetch-logged-in-username-in-a-webapp-secured-with-keycloak
+    /*
+     * @Context SecurityContext sc;
+     * 
+     * @GET
+     * 
+     * @Produces(MediaType.APPLICATION_JSON) public User getCurrentUser() {
+     * 
+     * // this will set the user id as userName String userName =
+     * sc.getUserPrincipal().getName();
+     * 
+     * if (sc.getUserPrincipal() instanceof KeycloakPrincipal) {
+     * KeycloakPrincipal<KeycloakSecurityContext> kp =
+     * (KeycloakPrincipal<KeycloakSecurityContext>) sc .getUserPrincipal();
+     * 
+     * // this is how to get the real userName (or rather the login name) userName =
+     * kp.getKeycloakSecurityContext().getIdToken().getPreferredUsername(); }
+     * 
+     * return "{ message : \"Hello " + userName + "\" }"; }
+     */
 
 }

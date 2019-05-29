@@ -14,8 +14,7 @@ import javax.inject.Inject;
  *
  */
 @Stateless
-public class UserServiceImpl extends GenericCRUDServiceImpl<User, UserDao>
-        implements UserService {
+public class UserServiceImpl extends GenericCRUDServiceImpl<User, UserDao> implements UserService {
 
     @Inject
     protected UserDao genericDao;
@@ -26,9 +25,9 @@ public class UserServiceImpl extends GenericCRUDServiceImpl<User, UserDao>
     }
 
     @Override
-    public User findByEmail(String email) {
+    public User findByIdentificator(String thirdPartyId) {
         // TODO validate email ?
-        return getDao().findByEmail(email);
+        return getDao().findByThirdPartyId(thirdPartyId);
     }
 
 }

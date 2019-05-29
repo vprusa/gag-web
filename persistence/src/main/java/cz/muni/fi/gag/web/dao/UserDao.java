@@ -8,11 +8,11 @@ import cz.muni.fi.gag.web.entity.User;
  * 
  * @author Vojtech Prusa
  * 
- * @GestureDaoImpl
+ * @UserDaoImpl
  *
  */
 public interface UserDao extends GenericDao<User> {
 
-    User findByEmail(@NotNull String email);
+    User findByThirdPartyId(@NotNull String thirdPartyId);
 
 }
