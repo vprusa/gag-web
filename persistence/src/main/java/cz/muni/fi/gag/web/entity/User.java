@@ -15,6 +15,8 @@ import javax.validation.constraints.NotNull;
 @Table(name = "Users")
 public class User extends AbstractEntity {
 
+    public static final String THIRD_PARTY_ID_EMAIL_PREFIX = "email:";
+
     @NotNull
     @Column(nullable = false, unique = true)
     private String thirdPartyId;
@@ -29,6 +31,11 @@ public class User extends AbstractEntity {
 
     public void setThirdPartyId(String thirdPartyId) {
         this.thirdPartyId = thirdPartyId;
+    }
+
+    public void setThirdPartyIdAsEmail(String email) {
+        StringBuilder sb = new StringBuilder(THIRD_PARTY_ID_EMAIL_PREFIX);
+        this.thirdPartyId = sb.append(email).toString();
     }
 
     public UserRole getRole() {
