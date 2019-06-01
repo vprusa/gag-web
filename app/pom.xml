@@ -15,7 +15,7 @@
 	<version>1.0-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>GAG web app</name>
-	<description>Gag web app using technologies</description>
+	<description>Gag web app</description>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -42,12 +42,28 @@
 	<build>
 		<!-- <defaultGoal>wildfly:start wildfly:undeploy install wildfly:deploy 
 			-DskipTests=true -Dcheckstyle.skip </defaultGoal> -->
+	   <!-- <finalName>gag-web-app-1.0-SNAPSHOT.WAR</finalName> -->
 		<plugins>
 			<plugin>
+			    <groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
 				<configuration>
-					<failOnMissingWebXml>true</failOnMissingWebXml>
-					<warSourceDirectory>src/main/webapp</warSourceDirectory>
+                    <failOnMissingWebXml>true</failOnMissingWebXml>
+				    <!--<warSourceDirectory>${basedir}/src/main/webapp</warSourceDirectory>-->
+					<!--<warSourceDirectory>src/main/webapp</warSourceDirectory>
+                     <webappDirectory>src/main/webapp</webappDirectory>
+                    <warSourceDirectory>src/main/webapp</warSourceDirectory> -->
+					<!--<webappDirectory>${basedir}/src/main/webapp</webappDirectory>
+					<warSourceDirectory>${basedir}/src/main/webapp</warSourceDirectory>
+					<webResources>
+						<resource>
+							<directory>${basedir}/src/main/webapp</directory>
+							<filtering>true</filtering>
+							<includes>
+								<include>**/*</include>
+							</includes>
+						</resource>
+					</webResources> -->
 				</configuration>
 			</plugin>
 			<plugin>
@@ -57,7 +73,6 @@
 					<skip>true</skip>
 				</configuration>
 			</plugin>
-
 			<plugin>
 				<groupId>org.wildfly.plugins</groupId>
 				<artifactId>wildfly-maven-plugin</artifactId>
@@ -66,11 +81,25 @@
 					<jboss-home>${project.parent.basedir}/wildfly-16.0.0.Final/</jboss-home>
 					<skip>false</skip>
 					<targetDir>
-						${project.basedir}/target/
+						${project.basedir}/live
 					</targetDir>
+					<!-- because wildfly is stupid an can upload as exploded only if it ends with .war -->
 					<filename>
-						gag-web-app-1.0-SNAPSHOT.war
+						gag-web-app-1.0-SNAPSHOT.WAR
 					</filename>
+					<add-user>
+						<users>
+							<user>
+								<username>admin</username>
+								<password>admin</password>
+							</user>
+							<!-- <user> <username>admin-user</username> <password>user.1234</password> 
+								<groups> <group>admin</group> <group>user</group> </groups> <application-user>true</application-user> 
+								</user> <user> <username>default-user</username> <password>user.1234</password> 
+								<groups> <group>user</group> </groups> <application-user>true</application-user> 
+								</user> -->
+						</users>
+					</add-user>
 				</configuration>
 				<executions>
 					<execution>
@@ -105,10 +134,12 @@
 									spawn="true" executable="bash">
 									<arg value="standalone.sh" />
 									<arg value="-Djboss.socket.binding.port-offset=100" />
-                                    <arg value="-Dkeycloak.migration.action=import" />
-                                    <arg value="-Dkeycloak.migration.provider=singleFile" />
-                                    <arg value="-Dkeycloak.migration.file=${project.parent.basedir}/config/google-identity-provider-realm.json" />
-                                    <arg value="-Dkeycloak.migration.strategy=OVERWRITE_EXISTING" />
+									<arg value="-Dkeycloak.migration.action=import" />
+									<arg value="-Dkeycloak.migration.provider=singleFile" />
+									<arg
+										value="-Dkeycloak.migration.file=${project.parent.basedir}/config/google-identity-provider-realm.json" />
+									<arg
+										value="-Dkeycloak.migration.strategy=OVERWRITE_EXISTING" />
 								</exec>
 							</tasks>
 						</configuration>
@@ -118,8 +149,60 @@
 					</execution>
 				</executions>
 			</plugin>
-		
 			<!-- https://mvnrepository.com/artifact/org.keycloak/keycloak-jaxrs-oauth-client -->
 		</plugins>
+
+
 	</build>
+
+	<profiles>
+		<profile>
+			<id>copyJsps</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-resources-plugin</artifactId>
+						<version>2.5</version>
+						<configuration>
+							<outputDirectory>${basedir}/target/gag-web-app-1.0-SNAPSHOT/</outputDirectory>
+							<resources>
+								<resource>
+									<directory>src/main/webapp/</directory>
+									<filtering>true</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>npm</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>1.6.0</version>
+						<executions>
+							<execution>
+								<id>exec-npm-install</id>
+								<phase>generate-sources</phase>
+								<configuration>
+									<executable>npm</executable>
+									<arguments>
+										<argument>install</argument>
+									</arguments>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 </project>
