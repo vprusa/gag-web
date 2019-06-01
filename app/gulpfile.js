@@ -66,7 +66,7 @@ gulp.task('components-js', function() {
 
 
 gulp.task('browser-sync', function () {
-    var proxyOptions = url.parse('http://localhost:8080/music');
+    var proxyOptions = url.parse('http://localhost:8080/gagweb');
     proxyOptions.route = '/gagweb';
     browserSync.init({
         open: true,

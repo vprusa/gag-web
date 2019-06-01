@@ -7,7 +7,7 @@
     "type": "git",
     "url": "git+https://gitlab.com/vprusa/gag-web.git"
   },
-  "author": "Ondrej Oravcok",
+  "author": "nobody",
   "license": "Apache-2.0",
   "bugs": {
     "url": "https://gitlab.com/vprusa/gag-web/issues"
@@ -16,10 +16,10 @@
   "devDependencies": {
     "bower": "^1.3.1",
     "browser-sync": "^2.18.8",
-    "gulp": "^3.9.1",
+    "gulp": "^4.0.2",
     "gulp-concat": "^2.6.1",
-    "http-server": "^0.6.1",
-    "karma": "~0.12",
+    "http-server": "^0.11.1",
+    "karma": "^4.1.0",
     "karma-chrome-launcher": "^0.1.4",
     "karma-firefox-launcher": "^0.1.3",
     "karma-jasmine": "^0.1.5",
