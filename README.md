@@ -18,11 +18,3 @@ In dir
 ```
 ./app
 ```
-
-
-Dir 
-```
-./frontend/*
-```
-is deprecated 
-
