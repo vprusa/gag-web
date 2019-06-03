@@ -81,11 +81,11 @@
 					<jboss-home>${project.parent.basedir}/wildfly-16.0.0.Final/</jboss-home>
 					<skip>false</skip>
 					<targetDir>
-						${project.basedir}/live
+						${project.basedir}/target
 					</targetDir>
 					<!-- because wildfly is stupid an can upload as exploded only if it ends with .war -->
 					<filename>
-						gag-web-app-1.0-SNAPSHOT.WAR
+						gag-web-app-1.0-SNAPSHOT.war
 					</filename>
 					<add-user>
 						<users>
@@ -131,7 +131,8 @@
 						<configuration>
 							<tasks>
 								<exec dir="${project.parent.basedir}/keycloak-6.0.1/bin/"
-									spawn="true" executable="bash">
+									spawn="true" executable="cmd">
+									<arg value="/C" />
 									<arg value="standalone.sh" />
 									<arg value="-Djboss.socket.binding.port-offset=100" />
 									<arg value="-Dkeycloak.migration.action=import" />
