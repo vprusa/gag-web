@@ -257,11 +257,7 @@
 						</executions>
 						<configuration>
 							<skip>false</skip>
-							<executable>cmd</executable>
-							<arguments>
-								<argument>/C</argument>
-								<argument>${project.basedir}/config/prepareWF2UseKC.sh</argument>
-							</arguments>
+							<executable>${project.basedir}/config/prepareWF2UseKC.sh</executable>
 							<workingDirectory>${project.basedir}</workingDirectory>
 							<successCodes>
 								<successCode>0</successCode>
@@ -269,53 +265,53 @@
 							</successCodes>
 						</configuration>
 					</plugin>
-<!--					<plugin>-->
-<!--						<groupId>com.googlecode.maven-download-plugin</groupId>-->
-<!--						<artifactId>download-maven-plugin</artifactId>-->
-<!--						<version>1.4.1</version>-->
-<!--						<inherited>false</inherited>-->
-<!--						<executions>-->
-<!--							<execution>-->
-<!--								<id>install-wildfly</id>-->
-<!--								&lt;!&ndash; maven.apache.org/ref/3.6.1/maven-core/lifecycles.html pre-integration-test &ndash;&gt;-->
-<!--								<phase>prepare-package</phase>-->
-<!--								<goals>-->
-<!--									<goal>wget</goal>-->
-<!--								</goals>-->
-<!--								<configuration>-->
-<!--									<url>https://download.jboss.org/wildfly/16.0.0.Final/wildfly-16.0.0.Final.zip</url>-->
-<!--									<unpack>true</unpack>-->
-<!--									<outputDirectory>${project.basedir}/</outputDirectory>-->
-<!--								</configuration>-->
-<!--							</execution>-->
-<!--							<execution>-->
-<!--								<id>install-keycloak-adapter</id>-->
-<!--								<phase>prepare-package</phase>-->
-<!--								<goals>-->
-<!--									<goal>wget</goal>-->
-<!--								</goals>-->
-<!--								<configuration>-->
-<!--									&lt;!&ndash; TODO versions to properties &ndash;&gt;-->
-<!--									<url>https://downloads.jboss.org/keycloak/6.0.1/adapters/keycloak-oidc/keycloak-wildfly-adapter-dist-6.0.1.zip</url>-->
-<!--									<unpack>true</unpack>-->
-<!--									<outputDirectory>${project.basedir}/keycloak-wildfly-adapter/</outputDirectory>-->
-<!--								</configuration>-->
-<!--							</execution>-->
-<!--							<execution>-->
-<!--								<id>install-keycloak-server</id>-->
-<!--								<phase>prepare-package</phase>-->
-<!--								<goals>-->
-<!--									<goal>wget</goal>-->
-<!--								</goals>-->
-<!--								<configuration>-->
-<!--									&lt;!&ndash; TODO versions to properties &ndash;&gt;-->
-<!--									<url>https://downloads.jboss.org/keycloak/6.0.1/keycloak-6.0.1.zip</url>-->
-<!--									<unpack>true</unpack>-->
-<!--									<outputDirectory>${project.basedir}/</outputDirectory>-->
-<!--								</configuration>-->
-<!--							</execution>-->
-<!--						</executions>-->
-<!--					</plugin>-->
+					<plugin>
+						<groupId>com.googlecode.maven-download-plugin</groupId>
+						<artifactId>download-maven-plugin</artifactId>
+						<version>1.4.1</version>
+						<inherited>false</inherited>
+						<executions>
+							<execution>
+								<id>install-wildfly</id>
+								<!-- maven.apache.org/ref/3.6.1/maven-core/lifecycles.html pre-integration-test -->
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>wget</goal>
+								</goals>
+								<configuration>
+									<url>https://download.jboss.org/wildfly/16.0.0.Final/wildfly-16.0.0.Final.zip</url>
+									<unpack>true</unpack>
+									<outputDirectory>${project.basedir}/</outputDirectory>
+								</configuration>
+							</execution>
+							<execution>
+								<id>install-keycloak-adapter</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>wget</goal>
+								</goals>
+								<configuration>
+									<!-- TODO versions to properties -->
+									<url>https://downloads.jboss.org/keycloak/6.0.1/adapters/keycloak-oidc/keycloak-wildfly-adapter-dist-6.0.1.zip</url>
+									<unpack>true</unpack>
+									<outputDirectory>${project.basedir}/keycloak-wildfly-adapter/</outputDirectory>
+								</configuration>
+							</execution>
+							<execution>
+								<id>install-keycloak-server</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>wget</goal>
+								</goals>
+								<configuration>
+									<!-- TODO versions to properties -->
+									<url>https://downloads.jboss.org/keycloak/6.0.1/keycloak-6.0.1.zip</url>
+									<unpack>true</unpack>
+									<outputDirectory>${project.basedir}/</outputDirectory>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
 					<plugin>
 						<groupId>org.wildfly.plugins</groupId>
 						<artifactId>wildfly-maven-plugin</artifactId>
@@ -372,4 +368,3 @@
 	</modules>
 
 </project>
-
