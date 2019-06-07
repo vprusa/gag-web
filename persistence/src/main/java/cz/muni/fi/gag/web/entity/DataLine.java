@@ -9,6 +9,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
+import javax.validation.constraints.PastOrPresent;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -24,6 +25,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public abstract class DataLine extends AbstractEntity {
 
     @NotNull
+    @PastOrPresent
     protected Date timestamp;
 
     // https://stackoverflow.com/questions/26957554/

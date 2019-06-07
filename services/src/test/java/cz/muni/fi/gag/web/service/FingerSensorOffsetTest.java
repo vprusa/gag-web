@@ -1,9 +1,8 @@
 package cz.muni.fi.gag.web.service;
 
+import cz.muni.fi.gag.web.entity.FingerPosition;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.Assert;
@@ -15,8 +14,6 @@ import org.junit.runner.RunWith;
 
 import cz.muni.fi.gag.web.dao.FingerSensorOffsetDao;
 import cz.muni.fi.gag.web.entity.FingerSensorOffset;
-import cz.muni.fi.gag.web.entity.HandDevice;
-import cz.muni.fi.gag.web.entity.SensorType;
 
 import javax.inject.Inject;
 
@@ -50,8 +47,8 @@ public class FingerSensorOffsetTest extends TestBase {
 
     @Before
     public void before() {
-        testFingerSensorOffset1 = buildFingerSensorOffsetWithPersistentRefs();
-        testFingerSensorOffset2 = buildFingerSensorOffsetWithPersistentRefs();
+        testFingerSensorOffset1 = buildFingerSensorOffsetWithPersistentRefs(FingerPosition.INDEX);
+        testFingerSensorOffset2 = buildFingerSensorOffsetWithPersistentRefs(FingerPosition.INDEX);
         log.info("Using FingerSensorOffset test1:");
         log.info(testFingerSensorOffset1.toString());
         log.info("Using FingerSensorOffset test2:");

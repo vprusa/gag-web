@@ -63,24 +63,6 @@ public class HandDeviceTest extends TestBase {
     private HandDevice testHandDevice1;
     private HandDevice testHandDevice2;
 
-    public HandDevice buildHandDevice() {
-        User u = buildUser();
-        u = userDao.create(u);
-
-        //FingerSensorOffset fo = buildFingerSensorOffset();
-        //fo = fingerSensorOffsetDao.create(fo);
-        
-        //List<SensorOffset> o = Collections.singletonList(fo);
-        List<SensorOffset> o = Collections.emptyList();
-
-        HandDevice r = new HandDevice();
-        r.setDeviceId("devId");
-        r.setUser(u);
-        r.setOffsets(o);
-
-        return r;
-    }
-
     @Before
     public void before() {
         testHandDevice1 = buildHandDevice();
