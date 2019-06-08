@@ -15,7 +15,7 @@ angular.module('app', [
             });
         }
     };
-}]).service('createUpdateTools', function () {
+}])/*.service('createUpdateTools', function () {
     var alerts = [];
     return {
         getAlerts: function () {
@@ -31,7 +31,7 @@ angular.module('app', [
             alerts = [];
         }
     }
-}).config(['$routeProvider',
+})*/.config(['$routeProvider',
     function ($routeProvider) {
         $routeProvider
             .when('/', {templateUrl: 'partials/home.html', controller: 'HomeController'})
