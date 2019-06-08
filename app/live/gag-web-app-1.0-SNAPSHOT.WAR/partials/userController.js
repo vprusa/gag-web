@@ -1,6 +1,4 @@
 'use strict';
-<<<<<<< HEAD
-=======
 /*
 angular.module('app').controller('UserController',
 		['$scope', '$location', '$route', 'commonTools', 'createUpdateTools', 
@@ -9,13 +7,9 @@ angular.module('app').controller('UserController',
 		} ]);
 */
 
-
->>>>>>> Fixes and UI changes
-
 angular.module('app')
     .controller('UserController', ['$scope', '$location', '$route', 'commonTools', 'createUpdateTools', 
     	function ($scope, $location, $route, commonTools, createUpdateTools) {
-<<<<<<< HEAD
         commonTools.getCurrentUserDetail().then(function (response) {
             $scope.user = response;
             //console.log(response);
@@ -30,12 +24,18 @@ angular.module('app')
             $scope.alerts.splice(index, 1);
         };
         
-=======
-        commonTools.getSongsForUser().then(function (response) {
-            $scope.songs = response;
+        commonTools.getCurrentUserDetail().then(function (response) {
+            $scope.user = response;
+            console.log(response);
         }, function (response) {
             $scope.alerts.push({type: 'danger', title: 'Error '+ response.status, msg: response.statusText});
         });
+        
+        $scope.alerts = angular.copy(createUpdateTools.getAlerts());
+        createUpdateTools.deleteAlerts();
 
->>>>>>> Fixes and UI changes
+        $scope.closeAlert = function(index) {
+            $scope.alerts.splice(index, 1);
+        };
+        
     }]);
