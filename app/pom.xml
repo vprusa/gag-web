@@ -36,34 +36,33 @@
 			<groupId>cz.muni.fi.gag.web</groupId>
 			<artifactId>gag-web-services</artifactId>
 			<version>1.0-SNAPSHOT</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>cz.muni.fi.gag.web</groupId>
+			<artifactId>gag-web-services</artifactId>
+			<version>1.0-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 
 	<build>
 		<!-- <defaultGoal>wildfly:start wildfly:undeploy install wildfly:deploy 
 			-DskipTests=true -Dcheckstyle.skip </defaultGoal> -->
-	   <!-- <finalName>gag-web-app-1.0-SNAPSHOT.WAR</finalName> -->
+		<!-- <finalName>gag-web-app-1.0-SNAPSHOT.WAR</finalName> -->
 		<plugins>
 			<plugin>
-			    <groupId>org.apache.maven.plugins</groupId>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
 				<configuration>
-                    <failOnMissingWebXml>true</failOnMissingWebXml>
-				    <!--<warSourceDirectory>${basedir}/src/main/webapp</warSourceDirectory>-->
-					<!--<warSourceDirectory>src/main/webapp</warSourceDirectory>
-                     <webappDirectory>src/main/webapp</webappDirectory>
-                    <warSourceDirectory>src/main/webapp</warSourceDirectory> -->
-					<!--<webappDirectory>${basedir}/src/main/webapp</webappDirectory>
-					<warSourceDirectory>${basedir}/src/main/webapp</warSourceDirectory>
-					<webResources>
-						<resource>
-							<directory>${basedir}/src/main/webapp</directory>
-							<filtering>true</filtering>
-							<includes>
-								<include>**/*</include>
-							</includes>
-						</resource>
-					</webResources> -->
+					<failOnMissingWebXml>true</failOnMissingWebXml>
+					<!--<warSourceDirectory>${basedir}/src/main/webapp</warSourceDirectory> -->
+					<!--<warSourceDirectory>src/main/webapp</warSourceDirectory> <webappDirectory>src/main/webapp</webappDirectory> 
+						<warSourceDirectory>src/main/webapp</warSourceDirectory> -->
+					<!--<webappDirectory>${basedir}/src/main/webapp</webappDirectory> <warSourceDirectory>${basedir}/src/main/webapp</warSourceDirectory> 
+						<webResources> <resource> <directory>${basedir}/src/main/webapp</directory> 
+						<filtering>true</filtering> <includes> <include>**/*</include> </includes> 
+						</resource> </webResources> -->
 				</configuration>
 			</plugin>
 			<plugin>
@@ -83,7 +82,8 @@
 					<targetDir>
 						${project.basedir}/live
 					</targetDir>
-					<!-- because wildfly is stupid an can upload as exploded only if it ends with .war -->
+					<!-- because wildfly is stupid an can upload as exploded only if it 
+						ends with .war -->
 					<filename>
 						gag-web-app-1.0-SNAPSHOT.WAR
 					</filename>
@@ -200,6 +200,58 @@
 							</execution>
 						</executions>
 					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<!-- TODO this should be handled by npm -->
+			<id>install-material-dashboard</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.googlecode.maven-download-plugin</groupId>
+						<artifactId>download-maven-plugin</artifactId>
+						<version>1.4.1</version>
+						<inherited>false</inherited>
+						<executions>
+							<execution>
+								<id>install-material-dashboard</id>
+								<phase>generate-resources</phase>
+								<goals>
+									<goal>wget</goal>
+								</goals>
+								<configuration>
+									<url>https://github.com/creativetimofficial/material-dashboard/archive/master.zip</url>
+									<unpack>true</unpack>
+									<outputDirectory>${project.basedir}/</outputDirectory>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<artifactId>maven-resources-plugin</artifactId>
+						<version>3.0.1</version>
+						<executions>
+							<execution>
+								<id>copy-resources</id>
+								<!-- here the phase you need -->
+								<phase>validate</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${basedir}/live/gag-web-app-1.0-SNAPSHOT.WAR/assets</outputDirectory>
+									<resources>
+										<resource>
+											<directory>./material-dashboard-master/assets</directory>
+											<filtering>true</filtering>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+
 				</plugins>
 			</build>
 		</profile>

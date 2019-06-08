@@ -51,7 +51,8 @@
             ],
             "webOrigins": [
               "http://localhost:8080"
-            ]
+            ],
+            "directAccessGrantsEnabled": true
         }
     ],
     "identityProviders": [
