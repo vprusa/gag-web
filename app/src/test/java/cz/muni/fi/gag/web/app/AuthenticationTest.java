@@ -1,6 +1,5 @@
 package cz.muni.fi.gag.web.app;
 
-<<<<<<< HEAD
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -11,25 +10,18 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-=======
-import org.apache.http.HttpStatus;
->>>>>>> UI - User, about, home; some refactoring UI and some pom.xml, sketch UI test
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.resteasy.specimpl.MultivaluedMapImpl;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-<<<<<<< HEAD
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-=======
->>>>>>> UI - User, about, home; some refactoring UI and some pom.xml, sketch UI test
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-<<<<<<< HEAD
 import cz.muni.fi.gag.web.service.FingerDataLineTest;
 import cz.muni.fi.gag.web.service.TestBase;
 
@@ -37,10 +29,6 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonString;
-=======
-import cz.muni.fi.gag.web.service.TestBase;
-
->>>>>>> UI - User, about, home; some refactoring UI and some pom.xml, sketch UI test
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -49,7 +37,6 @@ import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-<<<<<<< HEAD
 
 import static org.junit.Assert.assertEquals;
 
@@ -57,10 +44,6 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-=======
-import java.io.File;
-import java.net.URL;
->>>>>>> UI - User, about, home; some refactoring UI and some pom.xml, sketch UI test
 import java.util.logging.Logger;
 
 /**
@@ -69,7 +52,6 @@ import java.util.logging.Logger;
 @RunWith(Arquillian.class)
 public class AuthenticationTest extends TestBase {
 
-<<<<<<< HEAD
     private static final Logger log = Logger.getLogger(AuthenticationTest.class.getSimpleName());
 
     private static final String KEYCLOAK_TOKEN_URL = "http://localhost:8180/auth/realms/google-identity-provider-realm/protocol/openid-connect/token";
@@ -123,44 +105,6 @@ public class AuthenticationTest extends TestBase {
 
     @SuppressWarnings("unchecked")
     public void testGenericLogIn(String username, String password) {
-=======
-    private static Logger log = Logger.getLogger(AuthenticationTest.class.getSimpleName());
-    
-    private static final String SECURITY_CHECK = "j_security_check";
-    private static final String USERNAME = "j_username";
-    private static final String PASSWORD = "j_password";
-    private static final String JSESSION_ID = "JSESSIONID";
-
-    @Deployment(testable = false)
-    public static WebArchive createDeployment() {
-
-        File[] files = Maven.resolver()
-                .loadPomFromFile("pom.xml")
-                .importRuntimeAndTestDependencies()
-                .resolve()
-                .withTransitivity()
-                .asFile();
-
-        WebArchive war = ShrinkWrap.create(WebArchive.class)
-                .addAsWebInfResource("WEB-INF/beans.xml", "beans.xml")
-                .addAsWebInfResource("WEB-INF/jboss-web.xml", "jboss-web.xml")
-                .addAsWebInfResource("WEB-INF/web.xml", "web.xml")
-                .addAsManifestResource("MANIFEST.MF")
-                .addAsLibraries(files);
-
-        log.info(war.toString(true));
-
-        return war;
-    }
-
-
-    @ArquillianResource
-    private URL baseUri;
-
-    @SuppressWarnings("unchecked")
-    public void testGenericLogIn(String username, String password) {
-
->>>>>>> UI - User, about, home; some refactoring UI and some pom.xml, sketch UI test
         MultivaluedMap formData = new MultivaluedMapImpl();
         formData.add(USERNAME, username);
         formData.add(PASSWORD, password);
@@ -173,7 +117,6 @@ public class AuthenticationTest extends TestBase {
         Assert.assertEquals("User cannot log in", HttpStatus.SC_OK, response.getStatus());
         Assert.assertTrue("No session created on valid log in",
                 !response.getCookies().get(JSESSION_ID).getValue().isEmpty());
-<<<<<<< HEAD
         response.close();
     }
 
@@ -242,41 +185,6 @@ public class AuthenticationTest extends TestBase {
         //assertEquals(200, response.getStatus());
         //assertEquals(200, EntityUtils.toString((HttpEntity) response.getEntity(), "UTF-8"));
         //assertEquals(200, accessToken);
-=======
-
-        response.close();
-    }
-
-    @Test
-    public void testAdminLogIn() {
-        testGenericLogIn("admin@musiclib.com", "pass");
-    }
-
-    @Test
-    public void testUserLogIn() {
-        testGenericLogIn("user1@musiclib.com", "pass");
-    }
-
-    @Test
-    public void testSuperUserLogIn() {
-        testGenericLogIn("superUser1@musiclib.com", "pass");
-    }
-
-    @Test
-    public void invalidLogIn() {
-        MultivaluedMap formData = new MultivaluedMapImpl();
-        formData.add(USERNAME, "");
-        formData.add(PASSWORD, "");
-
-        Client client = ClientBuilder.newClient();
-        WebTarget target = client.target(baseUri + SECURITY_CHECK);
-        Response response = target.request(MediaType.APPLICATION_FORM_URLENCODED_TYPE)
-                .post(Entity.form(new Form(formData)));
-
-        Assert.assertEquals("Invalid user logged in", HttpStatus.SC_NOT_FOUND, response.getStatus());
-
-        response.close();
->>>>>>> UI - User, about, home; some refactoring UI and some pom.xml, sketch UI test
     }
 
 }
