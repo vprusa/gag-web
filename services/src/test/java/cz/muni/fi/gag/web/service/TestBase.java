@@ -1,6 +1,7 @@
 package cz.muni.fi.gag.web.service;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -93,7 +94,7 @@ public class TestBase {
         return r;
     }
 
-    public FingerSensorOffset buildFingerSensorOffset() {
+    public FingerSensorOffset buildFingerSensorOffset(FingerPosition fingerPosition) {
         FingerSensorOffset r = new FingerSensorOffset();
         HandDevice hd = null;
         r.setDevice(hd);
@@ -101,12 +102,12 @@ public class TestBase {
         r.setX((short) 0);
         r.setY((short) 0);
         r.setZ((short) 0);
-        r.setPosition(FingerPosition.INDEX);
+        r.setPosition(fingerPosition);
         return r;
     }
 
-    public FingerSensorOffset buildFingerSensorOffsetWithPersistentRefs() {
-        FingerSensorOffset r = buildFingerSensorOffset();
+    public FingerSensorOffset buildFingerSensorOffsetWithPersistentRefs(FingerPosition fingerPosition) {
+        FingerSensorOffset r = buildFingerSensorOffset(fingerPosition);
         HandDevice d = buildHandDeviceAndPersist();
         r.setDevice(d);
         // fingerSensorOffsetDao.create(r);
@@ -134,16 +135,26 @@ public class TestBase {
     }
 
     public HandDevice buildHandDeviceAndPersist() {
+        HandDevice r = buildHandDevice();
+        r = handDeviceDao.create(r);
+        return r;
+    }
+
+    HandDevice buildHandDevice() {
         User u = buildUser();
         u = userDao.create(u);
 
-        List<SensorOffset> o = Collections.emptyList();
+        List<SensorOffset> o = new ArrayList<>();
+        for (FingerPosition fingerPosition : FingerPosition.values()) {
+            o.add(buildFingerSensorOffset(fingerPosition));
+        }
+
+        o.add(buildWristSensorOffset());
 
         HandDevice r = new HandDevice();
         r.setDeviceId("devId" + (++deviceIdCounter));
         r.setUser(u);
         r.setOffsets(o);
-        r = handDeviceDao.create(r);
         return r;
     }
 

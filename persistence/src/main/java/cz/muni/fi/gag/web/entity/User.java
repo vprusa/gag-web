@@ -5,6 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -17,7 +19,7 @@ public class User extends AbstractEntity {
 
     public static final String THIRD_PARTY_ID_EMAIL_PREFIX = "email:";
 
-    @NotNull
+    @NotBlank
     @Column(nullable = false, unique = true)
     private String thirdPartyId;
 
@@ -33,7 +35,7 @@ public class User extends AbstractEntity {
         this.thirdPartyId = thirdPartyId;
     }
 
-    public void setThirdPartyIdAsEmail(String email) {
+    public void setThirdPartyIdAsEmail(@Email String email) {
         StringBuilder sb = new StringBuilder(THIRD_PARTY_ID_EMAIL_PREFIX);
         this.thirdPartyId = sb.append(email).toString();
     }

@@ -10,9 +10,11 @@ import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import cz.muni.fi.gag.web.validation.ValidHandOffsets;
 
 /**
  * @author Vojtech Prusa
@@ -22,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Table(name = "handDevice")
 public class HandDevice extends AbstractEntity {
 
-    @NotNull
+    @NotBlank
     @Column(nullable = false, unique = true)
     private String deviceId;
 
@@ -32,6 +34,7 @@ public class HandDevice extends AbstractEntity {
 
     @OneToMany(mappedBy = "device", orphanRemoval = true, fetch = FetchType.EAGER)
     @JsonIgnoreProperties({ "device" })
+    @ValidHandOffsets
     private List<SensorOffset> offsets = new ArrayList<>();
 
     public String getDeviceId() {
