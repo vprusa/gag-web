@@ -4,6 +4,9 @@ import cz.muni.fi.gag.web.service.GestureService;
 import cz.muni.fi.gag.web.service.generic.GenericCRUDServiceImpl;
 import cz.muni.fi.gag.web.dao.GestureDao;
 import cz.muni.fi.gag.web.entity.Gesture;
+import cz.muni.fi.gag.web.entity.User;
+
+import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -23,6 +26,12 @@ public class GestureServiceImpl extends GenericCRUDServiceImpl<Gesture, GestureD
     @Override
     public GestureDao getDao() {
         return genericDao;
+    }
+
+    @Override
+    public List<Gesture> findByUser(User u) {
+        GestureDao gdao = getDao();
+        return gdao.findByUser(u);
     }
 
 }
