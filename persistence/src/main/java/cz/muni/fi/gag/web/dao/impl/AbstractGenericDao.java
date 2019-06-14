@@ -17,6 +17,8 @@ import cz.muni.fi.gag.web.dao.GenericDao;
  * 
  * @DataLineDaoImpl
  * @FingerSensorOffsetDaoImpl 
+ * @UserDaoImpl
+ * @GestureDaoImpl
  * 
  * TODO add @Transactional as annotation on class itself not methods?
  */
@@ -34,6 +36,10 @@ public abstract class AbstractGenericDao<T> implements GenericDao<T> {
     
     private final Class<T> type;
 
+    public Class<T> getType(){
+        return this.type;
+    }
+    
     public AbstractGenericDao(Class<T> entityType) {
         type = entityType;
     }

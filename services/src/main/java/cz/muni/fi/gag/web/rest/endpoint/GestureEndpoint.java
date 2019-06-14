@@ -1,6 +1,7 @@
 package cz.muni.fi.gag.web.rest.endpoint;
 
 import cz.muni.fi.gag.web.entity.Gesture;
+import cz.muni.fi.gag.web.entity.User;
 import cz.muni.fi.gag.web.service.GestureService;
 
 import javax.annotation.security.RolesAllowed;
@@ -17,6 +18,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import java.util.List;
 import java.util.Optional;
 
 import static cz.muni.fi.gag.web.entity.UserRole.USER_R;
@@ -26,20 +28,40 @@ import static cz.muni.fi.gag.web.entity.UserRole.USER_R;
  *
  */
 @Path("/gesture")
-public class GestureEndpoint {
+public class GestureEndpoint extends BaseEndpoint {
 
     @Inject
     private GestureService dataLineService;
+    /*
+     * @GET
+     * 
+     * @Path("/my")
+     * 
+     * @Produces(MediaType.APPLICATION_JSON) public Response getMyGestures() {
+     * LOG.info("getMyGestures"); User u = currentUser(); if(u != null) {
+     * List<Gesture> myGestures = dataLineService.findByUser(u); return
+     * Response.ok(myGestures).build(); } return getResponseNotLoggedIn(); }
+     */
 
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getGestureById(@PathParam("id") Long id) {
-        Optional<Gesture> dataLine = dataLineService.findById(id);
-        if (!dataLine.isPresent()) {
-            Response.status(Status.NOT_FOUND);
+    public Response getGestureById(@PathParam("id") String identifier) {
+        try {
+            Optional<Gesture> dataLine = dataLineService.findById(Long.parseLong(identifier));
+            if (!dataLine.isPresent()) {
+                Response.status(Status.NOT_FOUND);
+            }
+            return Response.ok(dataLine.get()).build();
+        } catch (NumberFormatException ex) {
+            LOG.info("getMyGestures");
+            User u = currentUser();
+            if (u != null) {
+                List<Gesture> myGestures = dataLineService.findByUser(u);
+                return Response.ok(myGestures).build();
+            }
+            return getResponseNotLoggedIn();
         }
-        return Response.ok(dataLine.get()).build();
     }
 
     @POST

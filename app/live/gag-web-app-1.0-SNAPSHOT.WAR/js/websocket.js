@@ -4,27 +4,27 @@
 'use strict';
 
 angular.module('app')
-    .controller('websocketCtrl', ['$scope', '$location', '$rootScope', function ($scope, $location, $rootScope) {
-        $scope.songs = [];
-        $scope.songId = "";
+    .controller('websocketController', ['$scope', '$location', '$rootScope', function ($scope, $location, $rootScope) {
+        $scope.dataLines = [];
+        $scope.dataLineId = "";
 
-        $scope.recommendSong = function (msg) {
+        $scope.currentDataLine = function (msg) {
             $rootScope.websocketSession.send(msg);
         };
         
         $scope.onMessage = function (evt) {
             var songData = JSON.parse(evt.data);
-            $scope.songs.length = 0;
-            angular.forEach(songData, function (item) {
-                $scope.songs.push(item);
+            $scope.dataLines.length = 0;
+            angular.forEach(dataLine, function (item) {
+                $scope.dataLines.push(item);
             });
-            $scope.songId = "";
+            $scope.dataLineId = "";
             $scope.$apply();
         };
 
         this.$onInit = function () {
             if (!$rootScope.websocketSession) {
-                $rootScope.websocketSession = new WebSocket('ws://' + document.location.host +'/music/recommendations');
+                $rootScope.websocketSession = new WebSocket('ws://' + document.location.host +'/api/dataline');
                 $rootScope.websocketSession.onmessage = $scope.onMessage;
             }
         };
@@ -33,6 +33,7 @@ angular.module('app')
         //     if ($rootScope.websocketSession) { $rootScope.websocketSession.close(); }
         // };
 
+        /*
         $scope.getUserString = function (item) {
             var result = item.users[0].firstName;
             if (item.users.length > 1) {
@@ -44,6 +45,6 @@ angular.module('app')
         };
         $scope.artistDetail = function (id) {
             $location.path('/artistDetail/' + id);
-        }
+        }*/
 
     }]);
