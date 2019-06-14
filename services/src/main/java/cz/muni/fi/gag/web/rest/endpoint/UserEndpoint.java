@@ -4,8 +4,6 @@ import cz.muni.fi.gag.web.entity.UserRole;
 import cz.muni.fi.gag.web.entity.User;
 import cz.muni.fi.gag.web.service.UserService;
 
-import java.util.Iterator;
-import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
@@ -18,7 +16,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
