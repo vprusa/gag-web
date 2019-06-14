@@ -13,7 +13,13 @@ angular.module('app', [
             return $http.get("/gagweb/api/user/currentdetail").then(function (response) {
                 return response.data;
             });
+        },
+        getGestures: function () {
+            return $http.get("/gagweb/api/gesture/mine").then(function (response) {
+                return response.data;
+            });
         }
+       
     };
 }]).service('createUpdateTools', function () {
     var alerts = [];
@@ -37,6 +43,7 @@ angular.module('app', [
             .when('/', {templateUrl: 'partials/home.html', controller: 'HomeController'})
             .when('/about', {templateUrl: 'partials/about.html'})
             .when('/user', {templateUrl: 'partials/user.html', controller: 'UserController'})
+            .when('/mygestures', {templateUrl: 'partials/myGestures.html', controller: 'MyGesturesController'})
             /*.when('/albumsOverview', {templateUrl: 'partials/albumsOverview.html', controller: 'albumsOverviewCtrl'})
             .when('/artistDetail/:id?', {templateUrl: 'partials/artistDetail.html', controller: 'artistDetailCtrl'})
             .when('/artistsOverview', {templateUrl: 'partials/artistsOverview.html', controller: 'artistsOverviewCtrl'})

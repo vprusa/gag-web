@@ -4,8 +4,6 @@ import cz.muni.fi.gag.web.entity.UserRole;
 import cz.muni.fi.gag.web.entity.User;
 import cz.muni.fi.gag.web.service.UserService;
 
-import java.util.Iterator;
-import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
@@ -18,7 +16,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -42,7 +39,7 @@ import java.io.IOException;
 @Path("user")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class UserEndpoint {
+public class UserEndpoint extends BaseEndpoint {
 
     public static final Logger LOG = Logger.getLogger(UserEndpoint.class.getSimpleName());
 
@@ -92,8 +89,8 @@ public class UserEndpoint {
         return builder.build();
     }
 
-    @Context
-    SecurityContext sc;
+    //@Context
+    //SecurityContext sc;
 
     @GET
     @Path("/currentdetail")
@@ -114,45 +111,12 @@ public class UserEndpoint {
     @GET
     @Path("/current")
     public Response currentsimple() {
-        // https://stackoverflow.com/questions/31864062/
-        // fetch-logged-in-username-in-a-webapp-secured-with-keycloak
-
-        User currentUser = null;
-        if (sc.getUserPrincipal() instanceof KeycloakPrincipal) {
-            @SuppressWarnings("unchecked")
-            KeycloakPrincipal<KeycloakSecurityContext> kp = (KeycloakPrincipal<KeycloakSecurityContext>) sc
-                    .getUserPrincipal();
-            // this is how to get the real userName (or rather the login name)
-            User existingUser = null;
-            currentUser = new User();
-            AccessToken at = kp.getKeycloakSecurityContext().getToken();
-
-            currentUser.setThirdPartyIdAsEmail(at.getEmail());
-            // TODO fix should not be necessary here ..
-            if ((existingUser = userService.findByIdentificator(currentUser.getThirdPartyId())) == null) {
-                Set<String> currentUserRoles = at.getRealmAccess().getRoles();
-                currentUser.setRole(UserRole.ANONYMOUS);
-                Iterator<String> currentUserRolesIterator = currentUserRoles.iterator();
-                while (currentUserRolesIterator.hasNext()) {
-                    String role = currentUserRolesIterator.next();
-                    if (role.matches(UserRole.USER_R)) {
-                        currentUser.setRole(UserRole.USER);
-                    } else if (role.matches(UserRole.ADMIN_R)) {
-                        currentUser.setRole(UserRole.ADMIN);
-                    }
-                }
-                currentUser = userService.create(currentUser);
-                return Response.ok(currentUser).build();
-            }
-            return Response.ok(existingUser).build();
-        } else {
-            if (sc.getUserPrincipal() != null) {
-                currentUser = userService.findByIdentificator(sc.getUserPrincipal().getName());
-                return Response.ok(currentUser).build();
-            }
+        User currentUser = currentUser();
+        if(currentUser != null) {
+            return Response.ok(currentUser).build();
         }
         // TODO fix messages
-        return Response.ok("No user found").build();
+        return getResponseNotLoggedIn();
     }
 
     // Some other methods copy-pasted from
