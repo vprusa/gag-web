@@ -54,7 +54,6 @@ public class GestureEndpoint extends BaseEndpoint {
             }
             return Response.ok(dataLine.get()).build();
         } catch (NumberFormatException ex) {
-            LOG.info("getMyGestures");
             User u = currentUser();
             if (u != null) {
                 List<Gesture> myGestures = dataLineService.findByUser(u);

@@ -5,6 +5,8 @@ import cz.muni.fi.gag.web.service.generic.GenericCRUDServiceImpl;
 import cz.muni.fi.gag.web.dao.DataLineDao;
 import cz.muni.fi.gag.web.entity.DataLine;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -23,5 +25,11 @@ public class DataLineServiceImpl extends GenericCRUDServiceImpl<DataLine, DataLi
     @Override
     public DataLineDao getDao() {
         return genericDao;
+    }
+
+    @Override
+    public List<DataLine> findByGestureId(long gestureId) {
+        DataLineDao dao = getDao();
+        return dao.findByGestureId(gestureId);
     }
 }

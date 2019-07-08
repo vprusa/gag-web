@@ -12,6 +12,12 @@ or
 mvn  wildfly:start wildfly:undeploy install wildfly:deploy -DskipTests=true -Dcheckstyle.skip | tee app.log
 ```
 
+or to re-deploy on running server:
+
+```
+mvn  wildfly:undeploy install wildfly:deploy -DskipTests=true -Dcheckstyle.skip 
+```
+
 #### Frontend 
 
 In dir 

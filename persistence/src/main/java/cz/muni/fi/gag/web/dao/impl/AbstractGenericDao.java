@@ -19,6 +19,7 @@ import cz.muni.fi.gag.web.dao.GenericDao;
  * @FingerSensorOffsetDaoImpl 
  * @UserDaoImpl
  * @GestureDaoImpl
+ * @DataLineDaoImpl
  * 
  * TODO add @Transactional as annotation on class itself not methods?
  */

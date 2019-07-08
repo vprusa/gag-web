@@ -17,6 +17,9 @@ import cz.muni.fi.gag.web.dao.GenericDao;
  * @FingerDataLineService
  * @FingerDataLineServiceImpl
  * 
+ * @GestureService
+ * @GestureServiceImpl
+ * 
  */
 public interface GenericCRUDService<T, TDao extends GenericDao<T>> {
 

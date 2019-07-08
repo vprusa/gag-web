@@ -1,6 +1,8 @@
 package cz.muni.fi.gag.web.entity;
 
+import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -22,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @JsonIgnoreProperties(value= {"gesture"})
-public abstract class DataLine extends AbstractEntity {
+public abstract class DataLine extends AbstractEntity implements Serializable {
 
     @NotNull
     @PastOrPresent
@@ -95,6 +97,27 @@ public abstract class DataLine extends AbstractEntity {
             return false;
         }
         return true;
+    }
+    
+
+    public static class Aggregate {
+        
+        List<DataLine> data;
+        
+        public Aggregate(List<DataLine> data) {
+            super();
+            this.data = data;
+        }
+
+        /**
+         * Getter
+         *
+         * @return data instance
+         */
+        public List<DataLine> getData() {
+            return data;
+        }
+
     }
 
 }
