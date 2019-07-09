@@ -1,5 +1,5 @@
 /**
- * Created by Martin Styk on 18.04.2017.
+ * Edited by vprusa
  */
 'use strict';
 

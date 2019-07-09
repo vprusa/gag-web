@@ -3,8 +3,10 @@ package cz.muni.fi.gag.web.service.impl;
 import cz.muni.fi.gag.web.service.DataLineService;
 import cz.muni.fi.gag.web.service.generic.GenericCRUDServiceImpl;
 import cz.muni.fi.gag.web.dao.DataLineDao;
+import cz.muni.fi.gag.web.dao.impl.DataLineGestureIterator;
 import cz.muni.fi.gag.web.entity.DataLine;
 
+import java.util.Iterator;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -32,4 +34,12 @@ public class DataLineServiceImpl extends GenericCRUDServiceImpl<DataLine, DataLi
         DataLineDao dao = getDao();
         return dao.findByGestureId(gestureId);
     }
+    
+    
+    // TODO it seems wrong to instantiate iterator...? or implement Iterable
+    @Override
+    public Iterator<DataLine> getIteratorByGesture(long gestureId) {
+        return new DataLineGestureIterator(getDao(), gestureId);
+    }
+   
 }

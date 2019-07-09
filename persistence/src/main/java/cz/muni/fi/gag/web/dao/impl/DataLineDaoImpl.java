@@ -1,11 +1,16 @@
 package cz.muni.fi.gag.web.dao.impl;
 
 import java.io.Serializable;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+
+//import org.hibernate.Query;
+//import org.hibernate.Session;
+//import org.hibernate.StatelessSession;
 
 import cz.muni.fi.gag.web.dao.DataLineDao;
 import cz.muni.fi.gag.web.entity.DataLine;
@@ -33,5 +38,59 @@ public class DataLineDaoImpl extends AbstractGenericDao<DataLine> implements Dat
         List<DataLine> results = q.getResultList();
         return results;
     }
+
+    /*
+     * https://stackoverflow.com/questions/5067619/jpa-what-is-the-
+     * proper-pattern-for-iterating-over-large-result-sets
+     */
+    @Transactional
+    @Override
+    public List<DataLine> getChunkForGesture(long gestureId, int offset, int max) {
+        return em
+                .createQuery("SELECT g FROM DataLine g WHERE gesture_id = :gestureId ORDER BY timestamp ASC",
+                        DataLine.class)
+                .setParameter("gestureId", gestureId).setFirstResult(offset).setMaxResults(max).getResultList();
+    }
+
+    /*
+    private Iterator<DataLine> iterateAll(long gestureId) {
+        int offset = 0;
+
+        List<DataLine> models;
+        while ((models = this.getAllModelsIterable(gestureId, offset, ITERATOR_MAX_COUNT)).size() > 0) {
+            em.getTransaction().begin();
+            models.iterator()
+            for (DataLine model : models) {
+                // log.info("do something with model: " + model.getId());
+            }
+
+            em.flush();
+            em.clear();
+            em.getTransaction().commit();
+            offset += models.size();
+        }
+    }
+    */
+
+    // @Transactional
+    // @Override
+    // public Iterator<DataLine> iterateOverGestureData(long gestureId) {
+    // TypedQuery<DataLine> q = em
+    // .createQuery(, DataLine.class)
+    // .setParameter("gestureId", gestureId);
+    // List<DataLine> results = q.getgetgetResultList();
+    /*
+     * StatelessSession session = ((Session)
+     * em.getDelegate()).getSessionFactory().openStatelessSession();
+     * 
+     * Query query =
+     * session.createQuery("SELECT a FROM Address a WHERE .... ORDER BY a.id");
+     * query.setFetchSize(Integer.valueOf(1000)); query.setReadOnly(true);
+     * query.setLockMode("a", LockMode.NONE); ScrollableResults results =
+     * query.scroll(ScrollMode.FORWARD_ONLY); while (results.next()) { Address addr
+     * = (Address) results.get(0); // Do stuff } results.close(); session.close();
+     */
+    // return results;
+    // }
 
 }
