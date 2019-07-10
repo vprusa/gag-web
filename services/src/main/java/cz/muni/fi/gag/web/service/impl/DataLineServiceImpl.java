@@ -18,8 +18,7 @@ import javax.inject.Inject;
  *
  */
 @Stateless
-public class DataLineServiceImpl extends GenericCRUDServiceImpl<DataLine, DataLineDao>
-        implements DataLineService {
+public class DataLineServiceImpl extends GenericCRUDServiceImpl<DataLine, DataLineDao> implements DataLineService {
 
     @Inject
     protected DataLineDao genericDao;
@@ -34,12 +33,12 @@ public class DataLineServiceImpl extends GenericCRUDServiceImpl<DataLine, DataLi
         DataLineDao dao = getDao();
         return dao.findByGestureId(gestureId);
     }
-    
-    
-    // TODO it seems wrong to instantiate iterator...? or implement Iterable
+
+    // TODO it seems wrong to instantiate iterator...? or should it be by
+    // implementing Iterable? No more wrappers?
     @Override
-    public Iterator<DataLine> getIteratorByGesture(long gestureId) {
+    public Iterator<DataLine> initIteratorByGesture(long gestureId) {
         return new DataLineGestureIterator(getDao(), gestureId);
     }
-   
+
 }

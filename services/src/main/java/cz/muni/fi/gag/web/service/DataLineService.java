@@ -18,6 +18,6 @@ public interface DataLineService extends GenericCRUDService<DataLine, DataLineDa
 
     List<DataLine> findByGestureId(long gestureId);
 
-    Iterator<DataLine> getIteratorByGesture(long gestureId);
+    Iterator<DataLine> initIteratorByGesture(long gestureId);
 
 }
