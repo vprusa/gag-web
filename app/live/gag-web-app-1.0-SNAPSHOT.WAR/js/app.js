@@ -23,6 +23,11 @@ angular.module('app', [
             return $http.get("/gagweb/api/gesture/" + id).then(function (response) {
                 return response.data;
             });
+        },
+        getGestureDetailData: function (id) {
+            return $http.get("/gagweb/api/dataline/gesture/" + id).then(function (response) {
+                return response.data;
+            });
         }
        
     };

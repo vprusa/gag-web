@@ -17,6 +17,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import java.util.List;
 import java.util.Optional;
 
 import static cz.muni.fi.gag.web.entity.UserRole.USER_R;
@@ -32,7 +33,7 @@ public class DataLineEndpoint {
     private DataLineService dataLineService;
 
     @GET
-    @Path("/{id}")
+    @Path("/plain/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getDataLineById(@PathParam("id") Long id) {
         Optional<DataLine> dataLine = dataLineService.findById(id);
@@ -40,6 +41,17 @@ public class DataLineEndpoint {
             Response.status(Status.NOT_FOUND);
         }
         return Response.ok(dataLine.get()).build();
+    }
+    
+    @GET
+    @Path("/gesture/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getDataLinesByGestureId(@PathParam("id") Long gestureId) {
+        List<DataLine> dataLine = dataLineService.findByGestureId(gestureId);
+        if (dataLine.isEmpty()) {
+            Response.status(Status.NOT_FOUND);
+        }
+        return Response.ok(dataLine).build();
     }
 
     @POST
