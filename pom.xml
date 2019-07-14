@@ -41,6 +41,7 @@
 		<version.org.wildfly.server>10.1.0.Final</version.org.wildfly.server>
 		<version.wildfly.checkstyle.config>1.0.5.Final</version.wildfly.checkstyle.config>
 		<version.wildfly.maven.plugin>1.1.0.Final</version.wildfly.maven.plugin>
+        <version.server.bom>16.0.0.Final</version.server.bom>
 
 		<version.keycloak>6.0.1</version.keycloak>
 
@@ -51,8 +52,22 @@
 		<artifactId>jboss-parent</artifactId>
 		<version>16</version>
 	</parent>
+	
 	<dependencyManagement>
 		<dependencies>
+		 <!-- JBoss distributes a complete set of Java EE APIs including a Bill
+                of Materials (BOM). A BOM specifies the versions of a "stack" (or a collection)
+                of artifacts. We use this here so that we always get the correct versions
+                of artifacts. Here we use the jboss-eap-javaee8-with-tools stack (you can
+                read this as the JBoss stack of the Java EE APIs, with some extras tools
+                for your project, such as Arquillian for testing) 
+            <dependency>
+                <groupId>org.wildfly.bom</groupId>
+                <artifactId>wildfly-javaee8-with-tools</artifactId>
+                <version>${version.server.bom}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>-->
 			<dependency>
 				<groupId>org.wildfly.bom</groupId>
 				<artifactId>wildfly-javaee7-with-tools</artifactId>

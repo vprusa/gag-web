@@ -24,7 +24,7 @@ angular.module('app')
 
         this.$onInit = function () {
             if (!$rootScope.websocketSession) {
-                $rootScope.websocketSession = new WebSocket('ws://' + document.location.host +'/api/dataline');
+                $rootScope.websocketSession = new WebSocket('ws://' + document.location.host +'/gagweb/datalinews');
                 $rootScope.websocketSession.onmessage = $scope.onMessage;
             }
         };
