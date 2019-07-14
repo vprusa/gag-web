@@ -6,7 +6,7 @@
 angular.module('app')
     .controller('websocketController', ['$scope', '$location', '$rootScope', function ($scope, $location, $rootScope) {
         $scope.dataLines = [];
-        $scope.dataLineId = "";
+        $scope.gestureId = "";
 
         $scope.currentDataLine = function (msg) {
             $rootScope.websocketSession.send(msg);
@@ -18,7 +18,7 @@ angular.module('app')
             angular.forEach(dataLine, function (item) {
                 $scope.dataLines.push(item);
             });
-            $scope.dataLineId = "";
+            $scope.gestureId = "";
             $scope.$apply();
         };
 
@@ -29,9 +29,9 @@ angular.module('app')
             }
         };
         
-        // this.$onDestroy = function () {
-        //     if ($rootScope.websocketSession) { $rootScope.websocketSession.close(); }
-        // };
+        this.$onDestroy = function () {
+             if ($rootScope.websocketSession) { $rootScope.websocketSession.close(); }
+        };
 
         /*
         $scope.getUserString = function (item) {

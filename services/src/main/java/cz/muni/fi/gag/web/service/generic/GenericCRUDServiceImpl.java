@@ -6,7 +6,7 @@ import java.util.Optional;
 import cz.muni.fi.gag.web.dao.GenericDao;
 
 import cz.muni.fi.gag.web.entity.AbstractEntity;
-import cz.muni.fi.gag.web.logging.LogMessages;
+import cz.muni.fi.gag.web.logging.Log;
 
 /**
  * @author Vojtech Prusa
@@ -24,21 +24,21 @@ public abstract class GenericCRUDServiceImpl<T extends AbstractEntity, TDao exte
     @Override
     public T create(T entity) {
         T created = this.getDao().create(entity);
-        LogMessages.infoCreate(this.getClass(), created);
+        Log.infoCreate(this.getClass(), created);
         return created;
     }
 
     @Override
     public T update(T entity) {
         T updated = getDao().update(entity);
-        LogMessages.infoUpdate(this.getClass(), updated);
+        Log.infoUpdate(this.getClass(), updated);
         return getDao().update(entity);
     }
 
     @Override
     public void remove(T entity) throws IllegalArgumentException {
         getDao().remove(entity.getId());
-        LogMessages.infoRemove(this.getClass(), entity);
+        Log.infoRemove(this.getClass(), entity);
     }
 
     @Override

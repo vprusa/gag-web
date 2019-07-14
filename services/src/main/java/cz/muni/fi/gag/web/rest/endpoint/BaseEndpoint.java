@@ -2,7 +2,9 @@ package cz.muni.fi.gag.web.rest.endpoint;
 
 import java.util.Iterator;
 import java.util.Set;
-import java.util.logging.Logger;
+
+import org.jboss.logging.Logger;
+//import java.util.logging.Logger;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Context;
@@ -26,7 +28,7 @@ import cz.muni.fi.gag.web.service.UserService;
  */
 public class BaseEndpoint {
    
-    protected static final Logger LOG = Logger.getLogger(BaseEndpoint.class.getSimpleName());
+    protected static final Logger log = Logger.getLogger(BaseEndpoint.class.getSimpleName());
     
     @Inject
     private UserService userService;

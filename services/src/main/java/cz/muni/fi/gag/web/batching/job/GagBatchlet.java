@@ -2,7 +2,7 @@ package cz.muni.fi.gag.web.batching.job;
 
 //import cz.muni.gag.web.dao.???Dao;
 //import cz.muni.gag.web.entity.???;
-import cz.muni.fi.gag.web.logging.LogMessages;
+import cz.muni.fi.gag.web.logging.Log;
 //import cz.muni.gag.web.rest.client.???RestClient;
 
 import javax.batch.api.Batchlet;
@@ -25,7 +25,7 @@ public class GagBatchlet implements Batchlet {
 
     @Override
     public String process() throws Exception {
-        LogMessages.info(getClass(), "process");
+        Log.info(getClass(), "process");
 
         // TODO write process
 
@@ -34,7 +34,7 @@ public class GagBatchlet implements Batchlet {
 
     @Override
     public void stop() throws Exception {
-        LogMessages.info(getClass(), "stop");
+        Log.info(getClass(), "stop");
     }
 
 }

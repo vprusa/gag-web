@@ -31,7 +31,7 @@ import static cz.muni.fi.gag.web.entity.UserRole.USER_R;
 public class GestureEndpoint extends BaseEndpoint {
 
     @Inject
-    private GestureService dataLineService;
+    private GestureService gestureService;
     /*
      * @GET
      * 
@@ -47,16 +47,19 @@ public class GestureEndpoint extends BaseEndpoint {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getGestureById(@PathParam("id") String identifier) {
+        log.info("getGestureById");
         try {
-            Optional<Gesture> dataLine = dataLineService.findById(Long.parseLong(identifier));
+            Optional<Gesture> dataLine = gestureService.findById(Long.parseLong(identifier));
             if (!dataLine.isPresent()) {
                 Response.status(Status.NOT_FOUND);
             }
+            log.info("getGestureById");
             return Response.ok(dataLine.get()).build();
         } catch (NumberFormatException ex) {
             User u = currentUser();
             if (u != null) {
-                List<Gesture> myGestures = dataLineService.findByUser(u);
+                List<Gesture> myGestures = gestureService.findByUser(u);
+                log.info("getGestureByUser");
                 return Response.ok(myGestures).build();
             }
             return getResponseNotLoggedIn();
@@ -70,7 +73,7 @@ public class GestureEndpoint extends BaseEndpoint {
     public Response createGesture(Gesture dataLine) {
         Response.ResponseBuilder builder;
         try {
-            Gesture created = dataLineService.create(dataLine);
+            Gesture created = gestureService.create(dataLine);
             builder = Response.ok(created);
         } catch (Exception e) {
             builder = Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage());
@@ -83,12 +86,12 @@ public class GestureEndpoint extends BaseEndpoint {
     @RolesAllowed(USER_R)
     public Response removeGesture(@PathParam("id") Long id) throws Exception {
         Response.ResponseBuilder builder;
-        Optional<Gesture> dataLine = dataLineService.findById(id);
+        Optional<Gesture> dataLine = gestureService.findById(id);
         if (!dataLine.isPresent()) {
             Response.status(Status.NOT_FOUND);
         }
         try {
-            dataLineService.remove(dataLine.get());
+            gestureService.remove(dataLine.get());
             builder = Response.ok();
         } catch (Exception e) {
             builder = Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage());
@@ -103,13 +106,13 @@ public class GestureEndpoint extends BaseEndpoint {
     @RolesAllowed(USER_R)
     public Response updateGesture(@PathParam("id") Long id, Gesture dataLine) {
         Response.ResponseBuilder builder;
-        Optional<Gesture> oldGesture = dataLineService.findById(id);
+        Optional<Gesture> oldGesture = gestureService.findById(id);
         if (!oldGesture.isPresent()) {
             Response.status(Status.NOT_FOUND);
         }
         dataLine.setId(oldGesture.get().getId());
         try {
-            Gesture updated = dataLineService.update(dataLine);
+            Gesture updated = gestureService.update(dataLine);
             builder = Response.ok(updated);
         } catch (Exception e) {
             builder = Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage());
