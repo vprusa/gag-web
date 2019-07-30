@@ -22,7 +22,12 @@ INSERT INTO WristDataLine (id, magX, magY, magZ) VALUES (2,1,1,1)
 INSERT INTO DataLine (timestamp, gesture_id) VALUES ('1970-01-01 00:00:01', 2)
 INSERT INTO FingerDataLine (id, accX, accY, accZ, position, quatA, quatX, quatY, quatZ) VALUES (3,1,1,1,0,1,1,1,1)
 INSERT INTO WristDataLine (id, magX, magY, magZ) VALUES (3,1,1,1)
-
+INSERT INTO DataLine (timestamp, gesture_id) VALUES ('1970-01-01 00:00:02', 2)
+INSERT INTO FingerDataLine (id, accX, accY, accZ, position, quatA, quatX, quatY, quatZ) VALUES (4,1,1,1,0,1,1,1,1)
+INSERT INTO WristDataLine (id, magX, magY, magZ) VALUES (4,1,1,1)
+INSERT INTO DataLine (timestamp, gesture_id) VALUES ('1970-01-01 00:00:03', 2)
+INSERT INTO FingerDataLine (id, accX, accY, accZ, position, quatA, quatX, quatY, quatZ) VALUES (5,1,1,1,0,1,1,1,1)
+INSERT INTO WristDataLine (id, magX, magY, magZ) VALUES (5,1,1,1)
 
 INSERT INTO SensorOffset (DTYPE, sensorType, x,y,z, position, offsets) VALUES ('Finger',0,0,0,0,0,1)
 INSERT INTO SensorOffset (DTYPE, sensorType, x,y,z, offsets) VALUES ('Wrist',0,0,0,0,1)
