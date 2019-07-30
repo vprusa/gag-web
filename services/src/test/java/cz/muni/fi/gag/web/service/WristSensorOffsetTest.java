@@ -1,9 +1,8 @@
 package cz.muni.fi.gag.web.service;
 
+import cz.muni.fi.gag.web.common.TestServiceBase;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.Assert;
@@ -14,20 +13,19 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 
 import cz.muni.fi.gag.web.dao.WristSensorOffsetDao;
-import cz.muni.fi.gag.web.entity.HandDevice;
-import cz.muni.fi.gag.web.entity.SensorType;
 import cz.muni.fi.gag.web.entity.WristSensorOffset;
 
 import javax.inject.Inject;
 
 import java.util.logging.Logger;
+import static java.util.Arrays.asList;
 
 /**
  * @author Vojtech Prusa
  *
  */
 @RunWith(Arquillian.class)
-public class WristSensorOffsetTest extends TestBase {
+public class WristSensorOffsetTest extends TestServiceBase {
 
     private static Logger log = Logger.getLogger(WristSensorOffsetTest.class.getSimpleName());
 
@@ -52,10 +50,7 @@ public class WristSensorOffsetTest extends TestBase {
     public void before() {
         testWristSensorOffset1 = buildWristSensorOffsetWithPersistentRefs();
         testWristSensorOffset2 = buildWristSensorOffsetWithPersistentRefs();
-        log.info("Using WristSensorOffset test1:");
-        log.info(testWristSensorOffset1.toString());
-        log.info("Using WristSensorOffset test2:");
-        log.info(testWristSensorOffset2.toString());
+        printTestEntities(asList(testWristSensorOffset1, testWristSensorOffset2));
     }
 
     @After

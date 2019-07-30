@@ -1,0 +1,131 @@
+<div class="row">
+	<div class="col-lg-6 col-md-12">
+		<div class="card">
+			<div class="card-header card-header-primary">
+				<h4 class="card-title ">Gestures list</h4>
+				<p class="card-category">click on "Detail" to get detail</p>
+			</div>
+			<div class="card-body table-responsive">
+				<table class="table table-hover">
+					<thead class="text-warning">
+						<th>ID</th>
+						<th>Alias</th>
+						<th>Date created</th>
+						<th>Details</th>
+						<th>Op. #2</th>
+					</thead>
+					<tbody>
+						<tr ng-repeat="item in gestures">
+							<td>{{item.id}}</td>
+							<td>{{item.userAlias}}</td>
+							<td>{{item.dateCreated | date: 'yyyy-MM-dd HH:MM'}}</td>
+							<td>
+								<!-- <button type="button" class="btn btn-info desc" (click)="showDetail(item.id)">Show</button> -->
+								<a href="javascript:void(0)" ng-click='listDetail(item.id)'>List</a>
+							</td>
+							<td><a href="javascript:void(0)"
+								ng-click='selectGesture(item.id)'>Play</a></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-6 col-md-12">
+
+		<div class="card">
+			<div class="card-header card-header-primary">
+				<h4 class="card-title ">Gesture detail</h4>
+				<p class="card-category">{{selectedGestureDetail.info}}</p>
+			</div>
+			<div class="card-body">
+				<div class="" ng-if="selectedGestureDetail.play"></div>
+				<div ng-controller="websocketController">
+					<a title="Play gesture" class="btn list-item-href"
+						ng-click="playSelectedGesture()"> <span
+						class="glyphicon glyphicon-star-empty"></span></a>
+					<!-- <p class="card-category">{{selectedGestureDetail.info}}</p>-->
+					<table class="table">
+						<thead class="text-primary">
+							<th>ID</th>
+							<th>Time</th>
+							<th>Position</th>
+							<!-- <th>quatA</th>
+							<th>quatX</th>
+							<th>quatY</th>
+							<th>quatZ</th>
+							<th>accX</th>
+							<th>accY</th>
+							<th>accZ</th>
+							<th>magX</th>
+							<th>magY</th>
+							<th>magZ</th> -->
+						</thead>
+						<tbody>
+							<tr ng-repeat="item in selectedGestureDetail.player.data">
+								<td>{{item.id}}</td>
+								<td>{{item.timestamp | date: 'yyyy-MM-dd HH:MM'}}</td>
+								<td>{{item.position}}</td>
+								<!-- <td>{{item.quatA}}</td>
+								<td>{{item.quatX}}</td>
+								<td>{{item.quatY}}</td>
+								<td>{{item.quatZ}}</td>
+								<td>{{item.accX}}</td>
+								<td>{{item.accY}}</td>
+								<td>{{item.accZ}}</td>
+								<td>{{item.magX}}</td>
+								<td>{{item.magY}}</td>
+								<td>{{item.magZ}}</td> -->
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="card">
+		<div class="card-header card-header-primary">
+			<h4 class="card-title ">Gesture detail</h4>
+			<p class="card-category">{{selectedGestureDetail.info}}</p>
+		</div>
+		<div class="card-body">
+			<div class="" ng-if="selectedGestureDetail.play"></div>
+			<div class="table-responsive" ng-if="selectedGestureDetail.list">
+				<table class="table">
+					<thead class="text-primary">
+						<th>ID</th>
+						<th>Time</th>
+						<th>Position</th>
+						<th>quatA</th>
+						<th>quatX</th>
+						<th>quatY</th>
+						<th>quatZ</th>
+						<th>accX</th>
+						<th>accY</th>
+						<th>accZ</th>
+						<th>magX</th>
+						<th>magY</th>
+						<th>magZ</th>
+					</thead>
+					<tbody>
+						<tr ng-repeat="item in selectedGestureDetail.data">
+							<td>{{item.id}}</td>
+							<td>{{item.timestamp | date: 'yyyy-MM-dd HH:MM'}}</td>
+							<td>{{item.position}}</td>
+							<td>{{item.quatA}}</td>
+							<td>{{item.quatX}}</td>
+							<td>{{item.quatY}}</td>
+							<td>{{item.quatZ}}</td>
+							<td>{{item.accX}}</td>
+							<td>{{item.accY}}</td>
+							<td>{{item.accZ}}</td>
+							<td>{{item.magX}}</td>
+							<td>{{item.magY}}</td>
+							<td>{{item.magZ}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>

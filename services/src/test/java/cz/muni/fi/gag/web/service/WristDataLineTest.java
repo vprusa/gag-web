@@ -1,9 +1,8 @@
 package cz.muni.fi.gag.web.service;
 
+import cz.muni.fi.gag.web.common.TestServiceBase;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.Assert;
@@ -22,12 +21,14 @@ import javax.inject.Inject;
 import java.util.Date;
 import java.util.logging.Logger;
 
+import static java.util.Arrays.asList;
+
 /**
  * @author Vojtech Prusa
  *
  */
 @RunWith(Arquillian.class)
-public class WristDataLineTest extends TestBase {
+public class WristDataLineTest extends TestServiceBase {
 
     private static Logger log = Logger.getLogger(WristDataLineTest.class.getSimpleName());
 
@@ -72,10 +73,7 @@ public class WristDataLineTest extends TestBase {
     public void before() {
         testWristDataLine1 = buildWristDataLine();
         testWristDataLine2 = buildWristDataLine();
-        log.info("Using WristDataLine test1:");
-        log.info(testWristDataLine1.toString());
-        log.info("Using WristDataLine test2:");
-        log.info(testWristDataLine2.toString());
+        printTestEntities(asList(testWristDataLine1, testWristDataLine2));
     }
 
     @After

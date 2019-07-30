@@ -1,5 +1,6 @@
 package cz.muni.fi.gag.web.service;
 
+import cz.muni.fi.gag.web.common.TestServiceBase;
 import cz.muni.fi.gag.web.entity.FingerPosition;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -18,13 +19,14 @@ import cz.muni.fi.gag.web.entity.FingerSensorOffset;
 import javax.inject.Inject;
 
 import java.util.logging.Logger;
+import static java.util.Arrays.asList;
 
 /**
  * @author Vojtech Prusa
  *
  */
 @RunWith(Arquillian.class)
-public class FingerSensorOffsetTest extends TestBase {
+public class FingerSensorOffsetTest extends TestServiceBase {
 
     private static Logger log = Logger.getLogger(FingerSensorOffsetTest.class.getSimpleName());
 
@@ -49,10 +51,7 @@ public class FingerSensorOffsetTest extends TestBase {
     public void before() {
         testFingerSensorOffset1 = buildFingerSensorOffsetWithPersistentRefs(FingerPosition.INDEX);
         testFingerSensorOffset2 = buildFingerSensorOffsetWithPersistentRefs(FingerPosition.INDEX);
-        log.info("Using FingerSensorOffset test1:");
-        log.info(testFingerSensorOffset1.toString());
-        log.info("Using FingerSensorOffset test2:");
-        log.info(testFingerSensorOffset2.toString());
+        printTestEntities(asList(testFingerSensorOffset1, testFingerSensorOffset2));
     }
 
     @After
