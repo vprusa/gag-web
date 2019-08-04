@@ -40,13 +40,23 @@ import static junit.framework.Assert.assertEquals;
 
 /**
  * @author Vojtech Prusa
+ *
+ * This test expects that:
+ * - app is running on WF at {@link AuthenticationTest#APP_URL}
+ * - KC is configured and running with TOKEN endpoint at {@link AuthenticationTest#KEYCLOAK_TOKEN_URL}
+ * - has some arguments set properly
+ * -- {@link AuthenticationTest#JSESSION_ID}
+ * -- {@link AuthenticationTest#SECURITY_CHECK}
+ * -- {@link AuthenticationTest#USERNAME}
+ * -- {@link AuthenticationTest#PASSWORD}
  */
 @RunWith(Arquillian.class)
 public class AuthenticationTest extends TestEndpointBase {
 
     private static final Logger log = Logger.getLogger(AuthenticationTest.class.getSimpleName());
 
-    private static final String KEYCLOAK_TOKEN_URL = "http://localhost:8180/auth/realms/google-identity-provider-realm/protocol/openid-connect/token";
+    private static final String KEYCLOAK_TOKEN_URL =
+            "http://localhost:8180/auth/realms/google-identity-provider-realm/protocol/openid-connect/token";
     private static final String APP_URL = "http://localhost:8080/gagweb/";
     private static final String SECURITY_CHECK = "j_security_check";
     private static final String USERNAME = "test";
