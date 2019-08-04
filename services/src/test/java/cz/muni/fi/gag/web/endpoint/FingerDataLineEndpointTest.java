@@ -1,10 +1,9 @@
 package cz.muni.fi.gag.web.endpoint;
 
-import cz.muni.fi.gag.web.dao.FingerDataLineDao;
+import cz.muni.fi.gag.web.common.TestEndpointBase;
 import cz.muni.fi.gag.web.entity.FingerDataLine;
 import cz.muni.fi.gag.web.entity.FingerPosition;
 import cz.muni.fi.gag.web.service.FingerDataLineService;
-import cz.muni.fi.gag.web.common.TestEndpointBase;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -69,6 +68,7 @@ public class FingerDataLineEndpointTest extends TestEndpointBase {
     public void after() {
         fingerDataLineService.findAll().stream().forEach(fingerDataLineService::remove);
     }
+
 
     @Test
     public void testEndpointCRUD() {

@@ -18,8 +18,8 @@ public class TestBase {
 
     private static Logger log = Logger.getLogger(TestBase.class.getSimpleName());
 
-    static String keycloakGroupId = "org.keycloak:";
-    static String keycloakVersion = ":6.0.1";
+    public static String keycloakGroupId = "org.keycloak:";
+    public static String keycloakVersion = ":6.0.1";
 
     public static WebArchive getDeployment(Class clazz) {
 
@@ -38,16 +38,16 @@ public class TestBase {
                         keycloakGroupId + "keycloak-client-registration-api" + keycloakVersion)
                 .withTransitivity().asFile();
 
-        log.info("Dependency Files KeyCloak");
+        log.info("Loading Dependency Files - KeyCloak");
 
         for (File file : filesKeycloak) {
-            log.info(file.getAbsolutePath());
+            //log.info(file.getAbsolutePath());
         }
 
-        log.info("Dependency Files");
+        log.info("Loading Dependency Files - other");
 
         for (File file : files) {
-            log.info(file.getAbsolutePath());
+            //log.info(file.getAbsolutePath());
         }
 
         return ShrinkWrap.create(WebArchive.class, clazz.getSimpleName() + ".war")
