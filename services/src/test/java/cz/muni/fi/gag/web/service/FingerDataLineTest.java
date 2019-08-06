@@ -16,8 +16,6 @@ import cz.muni.fi.gag.web.dao.FingerDataLineDao;
 import cz.muni.fi.gag.web.entity.FingerDataLine;
 import cz.muni.fi.gag.web.entity.FingerPosition;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.logging.Logger;
 
@@ -60,9 +58,9 @@ public class FingerDataLineTest extends TestServiceBase {
         r.setQuatY(0);
         r.setQuatZ(0);
         r.setTimestamp(new Date());
-        r.setX((short) 0);
-        r.setY((short) 0);
-        r.setZ((short) 0);
+        r.setAccX((short) 0);
+        r.setAccY((short) 0);
+        r.setAccZ((short) 0);
         return r;
     }
 

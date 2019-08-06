@@ -1,6 +1,7 @@
 package cz.muni.fi.gag.web.endpoint.websocket;
 
 import cz.muni.fi.gag.web.common.TestEndpointBase;
+import cz.muni.fi.gag.web.endpoint.AuthenticationTestBase;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
@@ -51,7 +52,7 @@ import static junit.framework.Assert.assertEquals;
  * -- {@link WebsocketDatalineEndpointTest#PASSWORD}
  */
 @RunWith(Arquillian.class)
-public class WebsocketDatalineEndpointTest extends TestEndpointBase {
+public class WebsocketDatalineEndpointTest extends AuthenticationTestBase {
 
     private static final Logger log = Logger.getLogger(WebsocketDatalineEndpointTest.class.getSimpleName());
 

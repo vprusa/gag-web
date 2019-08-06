@@ -5,13 +5,8 @@ import cz.muni.fi.gag.web.dao.HandDeviceDao;
 import cz.muni.fi.gag.web.dao.UserDao;
 import cz.muni.fi.gag.web.entity.*;
 import org.jboss.logging.Logger;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 
 import javax.inject.Inject;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -51,9 +46,9 @@ public class TestServiceBase extends TestBase {
         r.setQuatY(0);
         r.setQuatZ(0);
         r.setTimestamp(new Date());
-        r.setX((short) 0);
-        r.setY((short) 0);
-        r.setZ((short) 0);
+        r.setAccX((short) 0);
+        r.setAccY((short) 0);
+        r.setAccZ((short) 0);
         return r;
     }
 
