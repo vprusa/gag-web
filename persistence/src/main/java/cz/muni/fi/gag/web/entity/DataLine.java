@@ -1,25 +1,20 @@
 package cz.muni.fi.gag.web.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
+import javax.validation.constraints.PastOrPresent;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.ManyToOne;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
-import javax.validation.constraints.PastOrPresent;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 /**
  * @author Vojtech Prusa
  * 
- * @FingerDataLine
- * @WristDataLine
+ * {@link FingerDataLine}
+ * {@link WristDataLine}
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)

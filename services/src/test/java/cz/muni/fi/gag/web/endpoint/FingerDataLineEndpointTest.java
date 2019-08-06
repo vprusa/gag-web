@@ -1,21 +1,23 @@
 package cz.muni.fi.gag.web.endpoint;
 
-import cz.muni.fi.gag.web.common.TestEndpointBase;
 import cz.muni.fi.gag.web.entity.FingerDataLine;
 import cz.muni.fi.gag.web.entity.FingerPosition;
-import cz.muni.fi.gag.web.service.FingerDataLineService;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.*;
-import org.junit.rules.ExpectedException;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.Date;
 import java.util.logging.Logger;
-
-import static java.util.Arrays.asList;
 
 /**
  * @author Vojtech Prusa
@@ -24,25 +26,18 @@ import static java.util.Arrays.asList;
  *
  */
 @RunWith(Arquillian.class)
-public class FingerDataLineEndpointTest extends TestEndpointBase {
+public class FingerDataLineEndpointTest extends EndpointTestBase<FingerDataLine> {
 
     private static Logger log = Logger.getLogger(FingerDataLineEndpointTest.class.getSimpleName());
+
+    public static final String TESTED_ENDPOINT = API_ENDPOINT + "fingerdataline";
 
     @Deployment
     public static WebArchive deployment() {
         return getDeployment(FingerDataLineEndpointTest.class);
     }
-    
-    @Inject
-    public FingerDataLineService fingerDataLineService;
 
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
-
-    private FingerDataLine testFingerDataLine1;
-    private FingerDataLine testFingerDataLine2;
-
-    public FingerDataLine buildFingerDataLine() {
+    public FingerDataLine buildDataLine() {
         FingerDataLine r = new FingerDataLine();
         r.setGesture(null);
         r.setPosition(FingerPosition.INDEX);
@@ -57,24 +52,56 @@ public class FingerDataLineEndpointTest extends TestEndpointBase {
         return r;
     }
 
-    @Before
-    public void before() {
-        testFingerDataLine1 = buildFingerDataLine();
-        testFingerDataLine2 = buildFingerDataLine();
-        printTestEntities(asList(testFingerDataLine1, testFingerDataLine2));
-    }
-
-    @After
-    public void after() {
-        fingerDataLineService.findAll().stream().forEach(fingerDataLineService::remove);
-    }
-
-
     @Test
-    public void testEndpointCRUD() {
-        fingerDataLineService.create(testFingerDataLine2);
-        Assert.assertEquals(testFingerDataLine2, fingerDataLineService.findById(testFingerDataLine2.getId()).get());
-        //after();
+    @RunAsClient
+    //public void authenticateUser(@ArquillianResteasyResource final WebTarget webTarget) throws Exception {
+    public void testEndpoint() throws Exception {
+        HttpClient client = new DefaultHttpClient();//ClientBuilder.newClient();
+        //HttpGet get = new HttpGet(getAppUrl());
+        String accessToken = basicLogin();
+        //get.addHeader("Authorization", "Bearer " + accessToken);
+        //HttpResponse response = client.execute(get);
+
+        //assertEquals("Status code should have been 200", 200, response.getStatusLine().getStatusCode());
+/*
+        final Response response = webTarget
+                .path("/sessions")
+                .request(MediaType.APPLICATION_JSON)
+                .post(Entity.json(new UserData(
+                        "myuser",
+                        "mypassword")));
+        assertEquals(true, response.readEntity(Boolean.class));
+  */
+        HttpPost insertPost = new HttpPost(TESTED_ENDPOINT);
+        //String accessToken = basicLogin();
+        insertPost.addHeader("Authorization", "Bearer " + accessToken);
+        //StringEntity params =new StringEntity(
+        //        "{\"id\":5,\"timestamp\":-3599005,\"quatA\":1.0,\"quatX\":1.0,\"quatY\":1.0,\"quatZ\":1.0,"+
+        //                "\"position\":\"THUMB\",\"magX\":1,\"magY\":1,\"magZ\":1,\"x\":1,\"y\":1,\"z\":1}");
+        //StringEntity params =new StringEntity(
+        //                "{\"timestamp\":-3599005,\"quatA\":1.0,\"quatX\":1.0,\"quatY\":1.0,\"quatZ\":1.0,"+
+        //                         "\"position\":\"THUMB\",\"magX\":1,\"magY\":1,\"magZ\":1,\"x\":1,\"y\":1,\"z\":1}");
+        StringEntity params =new StringEntity(
+                "{\"timestamp\":-3599005,\"quatA\":1.0,\"quatX\":1.0,\"quatY\":1.0,\"quatZ\":1.0,"+
+                        "\"position\":\"THUMB\",\"x\":1,\"y\":1,\"z\":1}");
+        insertPost.setEntity(params);
+        insertPost.setHeader("Content-Type", "application/json");
+
+        HttpResponse response = client.execute(insertPost);
+        log.info(response.toString());
+        log.info(String.valueOf(response.getStatusLine().getStatusCode()));
+
+        StringBuilder stringBuilder = new StringBuilder();
+        String line = null;
+
+        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()))) {
+            while ((line = bufferedReader.readLine()) != null) {
+                stringBuilder.append(line);
+            }
+        }
+
+        String text = stringBuilder.toString();
+        log.info(text);
     }
 
 }

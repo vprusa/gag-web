@@ -1,15 +1,14 @@
 package cz.muni.fi.gag.web.dao;
 
-import java.util.Iterator;
-import java.util.List;
-
 import cz.muni.fi.gag.web.entity.DataLine;
+
+import java.util.List;
 
 /**
  * 
  * @author Miloslav Zezulka, Vojtech Prusa
  * 
- * @DataLineDaoImpl
+ * {@link cz.muni.fi.gag.web.dao.impl.DataLineDaoImpl}
  *
  */
 public interface DataLineDao extends GenericDao<DataLine> {

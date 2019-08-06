@@ -1,13 +1,12 @@
 package cz.muni.fi.gag.web.dao.impl;
 
-import java.util.List;
-import java.util.Optional;
+import cz.muni.fi.gag.web.dao.GenericDao;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
-
-import cz.muni.fi.gag.web.dao.GenericDao;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * This class provides the most primitive and straight-forward implementation of
@@ -15,11 +14,13 @@ import cz.muni.fi.gag.web.dao.GenericDao;
  * 
  * @author Miloslav Zezulka, Vojtech Prusa
  * 
- * @DataLineDaoImpl
- * @FingerSensorOffsetDaoImpl 
- * @UserDaoImpl
- * @GestureDaoImpl
- * @DataLineDaoImpl
+ * {@link DataLineDaoImpl}
+ * {@link FingerSensorOffsetDaoImpl}
+ * {@link UserDaoImpl}
+ * {@link GestureDaoImpl}
+ * {@link DataLineDaoImpl}
+ * {@link FingerDataLineDaoImpl}
+ * {@link WristDataLineDaoImpl}
  * 
  * TODO add @Transactional as annotation on class itself not methods?
  */

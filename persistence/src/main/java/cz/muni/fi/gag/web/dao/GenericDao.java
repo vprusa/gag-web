@@ -8,7 +8,7 @@ import java.util.Optional;
  *
  * @author Miloslav Zezulka
  * 
- * @AbstractGenericDao
+ * {@link cz.muni.fi.gag.web.dao.impl.AbstractGenericDao}
  */
 public interface GenericDao<T> {
 
