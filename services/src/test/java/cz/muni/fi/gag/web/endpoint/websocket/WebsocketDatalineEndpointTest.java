@@ -1,9 +1,6 @@
 package cz.muni.fi.gag.web.endpoint.websocket;
 
 import cz.muni.fi.gag.web.endpoint.AuthenticationTestBase;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.logging.Logger;
@@ -17,6 +14,7 @@ import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Vojtech Prusa
@@ -29,21 +27,6 @@ public class WebsocketDatalineEndpointTest extends AuthenticationTestBase {
 
     public static final String TESTED_ENDPOINT = "ws://" + APP_URL_NO_PROTOCOL + "datalinews";
 
-    // curl -d "client_id=google-authentication" -d "username=test" -d
-    // "password=password" -d "grant_type=password" -d "scope=openid" -d
-    // "realm=Username-Password-Authentication"
-    // "http://localhost:8180/auth/realms/google-identity-provider-realm/protocol/openid-connect/token"
-   // @Test
-   // @RunAsClient
-    //public void authenticateUser(@ArquillianResteasyResource final WebTarget webTarget) throws Exception {
-    public void testEndpoint() throws Exception {
-        HttpClient client = new DefaultHttpClient();//ClientBuilder.newClient();
-        String accessToken = basicLogin();
-
-        HttpPost insertPost = new HttpPost(TESTED_ENDPOINT);
-        insertPost.addHeader("Authorization", "Bearer " + accessToken);
-    }
-
     @Test
     @RunAsClient
     public void testEndpointEmptyJSONObject() throws Exception {
@@ -52,6 +35,10 @@ public class WebsocketDatalineEndpointTest extends AuthenticationTestBase {
         //assertNotNull(session);
         log.info(session);
         //assertTrue(MyEndpointClientJSONObject.latch.await(2, TimeUnit.SECONDS));
+        boolean latchWait = MyEndpointClientJSONObject.latch.await(3, TimeUnit.SECONDS);
+        log.info(latchWait);
+        log.info(MyEndpointClientJSONObject.response);
+
         //assertEquals(JSON, MyEndpointClientJSONObject.response);
     }
 
@@ -71,25 +58,47 @@ public class WebsocketDatalineEndpointTest extends AuthenticationTestBase {
         ClientEndpointConfig.Configurator configurator = new ClientEndpointConfig.Configurator() {
             @Override
             public void beforeRequest(Map<String, List<String>> headers) {
-
                 try {
                     String accessToken = basicLogin();
                     headers.put("Authorization", Arrays.asList("Bearer " + accessToken));
+                    log.info(accessToken);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
+
+            @Override
+            public void afterResponse(HandshakeResponse hr) {
+                super.afterResponse(hr);
+                log.info(hr.toString());
+            }
         };
-
-        //HttpPost insertPost = new HttpPost(TESTED_ENDPOINT);
-        //insertPost.addHeader("Authorization", "Bearer " + accessToken);
         ClientEndpointConfig clientEndpointConfig = ClientEndpointConfig.Builder.create().configurator(configurator).build();
-
         WebSocketContainer container = ContainerProvider.getWebSocketContainer();
         URI uri = new URI(TESTED_ENDPOINT);
-
         Session session = container.connectToServer(MyEndpointClientJSONObject.class, clientEndpointConfig, uri);
+        MessageHandler.Partial mhw = new MessageHandler.Partial<String>() {
+            @Override
+            public void onMessage(String partialMessage, boolean last) {
+                log.info("onMessage");
+                log.info(partialMessage);
+                MyEndpointClientJSONObject.response = partialMessage.toString();
+            }
 
+            private final Logger log2 = Logger.getLogger(MyEndpointClientJSONObject.class.getSimpleName());
+
+          //  @Override
+            public void onMessage(Object text) {
+                  /*try {
+                      remote.sendText("Got your message (" + text + "). Thanks !");
+                  } catch (IOException ioe) {
+                  }*/
+                log.info("onMessage");
+                log.info(text);
+                MyEndpointClientJSONObject.response = text.toString();
+            }
+        };
+        session.addMessageHandler(mhw);
         return session;
     }
 

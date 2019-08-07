@@ -95,11 +95,11 @@ public abstract class DataLine extends AbstractEntity implements Serializable {
     }
     
 
-    public static class Aggregate {
+    public static class Aggregate<DataLineEx extends DataLine> {
         
-        List<DataLine> data;
+        List<DataLineEx> data;
         
-        public Aggregate(List<DataLine> data) {
+        public Aggregate(List<DataLineEx> data) {
             super();
             this.data = data;
         }
@@ -109,7 +109,7 @@ public abstract class DataLine extends AbstractEntity implements Serializable {
          *
          * @return data instance
          */
-        public List<DataLine> getData() {
+        public List<DataLineEx> getData() {
             return data;
         }
 

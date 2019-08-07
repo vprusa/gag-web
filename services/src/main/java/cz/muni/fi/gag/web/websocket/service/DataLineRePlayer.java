@@ -1,17 +1,14 @@
 package cz.muni.fi.gag.web.websocket.service;
 
-import java.util.Date;
-import java.util.Iterator;
-
-import javax.enterprise.context.SessionScoped;
-import javax.ejb.Stateful;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.websocket.Session;
-
 import cz.muni.fi.gag.web.entity.DataLine;
 import cz.muni.fi.gag.web.logging.Log;
 import cz.muni.fi.gag.web.service.DataLineService;
+
+import javax.websocket.EncodeException;
+import javax.websocket.Session;
+import java.io.IOException;
+import java.util.Date;
+import java.util.Iterator;
 
 /**
  * @author Vojtech Prusa
@@ -54,17 +51,20 @@ public class DataLineRePlayer implements Runnable {
             try {
                 while (dli.hasNext()) {
                     DataLine dl = dli.next();
-                    Log.info("DL: " + dl.toString());
-                    session.getAsyncRemote().sendObject(dl);
+                    //Log.info("DL: " + dl.toString());
+                    //session.getAsyncRemote().sendObject(dl);
+                    Log.info(Boolean.toString(session.isOpen()));
+                    session.getBasicRemote().sendObject(dl);
                     now = dl.getTimestamp();
                     if (now != null && before != null) {
                         Thread.sleep(now.getTime() - before.getTime());                        
                     }
                     before = now;
                 }
-            } catch (InterruptedException e) {
+            } catch (InterruptedException | IOException | EncodeException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
+                Log.info(e.getMessage());
             }
         //}
     }

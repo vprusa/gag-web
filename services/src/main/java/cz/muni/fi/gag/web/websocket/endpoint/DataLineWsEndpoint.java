@@ -1,36 +1,29 @@
 package cz.muni.fi.gag.web.websocket.endpoint;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Singleton;
-import javax.enterprise.event.Observes;
-import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
-import javax.websocket.OnClose;
-import javax.websocket.OnError;
-import javax.websocket.OnMessage;
-import javax.websocket.OnOpen;
-import javax.websocket.Session;
-import javax.websocket.server.ServerEndpoint;
-
-import org.jboss.logging.Logger;
-
 import cz.muni.fi.gag.web.entity.DataLine;
-import cz.muni.fi.gag.web.entity.UserRole;
 import cz.muni.fi.gag.web.logging.Log;
 import cz.muni.fi.gag.web.service.DataLineService;
 import cz.muni.fi.gag.web.service.GestureService;
 import cz.muni.fi.gag.web.service.UserService;
 import cz.muni.fi.gag.web.websocket.service.DataLineMessage;
 import cz.muni.fi.gag.web.websocket.service.DataLineRePlayer;
-import cz.muni.fi.gag.web.websocket.service.SessionService;
+import org.jboss.logging.Logger;
 
+import javax.annotation.PostConstruct;
+import javax.ejb.Singleton;
+import javax.enterprise.event.Observes;
+import javax.inject.Inject;
+import javax.websocket.*;
+import javax.websocket.server.ServerEndpoint;
 import java.util.List;
 
 /**
  * @author Vojtech Prusa
  */
 @Singleton
-@ServerEndpoint(value = "/datalinews", encoders = DataLineSerializer.class)
+@ServerEndpoint(value = "/datalinews",  encoders = {DataLineCoders.Basic.Serializer.class}
+//, decoders = {DataLineCoders.Deserializer.class}
+)
 //@ServerEndpoint("/datalinews")
 public class DataLineWsEndpoint {
 
@@ -75,7 +68,8 @@ public class DataLineWsEndpoint {
         Log.info("onClose");
         log.info(getClass().getSimpleName());
         Thread replayer = (Thread) session.getUserProperties().get(REPLAYER_KEY);
-        replayer.interrupt();// stop();
+        if(replayer != null)
+            replayer.interrupt();// stop();
         // replayer.destroy();
         //sessionService.removeSession(session);
     }
