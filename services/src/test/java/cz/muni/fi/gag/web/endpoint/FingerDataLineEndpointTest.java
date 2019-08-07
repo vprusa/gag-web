@@ -54,26 +54,11 @@ public class FingerDataLineEndpointTest extends EndpointTestBase<FingerDataLine>
 
     @Test
     @RunAsClient
-    //public void authenticateUser(@ArquillianResteasyResource final WebTarget webTarget) throws Exception {
     public void testEndpoint() throws Exception {
         HttpClient client = new DefaultHttpClient();//ClientBuilder.newClient();
-        //HttpGet get = new HttpGet(getAppUrl());
         String accessToken = basicLogin();
-        //get.addHeader("Authorization", "Bearer " + accessToken);
-        //HttpResponse response = client.execute(get);
 
-        //assertEquals("Status code should have been 200", 200, response.getStatusLine().getStatusCode());
-/*
-        final Response response = webTarget
-                .path("/sessions")
-                .request(MediaType.APPLICATION_JSON)
-                .post(Entity.json(new UserData(
-                        "myuser",
-                        "mypassword")));
-        assertEquals(true, response.readEntity(Boolean.class));
-  */
         HttpPost insertPost = new HttpPost(TESTED_ENDPOINT);
-        //String accessToken = basicLogin();
         insertPost.addHeader("Authorization", "Bearer " + accessToken);
         //StringEntity params =new StringEntity(
         //        "{\"id\":5,\"timestamp\":-3599005,\"quatA\":1.0,\"quatX\":1.0,\"quatY\":1.0,\"quatZ\":1.0,"+

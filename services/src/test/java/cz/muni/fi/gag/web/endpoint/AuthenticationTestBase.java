@@ -2,31 +2,18 @@ package cz.muni.fi.gag.web.endpoint;
 
 import cz.muni.fi.gag.web.common.TestEndpointBase;
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.logging.Logger;
-import org.jboss.resteasy.specimpl.MultivaluedMapImpl;
-import org.junit.Assert;
 
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonString;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Form;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,7 +37,8 @@ public abstract class AuthenticationTestBase extends TestEndpointBase {
 
     private static final String KEYCLOAK_TOKEN_URL =
             "http://localhost:8180/auth/realms/google-identity-provider-realm/protocol/openid-connect/token";
-    protected static final String APP_URL = "http://localhost:8080/gagweb/";
+    protected static final String APP_URL_NO_PROTOCOL = "localhost:8080/gagweb/";
+    protected static final String APP_URL = "http://" + APP_URL_NO_PROTOCOL;
     private static final String SECURITY_CHECK = "j_security_check";
     private static final String USERNAME = "test";
     private static final String PASSWORD = "password";
@@ -61,8 +49,8 @@ public abstract class AuthenticationTestBase extends TestEndpointBase {
     // "realm=Username-Password-Authentication"
     // "http://localhost:8180/auth/realms/google-identity-provider-realm/protocol/openid-connect/token"
 
-    @ArquillianResource
-    private URL baseUri;
+    // @ArquillianResource
+    //private URL baseUri;
 
     private String getKeycloakUrl() {
         return KEYCLOAK_TOKEN_URL;
@@ -110,7 +98,7 @@ public abstract class AuthenticationTestBase extends TestEndpointBase {
 
     @SuppressWarnings("unchecked")
     public void testGenericLogIn(String username, String password) {
-        MultivaluedMap formData = new MultivaluedMapImpl();
+       /* MultivaluedMap formData = new MultivaluedMapImpl();
         formData.add(USERNAME, username);
         formData.add(PASSWORD, password);
 
@@ -123,6 +111,8 @@ public abstract class AuthenticationTestBase extends TestEndpointBase {
         Assert.assertTrue("No session created on valid log in",
                 !response.getCookies().get(JSESSION_ID).getValue().isEmpty());
         response.close();
+
+        */
     }
 
 }
