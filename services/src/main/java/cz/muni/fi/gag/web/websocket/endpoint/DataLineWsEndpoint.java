@@ -21,7 +21,10 @@ import java.util.List;
  * @author Vojtech Prusa
  */
 @Singleton
-@ServerEndpoint(value = "/datalinews",  encoders = {DataLineCoders.Basic.Serializer.class}
+@ServerEndpoint(value = "/datalinews",
+        encoders = {DataLineCoders.DataLineSerializer.class}
+        //encoders = {DataLineCoders.Plain.Serializer.class,
+        //DataLineCoders.Finger.Serializer.class, DataLineCoders.Wrist.Serializer.class}
 //, decoders = {DataLineCoders.Deserializer.class}
 )
 //@ServerEndpoint("/datalinews")

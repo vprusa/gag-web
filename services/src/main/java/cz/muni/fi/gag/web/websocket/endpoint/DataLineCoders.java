@@ -15,17 +15,19 @@ import java.util.List;
  * @author Vojtech Prusa
  *
  */
-public class DataLineCoders<DataLineEx extends DataLine> {
+public abstract class DataLineCoders<DataLineExU extends DataLine> {
 
-    public class Basic extends DataLineCoders<DataLine> {}
+    //public class AbPlain extends DataLineCoders<DataLine> {}
+    public class Plain extends DataLineCoders<DataLine> {}
     public class Finger extends DataLineCoders<FingerDataLine> {}
     public class Wrist extends DataLineCoders<WristDataLine> {}
 
-    public class Serializer implements Encoder.Text<List<DataLine.Aggregate<DataLineEx>>> {
+    public abstract class Serializer2<DataLineEx extends DataLineExU> implements Encoder.Text<List<DataLine.Aggregate<DataLineEx>>> {
+
         private ObjectMapper objectMapper;
 
         @Override
-        public String encode(List<DataLineEx.Aggregate<DataLineEx>> object) throws EncodeException {
+        public String encode(List<DataLine.Aggregate<DataLineEx>> object) throws EncodeException {
             try {
                 return objectMapper.writeValueAsString(object);
             } catch (JsonProcessingException e) {
@@ -39,10 +41,31 @@ public class DataLineCoders<DataLineEx extends DataLine> {
         }
 
         @Override
-        public void destroy() {
-
-        }
+        public void destroy() {}
     }
+
+    public class DataLineSerializer implements Encoder.Text<List<DataLine.Aggregate<DataLine>>> {
+
+        private ObjectMapper objectMapper;
+
+        @Override
+        public String encode(List<DataLine.Aggregate<DataLine>> object) throws EncodeException {
+            try {
+                return objectMapper.writeValueAsString(object);
+            } catch (JsonProcessingException e) {
+                throw new EncodeException(object, e.getMessage(), e);
+            }
+        }
+
+        @Override
+        public void init(EndpointConfig config) {
+            objectMapper = new ObjectMapper();
+        }
+
+        @Override
+        public void destroy() {}
+    }
+
 /*
     public class Deserializer implements Decoder.Text<List<DataLine.Aggregate>> {
         private ObjectMapper objectMapper;
