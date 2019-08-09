@@ -13,8 +13,12 @@ import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
+import java.io.StringReader;
 import java.util.List;
 
 /**
@@ -22,14 +26,9 @@ import java.util.List;
  */
 @Singleton
 @ServerEndpoint(value = "/datalinews",
-        //encoders = Plain.class
         encoders = { DataLineCoders.Plain.class, DataLineCoders.Finger.class, DataLineCoders.Wrist.class},
         decoders = { DataLineDecoders.Plain.class, DataLineDecoders.Finger.class, DataLineDecoders.Wrist.class}
-        //encoders = {DataLineCoders.Plain.Serializer.class,
-        //DataLineCoders.Finger.Serializer.class, DataLineCoders.Wrist.Serializer.class}
-//, decoders = {DataLineCoders.Deserializer.class}
 )
-//@ServerEndpoint("/datalinews")
 public class DataLineWsEndpoint {
 
     public static final Logger log = Logger.getLogger(DataLineWsEndpoint.class.getSimpleName());
@@ -73,23 +72,34 @@ public class DataLineWsEndpoint {
         Log.info("onClose");
         log.info(getClass().getSimpleName());
         Thread replayer = (Thread) session.getUserProperties().get(REPLAYER_KEY);
-        if(replayer != null)
+        if(replayer != null) {
             replayer.interrupt();// stop();
-        // replayer.destroy();
-        //sessionService.removeSession(session);
+        }
     }
 
     @OnMessage
     public void onDataLineMessage(String msg, Session session) {
         Log.info("onDataLineMessage");
-        log.info(getClass().getSimpleName());
         String loggedUserName = session.getUserPrincipal().getName();
         // TODO add role check and restrict access for users gestures only... etc. etc.
-        
-        log.info("gestureId: " + msg);
-        long gestureId = 2;
-        
-        List<DataLine> gestureData = dataLineService.findByGestureId(gestureId);
+
+        // TODO wrap in some structure .. create WS control protocol ...
+        JsonReader jsonReader = Json.createReader(new StringReader(msg));
+        JsonObject object = jsonReader.readObject();
+
+        String action = object.getString("action");
+        log.info("Action: " + action);
+        if(!action.matches("replayGesture")){
+            // another TODO ...
+            log.info("Unknown action: " + action);
+            return;
+        }
+        // {\"action\" : \"replayGesture\", \"gestureId\":2}";
+        long gestureId = object.getJsonNumber("gestureId").longValue();
+        jsonReader.close();
+        log.info("gestureId: " + gestureId);
+
+        //List<DataLine> gestureData = dataLineService.findByGestureId(gestureId);
         // if(isUserInRole(loggedUserName, Role.ADMIN) || isUserInRole(loggedUserName,
         // Role.SUPER_USER)) {
         // dataLineService.recommend(songId, loggedUserName);

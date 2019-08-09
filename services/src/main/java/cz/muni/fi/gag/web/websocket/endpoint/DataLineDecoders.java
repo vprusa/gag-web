@@ -1,6 +1,5 @@
 package cz.muni.fi.gag.web.websocket.endpoint;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.muni.fi.gag.web.entity.DataLine;
 import cz.muni.fi.gag.web.entity.FingerDataLine;
@@ -9,7 +8,6 @@ import org.jboss.logging.Logger;
 
 import javax.websocket.DecodeException;
 import javax.websocket.Decoder;
-import javax.websocket.EncodeException;
 import javax.websocket.EndpointConfig;
 
 /**
@@ -28,24 +26,15 @@ public class DataLineDecoders<DataLineEx extends DataLine> implements Decoder.Te
     @Override
     public DataLineEx decode(String s) throws DecodeException {
         // TODO
+        log.info("TODO");
         return null;
     }
 
     @Override
     public boolean willDecode(String s) {
         // TODO
+        log.info("TODO");
         return false;
-    }
-
-    //@Override
-    public String encode(DataLineEx object) throws EncodeException {
-        try {
-            String str = objectMapper.writeValueAsString(object);;
-            DataLineDecoders.log.info(str);
-            return str;
-        } catch (JsonProcessingException e) {
-            throw new EncodeException(object, e.getMessage(), e);
-        }
     }
 
     @Override

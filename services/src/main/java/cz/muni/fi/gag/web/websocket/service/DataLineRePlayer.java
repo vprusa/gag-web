@@ -14,9 +14,6 @@ import java.util.Iterator;
  * @author Vojtech Prusa
  *
  */
-//@SessionScoped
-//@ApplicationScoped
-//@Stateful
 public class DataLineRePlayer implements Runnable {
 
     public static final String GESTURE_KEY = "gestureId";
@@ -31,44 +28,44 @@ public class DataLineRePlayer implements Runnable {
         this.dataLineService = dataLineService;
         this.session = session;
         this.gestureId = gestureId;
-        Log.info(session.toString());
     }
 
     @Override
     public void run() {
-        Log.info("run");
-        //while (true) {
-            // https://stackoverflow.com/questions/16504140/thread-stop-deprecated
-            // TODO fix the fix of the fix ?
-            if (Thread.interrupted()) {
-                return;
-            }
-            Log.info("1");
-            Iterator<DataLine> dli = dataLineService.initIteratorByGesture(gestureId);
-            Date before = null;
-            Date now = null;
-            Log.info("2");
-            try {
-                while (dli.hasNext()) {
-                    DataLine dl = dli.next();
-                    //Log.info("DL: " + dl.toString());
-                    //session.getAsyncRemote().sendObject(dl);
-                    //Log.info(Boolean.toString(session.isOpen()));
-                    Log.info(dl.toString());
-                    dl.setGesture(null);
-                    session.getBasicRemote().sendObject(dl);
-                    now = dl.getTimestamp();
-                    if (now != null && before != null) {
-                        Thread.sleep(now.getTime() - before.getTime());                        
+        Log.info("Running DataLine re-play");
+        // https://stackoverflow.com/questions/16504140/thread-stop-deprecated
+        // TODO fix the fix of the fix ?
+        if (Thread.interrupted()) {
+            return;
+        }
+        Iterator<DataLine> dli = dataLineService.initIteratorByGesture(gestureId);
+        Date before = null;
+        Date now = null;
+        try {
+            while (dli.hasNext()) {
+                DataLine dl = dli.next();
+                //Log.info(now == null ? "Now null" : now.toString());
+                //Log.info(before  == null ? "Before null" : before.toString());
+                //Log.info(dl.toString());
+                now = dl.getTimestamp();
+                //Log.info(now == null ? "New now null" : now.toString());
+                if (now != null && before != null) {
+                    long timeDiff = now.getTime() - before.getTime();
+                    if(timeDiff == 0){
+                         return;
                     }
-                    before = now;
+                    session.getBasicRemote().sendObject(dl);
+                    Thread.sleep(timeDiff);
+                }else if(now != null){
+                    session.getBasicRemote().sendObject(dl);
                 }
-            } catch (InterruptedException | IOException | EncodeException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-                Log.info(e.getMessage());
+                before = now;
             }
-        //}
+        } catch (InterruptedException | IOException | EncodeException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            //Log.info(e.getMessage());
+        }
     }
 
 }

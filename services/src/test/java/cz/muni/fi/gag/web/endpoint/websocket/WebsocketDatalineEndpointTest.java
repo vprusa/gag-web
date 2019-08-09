@@ -30,11 +30,8 @@ public class WebsocketDatalineEndpointTest extends AuthenticationTestBase {
     @Test
     @RunAsClient
     public void testEndpointEmptyJSONObject() throws Exception {
-        String JSON = "{\"a\" : \"b\"}";
         Session session = connectToServer();
-        //assertNotNull(session);
         log.info(session);
-        //assertTrue(MyEndpointClientJSONObject.latch.await(2, TimeUnit.SECONDS));
         boolean latchWait = MyEndpointClientJSONObject.latch.await(3, TimeUnit.SECONDS);
         log.info(latchWait);
         log.info(MyEndpointClientJSONObject.response);
@@ -77,30 +74,22 @@ public class WebsocketDatalineEndpointTest extends AuthenticationTestBase {
         WebSocketContainer container = ContainerProvider.getWebSocketContainer();
         URI uri = new URI(TESTED_ENDPOINT);
         Session session = container.connectToServer(MyEndpointClientJSONObject.class, clientEndpointConfig, uri);
-        MessageHandler.Partial mhw = new MessageHandler.Partial<String>() {
+        MessageHandler.Whole<String> mhw = new MessageHandler.Whole<String>() {
+
             @Override
-            public void onMessage(String partialMessage, boolean last) {
-                log.info("onMessage");
-                log.info(partialMessage);
-                MyEndpointClientJSONObject.response = partialMessage.toString();
-            }
-
-            private final Logger log2 = Logger.getLogger(MyEndpointClientJSONObject.class.getSimpleName());
-
-          //  @Override
-            public void onMessage(Object text) {
+            public void onMessage(String text) {
                   /*try {
                       remote.sendText("Got your message (" + text + "). Thanks !");
                   } catch (IOException ioe) {
                   }*/
-                log.info("onMessage");
+                //log.info("onMessage");
                 log.info(text);
-                MyEndpointClientJSONObject.response = text.toString();
+                MyEndpointClientJSONObject.response.add(text);
             }
+
         };
         session.addMessageHandler(mhw);
         return session;
     }
-
 
 }
