@@ -18,7 +18,6 @@ public class MyEndpointClientJSONObject extends Endpoint {
     @Override
     public void onOpen(Session session, EndpointConfig config) {
         final RemoteEndpoint.Basic remote = session.getBasicRemote();
-
         //session.addMessageHandler(mhw);
         try {
             session.getBasicRemote().sendText(JSON);

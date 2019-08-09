@@ -53,7 +53,9 @@ public class DataLineRePlayer implements Runnable {
                     DataLine dl = dli.next();
                     //Log.info("DL: " + dl.toString());
                     //session.getAsyncRemote().sendObject(dl);
-                    Log.info(Boolean.toString(session.isOpen()));
+                    //Log.info(Boolean.toString(session.isOpen()));
+                    Log.info(dl.toString());
+                    dl.setGesture(null);
                     session.getBasicRemote().sendObject(dl);
                     now = dl.getTimestamp();
                     if (now != null && before != null) {

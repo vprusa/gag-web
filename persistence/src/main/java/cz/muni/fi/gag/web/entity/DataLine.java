@@ -8,7 +8,6 @@ import javax.validation.constraints.Null;
 import javax.validation.constraints.PastOrPresent;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 /**
  * @author Vojtech Prusa
@@ -97,9 +96,9 @@ public abstract class DataLine extends AbstractEntity implements Serializable {
 
     public static class Aggregate<DataLineEx extends DataLine> {
         
-        List<DataLineEx> data;
+        DataLineEx data;
         
-        public Aggregate(List<DataLineEx> data) {
+        public Aggregate(DataLineEx data) {
             super();
             this.data = data;
         }
@@ -109,7 +108,7 @@ public abstract class DataLine extends AbstractEntity implements Serializable {
          *
          * @return data instance
          */
-        public List<DataLineEx> getData() {
+        public DataLineEx getData() {
             return data;
         }
 
