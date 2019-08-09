@@ -27,7 +27,7 @@ public class DataLineCoders<DataLineEx extends DataLine> implements Encoder.Text
     @Override
     public String encode(DataLineEx object) throws EncodeException {
         try {
-            String str = objectMapper.writeValueAsString(object);;
+            String str = objectMapper.writeValueAsString(object);
             DataLineCoders.log.info(str);
             return str;
         } catch (JsonProcessingException e) {

@@ -1,9 +1,10 @@
 package cz.muni.fi.gag.web.endpoint.websocket;
 
 import cz.muni.fi.gag.web.endpoint.AuthenticationTestBase;
-import org.jboss.arquillian.container.test.api.RunAsClient;
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.logging.Logger;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -27,8 +28,13 @@ public class WebsocketDatalineEndpointTest extends AuthenticationTestBase {
 
     public static final String TESTED_ENDPOINT = "ws://" + APP_URL_NO_PROTOCOL + "datalinews";
 
+    @Deployment
+    public static WebArchive deployment() {
+        return getDeployment(WebsocketDatalineEndpointTest.class);
+    }
+
     @Test
-    @RunAsClient
+    //@RunAsClient
     public void testEndpointEmptyJSONObject() throws Exception {
         Session session = connectToServer();
         log.info(session);

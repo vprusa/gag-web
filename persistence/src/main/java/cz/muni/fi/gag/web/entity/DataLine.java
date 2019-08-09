@@ -2,7 +2,11 @@ package cz.muni.fi.gag.web.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import javax.persistence.*;
+import javax.persistence.FetchType;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import javax.validation.constraints.PastOrPresent;
@@ -92,8 +96,11 @@ public abstract class DataLine extends AbstractEntity implements Serializable {
         }
         return true;
     }
-    
 
+    /**
+     * @author Vojtech Prusa
+     *
+     */
     public static class Aggregate<DataLineEx extends DataLine> {
         
         DataLineEx data;

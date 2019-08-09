@@ -1,25 +1,24 @@
 package cz.muni.fi.gag.web.websocket.endpoint;
 
-import cz.muni.fi.gag.web.entity.DataLine;
 import cz.muni.fi.gag.web.logging.Log;
 import cz.muni.fi.gag.web.service.DataLineService;
 import cz.muni.fi.gag.web.service.GestureService;
 import cz.muni.fi.gag.web.service.UserService;
-import cz.muni.fi.gag.web.websocket.service.DataLineMessage;
 import cz.muni.fi.gag.web.websocket.service.DataLineRePlayer;
 import org.jboss.logging.Logger;
 
-import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
-import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
-import javax.websocket.*;
+import javax.websocket.OnClose;
+import javax.websocket.OnError;
+import javax.websocket.OnMessage;
+import javax.websocket.OnOpen;
+import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 import java.io.StringReader;
-import java.util.List;
 
 /**
  * @author Vojtech Prusa
@@ -49,14 +48,6 @@ public class DataLineWsEndpoint {
     
     //@Inject
     //private DataLineRePlayer rep;
-
-    // It starts a Thread that notifies all sessions each second
-    @PostConstruct
-    public void startIntervalNotifier() {
-        Log.info("startIntervalNotifier");
-        Log.info(getClass().getSimpleName());
-        log.info(getClass().getSimpleName());
-    }
 
     @OnOpen
     public void onOpen(Session session) {
@@ -117,24 +108,5 @@ public class DataLineWsEndpoint {
         log.info(getClass().getSimpleName());
         t.printStackTrace();
     }
-
-    public void onReplay(@Observes @DataLineMessage List<DataLine.Aggregate> dataline) {
-        //sendPushUpdate(dataline);
-    }
-
-    private void sendPushUpdate(List<DataLine.Aggregate> dataline) {
-        //sessionService.getAllSessions().stream().forEach(session -> {
-        //    session.getAsyncRemote().sendObject(dataline);
-        //});
-    }
-
-    private void sendPushUpdate(List<DataLine.Aggregate> dataline, Session session) {
-        //session.getAsyncRemote().sendObject(dataline);
-    }
-
-    // private boolean isUserInRole(String loggedUserName, UserRole admin) {
-    // return
-    // userService.findByIdentificator(loggedUserName).getRole().equals(admin);
-    // }
 
 }

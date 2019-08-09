@@ -1,26 +1,18 @@
 package cz.muni.fi.gag.web.dao.impl;
 
-import java.io.Serializable;
-import java.util.Iterator;
-import java.util.List;
+import cz.muni.fi.gag.web.dao.DataLineDao;
+import cz.muni.fi.gag.web.entity.DataLine;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
-
-//import org.hibernate.Query;
-//import org.hibernate.Session;
-//import org.hibernate.StatelessSession;
-
-import cz.muni.fi.gag.web.dao.DataLineDao;
-import cz.muni.fi.gag.web.entity.DataLine;
-import cz.muni.fi.gag.web.entity.Gesture;
-import cz.muni.fi.gag.web.entity.User;
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author Miloslav Zezulka, Vojtech Prusa
  *
- * @DataLineServiceImpl
+ * {@link cz.muni.fi.gag.web.service.impl.DataLineServiceImpl}
  */
 @ApplicationScoped
 public class DataLineDaoImpl extends AbstractGenericDao<DataLine> implements DataLineDao, Serializable {

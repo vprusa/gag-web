@@ -4,6 +4,8 @@ import javax.websocket.Session;
 import java.util.Collection;
 
 /**
+ * @author Vojtech Prusa
+ *
  * Websocket session service
  *
  */
