@@ -25,7 +25,7 @@ import java.io.StringReader;
  */
 @Singleton
 @ServerEndpoint(value = "/datalinews",
-        encoders = { DataLineCoders.Plain.class, DataLineCoders.Finger.class, DataLineCoders.Wrist.class},
+        encoders = { DataLineEncoders.Plain.class, DataLineEncoders.Finger.class, DataLineEncoders.Wrist.class},
         decoders = { DataLineDecoders.Plain.class, DataLineDecoders.Finger.class, DataLineDecoders.Wrist.class}
 )
 public class DataLineWsEndpoint {

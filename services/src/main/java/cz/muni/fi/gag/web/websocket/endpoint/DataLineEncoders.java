@@ -14,13 +14,13 @@ import javax.websocket.EndpointConfig;
 /**
  * @author Vojtech Prusa
  */
-public class DataLineCoders<DataLineEx extends DataLine> implements Encoder.Text<DataLineEx> {
+public class DataLineEncoders<DataLineEx extends DataLine> implements Encoder.Text<DataLineEx> {
 
     public static final Logger log = Logger.getLogger(DataLineWsEndpoint.class.getSimpleName());
 
-    public static class Plain extends DataLineCoders<DataLine> {}
-    public static class Finger extends DataLineCoders<FingerDataLine> {}
-    public static class Wrist extends DataLineCoders<WristDataLine> {}
+    public static class Plain extends DataLineEncoders<DataLine> {}
+    public static class Finger extends DataLineEncoders<FingerDataLine> {}
+    public static class Wrist extends DataLineEncoders<WristDataLine> {}
 
     private ObjectMapper objectMapper;
 
@@ -28,7 +28,7 @@ public class DataLineCoders<DataLineEx extends DataLine> implements Encoder.Text
     public String encode(DataLineEx object) throws EncodeException {
         try {
             String str = objectMapper.writeValueAsString(object);
-            DataLineCoders.log.info(str);
+            DataLineEncoders.log.info(str);
             return str;
         } catch (JsonProcessingException e) {
             throw new EncodeException(object, e.getMessage(), e);

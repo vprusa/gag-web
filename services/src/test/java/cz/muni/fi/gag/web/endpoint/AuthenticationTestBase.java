@@ -76,8 +76,8 @@ public abstract class AuthenticationTestBase extends TestEndpointBase {
         HttpResponse response = client.execute(post);
         log.info("Login response");
         log.info(response);
-        log.info("Response entity content len");
-        log.info(response.getEntity().getContentLength());
+        //log.info("Response entity content len");
+        //log.info(response.getEntity().getContentLength());
         //response.getEntity().getContent();
         JsonReader reader = Json.createReader(response.getEntity().getContent());
         JsonObject jobj = reader.readObject();

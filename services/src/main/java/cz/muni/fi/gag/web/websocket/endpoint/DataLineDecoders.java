@@ -1,14 +1,17 @@
 package cz.muni.fi.gag.web.websocket.endpoint;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
 import cz.muni.fi.gag.web.entity.DataLine;
 import cz.muni.fi.gag.web.entity.FingerDataLine;
 import cz.muni.fi.gag.web.entity.WristDataLine;
+import org.codehaus.jackson.type.TypeReference;
 import org.jboss.logging.Logger;
 
 import javax.websocket.DecodeException;
 import javax.websocket.Decoder;
 import javax.websocket.EndpointConfig;
+import java.io.IOException;
 
 /**
  * @author Vojtech Prusa
@@ -22,11 +25,26 @@ public class DataLineDecoders<DataLineEx extends DataLine> implements Decoder.Te
     public static class Wrist extends DataLineDecoders<WristDataLine> {}
 
     private ObjectMapper objectMapper;
+    //private ObjectReader objectReader;
+
+    public class Type extends  TypeReference<DataLineEx> {
+
+    }
 
     @Override
     public DataLineEx decode(String s) throws DecodeException {
         // TODO
         log.info("TODO");
+        //ObjectReader or = new ObjectReader();
+        ObjectReader objectReader = objectMapper.readerFor(DataLine.class);
+        //ObjectReader objectReader = objectMapper.reader().forType(Type.class);
+        try {
+            DataLineEx dl = objectReader.readValue(s);
+            return dl;
+        } catch (IOException e) {
+            e.printStackTrace();
+            //throw new DecodeException("","");
+        }
         return null;
     }
 
