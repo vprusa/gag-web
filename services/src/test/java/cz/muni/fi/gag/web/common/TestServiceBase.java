@@ -70,10 +70,8 @@ public class TestServiceBase extends TestBase {
         return r;
     }
 
-
-
     public DataLine buildDataLine() {
-        DataLine r = new DataLine(){};
+        DataLine r = new DataLine();
         r.setGesture(null);
         r.setTimestamp(new Date());
         return r;

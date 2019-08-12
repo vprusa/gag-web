@@ -1,10 +1,11 @@
-package cz.muni.fi.gag.web.websocket.endpoint;
+package cz.muni.fi.gag.web.endpoint.websocket.coders;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.muni.fi.gag.web.entity.DataLine;
 import cz.muni.fi.gag.web.entity.FingerDataLine;
 import cz.muni.fi.gag.web.entity.WristDataLine;
+import cz.muni.fi.gag.web.websocket.endpoint.DataLineWsEndpoint;
 import org.jboss.logging.Logger;
 
 import javax.websocket.EncodeException;

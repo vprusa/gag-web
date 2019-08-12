@@ -5,8 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import javax.validation.constraints.PastOrPresent;
@@ -22,7 +22,7 @@ import java.util.Date;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @JsonIgnoreProperties(value= {"gesture"})
-public abstract class DataLine extends AbstractEntity implements Serializable {
+public /*abstract */class DataLine extends AbstractEntity implements Serializable {
 
     @NotNull
     @PastOrPresent

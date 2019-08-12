@@ -1,14 +1,13 @@
-package cz.muni.fi.gag.web.websocket.endpoint;
+package cz.muni.fi.gag.web.endpoint.websocket.coders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import cz.muni.fi.gag.web.entity.DataLine;
 import cz.muni.fi.gag.web.entity.FingerDataLine;
 import cz.muni.fi.gag.web.entity.WristDataLine;
-import org.codehaus.jackson.type.TypeReference;
+import cz.muni.fi.gag.web.websocket.endpoint.DataLineWsEndpoint;
 import org.jboss.logging.Logger;
 
-import javax.websocket.DecodeException;
 import javax.websocket.Decoder;
 import javax.websocket.EndpointConfig;
 import java.io.IOException;
@@ -20,27 +19,36 @@ public class DataLineDecoders<DataLineEx extends DataLine> implements Decoder.Te
 
     public static final Logger log = Logger.getLogger(DataLineWsEndpoint.class.getSimpleName());
 
-    public static class Plain extends DataLineDecoders<DataLine> {}
-    public static class Finger extends DataLineDecoders<FingerDataLine> {}
-    public static class Wrist extends DataLineDecoders<WristDataLine> {}
+    private final Class type;
+
+    public DataLineDecoders(Class type) {
+        this.type = type;
+    }
+
+    public static class Plain extends DataLineDecoders<DataLine> {
+        public Plain() {
+            super(DataLine.class);
+        }
+    }
+    public static class Finger extends DataLineDecoders<FingerDataLine> {
+        public Finger() {
+            super(FingerDataLine.class);
+        }
+    }
+    public static class Wrist extends DataLineDecoders<WristDataLine> {
+        public Wrist() {
+            super(WristDataLine.class);
+        }
+    }
 
     private ObjectMapper objectMapper;
-    //private ObjectReader objectReader;
-
-    private class DataLineExType extends TypeReference<DataLineEx> {}
-
-    //private final DataLineExType type = new DataLineExType();
 
     @Override
-    public DataLineEx decode(String s) throws DecodeException {
-        // TODO
-        log.info("TODO");
-        //ObjectReader or = new ObjectReader();
-        //ObjectReader objectReader = objectMapper.readerFor(DataLine.class);
-        ObjectReader objectReader = objectMapper.reader().forType(DataLineExType.class);
-        //(new DataLineExType().getClass()); // Type.class // type.getClass()
+    public DataLineEx decode(String s) {
+        ObjectReader objectReader = objectMapper.reader().forType(type);
         try {
             DataLineEx dl = objectReader.readValue(s);
+            log.info(dl.toString());
             return dl;
         } catch (IOException e) {
             e.printStackTrace();
