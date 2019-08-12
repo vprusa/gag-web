@@ -27,17 +27,18 @@ public class DataLineDecoders<DataLineEx extends DataLine> implements Decoder.Te
     private ObjectMapper objectMapper;
     //private ObjectReader objectReader;
 
-    public class Type extends  TypeReference<DataLineEx> {
+    private class DataLineExType extends TypeReference<DataLineEx> {}
 
-    }
+    //private final DataLineExType type = new DataLineExType();
 
     @Override
     public DataLineEx decode(String s) throws DecodeException {
         // TODO
         log.info("TODO");
         //ObjectReader or = new ObjectReader();
-        ObjectReader objectReader = objectMapper.readerFor(DataLine.class);
-        //ObjectReader objectReader = objectMapper.reader().forType(Type.class);
+        //ObjectReader objectReader = objectMapper.readerFor(DataLine.class);
+        ObjectReader objectReader = objectMapper.reader().forType(DataLineExType.class);
+        //(new DataLineExType().getClass()); // Type.class // type.getClass()
         try {
             DataLineEx dl = objectReader.readValue(s);
             return dl;

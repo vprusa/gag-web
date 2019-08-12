@@ -52,6 +52,33 @@ public class TestServiceBase extends TestBase {
         return r;
     }
 
+    public WristDataLine buildWristDataLine() {
+        WristDataLine r = new WristDataLine();
+        r.setGesture(null);
+        r.setPosition(FingerPosition.INDEX);
+        r.setQuatA(0);
+        r.setQuatX(0);
+        r.setQuatY(0);
+        r.setQuatZ(0);
+        r.setTimestamp(new Date());
+        r.setAccX((short) 0);
+        r.setAccY((short) 0);
+        r.setAccZ((short) 0);
+        r.setMagX((short) 0);
+        r.setMagY((short) 0);
+        r.setMagZ((short) 0);
+        return r;
+    }
+
+
+
+    public DataLine buildDataLine() {
+        DataLine r = new DataLine(){};
+        r.setGesture(null);
+        r.setTimestamp(new Date());
+        return r;
+    }
+
     public FingerSensorOffset buildFingerSensorOffset(FingerPosition fingerPosition) {
         FingerSensorOffset r = new FingerSensorOffset();
         HandDevice hd = null;
