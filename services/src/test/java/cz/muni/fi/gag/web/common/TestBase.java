@@ -38,17 +38,17 @@ public class TestBase {
                         keycloakGroupId + "keycloak-client-registration-api" + keycloakVersion)
                 .withTransitivity().asFile();
 
-        log.info("Loading Dependency Files - KeyCloak");
+        //log.info("Loading Dependency Files - KeyCloak");
 
-        for (File file : filesKeycloak) {
+        //for (File file : filesKeycloak) {
             //log.info(file.getAbsolutePath());
-        }
+        //}
 
-        log.info("Loading Dependency Files - other");
+        //log.info("Loading Dependency Files - other");
 
-        for (File file : files) {
+        //for (File file : files) {
             //log.info(file.getAbsolutePath());
-        }
+        //}
 
         return ShrinkWrap.create(WebArchive.class, clazz.getSimpleName() + ".war")
                 .addPackages(true, "cz.muni.fi.gag.web")

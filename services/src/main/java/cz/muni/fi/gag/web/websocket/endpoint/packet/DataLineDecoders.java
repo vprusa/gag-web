@@ -1,4 +1,4 @@
-package cz.muni.fi.gag.web.endpoint.websocket.coders;
+package cz.muni.fi.gag.web.websocket.endpoint.packet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
@@ -60,8 +60,8 @@ public class DataLineDecoders<DataLineEx extends DataLine> implements Decoder.Te
     @Override
     public boolean willDecode(String s) {
         // TODO
-        log.info("TODO");
-        return false;
+        log.info("TODO ... willDecode");
+        return true;
     }
 
     @Override
@@ -70,5 +70,8 @@ public class DataLineDecoders<DataLineEx extends DataLine> implements Decoder.Te
     }
 
     @Override
-    public void destroy() {}
+    public void destroy() {
+        // TODO https://www.geeksforgeeks.org/how-to-make-object-eligible-for-garbage-collection/
+        //objectMapper = null;
+    }
 }

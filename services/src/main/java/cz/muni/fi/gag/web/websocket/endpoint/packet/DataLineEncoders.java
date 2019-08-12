@@ -1,4 +1,4 @@
-package cz.muni.fi.gag.web.endpoint.websocket.coders;
+package cz.muni.fi.gag.web.websocket.endpoint.packet;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,7 +29,7 @@ public class DataLineEncoders<DataLineEx extends DataLine> implements Encoder.Te
     public String encode(DataLineEx object) throws EncodeException {
         try {
             String str = objectMapper.writeValueAsString(object);
-            DataLineEncoders.log.info(str);
+            log.info(str);
             return str;
         } catch (JsonProcessingException e) {
             throw new EncodeException(object, e.getMessage(), e);
@@ -42,5 +42,8 @@ public class DataLineEncoders<DataLineEx extends DataLine> implements Encoder.Te
     }
 
     @Override
-    public void destroy() {}
+    public void destroy() {
+        // TODO https://www.geeksforgeeks.org/how-to-make-object-eligible-for-garbage-collection/
+        //objectMapper = null;
+    }
 }

@@ -4,9 +4,10 @@ import cz.muni.fi.gag.web.logging.Log;
 import cz.muni.fi.gag.web.service.DataLineService;
 import cz.muni.fi.gag.web.service.GestureService;
 import cz.muni.fi.gag.web.service.UserService;
+import cz.muni.fi.gag.web.websocket.endpoint.packet.DataLineDecoders;
+import cz.muni.fi.gag.web.websocket.endpoint.packet.DataLineEncoders;
 import cz.muni.fi.gag.web.websocket.service.DataLineRePlayer;
-import org.jboss.logging.Logger;
-
+import java.io.StringReader;
 import javax.ejb.Singleton;
 import javax.inject.Inject;
 import javax.json.Json;
@@ -18,15 +19,15 @@ import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
-import java.io.StringReader;
+import org.jboss.logging.Logger;
 
 /**
  * @author Vojtech Prusa
  */
 @Singleton
-@ServerEndpoint(value = "/datalinews"//,
-//        encoders = { DataLineEncoders.Plain.class, DataLineEncoders.Finger.class, DataLineEncoders.Wrist.class},
- //       decoders = { DataLineDecoders.Plain.class, DataLineDecoders.Finger.class, DataLineDecoders.Wrist.class}
+@ServerEndpoint(value = "/datalinews",
+        encoders = { DataLineEncoders.Plain.class, DataLineEncoders.Finger.class, DataLineEncoders.Wrist.class},
+        decoders = { DataLineDecoders.Plain.class, DataLineDecoders.Finger.class, DataLineDecoders.Wrist.class}
 )
 public class DataLineWsEndpoint {
 
