@@ -6,9 +6,9 @@ import org.jboss.logging.Logger;
  * @author Vojtech Prusa
  *
  */
-public class LogMessages {
+public class Log {
 
-    static Logger logger = Logger.getLogger(LogMessages.class.getSimpleName());
+    public static Logger logger = Logger.getLogger(Log.class.getSimpleName());
 
     public static void info(String s) {
         logger.info(s);

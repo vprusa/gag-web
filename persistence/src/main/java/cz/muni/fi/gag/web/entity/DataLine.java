@@ -1,28 +1,28 @@
 package cz.muni.fi.gag.web.entity;
 
-import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
+import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import javax.validation.constraints.PastOrPresent;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * @author Vojtech Prusa
  * 
- * @FingerDataLine
- * @WristDataLine
+ * {@link FingerDataLine}
+ * {@link WristDataLine}
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @JsonIgnoreProperties(value= {"gesture"})
-public abstract class DataLine extends AbstractEntity {
+public /*abstract */class DataLine extends AbstractEntity implements Serializable {
 
     @NotNull
     @PastOrPresent
@@ -95,6 +95,30 @@ public abstract class DataLine extends AbstractEntity {
             return false;
         }
         return true;
+    }
+
+    /**
+     * @author Vojtech Prusa
+     *
+     */
+    public static class Aggregate<DataLineEx extends DataLine> {
+        
+        DataLineEx data;
+        
+        public Aggregate(DataLineEx data) {
+            super();
+            this.data = data;
+        }
+
+        /**
+         * Getter
+         *
+         * @return data instance
+         */
+        public DataLineEx getData() {
+            return data;
+        }
+
     }
 
 }

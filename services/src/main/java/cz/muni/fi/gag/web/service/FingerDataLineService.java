@@ -8,7 +8,7 @@ import cz.muni.fi.gag.web.service.generic.GenericCRUDService;
  *
  * @author Vojtech Prusa
  *
- * @FingerDataLineServiceImpl
+ * {@link cz.muni.fi.gag.web.service.impl.FingerDataLineServiceImpl}
  *
  */
 public interface FingerDataLineService extends GenericCRUDService<FingerDataLine, FingerDataLineDao> {

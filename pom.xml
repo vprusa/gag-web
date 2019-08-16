@@ -17,7 +17,6 @@
 		<java.version>8</java.version>
 		<version.plugin.checkstyle>2.17</version.plugin.checkstyle>
 		<checkstyle.fail>false</checkstyle.fail>
-
 		<!--keep in alphabetical order please -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -41,6 +40,7 @@
 		<version.org.wildfly.server>10.1.0.Final</version.org.wildfly.server>
 		<version.wildfly.checkstyle.config>1.0.5.Final</version.wildfly.checkstyle.config>
 		<version.wildfly.maven.plugin>1.1.0.Final</version.wildfly.maven.plugin>
+        <version.server.bom>16.0.0.Final</version.server.bom>
 
 		<version.keycloak>6.0.1</version.keycloak>
 
@@ -51,8 +51,22 @@
 		<artifactId>jboss-parent</artifactId>
 		<version>16</version>
 	</parent>
+	
 	<dependencyManagement>
 		<dependencies>
+		 <!-- JBoss distributes a complete set of Java EE APIs including a Bill
+                of Materials (BOM). A BOM specifies the versions of a "stack" (or a collection)
+                of artifacts. We use this here so that we always get the correct versions
+                of artifacts. Here we use the jboss-eap-javaee8-with-tools stack (you can
+                read this as the JBoss stack of the Java EE APIs, with some extras tools
+                for your project, such as Arquillian for testing) 
+            <dependency>
+                <groupId>org.wildfly.bom</groupId>
+                <artifactId>wildfly-javaee8-with-tools</artifactId>
+                <version>${version.server.bom}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>-->
 			<dependency>
 				<groupId>org.wildfly.bom</groupId>
 				<artifactId>wildfly-javaee7-with-tools</artifactId>
@@ -188,6 +202,17 @@
 			<version>${version.org.jboss.resteasy}</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+            <groupId>javax.websocket</groupId>
+            <artifactId>javax.websocket-api</artifactId>
+            <version>1.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.spec.javax.websocket</groupId>
+            <artifactId>jboss-websocket-api_1.1_spec</artifactId>
+            <scope>provided</scope>
+        </dependency>
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>

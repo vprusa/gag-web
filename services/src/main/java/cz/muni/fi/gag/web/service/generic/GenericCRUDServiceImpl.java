@@ -1,12 +1,11 @@
 package cz.muni.fi.gag.web.service.generic;
 
+import cz.muni.fi.gag.web.dao.GenericDao;
+import cz.muni.fi.gag.web.entity.AbstractEntity;
+import cz.muni.fi.gag.web.logging.Log;
+
 import java.util.List;
 import java.util.Optional;
-
-import cz.muni.fi.gag.web.dao.GenericDao;
-
-import cz.muni.fi.gag.web.entity.AbstractEntity;
-import cz.muni.fi.gag.web.logging.LogMessages;
 
 /**
  * @author Vojtech Prusa
@@ -14,8 +13,8 @@ import cz.muni.fi.gag.web.logging.LogMessages;
  * @param <T>
  * @param <TDao>
  * 
- * @DataLineServiceImpl
- * @FingerDataLineServiceImpl
+ * {@link cz.muni.fi.gag.web.service.impl.DataLineServiceImpl}
+ * {@link cz.muni.fi.gag.web.service.impl.FingerDataLineServiceImpl}
  * 
  */
 public abstract class GenericCRUDServiceImpl<T extends AbstractEntity, TDao extends GenericDao<T>>
@@ -24,21 +23,21 @@ public abstract class GenericCRUDServiceImpl<T extends AbstractEntity, TDao exte
     @Override
     public T create(T entity) {
         T created = this.getDao().create(entity);
-        LogMessages.infoCreate(this.getClass(), created);
+        Log.infoCreate(this.getClass(), created);
         return created;
     }
 
     @Override
     public T update(T entity) {
         T updated = getDao().update(entity);
-        LogMessages.infoUpdate(this.getClass(), updated);
+        Log.infoUpdate(this.getClass(), updated);
         return getDao().update(entity);
     }
 
     @Override
     public void remove(T entity) throws IllegalArgumentException {
         getDao().remove(entity.getId());
-        LogMessages.infoRemove(this.getClass(), entity);
+        Log.infoRemove(this.getClass(), entity);
     }
 
     @Override

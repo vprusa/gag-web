@@ -1,9 +1,8 @@
 package cz.muni.fi.gag.web.service.generic;
 
+import cz.muni.fi.gag.web.dao.GenericDao;
 import java.util.List;
 import java.util.Optional;
-
-import cz.muni.fi.gag.web.dao.GenericDao;
 
 /**
  * @author Vojtech Prusa
@@ -11,11 +10,14 @@ import cz.muni.fi.gag.web.dao.GenericDao;
  * @param <T>
  * @param <TDao>
  * 
- * @DataLineService
- * @DataLineServiceImpl
+ * {@link cz.muni.fi.gag.web.service.DataLineService}
+ * {@link cz.muni.fi.gag.web.service.impl.DataLineServiceImpl}
  * 
- * @FingerDataLineService
- * @FingerDataLineServiceImpl
+ * {@link cz.muni.fi.gag.web.service.FingerDataLineService}
+ * {@link cz.muni.fi.gag.web.service.impl.FingerDataLineServiceImpl}
+ * 
+ * {@link cz.muni.fi.gag.web.service.GestureService}
+ * {@link cz.muni.fi.gag.web.service.impl.GestureServiceImpl}
  * 
  */
 public interface GenericCRUDService<T, TDao extends GenericDao<T>> {

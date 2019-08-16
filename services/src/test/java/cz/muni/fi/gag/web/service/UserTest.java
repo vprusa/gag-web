@@ -1,32 +1,26 @@
 package cz.muni.fi.gag.web.service;
 
-import org.jboss.arquillian.junit.Arquillian;
+import cz.muni.fi.gag.web.common.TestServiceBase;
+import cz.muni.fi.gag.web.dao.UserDao;
+import cz.muni.fi.gag.web.entity.User;
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 
-import cz.muni.fi.gag.web.dao.UserDao;
-import cz.muni.fi.gag.web.entity.User;
-import cz.muni.fi.gag.web.entity.UserRole;
-
 import javax.inject.Inject;
-
 import java.util.logging.Logger;
+
+import static java.util.Arrays.asList;
 
 /**
  * @author Vojtech Prusa
  *
  */
 @RunWith(Arquillian.class)
-public class UserTest extends TestBase {
+public class UserTest extends TestServiceBase {
 
     private static Logger log = Logger.getLogger(UserTest.class.getSimpleName());
 
@@ -51,10 +45,7 @@ public class UserTest extends TestBase {
     public void before() {
         testUser1 = buildUser();
         testUser2 = buildUser();
-        log.info("Using User test1:");
-        log.info(testUser1.toString());
-        log.info("Using User test2:");
-        log.info(testUser2.toString());
+        printTestEntities(asList(testUser1, testUser2));
     }
 
     @After

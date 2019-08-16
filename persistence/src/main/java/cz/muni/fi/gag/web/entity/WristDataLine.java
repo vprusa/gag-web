@@ -69,4 +69,10 @@ public class WristDataLine extends FingerDataLine {
         this.magZ = magZ;
     }
 
+    @Override
+    public String toString() {
+        return "WristDataLine [magX=" + magX + ", magY=" + magY + ", magZ=" + magZ + "] "
+                + super.toString();
+    }
+
 }

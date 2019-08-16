@@ -11,7 +11,7 @@ import cz.muni.fi.gag.web.service.generic.GenericCRUDService;
  *
  * @author Vojtech Prusa
  *
- * @GestureServiceImpl
+ * {@link cz.muni.fi.gag.web.service.impl.GestureServiceImpl}
  *
  */
 public interface GestureService extends GenericCRUDService<Gesture, GestureDao> {

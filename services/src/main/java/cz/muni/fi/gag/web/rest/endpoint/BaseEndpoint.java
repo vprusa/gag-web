@@ -1,21 +1,21 @@
 package cz.muni.fi.gag.web.rest.endpoint;
 
-import java.util.Iterator;
-import java.util.Set;
-import java.util.logging.Logger;
+import cz.muni.fi.gag.web.entity.User;
+import cz.muni.fi.gag.web.entity.UserRole;
+import cz.muni.fi.gag.web.service.UserService;
+import org.jboss.logging.Logger;
+import org.keycloak.KeycloakPrincipal;
+import org.keycloak.KeycloakSecurityContext;
+import org.keycloak.representations.AccessToken;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import java.util.Iterator;
+import java.util.Set;
 
-import org.keycloak.KeycloakPrincipal;
-import org.keycloak.KeycloakSecurityContext;
-import org.keycloak.representations.AccessToken;
-
-import cz.muni.fi.gag.web.entity.User;
-import cz.muni.fi.gag.web.entity.UserRole;
-import cz.muni.fi.gag.web.service.UserService;
+//import java.util.logging.Logger;
 
 /**
  * @author Vojtech Prusa
@@ -26,7 +26,7 @@ import cz.muni.fi.gag.web.service.UserService;
  */
 public class BaseEndpoint {
    
-    protected static final Logger LOG = Logger.getLogger(BaseEndpoint.class.getSimpleName());
+    protected static final Logger log = Logger.getLogger(BaseEndpoint.class.getSimpleName());
     
     @Inject
     private UserService userService;

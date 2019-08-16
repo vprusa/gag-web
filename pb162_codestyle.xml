@@ -24,18 +24,20 @@
             <property name="scope" value="public"/>
             <property name="checkFirstSentence" value="false"/>
         </module> -->
-        <module name="WriteTag">
-            <property name="tag" value="@author"/>
-            <property name="tagFormat" value="..* ..*"/>
+        <!--TODO fix ... -->
+        <!--<module name="WriteTag">-->
+            <!--<property name="tag" value="@author"/>-->
+       <!--     <property name="tagFormat" value="..* ..*"/>-->
             <!-- What to do if the tag does not exists? -->
-            <property name="severity" value="error"/>
-            <!-- What to do if the tag exists? -->
-            <property name="tagSeverity" value="ignore"/>
-        </module>
+        <!--<property name="severity" value="error"/>-->
+        <!-- What to do if the tag exists? -->
+        <!--<property name="tagSeverity" value="ignore"/>-->
+        <!--</module>-->
 
-        <!-- Checks for Naming Conventions.                  -->
+    <!-- Checks for Naming Conventions.                  -->
         <!-- See http://checkstyle.sf.net/config_naming.html -->
-        <module name="ConstantName"/>
+        <!--TODO fix app global logging -->
+        <!--<module name="ConstantName"/>-->
         <module name="LocalFinalVariableName"/>
         <module name="LocalVariableName"/>
         <module name="MemberName"/>
