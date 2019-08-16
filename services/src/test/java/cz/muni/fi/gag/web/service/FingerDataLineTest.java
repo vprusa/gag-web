@@ -1,9 +1,8 @@
 package cz.muni.fi.gag.web.service;
 
+import cz.muni.fi.gag.web.common.TestServiceBase;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.Assert;
@@ -21,6 +20,7 @@ import java.util.Date;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
+import static java.util.Arrays.asList;
 
 /**
  * @author Vojtech Prusa
@@ -28,7 +28,7 @@ import javax.inject.Inject;
  */
 //@ArquillianSuiteDeployment
 @RunWith(Arquillian.class)
-public class FingerDataLineTest extends TestBase {
+public class FingerDataLineTest extends TestServiceBase {
 
     private static Logger log = Logger.getLogger(FingerDataLineTest.class.getSimpleName());
 
@@ -58,9 +58,9 @@ public class FingerDataLineTest extends TestBase {
         r.setQuatY(0);
         r.setQuatZ(0);
         r.setTimestamp(new Date());
-        r.setX((short) 0);
-        r.setY((short) 0);
-        r.setZ((short) 0);
+        r.setAccX((short) 0);
+        r.setAccY((short) 0);
+        r.setAccZ((short) 0);
         return r;
     }
 
@@ -68,10 +68,7 @@ public class FingerDataLineTest extends TestBase {
     public void before() {
         testFingerDataLine1 = buildFingerDataLine();
         testFingerDataLine2 = buildFingerDataLine();
-        log.info("Using test1:");
-        log.info(testFingerDataLine1.toString());
-        log.info("Using test2:");
-        log.info(testFingerDataLine2.toString());
+        printTestEntities(asList(testFingerDataLine1, testFingerDataLine2));
     }
 
     @After

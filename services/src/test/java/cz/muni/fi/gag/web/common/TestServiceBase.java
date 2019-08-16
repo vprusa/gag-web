@@ -1,64 +1,22 @@
-package cz.muni.fi.gag.web.service;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.logging.Logger;
-
-import javax.inject.Inject;
-
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.resolver.api.maven.Maven;
+package cz.muni.fi.gag.web.common;
 
 import cz.muni.fi.gag.web.dao.FingerSensorOffsetDao;
 import cz.muni.fi.gag.web.dao.HandDeviceDao;
 import cz.muni.fi.gag.web.dao.UserDao;
-import cz.muni.fi.gag.web.entity.FingerDataLine;
-import cz.muni.fi.gag.web.entity.FingerPosition;
-import cz.muni.fi.gag.web.entity.FingerSensorOffset;
-import cz.muni.fi.gag.web.entity.HandDevice;
-import cz.muni.fi.gag.web.entity.SensorOffset;
-import cz.muni.fi.gag.web.entity.SensorType;
-import cz.muni.fi.gag.web.entity.User;
-import cz.muni.fi.gag.web.entity.UserRole;
-import cz.muni.fi.gag.web.entity.WristSensorOffset;
+import cz.muni.fi.gag.web.entity.*;
+import org.jboss.logging.Logger;
+
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author Vojtech Prusa
  */
-public class TestBase {
+public class TestServiceBase extends TestBase {
 
-    private static Logger log = Logger.getLogger(TestBase.class.getSimpleName());
-
-    static String keycloakGroupId = "org.keycloak:";
-    static String keycloakVersion = ":6.0.1";
-
-    public static WebArchive getDeployment(Class clazz) {
-        File[] files = Maven.resolver()
-                .resolve(keycloakGroupId + "keycloak-core" + keycloakVersion,
-                        keycloakGroupId + "keycloak-common" + keycloakVersion,
-                        keycloakGroupId + "keycloak-adapter-core" + keycloakVersion,
-                        keycloakGroupId + "keycloak-adapter-spi" + keycloakVersion,
-                        keycloakGroupId + "keycloak-client-registration-api" + keycloakVersion)
-                .withTransitivity().asFile();
-
-        log.info("Dependency Files");
-
-        for (File file : files) {
-            log.info(file.getAbsolutePath());
-        }
-
-        // File[] keycloak
-
-        return ShrinkWrap.create(WebArchive.class, clazz.getSimpleName() + ".war")
-                .addPackages(true, "cz.muni.fi.gag.web")
-                .addAsResource("test-persistence.xml", "META-INF/persistence.xml")
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml").addAsLibraries(files);
-    }
+    private static Logger log = Logger.getLogger(TestServiceBase.class.getSimpleName());
 
     @Inject
     private UserDao userDao;
@@ -88,9 +46,34 @@ public class TestBase {
         r.setQuatY(0);
         r.setQuatZ(0);
         r.setTimestamp(new Date());
-        r.setX((short) 0);
-        r.setY((short) 0);
-        r.setZ((short) 0);
+        r.setAccX((short) 0);
+        r.setAccY((short) 0);
+        r.setAccZ((short) 0);
+        return r;
+    }
+
+    public WristDataLine buildWristDataLine() {
+        WristDataLine r = new WristDataLine();
+        r.setGesture(null);
+        r.setPosition(FingerPosition.INDEX);
+        r.setQuatA(0);
+        r.setQuatX(0);
+        r.setQuatY(0);
+        r.setQuatZ(0);
+        r.setTimestamp(new Date());
+        r.setAccX((short) 0);
+        r.setAccY((short) 0);
+        r.setAccZ((short) 0);
+        r.setMagX((short) 0);
+        r.setMagY((short) 0);
+        r.setMagZ((short) 0);
+        return r;
+    }
+
+    public DataLine buildDataLine() {
+        DataLine r = new DataLine();
+        r.setGesture(null);
+        r.setTimestamp(new Date());
         return r;
     }
 
@@ -140,7 +123,7 @@ public class TestBase {
         return r;
     }
 
-    HandDevice buildHandDevice() {
+    public HandDevice buildHandDevice() {
         User u = buildUser();
         u = userDao.create(u);
 

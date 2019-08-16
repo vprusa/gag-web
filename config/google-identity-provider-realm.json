@@ -47,10 +47,13 @@
             "adminUrl": "http://localhost:8080/gagweb/",
             "baseUrl": "http://localhost:8080/gagweb/",
             "redirectUris": [
-              "http://localhost:8080/gagweb/*"
+                "http://localhost:8080/gagweb/*",
+                "http://localhost:8080/gagweb*"
             ],
             "webOrigins": [
-              "http://localhost:8080"
+                "http://localhost:8080",
+                "http://127.0.0.1:8080"
+
             ],
             "directAccessGrantsEnabled": true
         }

@@ -115,7 +115,7 @@ public class FingerDataLine extends DataLine {
      *
      * @return x instance
      */
-    public short getX() {
+    public short getAccX() {
         return accX;
     }
 
@@ -124,7 +124,7 @@ public class FingerDataLine extends DataLine {
      * 
      * @param x instance
      */
-    public void setX(short x) {
+    public void setAccX(short x) {
         this.accX = x;
     }
 
@@ -133,7 +133,7 @@ public class FingerDataLine extends DataLine {
      *
      * @return y instance
      */
-    public short getY() {
+    public short getAccY() {
         return accY;
     }
 
@@ -142,7 +142,7 @@ public class FingerDataLine extends DataLine {
      * 
      * @param y instance
      */
-    public void setY(short y) {
+    public void setAccY(short y) {
         this.accY = y;
     }
 
@@ -151,7 +151,7 @@ public class FingerDataLine extends DataLine {
      *
      * @return z instance
      */
-    public short getZ() {
+    public short getAccZ() {
         return accZ;
     }
 
@@ -160,7 +160,7 @@ public class FingerDataLine extends DataLine {
      * 
      * @param z instance
      */
-    public void setZ(short z) {
+    public void setAccZ(short z) {
         this.accZ = z;
     }
 
@@ -221,7 +221,7 @@ public class FingerDataLine extends DataLine {
     @Override
     public String toString() {
         return "FingerDataLine [quatA=" + quatA + ", quatX=" + quatX + ", quatY=" + quatY + ", quatZ=" + quatZ
-                + ", accX=" + accX + ", accY=" + accY + ", accZ=" + accZ + ", position=" + position + "]"
+                + ", accX=" + accX + ", accY=" + accY + ", accZ=" + accZ + ", position=" + position + "] "
                 + super.toString();
     }
 

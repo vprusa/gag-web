@@ -1,9 +1,8 @@
 package cz.muni.fi.gag.web.service;
 
+import cz.muni.fi.gag.web.common.TestServiceBase;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.Assert;
@@ -16,27 +15,19 @@ import org.junit.runner.RunWith;
 import cz.muni.fi.gag.web.dao.FingerSensorOffsetDao;
 import cz.muni.fi.gag.web.dao.HandDeviceDao;
 import cz.muni.fi.gag.web.dao.UserDao;
-import cz.muni.fi.gag.web.entity.DataLine;
-import cz.muni.fi.gag.web.entity.FingerDataLine;
-import cz.muni.fi.gag.web.entity.FingerSensorOffset;
-import cz.muni.fi.gag.web.entity.Gesture;
 import cz.muni.fi.gag.web.entity.HandDevice;
-import cz.muni.fi.gag.web.entity.SensorOffset;
-import cz.muni.fi.gag.web.entity.User;
 
 import javax.inject.Inject;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
 import java.util.logging.Logger;
+import static java.util.Arrays.asList;
 
 /**
  * @author Vojtech Prusa
  *
  */
 @RunWith(Arquillian.class)
-public class HandDeviceTest extends TestBase {
+public class HandDeviceTest extends TestServiceBase {
 
     private static Logger log = Logger.getLogger(HandDeviceTest.class.getSimpleName());
 
@@ -67,10 +58,7 @@ public class HandDeviceTest extends TestBase {
     public void before() {
         testHandDevice1 = buildHandDevice();
         testHandDevice2 = buildHandDevice();
-        log.info("Using HandDevice test1:");
-        log.info(testHandDevice1.toString());
-        log.info("Using HandDevice test2:");
-        log.info(testHandDevice2.toString());
+        printTestEntities(asList(testHandDevice1, testHandDevice2));
     }
 
     @After

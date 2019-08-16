@@ -12,11 +12,25 @@ or
 mvn  wildfly:start wildfly:undeploy install wildfly:deploy -DskipTests=true -Dcheckstyle.skip | tee app.log
 ```
 
+or to re-deploy on running server:
+
+```
+mvn  wildfly:undeploy install wildfly:deploy -DskipTests=true -Dcheckstyle.skip 
+```
+
 #### Frontend 
 
 In dir 
 ```
 ./app
+```
+
+#### Tests
+
+##### WS DataLine on Running WS
+
+```
+mvn clean wildfly:undeploy install wildfly:deploy -DskipTests=true -Dcheckstyle.skip && mvn test -Dtest=WebsocketDatalineEndpointTest -DfailIfNoTests=false -Dcheckstyle.skip | tee app2.log
 ```
 
 #### zip 

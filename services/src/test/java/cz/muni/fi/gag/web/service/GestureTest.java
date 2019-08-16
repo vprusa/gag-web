@@ -1,9 +1,8 @@
 package cz.muni.fi.gag.web.service;
 
+import cz.muni.fi.gag.web.common.TestServiceBase;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.Assert;
@@ -27,13 +26,14 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
+import static java.util.Arrays.asList;
 
 /**
  * @author Vojtech Prusa
  *
  */
 @RunWith(Arquillian.class)
-public class GestureTest extends TestBase {
+public class GestureTest extends TestServiceBase {
 
     private static Logger log = Logger.getLogger(GestureTest.class.getSimpleName());
 
@@ -78,10 +78,7 @@ public class GestureTest extends TestBase {
     public void before() {
         testGesture1 = buildGesture();
         testGesture2 = buildGesture();
-        log.info("Using Gesture test1:");
-        log.info(testGesture1.toString());
-        log.info("Using Gesture test2:");
-        log.info(testGesture2.toString());
+        printTestEntities(asList(testGesture1, testGesture2));
     }
 
     @After

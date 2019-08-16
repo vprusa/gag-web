@@ -1,6 +1,6 @@
 package cz.muni.fi.gag.web.batching;
 
-import cz.muni.fi.gag.web.logging.LogMessages;
+import cz.muni.fi.gag.web.logging.Log;
 
 import javax.batch.operations.JobOperator;
 import javax.batch.runtime.BatchRuntime;
@@ -22,7 +22,7 @@ public class BatchControllerImpl implements BatchController {
 
         JobOperator jobOperator = BatchRuntime.getJobOperator();
         long jobId = jobOperator.start(commentaryJobName, jobParams);
-        LogMessages.info("Job id" + jobId);
+        Log.info("Job id" + jobId);
     }
 
 }
