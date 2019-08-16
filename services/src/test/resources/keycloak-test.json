@@ -1,0 +1,7 @@
+{
+	"realm": "google-identity-provider-realm",
+	"resource": "google-authentication",
+	"auth-server-url": "http://localhost:8180/auth",
+	"ssl-required": "external",
+	"public-client": true
+}
