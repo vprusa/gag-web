@@ -26,7 +26,7 @@ public class WebsocketDatalineEndpointTest extends AuthenticationTestBase {
 
     private static final Logger log = Logger.getLogger(WebsocketDatalineEndpointTest.class.getSimpleName());
 
-    public static final String TESTED_ENDPOINT = "ws://" + APP_URL_NO_PROTOCOL + "datalinews";
+    public static final String TESTED_ENDPOINT = "ws://" + URL_NO_PROTOCOL + POSSIBLE_TEST_APP_URI + "/datalinews";
 
     @Deployment
     public static WebArchive deployment() {
@@ -35,7 +35,7 @@ public class WebsocketDatalineEndpointTest extends AuthenticationTestBase {
 
     @Test
     //@RunAsClient
-    public void testEndpointEmptyJSONObject() throws Exception {
+    public void testEndpointJSONObject() throws Exception {
         Session session = connectToServer();
         log.info(session);
         boolean latchWait = MyEndpointClientJSONObject.latch.await(3, TimeUnit.SECONDS);
@@ -78,6 +78,7 @@ public class WebsocketDatalineEndpointTest extends AuthenticationTestBase {
         };
         ClientEndpointConfig clientEndpointConfig = ClientEndpointConfig.Builder.create().configurator(configurator).build();
         WebSocketContainer container = ContainerProvider.getWebSocketContainer();
+        log.info("Connecting to URI: " + TESTED_ENDPOINT);
         URI uri = new URI(TESTED_ENDPOINT);
         Session session = container.connectToServer(MyEndpointClientJSONObject.class, clientEndpointConfig, uri);
         MessageHandler.Whole<String> mhw = new MessageHandler.Whole<String>() {

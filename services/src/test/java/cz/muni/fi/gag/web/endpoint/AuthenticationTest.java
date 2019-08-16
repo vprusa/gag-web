@@ -1,5 +1,7 @@
 package cz.muni.fi.gag.web.endpoint;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -28,12 +30,20 @@ public class AuthenticationTest extends AuthenticationTestBase {
     }
 
     @Test
-    public void withTokenShouldSayHello() throws Exception {
+    public void withTokenShouldRespond() throws IOException, UnsupportedEncodingException {
         HttpClient client = new DefaultHttpClient();//ClientBuilder.newClient();
         HttpGet get = new HttpGet(getAppUrl());
         String accessToken = basicLogin();
         get.addHeader("Authorization", "Bearer " + accessToken);
         HttpResponse response = client.execute(get);
+        /*try {
+            Thread.sleep(200000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            log.info(e.getMessage());
+        }*/
+        log.info(response.getEntity());
+        log.info(response.getStatusLine());
         assertEquals("Status code should have been 200", 200, response.getStatusLine().getStatusCode());
     }
 

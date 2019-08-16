@@ -10,13 +10,13 @@
 	OF ANY KIND, either express or implied. See the License for the specific 
 	language governing permissions and limitations under the License. -->
 <persistence version="2.1"
-	xmlns="http://xmlns.jcp.org/xml/ns/persistence"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="
+			 xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+			 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			 xsi:schemaLocation="
         http://xmlns.jcp.org/xml/ns/persistence
         http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
-	<persistence-unit name="test"
-		transaction-type="JTA">
+	<persistence-unit name="primary"
+					  transaction-type="JTA">
 		<!-- If you are running in a production environment, add a managed data 
 			source, this example data source is just for development and testing! -->
 		<jta-data-source>java:jboss/datasources/ExampleDS</jta-data-source>
@@ -38,14 +38,14 @@
 			<property name="hibernate.show_sql" value="true" />
 			<property name="hibernate.format_sql" value="true" />
 			<property name="hibernate.search.default.directory_provider"
-				value="filesystem" />
+					  value="filesystem" />
 			<property name="hibernate.dialect"
-				value="org.hibernate.dialect.H2Dialect" />
+					  value="org.hibernate.dialect.H2Dialect" />
 			<!--Lucene is not deleting entries on the DB drop, so on the app restart 
 				previously used indexed create new entries in this directory so moving into 
 				target folder -->
 			<property name="hibernate.search.default.indexBase"
-				value="${build.directory}/lucene/test/indexes" />
+					  value="${build.directory}/lucene/test/indexes" />
 		</properties>
 	</persistence-unit>
 </persistence>
