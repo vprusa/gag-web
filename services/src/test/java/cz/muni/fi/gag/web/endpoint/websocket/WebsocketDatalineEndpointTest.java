@@ -26,7 +26,7 @@ public class WebsocketDatalineEndpointTest extends AuthenticationTestBase {
 
     private static final Logger log = Logger.getLogger(WebsocketDatalineEndpointTest.class.getSimpleName());
 
-    public static final String TESTED_ENDPOINT = "ws://" + URL_NO_PROTOCOL + POSSIBLE_TEST_APP_URI + "/datalinews";
+    public static final String TESTED_ENDPOINT = "ws://" + URL_NO_PROTOCOL + WebsocketDatalineEndpointTest.class.getSimpleName() + "/datalinews";
 
     @Deployment
     public static WebArchive deployment() {
