@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <META charset="UTF-8" />
+    <title>
+        BLE GATT UART test
+    </title>
+    <script
+            src="https://code.jquery.com/jquery-3.4.1.min.js"
+            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+            crossorigin="anonymous"></script>
+    <script src="characteristics.js"></script>
+    <style>
+      #content table th {
+          padding-left: 10px ;
+      }
+     </style>
+</head>
+<body>
+<form id="connectForm" method="GET">
+    <input id="name" type="text" autofocus="" placeholder="Bluetooth Name" value="GAGGM">
+    <input id="service" type="text" placeholder="Bluetooth Service" value="6e400001-b5a3-f393-e0a9-e50e24dcca9e">
+    <input id="characteristic-write" type="text" placeholder="Bluetooth Characteristic" value="6e400002-b5a3-f393-e0a9-e50e24dcca9e">
+    <input id="characteristic-notify" type="text" placeholder="Bluetooth Characteristic" value="6e400003-b5a3-f393-e0a9-e50e24dcca9e">
+    <button onclick="onButtonClick()">Get characteristics</button>
+    <button onclick="onReconnectButtonrClick()">Reconnect</button>
+</form>
+
+<form id="terminalInput" method="GET">
+    <input id="toSend" type="text" placeholder="" value="test">
+    <button onclick="sendValue()">Send</button>
+    <button onclick="startPerfTest()">Perf</button>
+</form>
+<p>This page contains testing for GATT...</p>
+
+<div id="output" class="output">
+    <div id="content">
+        <table><tr><th>Time</th><th>Diff</th><th>Msg</th></tr></table>
+    </div>
+    <div id="status"></div>
+    <pre id="log"></pre>
+</div>
+<script>
+      [].forEach.call(
+        document.querySelectorAll('form'),
+        function (el) {
+            console.log(el);
+            el.addEventListener('submit', function(event) {
+              event.stopPropagation();
+              event.preventDefault();
+            });
+        }
+      );
+    </script>
+<script>
+      //log = ChromeSamples.log;
+      function elemLog(msg){
+        $("#log").append(msg);
+        $("#log").append("<br>");
+      }
+      log = elemLog
+      function isWebBluetoothEnabled() {
+        if (navigator.bluetooth) {
+          return true;
+        } else {
+          //ChromeSamples.setStatus('Web Bluetooth API is not available.\n' +
+          //    'Please make sure the "Experimental Web Platform features" flag is enabled.');
+          return false;
+        }
+      }
+    </script>
+</body>
+</html>

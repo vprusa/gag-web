@@ -1,5 +1,106 @@
 <div class="row">
+	<div class="col-lg-5 col-md-8">
+		<div class="card">
+			<div class="card-header card-header-primary">
+				<h4 class="card-title ">New gesture</h4>
+				<p class="card-category">Fill form and click Record button</p>
+			</div>
+			<div class="card-body table-responsive">
+				<!--<form id="connectForm" method="GET">-->
+					<table class="table table-hover">
+						<tbody>
+							<tr>
+								<td colspan="2">BT NAME<br><input class="form-control"  id="name" type="text" autofocus="" placeholder="Bluetooth Name" value="GAGGM"></td>
+							</tr>
+							<tr>
+								<td colspan="2">Bluetooth Service<br><input class="form-control"  id="service" type="text" placeholder="Bluetooth Service" value="6e400001-b5a3-f393-e0a9-e50e24dcca9e"></td>
+							</tr>
+							<tr>
+								<td colspan="2">Bluetooth Write Characteristic<br><input class="form-control"  id="characteristic-write" type="text" placeholder="Bluetooth Characteristic" value="6e400002-b5a3-f393-e0a9-e50e24dcca9e"></td>
+							</tr>
+							<tr>
+								<td colspan="2">Bluetooth Notify Characteristic<br><input class="form-control"  id="characteristic-notify" type="text" placeholder="Bluetooth Characteristic" value="6e400003-b5a3-f393-e0a9-e50e24dcca9e"></td>
+							</tr>
+							<tr>
+								<td><button  class="btn btn-info desc"  onclick="onButtonClick()">Connect</button></td>
+								<!--<td><button  class="btn btn-info desc"  onclick="onReconnectButtonrClick()">Reconnect</button></td>-->
+							</tr>
+						</tbody>
+					</table>
+				<!--</form>-->
+
+				<button type="button" class="btn btn-info desc" (click)="showDetail(item.id)">Record</button>
+				<table class="table table-hover">
+					<tbody>
+					<tr>
+						<td>Time</td>
+						<td>xx s</td>
+					</tr>
+					<tr>
+						<td>Info</td>
+						<td>Lipsum</td>
+					</tr>
+					<tr>
+						<td>Info #2</td>
+						<td>VLipsum</td>
+					</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
 	<div class="col-lg-6 col-md-12">
+
+		<div class="card">
+			<div class="card-header card-header-primary">
+				<h4 class="card-title ">Gesture detail - partial (WS)</h4>
+				<p class="card-category">{{selectedGestureDetail.info}}</p>
+			</div>
+			<div class="card-body">
+				<div class="" ng-if="selectedGestureDetail.play"></div>
+				<div ng-controller="websocketController">
+					<button class="btn btn-info desc"
+							ng-click='playSelectedGesture()'>Play</button></td>
+					<!-- <p class="card-category">{{selectedGestureDetail.info}}</p>-->
+					<table class="table">
+						<thead class="text-primary">
+						<th>ID</th>
+						<th>Time</th>
+						<th>Position</th>
+						<!-- <th>quatA</th>
+                        <th>quatX</th>
+                        <th>quatY</th>
+                        <th>quatZ</th>
+                        <th>accX</th>
+                        <th>accY</th>
+                        <th>accZ</th>
+                        <th>magX</th>
+                        <th>magY</th>
+                        <th>magZ</th> -->
+						</thead>
+						<tbody>
+						<tr ng-repeat="item in selectedGestureDetail.player.data">
+							<td>{{item.id}}</td>
+							<td>{{item.timestamp | date: 'yyyy-MM-dd HH:MM'}}</td>
+							<td>{{item.position}}</td>
+							<!-- <td>{{item.quatA}}</td>
+                            <td>{{item.quatX}}</td>
+                            <td>{{item.quatY}}</td>
+                            <td>{{item.quatZ}}</td>
+                            <td>{{item.accX}}</td>
+                            <td>{{item.accY}}</td>
+                            <td>{{item.accZ}}</td>
+                            <td>{{item.magX}}</td>
+                            <td>{{item.magY}}</td>
+                            <td>{{item.magZ}}</td> -->
+						</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+
 		<div class="card">
 			<div class="card-header card-header-primary">
 				<h4 class="card-title ">Gestures list</h4>
@@ -8,84 +109,33 @@
 			<div class="card-body table-responsive">
 				<table class="table table-hover">
 					<thead class="text-warning">
-						<th>ID</th>
-						<th>Alias</th>
-						<th>Date created</th>
-						<th>Details</th>
-						<th>Op. #2</th>
+					<th>ID</th>
+					<th>Alias</th>
+					<th>Date created</th>
+					<th>Details</th>
+					<th>Op. #2</th>
 					</thead>
 					<tbody>
-						<tr ng-repeat="item in gestures">
-							<td>{{item.id}}</td>
-							<td>{{item.userAlias}}</td>
-							<td>{{item.dateCreated | date: 'yyyy-MM-dd HH:MM'}}</td>
-							<td>
-								<!-- <button type="button" class="btn btn-info desc" (click)="showDetail(item.id)">Show</button> -->
-								<a href="javascript:void(0)" ng-click='listDetail(item.id)'>List</a>
-							</td>
-							<td><a href="javascript:void(0)"
-								ng-click='selectGesture(item.id)'>Play</a></td>
-						</tr>
+					<tr ng-repeat="item in gestures">
+						<td>{{item.id}}</td>
+						<td>{{item.userAlias}}</td>
+						<td>{{item.dateCreated | date: 'yyyy-MM-dd HH:MM'}}</td>
+						<td>
+							<!-- <button type="button" class="btn btn-info desc" (click)="showDetail(item.id)">Show</button> -->
+							<a href="javascript:void(0)" ng-click='listDetail(item.id)'>List</a>
+						</td>
+						<td><button class="btn btn-info desc"
+									ng-click='selectGesture(item.id)'>Play</button></td>
+					</tr>
 					</tbody>
 				</table>
 			</div>
 		</div>
 	</div>
-	<div class="col-lg-6 col-md-12">
 
-		<div class="card">
-			<div class="card-header card-header-primary">
-				<h4 class="card-title ">Gesture detail</h4>
-				<p class="card-category">{{selectedGestureDetail.info}}</p>
-			</div>
-			<div class="card-body">
-				<div class="" ng-if="selectedGestureDetail.play"></div>
-				<div ng-controller="websocketController">
-					<a title="Play gesture" class="btn list-item-href"
-						ng-click="playSelectedGesture()"> <span
-						class="glyphicon glyphicon-star-empty"></span></a>
-					<!-- <p class="card-category">{{selectedGestureDetail.info}}</p>-->
-					<table class="table">
-						<thead class="text-primary">
-							<th>ID</th>
-							<th>Time</th>
-							<th>Position</th>
-							<!-- <th>quatA</th>
-							<th>quatX</th>
-							<th>quatY</th>
-							<th>quatZ</th>
-							<th>accX</th>
-							<th>accY</th>
-							<th>accZ</th>
-							<th>magX</th>
-							<th>magY</th>
-							<th>magZ</th> -->
-						</thead>
-						<tbody>
-							<tr ng-repeat="item in selectedGestureDetail.player.data">
-								<td>{{item.id}}</td>
-								<td>{{item.timestamp | date: 'yyyy-MM-dd HH:MM'}}</td>
-								<td>{{item.position}}</td>
-								<!-- <td>{{item.quatA}}</td>
-								<td>{{item.quatX}}</td>
-								<td>{{item.quatY}}</td>
-								<td>{{item.quatZ}}</td>
-								<td>{{item.accX}}</td>
-								<td>{{item.accY}}</td>
-								<td>{{item.accZ}}</td>
-								<td>{{item.magX}}</td>
-								<td>{{item.magY}}</td>
-								<td>{{item.magZ}}</td> -->
-							</tr>
-						</tbody>
-					</table>
-				</div>
-			</div>
-		</div>
-	</div>
 	<div class="card">
 		<div class="card-header card-header-primary">
-			<h4 class="card-title ">Gesture detail</h4>
+			<h4 class="card-title ">Gesture detail - whole (RS)</h4>
 			<p class="card-category">{{selectedGestureDetail.info}}</p>
 		</div>
 		<div class="card-body">

@@ -1,13 +1,11 @@
 package cz.muni.fi.gag.web.dao.impl;
 
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-
 import cz.muni.fi.gag.web.dao.GenericDao;
-
 import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
 
 /**
  * @author <a href="mailto:martin.styk@gmail.com">Martin Styk</a>
@@ -48,6 +46,6 @@ public abstract class GenericDaoImpl<T> implements GenericDao<T>, Serializable {
     @SuppressWarnings("unchecked")
     public List<T> findAll() {
         return em.createQuery("FROM " + type.getName()).<T>getResultList();
-
     }
+
 }

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.persistence.EntityManager;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.TypedQuery;
 import javax.validation.constraints.NotNull;
@@ -34,4 +35,10 @@ public class UserDaoImpl extends AbstractGenericDao<User> implements UserDao, Se
         throw new NonUniqueResultException();
         // return q.getSingleResult();
     }
+
+
+    public EntityManager getEm() {
+        return em;
+    }
+
 }

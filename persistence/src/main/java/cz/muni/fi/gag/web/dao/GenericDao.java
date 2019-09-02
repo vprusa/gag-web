@@ -57,4 +57,5 @@ public interface GenericDao<T> {
      * are none.
      */
     List<T> findAll();
+
 }
