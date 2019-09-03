@@ -106,10 +106,11 @@ angular
                   });
                }
 
+
+
                $scope.ble.time = function (text) {
                   $scope.log('[' + new Date().toJSON().substr(11, 8) + '] ' + text);
                }
-
 
                $scope.ble.connect = function() {
                    $scope.ble.exponentialBackoff(5 /* max retries */, 2 /* seconds delay */,
@@ -126,8 +127,8 @@ angular
                }
 
                $scope.ble.onDisconnected = function() {
-                    $scope.ble.log('> Bluetooth Device disconnected');
-                    $scope.ble.connect();
+                    $scope.log('> Bluetooth Device disconnected');
+                    $scope.connect();
                }
 
                $scope.ble.showReceivedValue = function (value, timeNow, timeDiff) {
@@ -150,14 +151,59 @@ angular
                   return String.fromCharCode.apply(null, new Uint8Array(buf));
                }
 
+               $scope.ble.bytesToInt = function(byte1, byte2) {
+                 //var number = parseInt(byte1) | parseInt(byte1)_ << 8;
+                 //var number = parseInt(byte1) | parseInt(byte1)_ << 8;
+                 var number = ((byte1 << 8) | byte2);
+                 //console.log("number");
+                 //console.log(number);
+                 var buffer = new ArrayBuffer(4);
+                 var view = new DataView(buffer);
+                 //console.log(byte1);
+                 //console.log(byte2)
+                 //console.log("number2");
+                 //console.log(number);
+
+                 number = number / 16384.0;
+                 //console.log("number3");
+                 //console.log(number);
+
+                 if (number >= 2){
+                   number = -4 + number;
+                 }
+                 //console.log("number4");
+                 //console.log(number);
+                 return number;
+               }
+
                $scope.ble.convert = function(data){
-                    let received = $scope.ble.ab2str(data.currentTarget.value.buffer);
-                    //console.log(received);
-                    //console.log(typeof(received));
-                    let arr = new Uint8Array(data.currentTarget.value.buffer);
+                    // g.e  [42, 153, 4, 6, 143, 197, 31, 231, 246, 2, 242, 0, 0, 13, 10]
+                    // g.e  [*, counter, finger, (6, 143), (197, 31), (231, 246), (2, 242), 0, 0, 13, 10]
+                    //let received = $scope.ble.ab2str(data.currentTarget.value.buffer);
+                    let received = new Uint8Array(data.currentTarget.value.buffer);
+
+                    console.log(received);
+
+                    let hand = received[0];
+                    let finger = received[2];
+                    console.log("received[0]");
+                    console.log(received[0]);
+                    let quatA = $scope.ble.bytesToInt(received[3],received[4]);
+
+                    let quatX = $scope.ble.bytesToInt(received[5],received[6]);
+                    let quatY = $scope.ble.bytesToInt(received[7],received[8]);
+                    let quatZ = $scope.ble.bytesToInt(received[9],received[10]);
+
+                    console.log("quatA");
+                    console.log(quatA);
+                    console.log("quatX");
+                    console.log(quatX);
+                    console.log("quatY");
+                    console.log(quatY);
+                    console.log("quatZ");
+                    console.log(quatZ);
+
                     console.log(arr);
-
-
                     return received;
                }
 
@@ -264,5 +310,3 @@ angular
               }
 
             } ]);
-
-

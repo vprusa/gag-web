@@ -1,5 +1,8 @@
 package cz.muni.fi.gag.web.websocket.endpoint;
 
+import cz.muni.fi.gag.web.entity.DataLine;
+import cz.muni.fi.gag.web.entity.FingerDataLine;
+import cz.muni.fi.gag.web.entity.WristDataLine;
 import cz.muni.fi.gag.web.logging.Log;
 import cz.muni.fi.gag.web.service.DataLineService;
 import cz.muni.fi.gag.web.service.GestureService;
@@ -70,36 +73,52 @@ public class DataLineWsEndpoint {
     }
 
     @OnMessage
-    public void onDataLineMessage(String msg, Session session) {
+    public void onDataLineMessage(Object msg, Session session) {
         Log.info("onDataLineMessage");
         String loggedUserName = session.getUserPrincipal().getName();
         // TODO add role check and restrict access for users gestures only... etc. etc.
 
         // TODO wrap in some structure .. create WS control protocol ...
-        JsonReader jsonReader = Json.createReader(new StringReader(msg));
-        JsonObject object = jsonReader.readObject();
+        if(msg instanceof WristDataLine){
+            WristDataLine wdl  = (WristDataLine) msg;
+            dataLineService.create(wdl);
+        } else if(msg instanceof FingerDataLine) {
+            FingerDataLine fdl  = (FingerDataLine) msg;
+            dataLineService.create(fdl);
+        } else if(msg instanceof DataLine) {
+            DataLine dl  = (DataLine) msg;
+            dataLineService.create(dl);
+        } else if (msg instanceof String) {
+            String msgStr = (String) msg;
+            JsonReader jsonReader = Json.createReader(new StringReader(msgStr));
+            JsonObject object = jsonReader.readObject();
 
-        String action = object.getString("action");
-        log.info("Action: " + action);
-        if(!action.matches("replayGesture")){
-            // another TODO ...
-            log.info("Unknown action: " + action);
-            return;
+            String action = object.getString("action");
+            log.info("Action: " + action);
+
+            switch(action){
+                case "replayGesture":
+                    // {\"action\" : \"replayGesture\", \"gestureId\":2}";
+                    long gestureId = object.getJsonNumber("gestureId").longValue();
+                    jsonReader.close();
+                    log.info("gestureId: " + gestureId);
+
+                    //List<DataLine> gestureData = dataLineService.findByGestureId(gestureId);
+                    // if(isUserInRole(loggedUserName, Role.ADMIN) || isUserInRole(loggedUserName,
+                    // Role.SUPER_USER)) {
+                    // dataLineService.recommend(songId, loggedUserName);
+                    // }
+                    DataLineRePlayer rep = new DataLineRePlayer(session, dataLineService, gestureId);
+                    Thread replayer = new Thread(rep);
+                    replayer.start();
+                    session.getUserProperties().put(REPLAYER_KEY, replayer);
+                    break;
+                default:
+                    log.info("Unknown action: " + action);
+                    return;
+            }
         }
-        // {\"action\" : \"replayGesture\", \"gestureId\":2}";
-        long gestureId = object.getJsonNumber("gestureId").longValue();
-        jsonReader.close();
-        log.info("gestureId: " + gestureId);
 
-        //List<DataLine> gestureData = dataLineService.findByGestureId(gestureId);
-        // if(isUserInRole(loggedUserName, Role.ADMIN) || isUserInRole(loggedUserName,
-        // Role.SUPER_USER)) {
-        // dataLineService.recommend(songId, loggedUserName);
-        // }
-        DataLineRePlayer rep = new DataLineRePlayer(session, dataLineService, gestureId);
-        Thread replayer = new Thread(rep);
-        replayer.start();
-        session.getUserProperties().put(REPLAYER_KEY, replayer);
     }
     
     // Exception handling

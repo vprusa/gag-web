@@ -26,16 +26,9 @@ import java.util.Optional;
  */
 public abstract class AbstractGenericDao<T> implements GenericDao<T> {
 
-    //@Inject
-    // TODO move to its own class?
     @PersistenceContext//(name="gagEntityManager")
     protected EntityManager em;
-/*
-    @Produces
-    public EntityManager entityManager(){
-      return em;
-    }*/
-    
+
     private final Class<T> type;
 
     public Class<T> getType(){
