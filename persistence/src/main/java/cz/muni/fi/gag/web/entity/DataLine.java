@@ -30,7 +30,7 @@ public /*abstract */class DataLine extends AbstractEntity implements Serializabl
 
     // https://stackoverflow.com/questions/26957554/
     // jsonmappingexception-could-not-initialize-proxy-no-session
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @Null // todo @NotNull .. fix tests?
     protected Gesture gesture;
 

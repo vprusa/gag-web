@@ -28,8 +28,13 @@ angular.module('app', [
             return $http.get("/gagweb/api/dataline/gesture/" + id).then(function (response) {
                 return response.data;
             });
+        },
+        createFingerDataLine: function (data){
+           return $http.post("/gagweb/api/fingerdataline", data).then(function (response){
+               return response.data;
+           });
         }
-       
+
     };
 }]).service('createUpdateTools', function () {
     var alerts = [];

@@ -112,6 +112,27 @@ angular
                   $scope.log('[' + new Date().toJSON().substr(11, 8) + '] ' + text);
                }
 
+               $scope.ble.convertNumberToFinger = function(nmb){
+                 // THUMB, INDEX, MIDDLE, RING, LITTLE, WRIST;
+                 switch(nmb){
+                   case 0:
+                    return "THUMB";
+                   case 1:
+                    return "INDEX";
+                   case 2:
+                    return "MIDDLE";
+                   case 3:
+                     return "RING";
+                   case 4:
+                     return "LITTLE";
+                   case 5:
+                     return "WRIST";
+                   default:
+                    return "NONE";
+                 }
+                 return "NONE";
+               }
+
                $scope.ble.connect = function() {
                    $scope.ble.exponentialBackoff(5 /* max retries */, 2 /* seconds delay */,
                     function toTry() {
@@ -180,20 +201,20 @@ angular
                     // g.e  [42, 153, 4, 6, 143, 197, 31, 231, 246, 2, 242, 0, 0, 13, 10]
                     // g.e  [*, counter, finger, (6, 143), (197, 31), (231, 246), (2, 242), 0, 0, 13, 10]
                     //let received = $scope.ble.ab2str(data.currentTarget.value.buffer);
+
                     let received = new Uint8Array(data.currentTarget.value.buffer);
 
-                    console.log(received);
+                    //console.log(received);
 
                     let hand = received[0];
-                    let finger = received[2];
-                    console.log("received[0]");
-                    console.log(received[0]);
+                    let finger = $scope.ble.convertNumberToFinger(received[2]);
                     let quatA = $scope.ble.bytesToInt(received[3],received[4]);
 
                     let quatX = $scope.ble.bytesToInt(received[5],received[6]);
                     let quatY = $scope.ble.bytesToInt(received[7],received[8]);
                     let quatZ = $scope.ble.bytesToInt(received[9],received[10]);
 
+                    /*
                     console.log("quatA");
                     console.log(quatA);
                     console.log("quatX");
@@ -202,14 +223,34 @@ angular
                     console.log(quatY);
                     console.log("quatZ");
                     console.log(quatZ);
+                    */
 
-                    console.log(arr);
-                    return received;
+// {"id":1,"timestamp":-3599000,"quatA":1.0,"quatX":1.0,"quatY":1.0,"quatZ":1.0,"accX":1,"accY":1,"accZ":1,"position":"THUMB","magX":1,"magY":1,"magZ":1}
+                    var jsonMessage = {
+                      // "id": null,
+                      "timestamp": $.now(),
+                      // TODO dynamic
+                      "gesture": 2,
+                      "quatA": quatA,
+                      "quatX": quatX,
+                      "quatY": quatY,
+                      "quatZ": quatZ,
+                      "accX": 1,
+                      "accY": 1,
+                      "accZ": 1,
+                      "position": finger,
+
+                      //"magX": 1,
+                      //"magY": 1,
+                      //"magZ": 1
+                    };
+                    //console.log(jsonMessage);
+                    return jsonMessage;
                }
 
                $scope.connect2BLE = function(){
                   console.log("connect2BLE");
-                  console.log($scope.ble)
+                  console.log($scope.ble);
 
                   let serviceUuid = $scope.ble.device.serviceUUID;
                   if (serviceUuid.startsWith('0x')) {
@@ -279,7 +320,7 @@ angular
                       $scope.ble.timeNow = $.now();
                       console.log("Time timeNow: " + $scope.ble.timeNow);
 
-                      $scope.ble.bluetoothDeviceNotifyChar.addEventListener("characteristicvaluechanged",async function(ev){
+                      $scope.ble.bluetoothDeviceNotifyChar.addEventListener("characteristicvaluechanged", async function(ev){
                         //console.log(ev);
                         var received = false;
                         if(!(received = $scope.ble.convert(ev))) {return;}
@@ -301,6 +342,22 @@ angular
                         $scope.ble.showReceivedValue(received, $scope.ble.timeNow, timeDiff);
                         $scope.ble.lastTS = ev.timeStamp;
                         $scope.ble.timeNotifyLast = $scope.ble.timeNow;
+
+                        console.log("trying to push dataline:");
+                        var jsonStr = JSON.stringify(received);
+                        console.log(jsonStr);
+                        commonTools.createFingerDataLine(jsonStr).then(function (response) {
+                           //$scope.status = "New song successfully created.";
+                           //createUpdateTools.setAlerts([{type: 'success', title: 'Successful!', msg: $scope.status}]);
+                           //$location.path("/songsOverview");
+                           console.log("response");
+                           console.log(response);
+                        }, function (response) {
+                           //$scope.alerts.push({type: 'danger', title: 'Error ' + response.status, msg: response.statusText});
+                           console.log("response Error");
+                           console.log(response);
+                        });
+
                       });
                       $scope.ble.bluetoothDeviceNotifyChar.startNotifications();
                   })
