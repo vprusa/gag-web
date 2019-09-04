@@ -35,8 +35,7 @@ public class Gesture extends AbstractEntity {
     @NotNull
     private User user;
 
-
-    @Column(columnDefinition="tinyint(1) default 1")
+    @Column(columnDefinition="tinyint(1) default 0")
     private Boolean isFiltered;
 
     @OneToMany(mappedBy = "gesture", orphanRemoval = false, fetch = FetchType.EAGER)

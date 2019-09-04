@@ -37,8 +37,6 @@ class BaseDataLineMessageBodyReader<T extends DataLine> implements MessageBodyRe
     public T readFrom(Class<T> type, Type genericType, Annotation[] annotations,
                          MediaType mediaType, MultivaluedMap<String, String> httpHeaders,
                          InputStream entityStream) throws IOException, WebApplicationException {
-
-
         try {
             JAXBContext jaxbContext = JAXBContext.newInstance(type);
             Long gestureId = (Long) jaxbContext.createUnmarshaller().getProperty("gesture");

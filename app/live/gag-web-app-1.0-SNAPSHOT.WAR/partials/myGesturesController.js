@@ -312,7 +312,7 @@ angular
                   let promise = new Promise(
                     function(resolve, reject) {
                       if($scope.ble.current) {
-                        connect();
+                        $scope.ble.connect();
                         // TODO fix return values and reconnect ...
                         console.log($scope.ble.current);
                         resolve($scope.ble.current.gatt);

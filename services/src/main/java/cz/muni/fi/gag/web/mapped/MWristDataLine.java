@@ -10,7 +10,7 @@ import cz.muni.fi.gag.web.service.GestureService;
  *
  */
 @JsonIgnoreProperties(value = {"gesture"})
-public class MWristDataLine extends WristDataLine implements GestureMapper {
+public class MWristDataLine extends WristDataLine implements GestureMapper<WristDataLine> {
 
     protected Long gestureID;
 
