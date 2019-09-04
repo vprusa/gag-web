@@ -1,5 +1,6 @@
 package cz.muni.fi.gag.web.mapped;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import cz.muni.fi.gag.web.entity.DataLine;
 import cz.muni.fi.gag.web.service.GestureService;
 
@@ -7,6 +8,7 @@ import cz.muni.fi.gag.web.service.GestureService;
  * @author Vojtech Prusa
  * 
  */
+@JsonIgnoreProperties(value = {"gesture"})
 public class MDataLine extends DataLine implements GestureMapper<DataLine> {
 
     protected Long gestureID;

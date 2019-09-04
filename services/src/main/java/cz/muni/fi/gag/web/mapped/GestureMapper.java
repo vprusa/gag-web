@@ -13,7 +13,6 @@ import cz.muni.fi.gag.web.service.GestureService;
  *
  */
 public interface GestureMapper<DataLineEx extends DataLine> {
-        //, Service extends GestureService //GenericCRUDService<DataLineEx, GenericDao<DataLineEx>>
 
     Long getGestureID();
     void setGestureID(Long gestureID);
@@ -42,6 +41,7 @@ public interface GestureMapper<DataLineEx extends DataLine> {
         fdl.setQuatX(mfdl.getQuatX());
         fdl.setQuatY(mfdl.getQuatY());
         fdl.setQuatZ(mfdl.getQuatZ());
+        fdl.setPosition(mfdl.getPosition());
         return fdl;
     }
 
@@ -59,6 +59,8 @@ public interface GestureMapper<DataLineEx extends DataLine> {
         wdl.setMagX(mwdl.getMagX());
         wdl.setMagY(mwdl.getMagY());
         wdl.setMagZ(mwdl.getMagZ());
+        // TODO ?
+        //wdl.setPosition(mwdl.getPosition());
         return wdl;
     }
 

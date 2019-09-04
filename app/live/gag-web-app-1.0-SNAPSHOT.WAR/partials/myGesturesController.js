@@ -149,7 +149,7 @@ angular
 
                $scope.ble.onDisconnected = function() {
                     $scope.log('> Bluetooth Device disconnected');
-                    $scope.connect();
+                    $scope.ble.connect();
                }
 
                $scope.ble.showReceivedValue = function (value, timeNow, timeDiff) {
@@ -230,7 +230,7 @@ angular
                       // "id": null,
                       "timestamp": $.now(),
                       // TODO dynamic
-                      "gesture": 2,
+                      "gestureID": 2,
                       "quatA": quatA,
                       "quatX": quatX,
                       "quatY": quatY,
