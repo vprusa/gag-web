@@ -1,12 +1,12 @@
 package cz.muni.fi.gag.web.dao.impl;
 
 import cz.muni.fi.gag.web.dao.GenericDao;
-
+import java.util.List;
+import java.util.Optional;
+import javax.enterprise.inject.Produces;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * This class provides the most primitive and straight-forward implementation of
@@ -26,7 +26,8 @@ import java.util.Optional;
  */
 public abstract class AbstractGenericDao<T> implements GenericDao<T> {
 
-    @PersistenceContext//(name="gagEntityManager")
+    @Produces
+    @PersistenceContext
     protected EntityManager em;
 
     private final Class<T> type;

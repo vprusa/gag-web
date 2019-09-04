@@ -248,6 +248,40 @@ angular
                     return jsonMessage;
                }
 
+               $scope.test = function(){
+  // "id": null,
+                    var jsonMessage = {
+                      "timestamp": $.now(),
+                      // TODO dynamic
+                      "gestureID": 2,
+                      "quatA": 0,
+                      "quatX": 0,
+                      "quatY": 0,
+                      "quatZ": 0,
+                      "accX": 1,
+                      "accY": 1,
+                      "accZ": 1,
+                      "position": "MIDDLE",
+                      //"magX": 1,
+                      //"magY": 1,
+                      //"magZ": 1
+                    };
+
+                    var jsonStr = JSON.stringify(jsonMessage);
+                    console.log(jsonStr);
+                    commonTools.createFingerDataLine(jsonStr).then(function (response) {
+                       //$scope.status = "New song successfully created.";
+                       //createUpdateTools.setAlerts([{type: 'success', title: 'Successful!', msg: $scope.status}]);
+                       //$location.path("/songsOverview");
+                       console.log("response");
+                       console.log(response);
+                    }, function (response) {
+                       //$scope.alerts.push({type: 'danger', title: 'Error ' + response.status, msg: response.statusText});
+                       console.log("response Error");
+                       console.log(response);
+                    });
+                }
+
                $scope.connect2BLE = function(){
                   console.log("connect2BLE");
                   console.log($scope.ble);
@@ -344,6 +378,10 @@ angular
                         $scope.ble.timeNotifyLast = $scope.ble.timeNow;
 
                         console.log("trying to push dataline:");
+                        if(received.position === "WRIST"){
+                            // TODO
+                            return;
+                        }
                         var jsonStr = JSON.stringify(received);
                         console.log(jsonStr);
                         commonTools.createFingerDataLine(jsonStr).then(function (response) {

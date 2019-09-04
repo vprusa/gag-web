@@ -8,7 +8,7 @@ import cz.muni.fi.gag.web.service.generic.GenericCRUDService;
  *
  * @author Vojtech Prusa
  *
- * @UserServiceImpl
+ * {@link cz.muni.fi.gag.web.service.impl.UserServiceImpl}
  *
  */
 public interface UserService extends GenericCRUDService<User, UserDao> {

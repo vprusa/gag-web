@@ -11,6 +11,7 @@ import javax.persistence.Enumerated;
  *
  */
 @Entity
+//@ApplicationScoped
 public class FingerDataLine extends DataLine {
 
     // TODO wrapper/converter?

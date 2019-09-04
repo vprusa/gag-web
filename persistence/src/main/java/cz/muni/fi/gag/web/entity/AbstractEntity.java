@@ -12,19 +12,21 @@ import javax.persistence.MappedSuperclass;
  *         https://stackoverflow.com/questions/4045511/manytomany-in-an-abstract-mappedsuperclass
  *         ?
  * 
- * @DataLine
- * @FingerDataLine
- * @WristDataLine
- * @User
- * @SensorOffset
- * @FingerSensorOffset
- * @WristSensorOffset
- * @Gesture
- * @HandDevice
+ * {@link DataLine}
+ * {@link FingerDataLine}
+ * {@link WristDataLine}
+ * {@link User}
+ * {@link SensorOffset}
+ * {@link FingerSensorOffset}
+ * {@link WristSensorOffset}
+ * {@link Gesture}
+ * {@link HandDevice}
  * 
  */
+//@ApplicationScoped
+//@Stateless
 @MappedSuperclass
-public abstract class AbstractEntity {
+public /*abstract*/ class AbstractEntity extends AbstractBaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +36,7 @@ public abstract class AbstractEntity {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

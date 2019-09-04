@@ -17,5 +17,6 @@ import cz.muni.fi.gag.web.service.generic.GenericCRUDService;
 public interface GestureService extends GenericCRUDService<Gesture, GestureDao> {
 
     List<Gesture> findByUser(User u);
-    
+    Gesture findRefById(Long u);
+
 }

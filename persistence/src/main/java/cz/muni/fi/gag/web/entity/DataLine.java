@@ -1,17 +1,15 @@
 package cz.muni.fi.gag.web.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
+import java.io.Serializable;
+import java.util.Date;
+import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
-import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
 import javax.validation.constraints.PastOrPresent;
-import java.io.Serializable;
-import java.util.Date;
 
 /**
  * @author Vojtech Prusa
@@ -21,7 +19,8 @@ import java.util.Date;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@JsonIgnoreProperties(value= {"gesture"})
+@JsonIgnoreProperties(allowSetters = true, value = {"gesture"})
+//@ApplicationScoped
 public /*abstract */class DataLine extends AbstractEntity implements Serializable {
 
     @NotNull
@@ -30,8 +29,8 @@ public /*abstract */class DataLine extends AbstractEntity implements Serializabl
 
     // https://stackoverflow.com/questions/26957554/
     // jsonmappingexception-could-not-initialize-proxy-no-session
-    @ManyToOne(fetch = FetchType.LAZY)
-    @Null // todo @NotNull .. fix tests?
+    @ManyToOne(fetch = FetchType.EAGER)
+    //@Null // todo @NotNull .. fix tests?
     protected Gesture gesture;
 
     public Date getTimestamp() {
@@ -45,11 +44,49 @@ public /*abstract */class DataLine extends AbstractEntity implements Serializabl
     public Gesture getGesture() {
         return gesture;
     }
+/*
+    @Transient
+    @Inject
+    protected UserDao userDao;
 
-    public void setGesture(Gesture gesture) {
-        this.gesture = gesture;
+    private EntityManager getEM(){
+        return userDao.getEm();
     }
 
+    public void setGesture(Object gesture) {
+        log.info(gesture.toString());
+        log.info(gesture.getClass().toString());
+        if(gesture instanceof Gesture) {
+            this.gesture = (Gesture)gesture;
+        } else if(gesture instanceof Long) {
+            try {
+                EntityManager em = this.getEM();
+                if(em == null){
+                    log.info("em == null");
+                } else {
+                    log.info(em.toString());
+                    this.gesture = em.getReference(Gesture.class, gesture);
+                }
+            } catch(Exception e){
+                log.info(e.getMessage());
+                e.printStackTrace();
+            }
+        } else {
+            // TODO throw exception or ignore?
+        }
+
+        //this.gesture = gesture;
+    }*/
+
+    public void setGesture(Gesture gesture) {
+        //setGesture(new Long(gesture));
+        this.gesture = gesture;
+    }
+/*
+    public void setGesture(int gesture) {
+        setGesture(new Long(gesture));
+    }
+*/
     @Override
     public String toString() {
         return "DataLine [id=" + id + ", timestamp=" + timestamp + ", gesture=" + gesture + "]";

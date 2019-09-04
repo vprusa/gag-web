@@ -2,7 +2,9 @@ package cz.muni.fi.gag.web.rest.endpoint;
 
 import cz.muni.fi.gag.web.entity.FingerDataLine;
 import cz.muni.fi.gag.web.service.FingerDataLineService;
-
+import cz.muni.fi.gag.web.service.GestureService;
+import cz.muni.fi.gag.web.mapped.MFingerDataLine;
+import java.util.Optional;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -17,8 +19,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import java.util.Optional;
-
 import static cz.muni.fi.gag.web.entity.UserRole.USER_R;
 
 /**
@@ -30,6 +30,8 @@ public class FingerDataLineEndpoint {
 
     @Inject
     private FingerDataLineService fingerDataLineService;
+    @Inject
+    private GestureService gestureService;
 
     @GET
     @Path("/{id}")
@@ -44,12 +46,14 @@ public class FingerDataLineEndpoint {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces({MediaType.APPLICATION_JSON})
     @RolesAllowed(USER_R)
-    public Response createFingerDataLine(FingerDataLine fingerDataLine) {
+    public Response createFingerDataLine(MFingerDataLine mfdl) {
+        FingerDataLine fdl = mfdl.getEntity(gestureService);
+
         Response.ResponseBuilder builder;
         try {
-            FingerDataLine created = fingerDataLineService.create(fingerDataLine);
+            FingerDataLine created = fingerDataLineService.create(fdl);
             builder = Response.ok(created);
         } catch (Exception e) {
             builder = Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage());

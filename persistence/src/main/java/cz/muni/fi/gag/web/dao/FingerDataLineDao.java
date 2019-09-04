@@ -6,9 +6,8 @@ import cz.muni.fi.gag.web.entity.FingerDataLine;
  *
  * @author Vojtech Prusa
  *
- * @FingerDataLineDaoImpl
+ * {@link cz.muni.fi.gag.web.dao.impl.FingerDataLineDaoImpl}
  *
  */
 public interface FingerDataLineDao extends GenericDao<FingerDataLine> {
-
 }

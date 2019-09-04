@@ -9,11 +9,12 @@ import cz.muni.fi.gag.web.entity.User;
  * 
  * @author Vojtech Prusa
  * 
- * @GestureDaoImpl
+ * {@link cz.muni.fi.gag.web.dao.impl.GestureDaoImpl}
  *
  */
 public interface GestureDao extends GenericDao<Gesture> {
 
     List<Gesture> findByUser(User u);
 
+    Gesture findRefById(Long u);
 }

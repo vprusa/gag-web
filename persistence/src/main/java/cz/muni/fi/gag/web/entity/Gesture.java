@@ -35,7 +35,7 @@ public class Gesture extends AbstractEntity {
     @NotNull
     private User user;
 
-    @OneToMany(mappedBy = "gesture", orphanRemoval = false, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "gesture", orphanRemoval = false, fetch = FetchType.EAGER)
     @JsonIgnoreProperties({"gesture"})
     private List<DataLine> data = new ArrayList<>();
 

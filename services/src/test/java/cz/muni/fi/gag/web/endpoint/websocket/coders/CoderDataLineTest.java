@@ -50,7 +50,7 @@ public class CoderDataLineTest extends TestServiceBase {
         public DataLineEx testDecoder(DataLineEx dl) throws EncodeException, JsonProcessingException {
             String s = testEncoder(dl);
             // have to se id because default value is null due to handling id's automatically via persistence layer
-            dl.setId(0);
+            dl.setId(new Long(0));
 
             DataLineDecoders<DataLineEx> decoder = new DataLineDecoders<DataLineEx>(dl.getClass());
             decoder.init(null);

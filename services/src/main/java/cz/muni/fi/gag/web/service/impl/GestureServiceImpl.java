@@ -34,4 +34,9 @@ public class GestureServiceImpl extends GenericCRUDServiceImpl<Gesture, GestureD
         return gdao.findByUser(u);
     }
 
+    @Override
+    public Gesture findRefById(Long u) {
+        return getDao().findRefById(u);
+    }
+
 }

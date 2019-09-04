@@ -31,4 +31,9 @@ public class GestureDaoImpl extends AbstractGenericDao<Gesture> implements Gestu
         return results;
     }
 
+    @Override
+    public Gesture findRefById(Long u) {
+        return em.getReference(Gesture.class, u);
+    }
+
 }

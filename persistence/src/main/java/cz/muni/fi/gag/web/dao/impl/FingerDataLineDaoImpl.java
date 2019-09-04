@@ -1,11 +1,9 @@
 package cz.muni.fi.gag.web.dao.impl;
 
-import java.io.Serializable;
-
-import javax.enterprise.context.ApplicationScoped;
-
 import cz.muni.fi.gag.web.dao.FingerDataLineDao;
 import cz.muni.fi.gag.web.entity.FingerDataLine;
+import java.io.Serializable;
+import javax.enterprise.context.ApplicationScoped;
 
 /**
  * @author Vojtech Prusa
@@ -18,4 +16,5 @@ public class FingerDataLineDaoImpl extends AbstractGenericDao<FingerDataLine>
     public FingerDataLineDaoImpl() {
         super(FingerDataLine.class);
     }
+
 }
