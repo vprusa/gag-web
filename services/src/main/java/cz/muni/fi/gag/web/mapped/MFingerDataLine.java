@@ -2,6 +2,7 @@ package cz.muni.fi.gag.web.mapped;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import cz.muni.fi.gag.web.entity.FingerDataLine;
 import cz.muni.fi.gag.web.service.GestureService;
 
@@ -12,6 +13,7 @@ import cz.muni.fi.gag.web.service.GestureService;
 @JsonIgnoreProperties(value = {"gesture"})
 public class MFingerDataLine extends FingerDataLine implements GestureMapper<FingerDataLine> {
 
+    @JsonProperty("gid")
     protected Long gestureID;
 
     public Long getGestureID() {

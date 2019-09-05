@@ -228,17 +228,17 @@ angular
 // {"id":1,"timestamp":-3599000,"quatA":1.0,"quatX":1.0,"quatY":1.0,"quatZ":1.0,"accX":1,"accY":1,"accZ":1,"position":"THUMB","magX":1,"magY":1,"magZ":1}
                     var jsonMessage = {
                       // "id": null,
-                      "timestamp": $.now(),
+                      "t": $.now(),
                       // TODO dynamic
-                      "gestureID": 2,
-                      "quatA": quatA,
-                      "quatX": quatX,
-                      "quatY": quatY,
-                      "quatZ": quatZ,
-                      "accX": 1,
-                      "accY": 1,
-                      "accZ": 1,
-                      "position": finger,
+                      "gid": 2,
+                      "qA": quatA,
+                      "qX": quatX,
+                      "qY": quatY,
+                      "qZ": quatZ,
+                      "aX": 1,
+                      "aY": 1,
+                      "aZ": 1,
+                      "p": finger,
 
                       //"magX": 1,
                       //"magY": 1,
@@ -251,21 +251,22 @@ angular
                $scope.test = function(){
   // "id": null,
                     var jsonMessage = {
-                      "timestamp": $.now(),
+                      "t": $.now(),
                       // TODO dynamic
-                      "gestureID": 2,
-                      "quatA": 0,
-                      "quatX": 0,
-                      "quatY": 0,
-                      "quatZ": 0,
-                      "accX": 1,
-                      "accY": 1,
-                      "accZ": 1,
-                      "position": "MIDDLE",
+                      "gid": 2,
+                      "qA": 0,
+                      "qX": 0,
+                      "qY": 0,
+                      "qZ": 0,
+                      "aX": 1,
+                      "aY": 1,
+                      "aZ": 1,
+                      "p": "MIDDLE",
                       //"magX": 1,
                       //"magY": 1,
                       //"magZ": 1
                     };
+
 
                     var jsonStr = JSON.stringify(jsonMessage);
                     console.log(jsonStr);
@@ -371,14 +372,13 @@ angular
                         if($scope.ble.lastTS){
                           var difference = ev.timeStamp - $scope.ble.lastTS;
                           //console.log("Time difference: " + difference);
-
                         }
                         $scope.ble.showReceivedValue(received, $scope.ble.timeNow, timeDiff);
                         $scope.ble.lastTS = ev.timeStamp;
                         $scope.ble.timeNotifyLast = $scope.ble.timeNow;
 
                         console.log("trying to push dataline:");
-                        if(received.position === "WRIST"){
+                        if(received.p === "WRIST"){
                             // TODO
                             return;
                         }

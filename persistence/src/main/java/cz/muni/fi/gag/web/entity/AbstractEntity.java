@@ -30,6 +30,7 @@ public /*abstract*/ class AbstractEntity extends AbstractBaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@JsonProperty("i")
     protected Long id;
 
     public Long getId() {

@@ -1,6 +1,7 @@
 package cz.muni.fi.gag.web.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Entity;
@@ -20,17 +21,21 @@ import javax.validation.constraints.PastOrPresent;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @JsonIgnoreProperties(allowSetters = true, value = {"gesture"})
+//@JsonIgnoreProperties(allowSetters = true, value = {"g"})
 //@ApplicationScoped
 public /*abstract */class DataLine extends AbstractEntity implements Serializable {
 
     @NotNull
     @PastOrPresent
+    @JsonProperty("t")
     protected Date timestamp;
 
     // https://stackoverflow.com/questions/26957554/
     // jsonmappingexception-could-not-initialize-proxy-no-session
-    @ManyToOne(fetch = FetchType.EAGER)
+    // TODO fix find by reference?
+    @ManyToOne(fetch = FetchType.LAZY)
     //@Null // todo @NotNull .. fix tests?
+    //@JsonProperty("g")
     protected Gesture gesture;
 
     public Date getTimestamp() {

@@ -1,5 +1,6 @@
 package cz.muni.fi.gag.web.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -17,18 +18,24 @@ public class FingerDataLine extends DataLine {
     // TODO wrapper/converter?
     // private Quaternion quat;
 
+    @JsonProperty("qA")
     private float quatA;
+    @JsonProperty("qX")
     private float quatX;
+    @JsonProperty("qY")
     private float quatY;
+    @JsonProperty("qZ")
     private float quatZ;
 
+    @JsonProperty("aX")
     private short accX;
-
+    @JsonProperty("aY")
     private short accY;
-
+    @JsonProperty("aZ")
     private short accZ;
 
     @Enumerated(EnumType.ORDINAL)
+    @JsonProperty("p")
     private FingerPosition position;
 
     public FingerPosition getPosition() {

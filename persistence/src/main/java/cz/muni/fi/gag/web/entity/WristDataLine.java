@@ -1,5 +1,6 @@
 package cz.muni.fi.gag.web.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.persistence.Entity;
 
 /**
@@ -9,10 +10,13 @@ import javax.persistence.Entity;
 @Entity
 public class WristDataLine extends FingerDataLine {
 
+    @JsonProperty("mX")
     private short magX;
 
+    @JsonProperty("mY")
     private short magY;
 
+    @JsonProperty("mZ")
     private short magZ;
 
     /**

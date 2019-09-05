@@ -27,7 +27,7 @@ import javax.transaction.Transactional;
 public abstract class AbstractGenericDao<T> implements GenericDao<T> {
 
     @Produces
-    @PersistenceContext
+    @PersistenceContext(name = "primary")
     protected EntityManager em;
 
     private final Class<T> type;
