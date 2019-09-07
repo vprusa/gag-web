@@ -21,7 +21,7 @@
 			source, this example data source is just for development and testing! -->
 		<jta-data-source>java:jboss/datasources/ExampleDS</jta-data-source>
 
-		<class>cz.muni.fi.gag.web.entity.AbstractEntity</class>
+		<class>cz.muni.fi.gag.web.entity.GenericEntity</class>
 		<class>cz.muni.fi.gag.web.entity.DataLine</class>
 		<class>cz.muni.fi.gag.web.entity.FingerDataLine</class>
 		<class>cz.muni.fi.gag.web.entity.FingerSensorOffset</class>

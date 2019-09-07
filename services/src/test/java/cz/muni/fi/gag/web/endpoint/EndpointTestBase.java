@@ -1,6 +1,6 @@
 package cz.muni.fi.gag.web.endpoint;
 
-import cz.muni.fi.gag.web.entity.AbstractEntity;
+import cz.muni.fi.gag.web.entity.GenericEntity;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.runner.RunWith;
 
@@ -14,7 +14,7 @@ import java.util.logging.Logger;
  * {@link FingerDataLineEndpointTest}
  */
 @RunWith(Arquillian.class)
-public abstract class EndpointTestBase<EntityExt extends AbstractEntity>
+public abstract class EndpointTestBase<EntityExt extends GenericEntity>
         extends AuthenticationTestBase {
 
     private static Logger log = Logger.getLogger(EndpointTestBase.class.getSimpleName());

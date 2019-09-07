@@ -1,6 +1,6 @@
 package cz.muni.fi.gag.web.common;
 
-import cz.muni.fi.gag.web.entity.AbstractEntity;
+import cz.muni.fi.gag.web.entity.GenericEntity;
 import org.jboss.logging.Logger;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
@@ -53,9 +53,9 @@ public class TestBase {
                 .addAsLibraries(filesKeycloak);
     }
 
-    public void printTestEntities(List<AbstractEntity> entities){
+    public void printTestEntities(List<GenericEntity> entities){
         int i = 0;
-        for (Iterator<AbstractEntity> iter = entities.iterator(); iter.hasNext();) {
+        for (Iterator<GenericEntity> iter = entities.iterator(); iter.hasNext();) {
             log.info("Using " + iter.next().getClass().getSimpleName() + " test" + i + "");
             i++;
         }

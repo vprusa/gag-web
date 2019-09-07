@@ -5,6 +5,7 @@ import cz.muni.fi.gag.web.entity.FingerDataLine;
 import cz.muni.fi.gag.web.entity.Gesture;
 import cz.muni.fi.gag.web.entity.WristDataLine;
 import cz.muni.fi.gag.web.service.GestureService;
+import cz.muni.fi.gag.web.websocket.endpoint.packet.WSMsgBase;
 
 /**
  * @author Vojtech Prusa
@@ -12,7 +13,7 @@ import cz.muni.fi.gag.web.service.GestureService;
  * TODO .. how to avoid duplicit code in map[Finger|Wrist]DataLine(...) mehtods?
  *
  */
-public interface GestureMapper<DataLineEx extends DataLine> {
+public interface GestureMapper<DataLineEx extends DataLine> extends WSMsgBase {
 
     Long getGestureID();
     void setGestureID(Long gestureID);

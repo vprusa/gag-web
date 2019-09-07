@@ -1,7 +1,7 @@
 package cz.muni.fi.gag.web.service.generic;
 
 import cz.muni.fi.gag.web.dao.GenericDao;
-import cz.muni.fi.gag.web.entity.AbstractEntity;
+import cz.muni.fi.gag.web.entity.GenericEntity;
 import cz.muni.fi.gag.web.logging.Log;
 
 import java.util.List;
@@ -17,7 +17,7 @@ import java.util.Optional;
  * {@link cz.muni.fi.gag.web.service.impl.FingerDataLineServiceImpl}
  * 
  */
-public abstract class GenericCRUDServiceImpl<T extends AbstractEntity, TDao extends GenericDao<T>>
+public abstract class GenericCRUDServiceImpl<T extends GenericEntity, TDao extends GenericDao<T>>
         implements GenericCRUDService<T, TDao> {
 
     @Override

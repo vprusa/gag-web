@@ -22,7 +22,7 @@ import javax.validation.constraints.PastOrPresent;
  */
 @Entity
 @Table(name = "gesture")
-public class Gesture extends AbstractEntity {
+public class Gesture extends GenericEntity {
 
     @NotNull
     @PastOrPresent

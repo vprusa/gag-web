@@ -22,7 +22,7 @@ import cz.muni.fi.gag.web.validation.ValidHandOffsets;
  */
 @Entity
 @Table(name = "handDevice")
-public class HandDevice extends AbstractEntity {
+public class HandDevice extends GenericEntity {
 
     @NotBlank
     @Column(nullable = false, unique = true)

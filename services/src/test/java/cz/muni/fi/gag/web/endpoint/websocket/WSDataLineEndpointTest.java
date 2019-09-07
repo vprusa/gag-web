@@ -22,15 +22,15 @@ import java.util.concurrent.TimeUnit;
  *
  */
 @RunWith(Arquillian.class)
-public class WebsocketDatalineEndpointTest extends AuthenticationTestBase {
+public class WSDataLineEndpointTest extends AuthenticationTestBase {
 
-    private static final Logger log = Logger.getLogger(WebsocketDatalineEndpointTest.class.getSimpleName());
+    private static final Logger log = Logger.getLogger(WSDataLineEndpointTest.class.getSimpleName());
 
-    public static final String TESTED_ENDPOINT = "ws://" + URL_NO_PROTOCOL + WebsocketDatalineEndpointTest.class.getSimpleName() + "/datalinews";
+    public static final String TESTED_ENDPOINT = "ws://" + URL_NO_PROTOCOL + WSDataLineEndpointTest.class.getSimpleName() + "/datalinews";
 
     @Deployment
     public static WebArchive deployment() {
-        return getDeployment(WebsocketDatalineEndpointTest.class);
+        return getDeployment(WSDataLineEndpointTest.class);
     }
 
     @Test
@@ -38,9 +38,9 @@ public class WebsocketDatalineEndpointTest extends AuthenticationTestBase {
     public void testEndpointJSONObject() throws Exception {
         Session session = connectToServer();
         log.info(session);
-        boolean latchWait = MyEndpointClientJSONObject.latch.await(3, TimeUnit.SECONDS);
+        boolean latchWait = WSEndpointClientJSONObject.latch.await(3, TimeUnit.SECONDS);
         log.info(latchWait);
-        log.info(MyEndpointClientJSONObject.response);
+        log.info(WSEndpointClientJSONObject.response);
 
         //assertEquals(JSON, MyEndpointClientJSONObject.response);
     }
@@ -80,7 +80,7 @@ public class WebsocketDatalineEndpointTest extends AuthenticationTestBase {
         WebSocketContainer container = ContainerProvider.getWebSocketContainer();
         log.info("Connecting to URI: " + TESTED_ENDPOINT);
         URI uri = new URI(TESTED_ENDPOINT);
-        Session session = container.connectToServer(MyEndpointClientJSONObject.class, clientEndpointConfig, uri);
+        Session session = container.connectToServer(WSEndpointClientJSONObject.class, clientEndpointConfig, uri);
         MessageHandler.Whole<String> mhw = new MessageHandler.Whole<String>() {
 
             @Override
@@ -91,7 +91,7 @@ public class WebsocketDatalineEndpointTest extends AuthenticationTestBase {
                   }*/
                 //log.info("onMessage");
                 log.info(text);
-                MyEndpointClientJSONObject.response.add(text);
+                WSEndpointClientJSONObject.response.add(text);
             }
 
         };

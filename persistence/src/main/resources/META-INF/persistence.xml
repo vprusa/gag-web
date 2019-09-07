@@ -23,8 +23,7 @@
 		<jta-data-source>java:/MySqlDS</jta-data-source>
 		<!--<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider> -->
 
-
-		<class>cz.muni.fi.gag.web.entity.AbstractEntity</class>
+		<class>cz.muni.fi.gag.web.entity.GenericEntity</class>
 		<class>cz.muni.fi.gag.web.entity.DataLine</class>
 		<class>cz.muni.fi.gag.web.entity.FingerDataLine</class>
 		<class>cz.muni.fi.gag.web.entity.FingerSensorOffset</class>
@@ -37,36 +36,13 @@
 
 		<properties>
 
-			<!-- Configuring JDBC properties -->
 			<!--
-			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost/jpa_example" />
-			<property name="javax.persistence.jdbc.user" value="root" />
-			<property name="javax.persistence.jdbc.password" value="rootpwd" />
-			<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
+			<property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>
+			<property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/gagweb"/>
+			<property name="hibernate.connection.username" value="gagweb"/>
+			<property name="hibernate.connection.password" value="password"/>
 			-->
-			<!--
-			<property name="javax.persistence.jdbc.url" value="jdbc:mariadb://localhost:3306/gagweb" />
-			<property name="javax.persistence.jdbc.user" value="root" />
-			<property name="javax.persistence.jdbc.password" value="pwd" />
-			<property name="javax.persistence.jdbc.driver" value="com.mariadb.jdbc.Driver" />
-			<property name="hibernate.hbm2ddl.auto" value="drop-and-create" />
-			<property name="hbm2ddl.auto" value="drop-and-create"></property>
 
-			<property name="javax.persistence.schema-generation.database.action" value="drop-and-create" />
-
-			<property name="hibernate.dialect" value="org.hibernate.dialect.MariaDB102Dialect"/>
-			<property name="hibernate.generate_statistics" value="true"/>
-			<property name="hibernate.archive.autodetection" value="class"/>
-			<property name="hibernate.show_sql" value="true"/>
-			<property name="hibernate.format_sql" value="true"/>
-			<property name="hibernate.hbm2ddl.auto" value="update"/>
-			<property name="hbm2ddl.auto" value="update"/>
-
-			<property name="hibernate.connection.driver_class" value="com.mariadb.jdbc.Driver"/>
-			<property name="hibernate.connection.url" value="jdbc:mariadb://localhost/gagweb"/>
-			<property name="hibernate.connection.username" value="root"/>
-			<property name="hibernate.connection.password" value="pwd"/>
-			-->
 			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect"/>
 			<property name="hibernate.generate_statistics" value="true"/>
 			<property name="hibernate.archive.autodetection" value="class"/>
@@ -74,65 +50,7 @@
 			<property name="hibernate.format_sql" value="true"/>
 			<property name="hibernate.hbm2ddl.auto" value="update"/>
 			<property name="hbm2ddl.auto" value="update"/>
-			<!--
-			<property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>
-			<property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/gagweb"/>
-			<property name="hibernate.connection.username" value="gagweb"/>
-			<property name="hibernate.connection.password" value="password"/>
-			-->
 
-			<!--
-			<property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/gagweb?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=UTC"/>
-			?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=UTC
-			-->
-			<!--
-
-			<property name="javax.persistence.schema-generation.create-script-source" value="create-db.sql" />
-			<property name="javax.persistence.schema-generation.drop-script-source" value="drop-db.sql" />
-			<property name="javax.persistence.sql-load-script-source" value="data.sql" />
-
-			<property name="hibernate.dialect" value="org.hibernate.dialect.MariaDB102Dialect" />
-			<property name="hibernate.connection.driver_class" value="com.mariadb.jdbc.Driver" />
-			<property name="hibernate.connection.url" value="jdbc:mariadb://localhost:3306/gagweb" />
-			<property name="hibernate.connection.username" value="root" />
-			<property name="hibernate.connection.password" value="pwd" />
-			<property name="hibernate.hbm2ddl.auto" value="update" />
-			<property name="hbm2ddl.auto" value="update"></property>
-
-			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/gagweb" />
-			<property name="javax.persistence.jdbc.user" value="gagweb" />
-			<property name="javax.persistence.jdbc.password" value="password" />
-			<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
-			-->
-<!--
-			<property name="hibernate.connection.driver_class" value="com.mariadb.jdbc.Driver"/>
-			<property name="hibernate.connection.url" value="jdbc:mariadb://localhost/gagweb"/>
-			<property name="hibernate.connection.username" value="gagweb"/>
-			<property name="hibernate.connection.password" value="password"/>
-			<property name="hibernate.dialect" value="org.hibernate.dialect.MariaDB53Dialect"/>
--->
-<!--
-			<property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>
-			<property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/gagweb"/>
-			<property name="hibernate.connection.username" value="root"/>
-			<property name="hibernate.connection.password" value="pwd"/>
-			<property name="hibernate.dialect" value="org.hibernate.dialect.MariaDB102Dialect"/>
-			-->
-			<!-- Properties for Hibernate -->
-			<!--<property name="hibernate.hbm2ddl.auto" value="create-drop" /> -->
-			<!--<property name="hibernate.hbm2ddl.auto" value="create" />
-			<property name="hibernate.show_sql" value="true" />
-			<property name="hibernate.format_sql" value="true" />
-			-->
-			<!--
-			<property name="hibernate.dialect" value="org.hibernate.dialect.MariaDB102Dialect" />
-			<property name="hibernate.connection.driver_class" value="com.mariadb.jdbc.Driver" />
-			<property name="hibernate.connection.url" value="jdbc:mysqmariadbl://localhost:3306/gagweb" />
-			<property name="hibernate.connection.username" value="root" />
-			<property name="hibernate.connection.password" value="pwd" />
-			<property name="hibernate.hbm2ddl.auto" value="update" />
-			<property name="hbm2ddl.auto" value="update"></property>
-			-->
 			<!--<property name="hibernate.search.default.directory_provider"
 				value="filesystem" />-->
 			<!--<property name="hibernate.dialect"

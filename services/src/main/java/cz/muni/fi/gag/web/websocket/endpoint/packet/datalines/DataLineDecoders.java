@@ -1,44 +1,24 @@
-package cz.muni.fi.gag.web.websocket.endpoint.packet;
+package cz.muni.fi.gag.web.websocket.endpoint.packet.datalines;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import cz.muni.fi.gag.web.entity.DataLine;
-import cz.muni.fi.gag.web.entity.FingerDataLine;
-import cz.muni.fi.gag.web.entity.WristDataLine;
-import cz.muni.fi.gag.web.websocket.endpoint.DataLineWsEndpoint;
-import org.jboss.logging.Logger;
-
+import java.io.IOException;
 import javax.websocket.Decoder;
 import javax.websocket.EndpointConfig;
-import java.io.IOException;
+import org.jboss.logging.Logger;
 
 /**
  * @author Vojtech Prusa
  */
 public class DataLineDecoders<DataLineEx extends DataLine> implements Decoder.Text<DataLineEx> {
 
-    public static final Logger log = Logger.getLogger(DataLineWsEndpoint.class.getSimpleName());
+    public static final Logger log = Logger.getLogger(DataLineDecoders.class.getSimpleName());
 
     private final Class type;
 
     public DataLineDecoders(Class type) {
         this.type = type;
-    }
-
-    public static class Plain extends DataLineDecoders<DataLine> {
-        public Plain() {
-            super(DataLine.class);
-        }
-    }
-    public static class Finger extends DataLineDecoders<FingerDataLine> {
-        public Finger() {
-            super(FingerDataLine.class);
-        }
-    }
-    public static class Wrist extends DataLineDecoders<WristDataLine> {
-        public Wrist() {
-            super(WristDataLine.class);
-        }
     }
 
     private ObjectMapper objectMapper;

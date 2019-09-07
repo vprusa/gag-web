@@ -1,27 +1,19 @@
-package cz.muni.fi.gag.web.websocket.endpoint.packet;
+package cz.muni.fi.gag.web.websocket.endpoint.packet.datalines;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.muni.fi.gag.web.entity.DataLine;
-import cz.muni.fi.gag.web.entity.FingerDataLine;
-import cz.muni.fi.gag.web.entity.WristDataLine;
-import cz.muni.fi.gag.web.websocket.endpoint.DataLineWsEndpoint;
-import org.jboss.logging.Logger;
-
 import javax.websocket.EncodeException;
 import javax.websocket.Encoder;
 import javax.websocket.EndpointConfig;
+import org.jboss.logging.Logger;
 
 /**
  * @author Vojtech Prusa
  */
 public class DataLineEncoders<DataLineEx extends DataLine> implements Encoder.Text<DataLineEx> {
 
-    public static final Logger log = Logger.getLogger(DataLineWsEndpoint.class.getSimpleName());
-
-    public static class Plain extends DataLineEncoders<DataLine> {}
-    public static class Finger extends DataLineEncoders<FingerDataLine> {}
-    public static class Wrist extends DataLineEncoders<WristDataLine> {}
+    public static final Logger log = Logger.getLogger(DataLineEncoders.class.getSimpleName());
 
     private ObjectMapper objectMapper;
 

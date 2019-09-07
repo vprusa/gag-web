@@ -1,21 +1,17 @@
 package cz.muni.fi.gag.web.websocket.endpoint;
 
-import cz.muni.fi.gag.web.entity.DataLine;
-import cz.muni.fi.gag.web.entity.FingerDataLine;
-import cz.muni.fi.gag.web.entity.WristDataLine;
 import cz.muni.fi.gag.web.logging.Log;
 import cz.muni.fi.gag.web.service.DataLineService;
 import cz.muni.fi.gag.web.service.GestureService;
 import cz.muni.fi.gag.web.service.UserService;
-import cz.muni.fi.gag.web.websocket.endpoint.packet.DataLineDecoders;
-import cz.muni.fi.gag.web.websocket.endpoint.packet.DataLineEncoders;
-import cz.muni.fi.gag.web.websocket.service.DataLineRePlayer;
-import java.io.StringReader;
+import cz.muni.fi.gag.web.websocket.endpoint.packet.actions.Action;
+import cz.muni.fi.gag.web.websocket.endpoint.packet.actions.ActionDecoder;
+import cz.muni.fi.gag.web.websocket.endpoint.packet.actions.ReplayActionDecoder;
+import cz.muni.fi.gag.web.websocket.endpoint.packet.datalines.DataLineEncoder;
+import cz.muni.fi.gag.web.websocket.endpoint.packet.datalines.FingerDataLineEncoder;
+import cz.muni.fi.gag.web.websocket.endpoint.packet.datalines.WristDataLineEncoder;
 import javax.ejb.Singleton;
 import javax.inject.Inject;
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
@@ -29,8 +25,12 @@ import org.jboss.logging.Logger;
  */
 @Singleton
 @ServerEndpoint(value = "/datalinews",
-        encoders = { DataLineEncoders.Plain.class, DataLineEncoders.Finger.class, DataLineEncoders.Wrist.class},
-        decoders = { DataLineDecoders.Plain.class, DataLineDecoders.Finger.class, DataLineDecoders.Wrist.class}
+        encoders = { DataLineEncoder.class, FingerDataLineEncoder.class, WristDataLineEncoder.class},
+        decoders = { ReplayActionDecoder.class, ActionDecoder.class,
+            /*
+            DataLineDecoder.class, FingerDataLineDecoder.class, WristDataLineDecoder.class
+            */}
+
 )
 public class DataLineWsEndpoint {
 
@@ -72,23 +72,36 @@ public class DataLineWsEndpoint {
         }
     }
 
+
+    // https://docs.oracle.com/middleware/12213/wls/WLPRG/websockets.htm#WLPRG1000
     @OnMessage
-    public void onDataLineMessage(Object msg, Session session) {
+    public void onMessage(Action msg, Session session) {
         Log.info("onDataLineMessage");
         String loggedUserName = session.getUserPrincipal().getName();
         // TODO add role check and restrict access for users gestures only... etc. etc.
 
+        /*
         // TODO wrap in some structure .. create WS control protocol ...
-        if(msg instanceof WristDataLine){
-            WristDataLine wdl  = (WristDataLine) msg;
+        if(msg instanceof MWristDataLine){
+            MWristDataLine wdl  = (MWristDataLine) msg;
             dataLineService.create(wdl);
-        } else if(msg instanceof FingerDataLine) {
-            FingerDataLine fdl  = (FingerDataLine) msg;
+        } else if(msg instanceof MFingerDataLine) {
+            MFingerDataLine fdl  = (MFingerDataLine) msg;
             dataLineService.create(fdl);
-        } else if(msg instanceof DataLine) {
-            DataLine dl  = (DataLine) msg;
+        } else if(msg instanceof MDataLine) {
+            MDataLine dl  = (MDataLine) msg;
             dataLineService.create(dl);
-        } else if (msg instanceof String) {
+
+         */
+        if(false) {
+
+        /*
+        } else if (msg instanceof Action) {
+            Action act = (Action) msg;
+            log.info(act.toString());
+         */
+        // else if (msg instanceof String) {
+           /*
             String msgStr = (String) msg;
             JsonReader jsonReader = Json.createReader(new StringReader(msgStr));
             JsonObject object = jsonReader.readObject();
@@ -116,7 +129,12 @@ public class DataLineWsEndpoint {
                 default:
                     log.info("Unknown action: " + action);
                     return;
+
+
             }
+            */
+        } else {
+            log.info("Unknown message: " + msg.toString());
         }
 
     }

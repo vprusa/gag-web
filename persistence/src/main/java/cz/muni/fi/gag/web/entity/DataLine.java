@@ -23,7 +23,7 @@ import javax.validation.constraints.PastOrPresent;
 @JsonIgnoreProperties(allowSetters = true, value = {"gesture"})
 //@JsonIgnoreProperties(allowSetters = true, value = {"g"})
 //@ApplicationScoped
-public /*abstract */class DataLine extends AbstractEntity implements Serializable {
+public /*abstract */class DataLine extends GenericEntity implements Serializable {
 
     @NotNull
     @PastOrPresent

@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 //@MappedSuperclass
 @Entity
 @JsonIgnoreProperties({"device"})
-public abstract class SensorOffset extends AbstractEntity {
+public abstract class SensorOffset extends GenericEntity {
 
     /*
      * TODO are there any validation constraints we might apply (value in some

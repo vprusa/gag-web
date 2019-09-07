@@ -1,7 +1,6 @@
 package cz.muni.fi.gag.web.entity;
 
-import java.util.logging.Logger;
-import javax.persistence.Transient;
+import java.io.Serializable;
 
 /**
  * @author Vojtech Prusa
@@ -19,11 +18,9 @@ import javax.persistence.Transient;
  * {@link WristSensorOffset}
  * {@link Gesture}
  * {@link HandDevice}
+ * {@link GenericEntity}
  * 
  */
-public /*abstract*/ class AbstractBaseEntity {
-
-    @Transient
-    protected static final Logger log = Logger.getLogger(AbstractBaseEntity.class.getSimpleName());
+public /*abstract*/ class BaseEntity implements Serializable {
 
 }
