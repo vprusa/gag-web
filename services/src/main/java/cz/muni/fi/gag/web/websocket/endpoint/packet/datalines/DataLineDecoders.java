@@ -19,6 +19,7 @@ public class DataLineDecoders<DataLineEx extends DataLine> implements Decoder.Te
 
     public DataLineDecoders(Class type) {
         this.type = type;
+        objectMapper = new ObjectMapper();
     }
 
     private ObjectMapper objectMapper;
@@ -39,8 +40,8 @@ public class DataLineDecoders<DataLineEx extends DataLine> implements Decoder.Te
 
     @Override
     public boolean willDecode(String s) {
-        // TODO
         log.info("TODO ... willDecode");
+        log.info(this.getClass().getSimpleName());
         return true;
     }
 

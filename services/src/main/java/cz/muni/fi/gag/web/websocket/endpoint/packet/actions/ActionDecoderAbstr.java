@@ -20,6 +20,7 @@ public abstract class ActionDecoderAbstr<Act extends Action> implements Decoder.
 
     public ActionDecoderAbstr(Class type) {
         this.type = type;
+        objectMapper = new ObjectMapper();
     }
 
     @Override

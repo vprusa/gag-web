@@ -12,6 +12,6 @@ public class ReplayActionDecoder extends ActionDecoderAbstr<ReplayAction> {
     @Override
     public boolean willDecode(String s) {
         log.info("ReplayActionDecoder - willDecode: " + s);
-        return s.contains("gestureId");
+        return s.contains("\"action\"") && s.contains("\"replay\"");
     }
 }

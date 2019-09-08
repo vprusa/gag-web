@@ -1,5 +1,5 @@
 package cz.muni.fi.gag.web.websocket.endpoint.packet.datalines;
 
-import cz.muni.fi.gag.web.mapped.MWristDataLine;
+import cz.muni.fi.gag.web.entity.WristDataLine;
 
-public class WristDataLineEncoder extends DataLineEncoders<MWristDataLine> {}
+public class WristDataLineEncoder extends DataLineEncoders<WristDataLine> {}

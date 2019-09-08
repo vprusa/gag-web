@@ -19,7 +19,8 @@ angular.module('app').controller(
 
           $scope.playSelectedGesture = function() {
             //console.log("playSelectedGesture");
-            $rootScope.websocketSession.send($scope.selectedGestureDetail.selectedGesture);
+            console.log("playSelectedGesture");
+            $rootScope.websocketSession.send('{"action":"replay", "gestureId": ' + $scope.selectedGestureDetail.selectedGesture + '}');
           };
           
           $scope.onMessage = function(evt) {

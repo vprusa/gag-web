@@ -20,7 +20,7 @@ public class WSEndpointClientJSONObject extends Endpoint {
     private static final Logger log = Logger.getLogger(WSEndpointClientJSONObject.class.getSimpleName());
 
     public static CountDownLatch latch = new CountDownLatch(1);
-    public static String JSON = "{\"action\" : \"replayGesture\", \"gestureId\":2}";
+    public static String JSON = "{\"action\" : \"replay\", \"gestureId\":2}";
     public static List<String> response;
 
     @Override

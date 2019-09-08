@@ -1,8 +1,8 @@
-package cz.muni.fi.gag.web.websocket.endpoint.packet.datalines;
+package cz.muni.fi.gag.web.websocket.endpoint.packet;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import cz.muni.fi.gag.web.entity.DataLine;
+import javax.json.JsonObject;
 import javax.websocket.EncodeException;
 import javax.websocket.Encoder;
 import javax.websocket.EndpointConfig;
@@ -11,18 +11,14 @@ import org.jboss.logging.Logger;
 /**
  * @author Vojtech Prusa
  */
-public class DataLineEncoders<DataLineEx extends DataLine> implements Encoder.Text<DataLineEx> {
+public class JsonEncoder implements Encoder.Text<JsonObject> {
 
-    public static final Logger log = Logger.getLogger(DataLineEncoders.class.getSimpleName());
+    public static final Logger log = Logger.getLogger(JsonEncoder.class.getSimpleName());
 
     private ObjectMapper objectMapper;
 
-    public DataLineEncoders() {
-        objectMapper = new ObjectMapper();
-    }
-
     @Override
-    public String encode(DataLineEx object) throws EncodeException {
+    public String encode(JsonObject object) throws EncodeException {
         try {
             String str = objectMapper.writeValueAsString(object);
             log.info(str);
