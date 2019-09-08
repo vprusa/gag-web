@@ -3,7 +3,7 @@ package cz.muni.fi.gag.web.websocket.endpoint.packet.actions;
 /**
  * @author Vojtech Prusa
  */
-public class ReplayActionDecoder extends ActionDecoderAbstr<ReplayAction> {
+public class ReplayActionDecoder extends ActionDecoderBase<ReplayAction> {
 
     public ReplayActionDecoder() {
         super(ReplayAction.class);

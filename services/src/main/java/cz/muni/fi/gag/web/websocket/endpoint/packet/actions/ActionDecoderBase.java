@@ -10,15 +10,15 @@ import org.jboss.logging.Logger;
 /**
  * @author Vojtech Prusa
  */
-public abstract class ActionDecoderAbstr<Act extends Action> implements Decoder.Text<Act> {
+public abstract class ActionDecoderBase<Act extends Action> implements Decoder.Text<Act> {
 
-    public static final Logger log = Logger.getLogger(ActionDecoderAbstr.class.getSimpleName());
+    public static final Logger log = Logger.getLogger(ActionDecoderBase.class.getSimpleName());
 
     private ObjectMapper objectMapper;
 
     Class type;
 
-    public ActionDecoderAbstr(Class type) {
+    public ActionDecoderBase(Class type) {
         this.type = type;
         objectMapper = new ObjectMapper();
     }
