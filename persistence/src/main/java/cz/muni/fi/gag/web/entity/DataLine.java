@@ -17,6 +17,7 @@ import javax.validation.constraints.PastOrPresent;
  * 
  * {@link FingerDataLine}
  * {@link WristDataLine}
+ * {@link cz.muni.fi.gag.web.dao.impl.DataLineGestureIterator}
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -33,7 +34,7 @@ public /*abstract */class DataLine extends GenericEntity implements Serializable
     // https://stackoverflow.com/questions/26957554/
     // jsonmappingexception-could-not-initialize-proxy-no-session
     // TODO fix find by reference?
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     //@Null // todo @NotNull .. fix tests?
     //@JsonProperty("g")
     protected Gesture gesture;
@@ -49,49 +50,12 @@ public /*abstract */class DataLine extends GenericEntity implements Serializable
     public Gesture getGesture() {
         return gesture;
     }
-/*
-    @Transient
-    @Inject
-    protected UserDao userDao;
-
-    private EntityManager getEM(){
-        return userDao.getEm();
-    }
-
-    public void setGesture(Object gesture) {
-        log.info(gesture.toString());
-        log.info(gesture.getClass().toString());
-        if(gesture instanceof Gesture) {
-            this.gesture = (Gesture)gesture;
-        } else if(gesture instanceof Long) {
-            try {
-                EntityManager em = this.getEM();
-                if(em == null){
-                    log.info("em == null");
-                } else {
-                    log.info(em.toString());
-                    this.gesture = em.getReference(Gesture.class, gesture);
-                }
-            } catch(Exception e){
-                log.info(e.getMessage());
-                e.printStackTrace();
-            }
-        } else {
-            // TODO throw exception or ignore?
-        }
-
-        //this.gesture = gesture;
-    }*/
 
     public void setGesture(Gesture gesture) {
         //setGesture(new Long(gesture));
         this.gesture = gesture;
     }
-/*
-    public void setGesture(int gesture) {
-        setGesture(new Long(gesture));
-    }
-*/
+
     @Override
     public String toString() {
         return "DataLine [id=" + id + ", timestamp=" + timestamp + ", gesture=" + gesture + "]";

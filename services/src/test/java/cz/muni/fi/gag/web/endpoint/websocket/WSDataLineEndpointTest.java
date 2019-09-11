@@ -1,14 +1,6 @@
 package cz.muni.fi.gag.web.endpoint.websocket;
 
 import cz.muni.fi.gag.web.endpoint.AuthenticationTestBase;
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.logging.Logger;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import javax.websocket.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -16,6 +8,20 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import javax.websocket.ClientEndpointConfig;
+import javax.websocket.ContainerProvider;
+import javax.websocket.DeploymentException;
+import javax.websocket.HandshakeResponse;
+import javax.websocket.MessageHandler;
+import javax.websocket.Session;
+import javax.websocket.WebSocketContainer;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.container.test.api.RunAsClient;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.logging.Logger;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 /**
  * @author Vojtech Prusa
@@ -34,7 +40,7 @@ public class WSDataLineEndpointTest extends AuthenticationTestBase {
     }
 
     @Test
-    //@RunAsClient
+    @RunAsClient
     public void testEndpointJSONObject() throws Exception {
         Session session = connectToServer();
         log.info(session);

@@ -16,7 +16,7 @@ import cz.muni.fi.gag.web.websocket.endpoint.packet.datalines.FingerDataLineEnco
 import cz.muni.fi.gag.web.websocket.endpoint.packet.datalines.WristDataLineDecoder;
 import cz.muni.fi.gag.web.websocket.endpoint.packet.datalines.WristDataLineEncoder;
 import cz.muni.fi.gag.web.websocket.service.DataLineRePlayer;
-import javax.ejb.Singleton;
+import javax.faces.bean.SessionScoped;
 import javax.inject.Inject;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
@@ -29,7 +29,8 @@ import org.jboss.logging.Logger;
 /**
  * @author Vojtech Prusa
  */
-@Singleton
+//@Singleton
+@SessionScoped
 @ServerEndpoint(value = "/datalinews",
         encoders = {
                 //JsonEncoder.class
@@ -61,8 +62,8 @@ public class DataLineWsEndpoint {
     @Inject
     private UserService userService;
 
-    //@Inject
-    //private DataLineRePlayer rep;
+    @Inject
+    private DataLineRePlayer rep;
 
     @OnOpen
     public void onOpen(Session session) {
@@ -117,10 +118,16 @@ public class DataLineWsEndpoint {
             dataLineService.create(mdl.getEntity(gestureService));
         } else if(rad.willDecode(msg)) {
             ReplayAction ra = rad.decode(msg);
-            DataLineRePlayer rep = new DataLineRePlayer(session, dataLineService, ra.getGestureId());
-            Thread replayer = new Thread(rep);
-            replayer.start();
-            session.getUserProperties().put(REPLAYER_KEY, replayer);
+            //DataLineRePlayer rep = new DataLineRePlayer(session, dataLineService, ra.getGestureId());
+            //rep = new DataLineRePlayer(session, dataLineService, ra.getGestureId());
+            //DataLineRePlayer rep = new DataLineRePlayer(session, ra.getGestureId());
+            if(rep.getSession() == null) {
+                rep.setGestureId(ra.getGestureId());
+                rep.setSession(session);
+                Thread replayer = new Thread(rep);
+                replayer.start();
+                session.getUserProperties().put(REPLAYER_KEY, replayer);
+            }
         } else {
             log.info("Unknown message: " + msg);
         }
@@ -132,6 +139,10 @@ public class DataLineWsEndpoint {
         Log.info("onError");
         log.info(getClass().getSimpleName());
         t.printStackTrace();
+        Thread replayer = (Thread) session.getUserProperties().get(REPLAYER_KEY);
+        if(replayer != null) {
+            replayer.interrupt();// stop();
+        }
     }
 
 }

@@ -1,11 +1,11 @@
 package cz.muni.fi.gag.web.service;
 
 import cz.muni.fi.gag.web.dao.DataLineDao;
+import cz.muni.fi.gag.web.dao.impl.DataLineGestureIterator;
 import cz.muni.fi.gag.web.entity.DataLine;
 import cz.muni.fi.gag.web.service.generic.GenericCRUDService;
-
-import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  *
@@ -19,6 +19,8 @@ public interface DataLineService extends GenericCRUDService<DataLine, DataLineDa
 
     List<DataLine> findByGestureId(long gestureId);
 
-    Iterator<DataLine> initIteratorByGesture(long gestureId);
+    DataLineGestureIterator initIteratorByGesture(long gestureId);
+
+    Stream<DataLine> getStream(long gestureId);
 
 }

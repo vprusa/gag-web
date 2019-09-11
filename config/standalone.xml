@@ -159,7 +159,7 @@
                     </security>
                 </datasource>
                 <datasource jndi-name="java:/MySqlDS" pool-name="MySqlDS">
-                    <connection-url>jdbc:mysql://localhost:3306/gagweb</connection-url>
+                    <connection-url>jdbc:mysql://localhost:3306/gagweb?allowPublicKeyRetrieval=true</connection-url>
                     <driver-class>com.mysql.cj.jdbc.Driver</driver-class>
                     <connection-property name="useUnicode">
                         true
@@ -176,7 +176,8 @@
                     <connection-property name="serverTimezone">
                         UTC
                     </connection-property>
-                    <driver>gag-web-app-1.0-SNAPSHOT.WAR_com.mysql.cj.jdbc.Driver_8_0</driver>
+                    <!--<driver>gag-web-app-1.0-SNAPSHOT.WAR_com.mysql.cj.jdbc.Driver_8_0</driver>-->
+                    <driver>mysql-connector-java-8.0.17.jar</driver>
                     <security>
                         <user-name>gagweb</user-name>
                         <password>password</password>
@@ -552,8 +553,11 @@
         </outbound-socket-binding>
     </socket-binding-group>
     <deployments>
-        <deployment name="gag-web-app-1.0-SNAPSHOT.WAR" runtime-name="gag-web-app-1.0-SNAPSHOT.WAR">
+        <!--<deployment name="gag-web-app-1.0-SNAPSHOT.WAR" runtime-name="gag-web-app-1.0-SNAPSHOT.WAR">
             <fs-exploded path="/home/vprusa/workspace/p/notes/work/projects/arduino/gag/gag-web/app/live/gag-web-app-1.0-SNAPSHOT.WAR"/>
+        </deployment>-->
+        <deployment name="mysql-connector-java-8.0.17.jar" runtime-name="mysql-connector-java-8.0.17.jar">
+            <content sha1="53da6afdc5f7b45caaa5bc3627028b2041a36cee"/>
         </deployment>
     </deployments>
 </server>

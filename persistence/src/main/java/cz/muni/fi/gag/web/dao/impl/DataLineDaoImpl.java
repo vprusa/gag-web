@@ -2,20 +2,25 @@ package cz.muni.fi.gag.web.dao.impl;
 
 import cz.muni.fi.gag.web.dao.DataLineDao;
 import cz.muni.fi.gag.web.entity.DataLine;
-
+import cz.muni.fi.gag.web.entity.FingerDataLine;
+import java.io.Serializable;
+import java.util.List;
+import java.util.stream.Stream;
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
-import java.io.Serializable;
-import java.util.List;
+import org.jboss.logging.Logger;
 
 /**
  * @author Miloslav Zezulka, Vojtech Prusa
  *
  * {@link cz.muni.fi.gag.web.service.impl.DataLineServiceImpl}
+ * {@link cz.muni.fi.gag.web.service.impl.DataLineServiceImpl}
  */
 @ApplicationScoped
 public class DataLineDaoImpl extends AbstractGenericDao<DataLine> implements DataLineDao, Serializable {
+
+    public static Logger log = Logger.getLogger(DataLineGestureIterator.class.getSimpleName());
 
     public DataLineDaoImpl() {
         super(DataLine.class);
@@ -34,55 +39,41 @@ public class DataLineDaoImpl extends AbstractGenericDao<DataLine> implements Dat
     /*
      * https://stackoverflow.com/questions/5067619/jpa-what-is-the-
      * proper-pattern-for-iterating-over-large-result-sets
+     *
+     * TODO ... not working ...
+     *
+     * ERROR [org.hibernate.engine.jdbc.spi.SqlExceptionHelper] (Thread-824) IJ031040: Connection is not associated with a managed connection: org.jboss.jca.adapters.jdbc.jdk8.WrappedConnectionJDK8@3e7c33f6
+     * ERROR [stderr] (Thread-824) Exception in thread "Thread-824" org.hibernate.exception.GenericJDBCException: could not advance using next()
      */
     @Transactional
     @Override
-    public List<DataLine> getChunkForGesture(long gestureId, int offset, int max) {
+    public Stream<DataLine> getStream(long gestureId) {
+        log.info("getChunkForGesture: gestureId: " + gestureId);
         return em
-                .createQuery("SELECT g FROM DataLine g WHERE gesture_id = :gestureId ORDER BY timestamp ASC",
+                .createQuery("SELECT g FROM DataLine g WHERE gesture_id = :gestureId", // ORDER BY timestamp ASC
                         DataLine.class)
-                .setParameter("gestureId", gestureId).setFirstResult(offset).setMaxResults(max).getResultList();
+                .setParameter("gestureId", gestureId).getResultStream();
     }
 
-    /*
-    private Iterator<DataLine> iterateAll(long gestureId) {
-        int offset = 0;
+    //@Transactional
+    @Transactional
+    @Override
+    public List<DataLine> getChunkForGesture(long gestureId, int offset, int max) {
+        log.info("getChunkForGesture: gestureId: " + gestureId + " offset: " + offset + " max: " + max);
+        List<DataLine> dll = em
+                //.createQuery("SELECT g FROM DataLine g WHERE gesture_id = :gestureId ORDER BY timestamp ASC",
+                .createQuery("SELECT g FROM DataLine g WHERE gesture_id = :gestureId",
+                        DataLine.class)
+                //.setParameter("gestureId", gestureId).setFirstResult(offset).setMaxResults(max).getResultList();
+                .setParameter("gestureId", gestureId).getResultList();
+        FingerDataLine[] dla = new FingerDataLine[dll.size()];
+        dla = (FingerDataLine[]) dll.toArray();
 
-        List<DataLine> models;
-        while ((models = this.getAllModelsIterable(gestureId, offset, ITERATOR_MAX_COUNT)).size() > 0) {
-            em.getTransaction().begin();
-            models.iterator()
-            for (DataLine model : models) {
-                // log.info("do something with model: " + model.getId());
-            }
-
-            em.flush();
-            em.clear();
-            em.getTransaction().commit();
-            offset += models.size();
+        log.info("dll.toArray(): " +  dla.length);
+        for(FingerDataLine dl : dla){
+            log.info("DL: " + dl.toString());
         }
+        return dll;
     }
-    */
-
-    // @Transactional
-    // @Override
-    // public Iterator<DataLine> iterateOverGestureData(long gestureId) {
-    // TypedQuery<DataLine> q = em
-    // .createQuery(, DataLine.class)
-    // .setParameter("gestureId", gestureId);
-    // List<DataLine> results = q.getgetgetResultList();
-    /*
-     * StatelessSession session = ((Session)
-     * em.getDelegate()).getSessionFactory().openStatelessSession();
-     * 
-     * Query query =
-     * session.createQuery("SELECT a FROM Address a WHERE .... ORDER BY a.id");
-     * query.setFetchSize(Integer.valueOf(1000)); query.setReadOnly(true);
-     * query.setLockMode("a", LockMode.NONE); ScrollableResults results =
-     * query.scroll(ScrollMode.FORWARD_ONLY); while (results.next()) { Address addr
-     * = (Address) results.get(0); // Do stuff } results.close(); session.close();
-     */
-    // return results;
-    // }
 
 }
