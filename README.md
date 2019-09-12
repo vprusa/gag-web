@@ -30,7 +30,7 @@ In dir
 ##### WS DataLine on Running WS
 
 ```
-mvn clean wildfly:undeploy install wildfly:deploy -DskipTests=true -Dcheckstyle.skip && mvn test -Dtest=WebsocketDatalineEndpointTest -DfailIfNoTests=false -Dcheckstyle.skip | tee app2.log
+mvn dependency:get -Ddest=./ -Dartifact=mysql:mysql-connector-java:8.0.17 && mvn clean wildfly:undeploy install wildfly:deploy -DskipTests=true -Dcheckstyle.skip && mvn test -Dtest=WebsocketDatalineEndpointTest -DfailIfNoTests=false -Dcheckstyle.skip | tee app2.log
 ```
 
 #### zip 
