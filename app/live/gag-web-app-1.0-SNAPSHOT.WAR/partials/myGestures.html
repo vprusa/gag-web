@@ -84,18 +84,18 @@
 						<tbody>
 						<tr ng-repeat="item in ble.currentDataLines">
 							<td>{{item.id}}</td>
-							<td>{{item.timestamp | date: 'yyyy-MM-dd HH:MM'}}</td>
-							<td>{{item.position}}</td>
+							<td>{{item.t | date: 'yyyy-MM-dd HH:MM'}}</td>
+							<td>{{item.p}}</td>
 							<!-- <td>{{item.quatA}}</td>
-                            <td>{{item.quatX}}</td>
-                            <td>{{item.quatY}}</td>
-                            <td>{{item.quatZ}}</td>
-                            <td>{{item.accX}}</td>
-                            <td>{{item.accY}}</td>
-                            <td>{{item.accZ}}</td>
-                            <td>{{item.magX}}</td>
-                            <td>{{item.magY}}</td>
-                            <td>{{item.magZ}}</td> -->
+                            <td>{{item.qX}}</td>
+                            <td>{{item.qY}}</td>
+                            <td>{{item.qZ}}</td>
+                            <td>{{item.a}}</td>
+                            <td>{{item.aX}}</td>
+                            <td>{{item.aZ}}</td>
+                            <td>{{item.mX}}</td>
+                            <td>{{item.mY}}</td>
+                            <td>{{item.mZ}}</td> -->
 						</tr>
 						</tbody>
 					</table>
@@ -133,20 +133,22 @@
                         <th>magZ</th> -->
 						</thead>
 						<tbody>
-						<tr ng-repeat="item in selectedGestureDetail.player.data">
+						<tr ng-repeat="item in currentDataLines">
 							<td>{{item.id}}</td>
-							<td>{{item.timestamp | date: 'yyyy-MM-dd HH:MM'}}</td>
-							<td>{{item.position}}</td>
-							<!-- <td>{{item.quatA}}</td>
-                            <td>{{item.quatX}}</td>
-                            <td>{{item.quatY}}</td>
-                            <td>{{item.quatZ}}</td>
-                            <td>{{item.accX}}</td>
-                            <td>{{item.accY}}</td>
-                            <td>{{item.accZ}}</td>
-                            <td>{{item.magX}}</td>
-                            <td>{{item.magY}}</td>
-                            <td>{{item.magZ}}</td> -->
+							<td>{{item.t | date: 'yyyy-MM-dd HH:MM'}}</td>
+							<td>{{item.p}}</td>
+							<!--
+							<td>{{item.qA}}</td>
+                            <td>{{item.qX}}</td>
+                            <td>{{item.qY}}</td>
+                            <td>{{item.qZ}}</td>
+                            <td>{{item.aX}}</td>
+                            <td>{{item.aY}}</td>
+                            <td>{{item.aZ}}</td>
+                            <td>{{item.mX}}</td>
+                            <td>{{item.mY}}</td>
+                            <td>{{item.mZ}}</td>
+                            -->
 						</tr>
 						</tbody>
 					</table>
@@ -178,7 +180,7 @@
 							<a href="javascript:void(0)" ng-click='listDetail(item.id)'>List</a>
 						</td>
 						<td><button class="btn btn-info desc"
-									ng-click='selectGesture(item.id)'>Play</button></td>
+									ng-click='selectGesture(item.id)'>Select</button></td>
 					</tr>
 					</tbody>
 				</table>

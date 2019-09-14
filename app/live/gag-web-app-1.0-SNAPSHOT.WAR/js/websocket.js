@@ -13,9 +13,12 @@ angular.module('app').controller(
           $scope.dataLines = [];
           $scope.gestureId = "";
 
-          $scope.currentDataLine = function(msg) {
+
+          $scope.currentDataLines = [];
+
+          /*$scope.currentDataLine = function(msg) {
             $rootScope.websocketSession.send(msg);
-          };
+          };*/
 
           $scope.playSelectedGesture = function() {
             //console.log("playSelectedGesture");
@@ -42,19 +45,24 @@ angular.module('app').controller(
               //"magZ": 1
             };
 
-            var jsonStr = JSON.stringify(jsonMessage);
-            console.log(jsonStr);
-
             function sendDataAndWait(counter, data){
                 console.log(data);
-                $rootScope.websocketSession.send(data);
+                $scope.currentDataLines = [data];
+                console.log($scope.currentDataLines);
+
+                var jsonStr = JSON.stringify(data);
+                console.log(jsonStr);
+
+                $rootScope.websocketSession.send(jsonStr);
                 if(counter > 0){
                     setTimeout(function(){sendDataAndWait(--counter, data)}, 20);
                 }
             }
-            sendDataAndWait(5, jsonStr);
+            sendDataAndWait(5, jsonMessage);
 
           }
+
+          //$scope.selectedGestureDetail.player = {data: []};
           
           $scope.onMessage = function(evt) {
             console.log(evt);
@@ -65,7 +73,8 @@ angular.module('app').controller(
             //  $scope.dataLines.push(item);
             //});
 
-            $scope.selectedGestureDetail.player = { data: data };
+            //$scope.selectedGestureDetail.player.data.push(data) ;
+
             //$scope.gestureId = "";
             $scope.$apply();
           };
