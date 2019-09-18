@@ -25,6 +25,7 @@ public abstract class ActionDecoderBase<Act extends Action> implements Decoder.T
 
     @Override
     public Act decode(String s) {
+        log.info("decode: " + this.getClass().getSimpleName());
         ObjectReader objectReader = objectMapper.reader().forType(type);
         try {
             Act cmd = objectReader.readValue(s);

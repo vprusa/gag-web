@@ -1,30 +1,32 @@
-<div class="card" data-ng-controller="btController">
+<div class="card" data-ng-controller="btController"  style="margin-bottom: 0px;">
+	<form id="connectBLE" ng-submit="connect2BLE()" #connectBLE="ngForm">
 	<div class="card-header card-header-primary">
-		<h4 class="card-title ">BLE</h4>
+		<h4 class="card-title " style="display: inline-block; padding-right: 10px;">BLE</h4>
+		<button class="btn btn-info desc" type="submit">Connect to</button>
 		<p class="card-category">Fill the form & Connect to BLE</p>
+
 	</div>
 	<div class="card-body" >
-		<form id="connectBLE" ng-submit="connect2BLE()" #connectBLE="ngForm">
 		<table class="table table-hover">
 			<tbody>
-			<tr>
-				<td colspan="2">
-					<button class="btn btn-info desc" type="submit">Connect to...</button>
-				</td>
-			</tr>
-			<tr>
-				<td colspan="2">Device Name<br>
-                    <input class="form-control" ng-model="ble.device.name" type="text" autofocus="" placeholder="Bluetooth Name">
-				</td>
-			</tr>
-			<!--<tr>
-				<td colspan="">Device Name<br>
-                    <input class="form-control" ng-model="ble.device.name" type="text" autofocus="" placeholder="Bluetooth Name">
-				</td>
-				<td>
-					<button class="btn btn-info desc" type="submit">Con-<br>nect</button>
-				</td>
-			</tr>-->
+			<!--<<tr>
+            <td colspan="2">
+                <button class="btn btn-info desc" type="submit">Connect to...</button>
+            </td>
+        </tr>-->
+        <tr>
+            <td colspan="2">Device Name<br>
+                <input class="form-control" ng-model="ble.device.name" type="text" autofocus="" placeholder="Bluetooth Name">
+            </td>
+        </tr>
+        <!--<tr>
+            <td colspan="">Device Name<br>
+                <input class="form-control" ng-model="ble.device.name" type="text" autofocus="" placeholder="Bluetooth Name">
+            </td>
+            <td>
+                <button class="btn btn-info desc" type="submit">Con-<br>nect</button>
+            </td>
+        </tr>-->
 			</tr>
 			<tr>
 				<td colspan="2">Service<br>
@@ -44,6 +46,6 @@
 			</tr>
 			</tbody>
 		</table>
-		</form>
 	</div>
+	</form>
 </div>

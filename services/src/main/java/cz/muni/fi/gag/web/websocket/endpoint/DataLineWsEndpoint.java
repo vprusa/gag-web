@@ -121,13 +121,13 @@ public class DataLineWsEndpoint {
             //DataLineRePlayer rep = new DataLineRePlayer(session, dataLineService, ra.getGestureId());
             //rep = new DataLineRePlayer(session, dataLineService, ra.getGestureId());
             //DataLineRePlayer rep = new DataLineRePlayer(session, ra.getGestureId());
-            if(rep.getSession() == null) {
-                rep.setGestureId(ra.getGestureId());
-                rep.setSession(session);
-                Thread replayer = new Thread(rep);
-                replayer.start();
-                session.getUserProperties().put(REPLAYER_KEY, replayer);
-            }
+            //if(rep.getSession() == null) {
+            rep.setGestureId(ra.getGestureId());
+            rep.setSession(session);
+            Thread replayer = new Thread(rep);
+            replayer.start();
+            session.getUserProperties().put(REPLAYER_KEY, replayer);
+            //}
         } else {
             log.info("Unknown message: " + msg);
         }
