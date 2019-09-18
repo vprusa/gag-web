@@ -10,14 +10,16 @@
 			</div>
 			<div class="card-body">
 				<style>select {}</style>
-				<select ng-model="data.selectedGesture" class="btn btn-info">
-					<option selected value="-1">Select existing gesture</option>
-					<option ng-if="data.selectedGesture" ng-style="{'background-color':(!item.isFiltered ? 'green':'') }"
+				<select ng-model="data.selectedGesture"
+						 class="btn btn-info">
+					<option value="" selected >Select existing gesture</option>
+					<option ng-style="{'background-color':(!item.isFiltered ? 'green':'') }"
 							ng-repeat="item in data.gesturesList" value="{{item.id}}">
 						{{item.userAlias}} ({{item.dateCreated | date: 'yyyy:mm:dd-HH:MM:ss'}})
 					</option>
 				</select>
-				<select ng-disabled="!data.selectedGesture || data.selectedGesture == -1" class="btn btn-info">
+
+				<select ng-disabled="!data.selectedGesture" class="btn btn-info">
 					<option ng-repeat="opt in data.actionOptions" value="{{opt}}">
 						{{opt}}
 					</option>

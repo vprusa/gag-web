@@ -47,23 +47,24 @@ angular
                   recordingLength: 0
                 },
                 info: "TODO live 3D model",
-                gesturesList: [
+                gesturesList: [ {id: -1, userAlias: "testsas" }
                     //{id: "-1", userAlias: "", dateCreated: -1, isFiltered: 0},
                 ],
                 //selectedGesture: {-1: 'Select existing gesture'},
                 //					<option selected value="-1">Select existing gesture</option>
-                selectedGesture:-1,
+                selectedGesture: "",
                 actionOptions: [ 'append', 'override' ]
               };
 
-              $scope.onSelectChange = function(){
-             //   $scope.data.selectedGesture = -1;
-              }
+              // Warning ... idk it is broken using ng-model displays additional broken option...
+              /*$scope.onSelectChange = function(){
+                 $scope.data.selectedGesture = $("#toSelectGesture option:selected").value();
+              }*/
 
               commonTools.getGestures().then(function(gestures){
                 console.log(gestures);
                 $scope.data.gesturesList = gestures;
-                $scope.data.selectedGesture = -1;
+                $scope.data.selectedGesture = "";
               });
 
               $scope.record = function(){
