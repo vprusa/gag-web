@@ -36,7 +36,39 @@ angular.module('app', [
         }
 
     };
-}]).service('createUpdateTools', function () {
+}]).factory('BLETools',function() {
+    let ble = {
+       device : {
+           name: "GAGGM",
+           serviceUUID: "6e400001-b5a3-f393-e0a9-e50e24dcca9e",
+           writeCharUUID: "6e400002-b5a3-f393-e0a9-e50e24dcca9e",
+           notifyCharUUID: "6e400003-b5a3-f393-e0a9-e50e24dcca9e"
+       },
+       isConnected: false,
+       current : null,
+       currentDataLines : [
+               {
+               id: "0",
+               t: 0,
+               p: "INDEX",
+               qA: "",
+               qX: "",
+               qY: "",
+               qZ: "",
+               aX: "",
+               aY: "",
+               aZ: "",
+               mX: "",
+               mY: "",
+               mZ: ""
+               }
+           ]
+     };
+
+     // TODO move here code from btController.js
+     // or create custom library for it that would be included here
+    return ble;
+}).service('createUpdateTools', function () {
     var alerts = [];
     return {
         getAlerts: function () {

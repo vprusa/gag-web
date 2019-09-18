@@ -1,5 +1,22 @@
 'use strict';
 
+
+angular
+  .module('app')
+  .directive('slideToggle', function() {
+  return {
+    restrict: 'A',
+    scope:{},
+    controller: function ($scope) {},
+    link: function(scope, element, attr) {
+      element.bind('click', function() {
+        var $slideBox = angular.element(attr.slideToggle);
+        $slideBox.stop().slideToggle(parseInt(attr.slideToggleDuration));
+      });
+    }
+  };
+});
+
 angular
     .module('app')
     .controller(
@@ -10,7 +27,8 @@ angular
             '$route',
             'commonTools',
             'createUpdateTools',
-            function($scope, $location, $route, commonTools, createUpdateTools) {
+            'BLETools',
+            function($scope, $location, $route, commonTools, createUpdateTools, BLETools) {
               commonTools.getGestures().then(function(response) {
                 $scope.gestures = response;
               }, function(response) {
@@ -28,6 +46,7 @@ angular
                 $scope.alerts.splice(index, 1);
               };
 
+/*
               $scope.ble = {
                 device : {
                     name: "GAGGM",
@@ -35,11 +54,13 @@ angular
                     writeCharUUID: "6e400002-b5a3-f393-e0a9-e50e24dcca9e",
                     notifyCharUUID: "6e400003-b5a3-f393-e0a9-e50e24dcca9e"
                 },
+                showForm: true,
+                isConnected: false,
                 current : null,
                 currentDataLines : [
                         {
                         id: "0",
-                        t: "0",
+                        t: 0,
                         p: "INDEX",
                         qA: "",
                         qX: "",
@@ -54,6 +75,9 @@ angular
                         }
                     ]
               };
+              */
+
+              $scope.ble = BLETools;
 
               $scope.log = function(msg){
               console.log("msg");
@@ -195,7 +219,8 @@ angular
 
                $scope.connect2BLE = function(){
                   console.log("connect2BLE");
-                  //$scole.log($scope.ble);
+                  //$scope.log($scope.ble);
+                  $scope.ble.isConnected = !$scope.ble.isConnected;
 
                   let serviceUuid = $scope.ble.device.serviceUUID;
                   if (serviceUuid.startsWith('0x')) {

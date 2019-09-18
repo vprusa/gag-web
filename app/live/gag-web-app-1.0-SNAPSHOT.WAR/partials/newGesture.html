@@ -1,7 +1,4 @@
-<!--<script src="./partials/characteristics.js"></script>-->
-
-
-<div class="row">
+<div data-ng-controller="NewGestureController" class="row">
 	<div class="col-lg-6 col-md-12">
 		<div class="card">
 			<div class="card-header card-header-primary">
@@ -9,43 +6,48 @@
 				<p class="card-category"></p>
 			</div>
 			<div class="card-body">
-
-			<table class="table table-hover">
-				<tbody>
-				<tr>
-					<td colspan="2">
-						<table class="table table-hover">
-							<tbody>
-								<tr>
-									<td>Gesture name<br><input class="form-control" ng-model="newGesture.name" type="text" placeholder="Gesture Name"></td>
-									<td>
-										<div data-ng-if="!newGesture.recordingInfo.isRecording">
-											<button type="button" class="btn btn-info desc" ng-click="record()">Record</button>
-										</div>
-										<div width="500px" data-ng-if="newGesture.recordingInfo.isRecording">
-											<button type="button" class="btn btn-info desc" ng-click="stop()">Stop</button>
-										</div>
-									</td>
-								</tr>
-							</tbody>
-						</table>
-					</td>
-				</tr>
-				<tr>
-					<td>Time</td>
-					<td>{{newGesture.recordingInfo.startTime | date: 'HH:MM:ss.sss'}}</td>
-				</tr>
-				<tr>
-                    <td>Recording</td>
-                    <td>{{newGesture.recordingInfo.recordingTime | date: 'HH:MM:ss.sss'}}</td>
-				</tr>
-				<tr>
-					<td>Info #2</td>
-					<td>VLipsum</td>
-				</tr>
-				</tbody>
-			</table>
-		</div>
+				<table class="table table-hover">
+					<tbody>
+					<tr>
+						<td colspan="2">
+							<table class="table table-hover">
+								<tbody>
+									<tr>
+										<td>Gesture name<br>
+											<input class="form-control" ng-model="newGesture.name" type="text" placeholder="Gesture Name">
+										</td>
+										<td style="text-align:right; vertical-align: top;">
+											<div data-ng-if="!newGesture.recordingInfo.isRecording">
+												<button ng-disabled="!ble.isConnected" clicktype="button" class="btn btn-info desc" ng-click="record()">Record</button>
+												<p ng-if="!ble.isConnected">First connect device</p>
+												<p ng-if="ble.isConnected"></p>
+											</div>
+											<div  style="text-align: right;" data-ng-if="newGesture.recordingInfo.isRecording">
+												<button  style="position: right;" type="button" class="btn btn-info desc" ng-click="stop()">Stop</button>
+												<p ng-if="!ble.isConnected">Device disconnected,<br> you should stop</p>
+												<p ng-if="ble.isConnected"></p>
+											</div>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td>Time</td>
+						<td>{{newGesture.recordingInfo.startTime | date: 'HH:MM:ss.sss'}}</td>
+					</tr>
+					<tr>
+						<td>Recording</td>
+						<td>{{newGesture.recordingInfo.recordingTime | date: 'HH:MM:ss.sss'}}</td>
+					</tr>
+					<tr>
+						<td>Info #2</td>
+						<td>VLipsum</td>
+					</tr>
+					</tbody>
+				</table>
+			</div>
 		</div>
 
 		<div class="card">
@@ -54,7 +56,6 @@
 				<p class="card-category">{{selectedGestureDetail.info}}</p>
 			</div>
 			<div class="card-body">
-				<div class="" ng-if="ble.isConnected"></div>
 				<div>
 					<!--<button class="btn btn-info desc"
 							ng-click='playSelectedGesture()'>Show</button></td>-->
@@ -78,7 +79,7 @@
 						<tbody>
 						<tr ng-repeat="item in ble.currentDataLines">
 							<td>{{item.id}}</td>
-							<td>{{item.t | date: 'HH:MM:ss.SSS'}}</td>
+							<td>{{item.t | date: 'HH:MM:ss.sss'}}</td>
 							<td>{{item.p}}</td>
 							<!-- <td>{{item.quatA}}</td>
                             <td>{{item.qX}}</td>
@@ -96,7 +97,6 @@
 				</div>
 			</div>
 		</div>
-
 	</div>
 </div>
 <div ng-include="'partials/logMessages.html'"></div>

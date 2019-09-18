@@ -10,7 +10,8 @@ angular
             '$route',
             'commonTools',
             'createUpdateTools',
-            function($scope, $location, $route, commonTools, createUpdateTools) {
+            'BLETools',
+            function($scope, $location, $route, commonTools, createUpdateTools, BLETools) {
               commonTools.getGestures().then(function(response) {
                 $scope.gestures = response;
               }, function(response) {
@@ -20,6 +21,8 @@ angular
                   msg : response.statusText
                 });
               });
+
+              $scope.ble = BLETools;
 
               $scope.alerts = angular.copy(createUpdateTools.getAlerts());
               createUpdateTools.deleteAlerts();

@@ -29,9 +29,9 @@ angular
               };
 
               $scope.selectedGestureDetail = {
-                info : "selected gesture info",
+                info : "TODO: 3D model of replaying data",
                 list : false,
-                data : "data"
+                data : ""
               };
 
               $scope.listDetail = function(id) {
