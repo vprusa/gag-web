@@ -3,7 +3,7 @@
  */
 'use strict';
 
-angular.module('app').factory('BLETools',function() {
+angular.module('app').factory('BLETools', function() {
   let ble = {
      device : {
          name: "GAGGM",
@@ -17,7 +17,7 @@ angular.module('app').factory('BLETools',function() {
          {
          id: "0",
          t: 0,
-         p: "INDEX",
+         p: "",
          qA: "",
          qX: "",
          qY: "",
@@ -257,14 +257,15 @@ angular.module('app').factory('BLETools',function() {
             }
             var jsonStr = JSON.stringify(received);
             console.log(jsonStr);
-            commonTools.createFingerDataLine(jsonStr).then(function (response) {
+
+            /*commonTools.createFingerDataLine(jsonStr).then(function (response) {
                console.log("response");
                console.log(response);
             }, function (response) {
                //alerts.push({type: 'danger', title: 'Error ' + response.status, msg: response.statusText});
                console.log("response Error");
                console.log(response);
-            });
+            });*/
 
           });
           ble.bluetoothDeviceNotifyChar.startNotifications();

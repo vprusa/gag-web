@@ -27,6 +27,7 @@ angular.module('app').controller(
               + $scope.selectedGestureDetail.selectedGesture + '}');
           };
 
+
           $scope.test = function() {
             var jsonMessage = {
               "t": $.now(),
@@ -59,7 +60,6 @@ angular.module('app').controller(
                 }
             }
             sendDataAndWait(5, jsonMessage);
-
           }
 
           //$scope.selectedGestureDetail.player = {data: []};

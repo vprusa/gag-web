@@ -3,7 +3,9 @@ package cz.muni.fi.gag.web.rest.endpoint;
 import cz.muni.fi.gag.web.entity.Gesture;
 import cz.muni.fi.gag.web.entity.User;
 import cz.muni.fi.gag.web.service.GestureService;
-
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -17,9 +19,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-
-import java.util.List;
-import java.util.Optional;
 
 import static cz.muni.fi.gag.web.entity.UserRole.USER_R;
 
@@ -66,14 +65,22 @@ public class GestureEndpoint extends BaseEndpoint {
         }
     }
 
+    // TODO add consumption of json object of now gesture data
     @POST
-    @Consumes(MediaType.APPLICATION_JSON)
+    //@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed(USER_R)
-    public Response createGesture(Gesture dataLine) {
+    @Path("/{userAlias}/{filtered}")
+    //public Response createGesture(Gesture dataLine) {
+    public Response createGesture(@PathParam("userAlias") String userAlias, @PathParam("filtered") int filtered) {
         Response.ResponseBuilder builder;
         try {
-            Gesture created = gestureService.create(dataLine);
+            Gesture g = new Gesture();
+            g.setUserAlias(userAlias);
+            g.setFiltered(filtered != 0);
+            g.setDateCreated(new Date());
+            g.setUser(currentUser());
+            Gesture created = gestureService.create(g);
             builder = Response.ok(created);
         } catch (Exception e) {
             builder = Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage());
