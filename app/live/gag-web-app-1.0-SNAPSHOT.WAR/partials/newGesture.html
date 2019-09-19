@@ -10,7 +10,7 @@
 			</div>
 			<div class="card-body">
 				<style>select {}</style>
-				<select ng-model="data.selectedGesture"
+				<select ng-model="data.selectedGesture" ng-change="onSelectChange()"
 						 class="btn btn-info">
 					<option value="" selected >Select existing gesture</option>
 					<option ng-style="{'background-color':(!item.isFiltered ? 'green':'') }"

@@ -10,7 +10,8 @@ angular
             '$route',
             'commonTools',
             'createUpdateTools',
-            function($scope, $location, $route, commonTools, createUpdateTools) {
+            'WSTools',
+            function($scope, $location, $route, commonTools, createUpdateTools, WSTools) {
               commonTools.getGestures().then(function(response) {
                 $scope.gestures = response;
               }, function(response) {
@@ -27,28 +28,41 @@ angular
               $scope.closeAlert = function(index) {
                 $scope.alerts.splice(index, 1);
               };
+              $scope.ws = WSTools;
+
+              this.$onInit = function(){
+                WSTools.init();
+              }
+
+              this.$onDestroy = function(){
+                WSTools.destroy();
+              }
 
               $scope.selectedGestureDetail = {
                 info : "TODO: 3D model of replaying data",
-                list : false,
-                data : ""
+                data : []
+              };
+
+              $scope.selectedGestureList = {
+                display: false,
+                data : []
               };
 
               $scope.listDetail = function(id) {
-                if ($scope.selectedGestureDetail.list == false) {
-                  commonTools.getGestureDetailData(id).then(function(response) {
-                    $scope.selectedGestureDetail.data = response;
-                    $scope.selectedGestureDetail.list = true;
-                  }, function(response) {
-                    $scope.alerts.push({
-                      type : 'danger',
-                      title : 'Error ' + response.status,
-                      msg : response.statusText
-                    });
-                  });
-                } else {
-                  $scope.selectedGestureDetail.list = false;
-                }
+                  if(!$scope.selectedGestureList.display ){
+                      commonTools.getGestureDetailData(id).then(function(response) {
+                        $scope.selectedGestureList.data = response;
+                        $scope.selectedGestureList.display = true;
+                      }, function(response) {
+                        $scope.alerts.push({
+                          type : 'danger',
+                          title : 'Error ' + response.status,
+                          msg : response.statusText
+                        });
+                      });
+                  }else{
+                    $scope.selectedGestureList.display = false;
+                  }
               };
 
               $scope.selectGesture = function(id) {
@@ -56,6 +70,24 @@ angular
                 $scope.selectedGestureDetail.play = !$scope.selectedGestureDetail.play;
                 $scope.selectedGestureDetail.selectedGesture = id;
               }
+
+              $scope.onMessage = function(evt) {
+                  //selectedGestureDetail.player.data
+                  var dataLine = JSON.parse(evt.data);
+                  console.log(dataLine);
+                  //$scope.selectedGestureDetail.data.push(dataLine) ;
+                  $scope.selectedGestureDetail.data = [dataLine];
+                  $scope.$apply();
+              };
+
+              $scope.ws.websocketSession.onmessage =  $scope.onMessage;
+              $scope.ws.playSelectedGesture = function() {
+                  //console.log("playSelectedGesture");
+                  console.log("playSelectedGesture");
+                  if($scope.selectedGestureDetail.selectedGesture)
+                  $scope.ws.websocketSession.send('{"action":"replay", "gestureId": '
+                    + $scope.selectedGestureDetail.selectedGesture + '}');
+              };
 
               $scope.ble = {
                 device : {

@@ -11,7 +11,8 @@ angular
             'commonTools',
             'createUpdateTools',
             'BLETools',
-            function($scope, $location, $route, commonTools, createUpdateTools, BLETools) {
+            'WSTools',
+            function($scope, $location, $route, commonTools, createUpdateTools, BLETools, WSTools) {
               commonTools.getGestures().then(function(response) {
                 $scope.gestures = response;
               }, function(response) {
@@ -23,6 +24,7 @@ angular
               });
 
               $scope.ble = BLETools;
+              $scope.ws = WSTools;
 
               $scope.alerts = angular.copy(createUpdateTools.getAlerts());
               createUpdateTools.deleteAlerts();
@@ -57,9 +59,10 @@ angular
               };
 
               // Warning ... idk it is broken using ng-model displays additional broken option...
-              /*$scope.onSelectChange = function(){
-                 $scope.data.selectedGesture = $("#toSelectGesture option:selected").value();
-              }*/
+              $scope.onSelectChange = function(){
+                // $scope.data.selectedGesture = $("#toSelectGesture option:selected").value();
+                $scope.data.currentGesture = $scope.data.gesturesList[$scope.data.selectedGesture-1];
+              }
 
               commonTools.getGestures().then(function(gestures){
                 console.log(gestures);
