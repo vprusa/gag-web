@@ -29,6 +29,16 @@ angular.module('app', [
                 return response.data;
             });
         },
+        clearGesture: function (id) {
+            return $http.post("/gagweb/api/gesture/" + userAlias + "/" + filtered).then(function (response) {
+                return response.data;
+            });
+        },
+        deleteGesture: function (id) {
+            return $http.delete("/gagweb/api/gesture/" + id).then(function (response) {
+                return response.data;
+            });
+        },
         getGestureDetailData: function (id) {
             return $http.get("/gagweb/api/dataline/gesture/" + id).then(function (response) {
                 return response.data;

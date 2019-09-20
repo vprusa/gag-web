@@ -44,15 +44,15 @@ angular
               };
 
               $scope.selectedGestureList = {
-                display: false,
+                display: -1,
                 data : []
               };
 
               $scope.listDetail = function(id) {
-                  if(!$scope.selectedGestureList.display ){
+                  if($scope.selectedGestureList.display == -1 || id != $scope.selectedGestureList.display ){
                       commonTools.getGestureDetailData(id).then(function(response) {
                         $scope.selectedGestureList.data = response;
-                        $scope.selectedGestureList.display = true;
+                        $scope.selectedGestureList.display = id;
                       }, function(response) {
                         $scope.alerts.push({
                           type : 'danger',
@@ -61,7 +61,7 @@ angular
                         });
                       });
                   }else{
-                    $scope.selectedGestureList.display = false;
+                    $scope.selectedGestureList.display = -1;
                   }
               };
 
@@ -69,6 +69,16 @@ angular
                 console.log("selectGesture: " + id);
                 $scope.selectedGestureDetail.play = !$scope.selectedGestureDetail.play;
                 $scope.selectedGestureDetail.selectedGesture = id;
+              }
+
+              $scope.clearGesture = function(id) {
+                  console.log("clearGesture: " + id);
+
+              }
+
+              $scope.deleteGesture = function(id) {
+                console.log("deleteGesture: " + id);
+                //commonTools.
               }
 
               $scope.onMessage = function(evt) {

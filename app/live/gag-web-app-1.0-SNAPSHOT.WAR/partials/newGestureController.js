@@ -35,7 +35,7 @@ angular
 
               $scope.data = {
                 currentGesture : {
-                  id: -1,
+                  id: "",
                   userAlias: "test",
                   dateCreated: -1,
                   user: -1,
@@ -49,7 +49,7 @@ angular
                   recordingLength: 0
                 },
                 info: "TODO live 3D model",
-                gesturesList: [ {id: -1, userAlias: "testsas" }
+                gesturesList: [ {id: "", userAlias: "" }
                     //{id: "-1", userAlias: "", dateCreated: -1, isFiltered: 0},
                 ],
                 //selectedGesture: {-1: 'Select existing gesture'},

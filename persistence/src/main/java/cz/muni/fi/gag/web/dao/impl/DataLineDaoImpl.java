@@ -76,4 +76,11 @@ public class DataLineDaoImpl extends AbstractGenericDao<DataLine> implements Dat
         return dll;
     }
 
+    @Override
+    public int removeBy(Long gestureId) {
+        log.info("removeBy: gestureId: " + gestureId);
+        return  em.createQuery("DELETE FROM DataLine g WHERE gesture_id = :gestureId")
+            .setParameter("gestureId", gestureId).executeUpdate();
+    }
+
 }

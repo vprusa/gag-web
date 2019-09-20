@@ -21,4 +21,5 @@ public interface DataLineDao extends GenericDao<DataLine> {
 
     List<DataLine> getChunkForGesture(long gestureId, int offset, int limit);
 
+    int removeBy(Long gestureId);
 }

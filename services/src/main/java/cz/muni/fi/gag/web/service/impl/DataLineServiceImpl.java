@@ -40,6 +40,11 @@ public class DataLineServiceImpl extends GenericCRUDServiceImpl<DataLine, DataLi
         return getDao().getStream(gestureId);
     }
 
+    @Override
+    public int removeBy(Long gestureId) {
+        return getDao().removeBy(gestureId);
+    }
+
 
     // TODO it seems wrong to instantiate iterator...? or should it be by
     // implementing Iterable? No more wrappers?

@@ -23,4 +23,5 @@ public interface DataLineService extends GenericCRUDService<DataLine, DataLineDa
 
     Stream<DataLine> getStream(long gestureId);
 
+    int removeBy(Long gestureId);
 }

@@ -26,7 +26,7 @@ import static cz.muni.fi.gag.web.entity.UserRole.USER_R;
  * @author Vojtech Prusa
  *
  */
-@Path("/gesture")
+@Path("/gesture/")
 public class GestureEndpoint extends BaseEndpoint {
 
     @Inject
@@ -43,7 +43,7 @@ public class GestureEndpoint extends BaseEndpoint {
      */
 
     @GET
-    @Path("/{id}")
+    @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getGestureById(@PathParam("id") String identifier) {
         log.info("getGestureById");
@@ -70,7 +70,7 @@ public class GestureEndpoint extends BaseEndpoint {
     //@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed(USER_R)
-    @Path("/{userAlias}/{filtered}")
+    @Path("{userAlias}/{filtered}")
     //public Response createGesture(Gesture dataLine) {
     public Response createGesture(@PathParam("userAlias") String userAlias, @PathParam("filtered") int filtered) {
         Response.ResponseBuilder builder;
@@ -92,6 +92,24 @@ public class GestureEndpoint extends BaseEndpoint {
     @Path("{id}")
     @RolesAllowed(USER_R)
     public Response removeGesture(@PathParam("id") Long id) throws Exception {
+        Response.ResponseBuilder builder;
+        Optional<Gesture> dataLine = gestureService.findById(id);
+        if (!dataLine.isPresent()) {
+            Response.status(Status.NOT_FOUND);
+        }
+        try {
+            gestureService.remove(dataLine.get());
+            builder = Response.ok();
+        } catch (Exception e) {
+            builder = Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage());
+        }
+        return builder.build();
+    }
+
+    @DELETE
+    @Path("/clear/{id}")
+    @RolesAllowed(USER_R)
+    public Response clearGesture(@PathParam("id") Long id) throws Exception {
         Response.ResponseBuilder builder;
         Optional<Gesture> dataLine = gestureService.findById(id);
         if (!dataLine.isPresent()) {

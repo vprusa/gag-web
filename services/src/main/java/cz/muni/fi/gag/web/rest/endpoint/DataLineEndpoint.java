@@ -54,6 +54,17 @@ public class DataLineEndpoint {
         return Response.ok(dataLine).build();
     }
 
+    @GET
+    @Path("/clearGesture/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response clearGesture(@PathParam("id") Long gestureId) {
+        int count = dataLineService.removeBy(gestureId);
+        if(count <= 0) {
+            Response.status(Status.NOT_FOUND);
+        }
+        return Response.ok(count).build();
+    }
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)

@@ -2,7 +2,7 @@
 
 <div class="row">
 
-	<div class="col-lg-6 col-md-12">
+	<div class="col-lg-8 col-md-12">
 	<div class="card">
 		<div class="card-header card-header-primary">
 			<h4 class="card-title ">Gestures list</h4>
@@ -23,20 +23,26 @@
 						<th>ID</th>
 						<th>Alias</th>
 						<th>Date created</th>
-						<th>Details</th>
-						<th>Op. #2</th>
+						<th>Operations</th>
 						</thead>
 						<tbody>
 						<tr ng-repeat="item in gestures">
 							<td>{{item.id}}</td>
-							<td>{{item.userAlias}}</td>
+							<td><button class="btn btn-info desc"
+                                        ng-click='selectGesture(item.id)'>{{item.userAlias}}</button></td>
 							<td>{{item.dateCreated | date: 'yyyy-MM-dd HH:MM'}}</td>
 							<td>
-								<!-- <button type="button" class="btn btn-info desc" (click)="showDetail(item.id)">Show</button> -->
-								<a href="javascript:void(0)" ng-click='listDetail(item.id)'>List</a>
+								<a href="" class="btn btn-info" ng-click='listDetail(item.id)'
+									 ng-style="{'background-color':(selectedGestureList.display == item.id? 'green':'') }">
+									<span class="glyphicon glyphicon-list-alt"></span>
+								</a>
+								<a href="" class="btn btn-info" ng-click='clearGesture(item.id)'>
+									<span class="glyphicon glyphicon-trash"></span>
+								</a>
+								<a href="" title="Remove" class="btn btn-info" ng-click='deleteGesture(item.id)'>
+									<span class="glyphicon glyphicon-remove"></span>
+								</a>
 							</td>
-							<td><button class="btn btn-info desc"
-										ng-click='selectGesture(item.id)'>Select</button></td>
 						</tr>
 						</tbody>
 					</table>
@@ -45,7 +51,7 @@
 		</div>
 	</div>
 
-	<div class="col-lg-6 col-md-12">
+	<div class="col-lg-4 col-md-12">
 		<div class="card">
 			<div class="card-header card-header-primary">
 				<h4 class="card-title ">Gesture detail - partial (live)</h4>
@@ -104,7 +110,7 @@
 		</div>
 		<div class="card-body">
 			<div class="" ></div>
-			<div class="table-responsive" ng-if="selectedGestureList.display">
+			<div class="table-responsive" ng-if="selectedGestureList.display != -1">
 				<table class="table">
 					<thead class="text-primary">
 						<th>ID</th>
