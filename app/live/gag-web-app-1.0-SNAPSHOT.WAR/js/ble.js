@@ -3,7 +3,8 @@
  */
 'use strict';
 
-angular.module('app').factory('BLETools', function() {
+//angular.module('app').factory('BLETools', function() {
+angular.module('app').factory('BLETools', ['WSTools', function(WSTools) {
   let ble = {
      device : {
          name: "GAGGM",
@@ -14,9 +15,9 @@ angular.module('app').factory('BLETools', function() {
      isConnected: false,
      current : null,
      currentDataLines : [
-         {
-         id: "0",
-         t: 0,
+         /* {
+         id: "",
+         t: "",
          p: "",
          qA: "",
          qX: "",
@@ -28,7 +29,7 @@ angular.module('app').factory('BLETools', function() {
          mX: "",
          mY: "",
          mZ: ""
-         }
+         }*/
      ]
    };
 
@@ -135,7 +136,7 @@ angular.module('app').factory('BLETools', function() {
      return number;
    }
 
-   ble.convert = function(data){
+   ble.convert = function(data, gestureId){
         // g.e  [42, 153, 4, 6, 143, 197, 31, 231, 246, 2, 242, 0, 0, 13, 10]
         // g.e  [*, counter, finger, (6, 143), (197, 31), (231, 246), (2, 242), 0, 0, 13, 10]
         //let received = ble.ab2str(data.currentTarget.value.buffer);
@@ -154,7 +155,7 @@ angular.module('app').factory('BLETools', function() {
           // "id": null,
           "t": $.now(),
           // TODO dynamic
-          "gid": 2,
+          "gid": gestureId,
           "qA": quatA,
           "qX": quatX,
           "qY": quatY,
@@ -174,6 +175,7 @@ angular.module('app').factory('BLETools', function() {
       console.log("connect2BLE");
       //log(ble);
       ble.isConnected = !ble.isConnected;
+      WSTools.init();
 
       let serviceUuid = ble.device.serviceUUID;
       if (serviceUuid.startsWith('0x')) {
@@ -238,7 +240,8 @@ angular.module('app').factory('BLETools', function() {
 
           ble.bluetoothDeviceNotifyChar.addEventListener("characteristicvaluechanged", async function(ev){
             var received = false;
-            if(!(received = ble.convert(ev))) {return;}
+            // TODO move most of this method to WSTools...?!
+            if(!(received = ble.convert(ev, WSTools.gestureId))) {return;}
 
             ble.timeNow = $.now();
 
@@ -252,11 +255,15 @@ angular.module('app').factory('BLETools', function() {
 
             console.log("trying to push dataline:");
             if(received.p === "WRIST"){
-                // TODO
-                return;
+                // TODO everything about wrist data
+                received.mX= 1;
+                received.mY= 1;
+                received.mZ= 1;
             }
             var jsonStr = JSON.stringify(received);
             console.log(jsonStr);
+
+            WSTools.sendMessage(jsonStr);
 
             /*commonTools.createFingerDataLine(jsonStr).then(function (response) {
                console.log("response");
@@ -278,4 +285,5 @@ angular.module('app').factory('BLETools', function() {
    // TODO move here code from btController.js
    // or create custom library for it that would be included here
   return ble;
-});
+//});
+}]);

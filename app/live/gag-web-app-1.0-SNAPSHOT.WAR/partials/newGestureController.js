@@ -36,10 +36,10 @@ angular
               $scope.data = {
                 currentGesture : {
                   id: "",
-                  userAlias: "test",
-                  dateCreated: -1,
-                  user: -1,
-                  isFiltered: -1
+                  userAlias: "",
+                  dateCreated: "",
+                  user: "",
+                  isFiltered: ""
                 },
                 currentDataLine: {},
                 recordingInfo: {
@@ -49,7 +49,7 @@ angular
                   recordingLength: 0
                 },
                 info: "TODO live 3D model",
-                gesturesList: [ {id: "", userAlias: "" }
+                gesturesList: [ {id: "", userAlias: ""}
                     //{id: "-1", userAlias: "", dateCreated: -1, isFiltered: 0},
                 ],
                 //selectedGesture: {-1: 'Select existing gesture'},
@@ -72,15 +72,21 @@ angular
 
               $scope.record = function(){
                 // new gesture or add to existing
-                if($scope.data.currentGesture.id == -1) {
+                if(!$scope.data.currentGesture.id || $scope.data.currentGesture.id == -1 || $scope.data.currentGesture.id == "") {
                   console.log($scope.data.currentGesture.userAlias);
                   commonTools.createGesture($scope.data.currentGesture.userAlias, 0).then(function(gesture){
-                     $scope.data.currentGesture = gesture;});
+                    $scope.data.currentGesture = gesture;
+                    WSTools.setState(WSTools.reqStates.RECORD, gesture.id);
+                    // TODO move logically WSTools.state instead of recordingInfo.isRecording
+                    // using ws.checkState.isRecording();
+                    $scope.data.recordingInfo.isRecording = true;
+                  });
                 } else {
-
+                  WSTools.setState(WSTools.reqStates.RECORD, $scope.data.currentGesture.id);
+                  // TODO move logically WSTools.state instead of recordingInfo.isRecording
+                  // using ws.checkState.isRecording();
+                  $scope.data.recordingInfo.isRecording = true;
                 }
-
-                $scope.data.recordingInfo.isRecording = true;
             }
 
             $scope.stop = function(){

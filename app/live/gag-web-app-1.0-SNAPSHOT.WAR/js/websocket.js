@@ -13,10 +13,82 @@
 angular.module('app').factory('WSTools', function(/*$rootScope*/) {
     let ws = {};
     //ws.dataLines = [];
+    // TODO add state automate, encapsulate variables, create access methods, etc.
+    // state automate would have states:
+    // waiting for input from WS or app
     ws.state = "IDLE";
-    ws.state = "PREPARE_REPLAYING";
+
+    // when waiting for replaying preparations to complete
+    //ws.state = "PREPARE_REPLAYING";
+    // when replaying data
     //ws.state = "REPLAYING";
+    // when waiting for replaying preparations to complete, e.g. delete DataLines for Override option in gesture
+    //ws.state = "PREPARE_RECORDING";
+    // when recording data
     //ws.state = "RECORDING";
+    // when replaying and recording, idk if necessary
+    // this one may be implemented far in the future for Use Case "shadowing gesture":
+    // visualization of current live gesture recording against
+    // already existing gesture replaying at the same time...
+    //ws.state = "REPLAYING_AND_RECORDING";
+
+    ws.reqStates = {
+        STOP: 0,
+        RECORD:1,
+        REPLAY:2
+      }
+
+    ws.innerStates = {
+        IDLE: 0,
+        PREPARE_REPLAYING:1,
+        REPLAYING: 2,
+        PREPARE_RECORDING: 3,
+        RECORDING: 4
+      }
+    ws.state = ws.innerStates.IDLE;
+
+    ws.setState = function(newState, gestureId){
+      switch(newState){
+        case ws.reqStates.RECORD:
+            if(typeof gestureId == 'undefined'){
+                console.log("For WSTools state RECORD gestureId can not be undefined");
+                break;
+            }
+            //ws.state = ws.reqStates.IDLE;
+            ws.state = ws.innerStates.PREPARE_RECORDING;
+            // TODO preparations
+            ws.gestureId = gestureId;
+            ws.state = ws.innerStates.RECORDING;
+            break;
+        case ws.reqStates.REPLAY:
+
+            break;
+         case ws.reqStates.STOP:
+
+            break;
+        default:
+            console.log("WSTools unknown state: ");
+            console.log(newState);
+        }
+    }
+
+    ws.gestureId = "";
+
+    ws.sendMessage = function(msg){
+        if(ws.checkStates.isRecording()){
+            console.log("sending message");
+            ws.websocketSession.send(msg);
+        }else{
+            console.log("not sending message");
+        }
+    }
+
+    ws.checkStates = {
+        isRecording: function(){
+            return ws.state == ws.innerStates.RECORDING},
+        isReplaying: function(){
+            return ws.state == ws.innerStates.REPLAYING},
+    }
 
     ws.gestureId = "";
 
@@ -40,7 +112,7 @@ angular.module('app').factory('WSTools', function(/*$rootScope*/) {
         //ws.gestureId = "";
         //ws.$apply();
     };
-    // ws.init = function() {
+     ws.init = function() {
         if (!ws.websocketSession) {
              console.log("init");
              let wsProtocol = window.location.protocol == "https:" ? "wss" : "ws";
@@ -52,7 +124,7 @@ angular.module('app').factory('WSTools', function(/*$rootScope*/) {
 
              console.log(ws.websocketSession);
            }
-    // };
+     };
 
     ws.destroy = function() {
         console.log("destroy");
@@ -87,7 +159,7 @@ angular.module('app').factory('WSTools', function(/*$rootScope*/) {
             var jsonStr = JSON.stringify(data);
             console.log(jsonStr);
 
-            $rootScope.websocketSession.send(jsonStr);
+            ws.websocketSession.send(jsonStr);
             if(counter > 0){
                 setTimeout(function(){sendDataAndWait(--counter, data)}, 20);
             }

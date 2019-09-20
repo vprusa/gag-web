@@ -9,10 +9,11 @@
 				<p class="card-category" ng-if="data.recordingInfo.isRecording && ble.isConnected">Recording now...</p>
 			</div>
 			<div class="card-body">
-				<style>select {}</style>
+				<style>select:before {content: '\e095'}</style>
 				<select ng-model="data.selectedGesture" ng-change="onSelectChange()"
 						 class="btn btn-info">
-					<option value="" selected >Select existing gesture</option>
+
+					<option value="" selected style="content: '\e095'; ">New.. or? </option>
 					<option ng-style="{'background-color':(!item.isFiltered ? 'green':'') }"
 							ng-repeat="item in data.gesturesList" value="{{item.id}}">
 						{{item.userAlias}} ({{item.dateCreated | date: 'yyyy:mm:dd-HH:MM:ss'}})

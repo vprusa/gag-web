@@ -90,7 +90,7 @@ angular
                   $scope.$apply();
               };
 
-              $scope.ws.websocketSession.onmessage =  $scope.onMessage;
+              //$scope.ws.websocketSession.onessage =  $scope.onMessage;
               $scope.ws.playSelectedGesture = function() {
                   //console.log("playSelectedGesture");
                   console.log("playSelectedGesture");
