@@ -3,11 +3,10 @@
  */
 'use strict';
 
-/*angular.module('app').controller(   'websocketController',  [
-/        '$scope',
+/*angular.module('app').controller('websocketController', [
+        '$scope',
         '$location',
         '$rootScope',
-
         function($scope, $location, $rootScope) {
         */
 angular.module('app').factory('WSTools', function(/*$rootScope*/) {
@@ -112,7 +111,7 @@ angular.module('app').factory('WSTools', function(/*$rootScope*/) {
         //ws.gestureId = "";
         //ws.$apply();
     };
-     ws.init = function() {
+    ws.init = function() {
         if (!ws.websocketSession) {
              console.log("init");
              let wsProtocol = window.location.protocol == "https:" ? "wss" : "ws";
@@ -123,8 +122,8 @@ angular.module('app').factory('WSTools', function(/*$rootScope*/) {
              ws.websocketSession.onmessage = ws.onMessage;
 
              console.log(ws.websocketSession);
-           }
-     };
+        }
+    };
 
     ws.destroy = function() {
         console.log("destroy");
@@ -167,7 +166,6 @@ angular.module('app').factory('WSTools', function(/*$rootScope*/) {
 
         sendDataAndWait(5, jsonMessage);
     }
-
 
     return ws;
 //} ]);
