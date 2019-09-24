@@ -29,9 +29,9 @@
         <infinispan.version>7.1.0.Final</infinispan.version>
         <version.keycloak>6.0.1</version.keycloak>
 
-        <projectScalaLibrary>1.0.0-M8</projectScalaLibrary>
-        <projectScalaVersion>2.13</projectScalaVersion>
-        <scalajsLibrary>scalajs-library_${projectScalaVersion}</scalajsLibrary>
+        <projectScalaLibrary>2.13.0</projectScalaLibrary>
+        <projectScalaVersion>2.13.0</projectScalaVersion>
+        <scalajsLibrary>scalajs-library_2.13</scalajsLibrary>
         <sjs.dependency>sjs.dependency</sjs.dependency>
         <sjs.phase>sjs.phase</sjs.phase>
         <scalajs-cli>scalajs-cli</scalajs-cli>
@@ -46,40 +46,30 @@
             <version>1.0.0-M8</version>
         </dependency>-->
         <!-- https://mvnrepository.com/artifact/org.scala-js/scalajs-library -->
-        <dependency>
+        <!-- <dependency>
             <groupId>org.scala-js</groupId>
             <artifactId>scalajs-library_2.13</artifactId>
             <version>1.0.0-M8</version>
-        </dependency>
+        </dependency>-->
 
         <!-- https://mvnrepository.com/artifact/org.scala-lang/scala-library -->
-        <dependency>
-            <groupId>org.scala-lang</groupId>
-            <artifactId>scala-library</artifactId>
-            <version>2.13.1</version>
+        <!--   <dependency>
+             <groupId>org.scala-lang</groupId>
+             <artifactId>scala-library</artifactId>
+             <version>2.13.0</version>
         </dependency>
-
-
-
-        <!-- https://mvnrepository.com/artifact/org.scala-lang/scala-library -->
-        <dependency>
-            <groupId>org.scala-lang</groupId>
-            <artifactId>scala-library</artifactId>
-            <version>2.13.0</version>
-        </dependency>
-
-
+        -->
 
         <!-- https://mvnrepository.com/artifact/org.scala-js/scalajs-compiler -->
-        <dependency>
+        <!--  <dependency>
             <groupId>org.scala-js</groupId>
             <artifactId>scalajs-compiler_2.13.1</artifactId>
-            <version>${projectScalaLibrary}</version>
+            <version>1.0.0-M8</version>
         </dependency>
-
+        -->
     </dependencies>
 
-<!-- https://gist.github.com/Andrei-Pozolotin/e26380fe9703a9158efe#file-scala-js-lib-xml -->
+    <!-- https://gist.github.com/Andrei-Pozolotin/e26380fe9703a9158efe#file-scala-js-lib-xml -->
     <profiles>
         <!-- Activate Scala/JS Library Project. -->
         <profile>
@@ -91,17 +81,44 @@
             </activation>
             <!-- Scala/JS libraries use scope=provided. -->
             <dependencies>
+                <!--
                 <dependency>
                     <groupId>org.scala-js</groupId>
-                    <artifactId>${scalajsLibrary}</artifactId>
+                    <artifactId>scalajs-library_${projectScalaVersion}</artifactId>
                     <scope>provided</scope>
-                    <version>${projectScalaLibrary}</version>
+                    <version>1.0.0-M8</version>
+                </dependency>-->
+                <!-- https://mvnrepository.com/artifact/org.scala-js/scalajs-library -->
+                <dependency>
+                    <groupId>org.scala-js</groupId>
+                    <artifactId>scalajs-library_2.13</artifactId>
+                    <version>1.0.0-M8</version>
                 </dependency>
+                <!-- https://mvnrepository.com/artifact/org.scala-js/scalajs-dom -->
+                <dependency>
+                    <groupId>org.scala-js</groupId>
+                    <artifactId>scalajs-dom_sjs1.0.0-M8_2.13</artifactId>
+                    <version>0.9.7</version>
+                </dependency>
+                <!-- https://mvnrepository.com/artifact/com.scalatags/scalatags -->
+                <dependency>
+                    <groupId>com.scalatags</groupId>
+                    <artifactId>scalatags_2.10</artifactId>
+                    <version>0.1.4</version>
+                </dependency>
+
+
+                <!--
+                    libraryDependencies ++= Seq(
+                    "org.scala-js" %%% "" % "0.9.1",
+                    "com.lihaoyi" %%% "scalatags" % "0.6.1"
+                -->
+
             </dependencies>
             <properties>
                 <!-- Scala/JS compiler plugin identification. -->
                 <sjs.plugin.groupId>org.scala-js</sjs.plugin.groupId>
-                <sjs.plugin.artifactId>scalajs-compiler_${projectScalaVersion}.1</sjs.plugin.artifactId>
+                <sjs.plugin.artifactId>scalajs-compiler_${projectScalaLibrary}</sjs.plugin.artifactId>
                 <sjs.plugin.version>${projectScalajsVersion}</sjs.plugin.version>
                 <!-- Scala/JS compiler plugin IDE integration. -->
                 <sjs.plugin.name>scalajs</sjs.plugin.name>
@@ -152,7 +169,8 @@
                                 </goals>
                                 <configuration>
                                     <target>
-                                     <!--   <propertyfile file="${sjs.eclipse.properties}"
+                                        <!--
+                                        <propertyfile file="${sjs.eclipse.properties}"
                                                       comment="Maven Config: scala-js-lib">
                                             <entry key="eclipse.preferences.version" value="1" />
                                             <entry key="scala.compiler.useProjectSettings" value="true" />
@@ -219,5 +237,7 @@
             </build>
         </profile>
 
+
+        
     </profiles>
 </project>
