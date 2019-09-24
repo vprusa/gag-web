@@ -1,5 +1,5 @@
 package example
-import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel}
+import scala.scalajs.js.annotation.JSExport
 import org.scalajs.dom
 import org.scalajs.dom.html
 
@@ -10,7 +10,7 @@ case class Point(x: Int, y: Int){
   def /(d: Int) = Point(x / d, y / d)
 }
 
-@JSExportTopLevel("ScalaJSExample")
+@JSExport
 object ScalaJSExample {
   @JSExport
   def main(canvas: html.Canvas): Unit = {
