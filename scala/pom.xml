@@ -1,0 +1,91 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>cz.muni.fi.gag.web</groupId>
+        <artifactId>gag-web-parent</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <groupId>cz.muni.fi.gag.web</groupId>
+    <artifactId>gag-web-scala</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>GAG web scala</name>
+    <description>Gag web scala</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>2.11.0</version>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+        <!-- TODO remove unnecessary ones-->
+        <profile>
+            <id>generate-js</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <configuration>
+                                    <executable>sbt</executable>
+                                    <arguments>
+                                        <argument>fastOptJS</argument>
+                                    </arguments>
+                                </configuration>
+                                <id>sbt</id>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- TODO move generated sources to ../app/live/gag-web-app-1.0-SNAPSHOT.WAR/js/libraries/ -->
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>publishM2</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <configuration>
+                                    <executable>sbt</executable>
+                                    <arguments>
+                                        <argument>publishM2</argument>
+                                    </arguments>
+                                </configuration>
+                                <id>sbt</id>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!--TODO move generated sources to ../app/live/gag-web-app-1.0-SNAPSHOT.WAR/js/libraries/ -->
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <repositories>
+        <repository>
+            <id>SonatypeOSSSnapshots</id>
+            <name>Sonatype OSS Snapshots</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+            <layout>default</layout>
+        </repository>
+    </repositories>
+</project>
