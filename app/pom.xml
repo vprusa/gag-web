@@ -370,8 +370,4 @@
 			</build>
 		</profile>
 	</profiles>
-
-	<modules>
-		<module>app-scala</module>
-	</modules>
 </project>
