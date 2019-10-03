@@ -10,6 +10,10 @@ mvn clean install -Dcheckstyle.skip | tee app.log
 ```
 
 ```
+sbt compile fastOptJS package publishM2
+```
+
+```
 sbt fastOptJS
 ```
 

@@ -53,6 +53,9 @@
         </profile>
         <profile>
             <id>publishM2</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <build>
                 <plugins>
                     <plugin>
@@ -63,6 +66,10 @@
                                 <configuration>
                                     <executable>sbt</executable>
                                     <arguments>
+                                        <!-- TODO remove unnecessary -->
+                                        <argument>compile</argument>
+                                        <argument>fastOptJS</argument>
+                                        <argument>package</argument>
                                         <argument>publishM2</argument>
                                     </arguments>
                                 </configuration>

@@ -2,12 +2,22 @@
 // https://github.com/portable-scala/sbt-crossproject
 import sbtcrossproject.CrossPlugin.autoImport.{crossProject, CrossType}
 
-val sharedSettings = Seq(scalaVersion := "2.11.12")
+val sharedSettings = Seq(
+  scalaVersion := "2.11.12",
+  name := "gag-web-scala",
+  version := "1.0-SNAPSHOT",
+  organization := "cz.muni.fi.gag.web.scala"
+  //,resolvers +=
+  //  "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
+)
+
+
 
 lazy val modules =
   // select supported platforms
   crossProject(JSPlatform, JVMPlatform, NativePlatform)
-    .crossType(CrossType.Pure) // [Pure, Full, Dummy], default: CrossType.Full
+    .crossType(CrossType.Full) // [Pure, Full, Dummy], default: CrossType.Full
+    .in(file("."))
     .settings(sharedSettings)
     .settings(/**/)
     .jsSettings(/* ... */) // defined in sbt-scalajs-crossproject
@@ -22,7 +32,7 @@ lazy val scalaJVM    = modules.jvm
 lazy val scalaNative = modules.native
 
 /*
-lazy val multiprojectOld =
+lazy val modules_ =
   crossProject(JSPlatform, JVMPlatform, NativePlatform)
     .settings(sharedSettings)
     .settings(
@@ -31,7 +41,7 @@ lazy val multiprojectOld =
     )
 
 // Optional in sbt 1.x (mandatory in sbt 0.13.x)
-lazy val fooJS = multiprojectOld.js
-lazy val fooJVM = multiprojectOld.jvm
-lazy val fooNative = multiprojectOld.native
+lazy val fooJS = modules_.js
+lazy val fooJVM = modules_.jvm
+lazy val fooNative = modules_.native
 */
