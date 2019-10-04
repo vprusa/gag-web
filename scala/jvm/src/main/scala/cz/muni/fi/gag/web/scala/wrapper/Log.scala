@@ -1,6 +1,6 @@
 package cz.muni.fi.gag.web.scala.wrapper
 
-import cz.muni.fi.gag.web.common.LogT
+import cz.muni.fi.gag.web.common.shared.LogT
 
 /**
  * This class is a test for portable multi-module cross project
