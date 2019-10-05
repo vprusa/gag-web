@@ -1,7 +1,7 @@
 package cz.muni.fi.gag.web.common
 
-import cz.muni.fi.gag.web.common.shared.VisualizationContext
+import cz.muni.fi.gag.web.common.shared.VisualizationContextT
 
 object Configuration {
-  var app: VisualizationContext = null
+  var app: VisualizationContextT = null
 }

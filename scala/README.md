@@ -24,3 +24,7 @@ sbt makePom
 ```
 sbt publishM2
 ```
+
+# TODO
+
+- Modularize: split shared to projects according to requirements of higher-level usage with regard to code size for JS and Native libraries

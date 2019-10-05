@@ -1,4 +1,5 @@
 package example
+import cz.muni.fi.gag.web.common.Log
 import org.scalajs.dom
 import org.scalajs.dom.html
 

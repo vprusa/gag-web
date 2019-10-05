@@ -53,7 +53,6 @@ class DataLineFilterWrapper(val hand: Hand, val sensor: Sensor, val date: Date =
     // TODO stirngified
     ""
   }
-
 }
 
 class RecordedDataFilter() {

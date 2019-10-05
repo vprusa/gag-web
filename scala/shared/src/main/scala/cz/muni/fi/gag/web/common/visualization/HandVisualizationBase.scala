@@ -1,9 +1,9 @@
 package cz.muni.fi.gag.web.common.visualization
 
 import cz.muni.fi.gag.web.common.Hand
-import cz.muni.fi.gag.web.common.shared.VisualizationContext
+import cz.muni.fi.gag.web.common.shared.VisualizationContextT
 
-class HandVisualizationBase(val hi: Hand.type, val app: VisualizationContext) //this.app = Configuration.app();
+class HandVisualizationBase(val hi: Hand.type, val app: VisualizationContextT) //this.app = Configuration.app();
 {
   var rotationX = 0.0f
   var rotationY = 0.0f
