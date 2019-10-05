@@ -2,6 +2,7 @@
 Copyright (c) 2018 Vojtěch Průša
 */
 package cz.muni.fi.gag.web.common.recognition
+import cz.muni.fi.gag.web.common.recognition
 
 object Sensor extends Enumeration {
   type Sensor = Value
@@ -17,6 +18,8 @@ object Sensor extends Enumeration {
       case _ => throw new IllegalArgumentException
     }
   }
+
+  override def values: recognition.Sensor.ValueSet = super.values
 
   def lenght(): Int = {6}
 
