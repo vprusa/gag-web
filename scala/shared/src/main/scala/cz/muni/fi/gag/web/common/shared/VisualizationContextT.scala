@@ -19,7 +19,6 @@ trait VisualizationContextT {
 
   def strokeWeight(w: Int)
 
-  //def lineWithDot(i: Int, offsetY: Int, i1: Int, sideOffset: Int, length1: Any, i2: Int)
   def lineWithDot(x1: Float, y1: Float, z1: Float, x2: Float, y2: Float, z2: Float): Unit = {
     strokeWeight(1)
     line(x1, y1, z1, x2, y2, z2)

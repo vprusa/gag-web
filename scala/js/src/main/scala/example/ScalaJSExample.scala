@@ -10,6 +10,7 @@ case class Point(x: Int, y: Int){
   def /(d: Int) = Point(x / d, y / d)
 }
 
+//@JSExportTopLevel("ScalaJSExample")
 @JSExport
 object ScalaJSExample {
   @JSExport

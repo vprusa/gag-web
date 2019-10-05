@@ -2,6 +2,8 @@
 // https://github.com/portable-scala/sbt-crossproject
 import sbtcrossproject.CrossPlugin.autoImport.{crossProject, CrossType}
 
+//scalaVersion := "2.11.12"
+
 val sharedSettings = Seq(
   scalaVersion := "2.11.12",
   name := "gag-web-scala",
@@ -20,7 +22,15 @@ lazy val modules =
     .in(file("."))
     .settings(sharedSettings)
     .settings(/**/)
-    .jsSettings(/* ... */) // defined in sbt-scalajs-crossproject
+    .jsSettings(
+      /*{
+        libraryDependencies += "org.querki" %%% "jstree-facade" % "0.5"
+        libraryDependencies += "com.lihaoyi" %% "scalatags" % "0.6.7"
+        libraryDependencies += "org.scala-js" %%% "scalajs-dom" % "0.9.7"
+        libraryDependencies += "org.scala-js" %% "scalajs-library" % "0.6.26"
+        libraryDependencies += "org.scala-js" %% "scalajs-test-interface" % "0.6.26" % Test
+      }*/
+      ) // defined in sbt-scalajs-crossproject
     .jvmSettings(/* ... */)
     // configure Scala-Native settings
     .nativeSettings(/* ... */) // defined in sbt-scala-native
