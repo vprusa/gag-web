@@ -11,7 +11,7 @@ case class Point(x: Int, y: Int){
 }
 
 //@JSExportTopLevel("ScalaJSExample")
-@JSExport
+@JSExport("ScalaJSExample")
 object ScalaJSExample {
   @JSExport
   def main(canvas: html.Canvas): Unit = {
@@ -48,4 +48,5 @@ object ScalaJSExample {
 
     dom.window.setInterval(() => run, 50)
   }
+
 }

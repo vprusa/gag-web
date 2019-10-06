@@ -1,0 +1,70 @@
+<html>
+<head title="Plasmids bank">
+  <!-- <link rel="stylesheet" href="./styles/mystyles.css" />-->
+
+  <script type="text/javascript" src="./resources/lib/jquery/jquery.min.js"></script>
+
+  <link rel="stylesheet" href="./resources/lib/Semantic-UI/semantic.css" />
+  <script type="text/javascript" src="./resources/lib/Semantic-UI/semantic.js"></script>
+
+  <link rel="stylesheet" href="./resources/lib/codemirror/lib/codemirror.css" type="text/css">
+  <script type="text/javascript" src="./resources/lib/codemirror/lib/codemirror.js"></script>
+  <script type="text/javascript" src="./resources/lib/codemirror/mode/xml/xml.js"></script>
+  <script type="text/javascript" src="./resources/lib/codemirror/mode/htmlmixed/htmlmixed.js"></script>
+  <script type="text/javascript" src="./resources/lib/codemirror/mode/clike/clike.js"></script>
+
+  <script type="text/javascript" src="./resources/lib/three.js/three.js"></script>
+
+  <script src="./resources/OrbitControls.js"></script>
+  <script src="./resources/CSS3DRenderer.js"></script>
+  <!-- <script src="./resources/frontend-fastopt.js"></script> -->
+
+  <script>
+      $( document ).ready(function() {
+          FrontEnd().main(); //activate ScalaJS main class
+          let leftSidebar = false;
+          if(leftSidebar) {
+          FrontEnd().showLeftSidebar(); //activate sidebar (if exists)
+          }
+      });
+  </script>
+
+  <script
+      src="https://code.jquery.com/jquery-3.4.1.min.js"
+      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+      crossorigin="anonymous"></script>
+  <script src="./gag-web-scala-fastopt.js"></script>
+  <!--
+  <script>
+    //ScalaJSExample().main(document.getElementById('canvas'));
+</script>
+-->
+</head>
+<body>
+<!--
+<section class="ui left  labeled sidebar green segment" data-view="sidebar">
+
+  <div class="ui breadcrumb">
+    <i class="right arrow icon divider"></i>
+    <header class="ui section header" data-bind="title"></header>
+    <i class="right arrow icon divider"></i>
+  </div>
+  <div class="item">
+    <img  class="ui image" data-bind-src="logo">
+  </div>
+
+</section>
+-->
+
+<div  class="pusher"> <!--it will be pushed by a sidebar-->
+  <main id="main" class="ui green tertiary inverted segment">
+    <section class="ui blue pilled message">
+      ScalaJS interface for THREE.js javascript lib. You can rotate the cube and sprite by holding left mouse button
+    </section>
+    <section id="container"></section>
+  </main>
+
+</div>
+</body>
+</html>
+
