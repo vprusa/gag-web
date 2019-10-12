@@ -272,7 +272,7 @@
 
 	<profiles>
 		<profile>
-			<id>copyJsps</id>
+			<id>copyJS</id>
 			<build>
 				<plugins>
 					<plugin>
@@ -293,6 +293,11 @@
 		</profile>
 		<profile>
 			<id>npm</id>
+			<activation>
+				<property>
+					<name>prepareAll</name>
+				</property>
+			</activation>
 			<build>
 				<plugins>
 					<plugin>
@@ -315,12 +320,30 @@
 							</execution>
 						</executions>
 					</plugin>
+					<plugin>
+						<artifactId>maven-resources-plugin</artifactId>
+						<version>2.5</version>
+						<configuration>
+							<outputDirectory>${basedir}/live/gag-web-app-1.0-SNAPSHOT.WAR/vendor</outputDirectory>
+							<resources>
+								<resource>
+									<directory>bower_components</directory>
+									<filtering>true</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</plugin>
 				</plugins>
 			</build>
 		</profile>
 		<profile>
 			<!-- TODO this should be handled by npm -->
 			<id>install-material-dashboard</id>
+			<activation>
+				<property>
+					<name>prepareAll</name>
+				</property>
+			</activation>
 			<build>
 				<plugins>
 					<plugin>

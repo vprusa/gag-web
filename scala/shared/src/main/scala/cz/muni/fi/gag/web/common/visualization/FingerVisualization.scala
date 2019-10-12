@@ -25,19 +25,19 @@ class FingerVisualization(override val hi: Hand.type, override val app: Visualiz
     else this.length4 = -1
   }
 
-  def drawStaticPart() = app.lineWithDot(0, offsetY, 0, sideOffset, this.length1, 0)
+  def drawStaticPart() = app._lineWithDot(0, offsetY, 0, sideOffset, this.length1, 0)
 
   def drawParts() = { // drawStaticPart();
     // app.lineWithDot(fingerStartX, fingerStartY, 0, sideOffset, this.length1, 0);
-    app.lineWithDot(sideOffset, this.length1, 0, sideOffset, this.length2, 0)
+    app._lineWithDot(sideOffset, this.length1, 0, sideOffset, this.length2, 0)
     if (this.length4 == -1 || this.length4offset == -1) {
-      this.app.strokeWeight(1)
-      this.app.line(sideOffset, this.length2, 0, sideOffset, this.length3, 0)
+      this.app._strokeWeight(1)
+      this.app._line(sideOffset, this.length2, 0, sideOffset, this.length3, 0)
     }
     else {
-      app.lineWithDot(sideOffset, this.length2, 0, sideOffset, this.length3, 0)
-      this.app.strokeWeight(1)
-      this.app.line(sideOffset, this.length3, 0, sideOffset, this.length4, 0)
+      app._lineWithDot(sideOffset, this.length2, 0, sideOffset, this.length3, 0)
+      this.app._strokeWeight(1)
+      this.app._line(sideOffset, this.length3, 0, sideOffset, this.length4, 0)
     }
   }
 
@@ -46,9 +46,9 @@ class FingerVisualization(override val hi: Hand.type, override val app: Visualiz
     val sideOffsetbkp = this.sideOffset
     drawStaticPart()
     // translate magic
-    app.pushMatrix()
-    app.translate(0, 0, 0)
-    app.translate(sideOffset, this.length1, 0)
+    app._pushMatrix()
+    app._translate(0, 0, 0)
+    app._translate(sideOffset, this.length1, 0)
     this.length1 = 0
     recalcLenghts(this.length1, length2offset, length3offset, length4offset)
     /*
@@ -57,14 +57,14 @@ class FingerVisualization(override val hi: Hand.type, override val app: Visualiz
              * app.rotateZ(rotationZ);// * (hi.ordinal() == 0 ? 1f : -1f));
              */ val hiv = if (hi == Hand.LEFT) 1f
     else -(1f)
-    app.rotate(angle, rotationX * hiv, rotationY * hiv, rotationZ * hiv)
-    app.stroke(0, 255, 0)
-    app.point(0, 0, 0)
+    app._rotate(angle, rotationX * hiv, rotationY * hiv, rotationZ * hiv)
+    app._stroke(0, 255, 0)
+    app._point(0, 0, 0)
     sideOffset = 0
     drawParts()
-    app.translate(0, 0, 0)
-    app.popMatrix()
-    app.stroke(255, 0, 255) // purple
+    app._translate(0, 0, 0)
+    app._popMatrix()
+    app._stroke(255, 0, 255) // purple
     this.length1 = length1bkp
     this.sideOffset = sideOffsetbkp
   }

@@ -29,17 +29,17 @@ class HandVisualization(override val hi: Hand.type, override val app: Visualizat
   override def rotate(angle: Float, rotationX: Float, rotationY: Float, rotationZ: Float) = {
     super.rotate(angle, rotationX, rotationY, rotationZ)
     // translate magic
-    app.pushMatrix
-    app.translate(0, 0, 0)
+    app._pushMatrix
+    app._translate(0, 0, 0)
     /*
      * app.rotateX(rotationX * (hi.ordinal() == 0 ? 1f : -1f));
      * app.rotateY(rotationY * (hi.ordinal() == 0 ? 1f : -1f));
      * app.rotateZ(rotationZ * (hi.ordinal() == 0 ? 1f : -1f));
     */
     val hiv = if ((hi eq Hand.LEFT)) 1f else -(1f)
-    app.rotate(angle, rotationX * hiv, rotationY * hiv, rotationZ * hiv)
+    app._rotate(angle, rotationX * hiv, rotationY * hiv, rotationZ * hiv)
     draw()
-    app.translate(0, 0, 0)
-    app.popMatrix
+    app._translate(0, 0, 0)
+    app._popMatrix
   }
 }

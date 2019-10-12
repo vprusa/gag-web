@@ -4,20 +4,20 @@ import cz.muni.fi.gag.web.common.shared.VisualizationContextT
 
 object VisualizationContext extends VisualizationContextT {
 
-  def pushMatrix() = {}
+  def _pushMatrix() = {}
 
-  def popMatrix()= {}
+  def _popMatrix()= {}
 
-  def point(x: Float, y: Float, z: Float)= {}
+  def _point(x: Float, y: Float, z: Float)= {}
 
-  def rotate(angle: Float, rotationX: Float, rotationY: Float, rotationZ: Float)= {}
+  def _rotate(angle: Float, rotationX: Float, rotationY: Float, rotationZ: Float)= {}
 
-  def stroke(v1: Float, v2: Float, v3: Float)= {}
+  def _stroke(v1: Float, v2: Float, v3: Float)= {}
 
-  def translate(x: Float, y: Float, z: Float)= {}
+  def _translate(x: Float, y: Float, z: Float)= {}
 
-  def line(sx: Float, sy: Float, sz: Float, ex: Float, ey: Float, ez: Float)= {}
+  def _line(sx: Float, sy: Float, sz: Float, ex: Float, ey: Float, ez: Float)= {}
 
-  def strokeWeight(w: Int)= {}
+  def _strokeWeight(w: Int)= {}
 
 }

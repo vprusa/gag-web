@@ -23,38 +23,13 @@
     </dependencies>
 
     <profiles>
-        <!-- TODO remove unnecessary ones-->
-        <profile>
-            <id>generate-js</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <configuration>
-                                    <executable>sbt</executable>
-                                    <arguments>
-                                        <argument>fastOptJS</argument>
-                                    </arguments>
-                                </configuration>
-                                <id>sbt</id>
-                                <phase>generate-sources</phase>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <!-- TODO move generated sources to ../app/live/gag-web-app-1.0-SNAPSHOT.WAR/js/libraries/ -->
-                </plugins>
-            </build>
-        </profile>
         <profile>
             <id>publishM2</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
+                <property>
+                    <name>prepareAll</name>
+                </property>
             </activation>
             <build>
                 <plugins>
@@ -66,10 +41,8 @@
                                 <configuration>
                                     <executable>sbt</executable>
                                     <arguments>
-                                        <!-- TODO remove unnecessary -->
                                         <argument>compile</argument>
-                                        <argument>fastOptJS</argument>
-                                        <argument>package</argument>
+                                        <argument>fastOptJSO</argument>
                                         <argument>publishM2</argument>
                                     </arguments>
                                 </configuration>

@@ -162,12 +162,12 @@
 
         <!--  Use JSON do parse messages from websocket , we use provided scope as the API is included in
             JBoss EAP -->
-       <!-- <dependency>
+        <!-- <dependency>
             <groupId>javax.json</groupId>
             <artifactId>javax.json-api</artifactId>
             <scope>provided</scope>
         </dependency>
- -->
+ 		-->
         <!-- Import the WebSocket API, we use provided scope as the API is included in
             JBoss EAP -->
         <dependency>
@@ -175,6 +175,7 @@
             <artifactId>jboss-websocket-api_1.1_spec</artifactId>
             <scope>provided</scope>
         </dependency>
+
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
@@ -192,7 +193,6 @@
 					<skip>true</skip>
 				</configuration>
 			</plugin>
-
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>

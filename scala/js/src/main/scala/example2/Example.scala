@@ -1,14 +1,12 @@
 package example2
 
-import org.denigma.codemirror.extensions.EditorConfig
-import org.denigma.codemirror.{CodeMirror, EditorConfiguration}
 import org.denigma.threejs._
 import org.denigma.threejs.extensions.Container3D
 import org.denigma.threejs.extensions.controls.{CameraControls, JumpCameraControls}
 import org.denigma.threejs.extras.HtmlSprite
 import org.scalajs.dom
 import org.scalajs.dom.MouseEvent
-import org.scalajs.dom.raw.{HTMLElement, HTMLTextAreaElement}
+import org.scalajs.dom.raw.HTMLElement
 import scalatags.JsDom.all._
 
 import scala.scalajs.js
@@ -115,9 +113,7 @@ class ExampleControls(cam: Camera, el: HTMLElement, sc: Scene, width: Double, he
     }
 
     rotateOnMove(event)
-
   }
-
 }
 
 trait ExampleData {
