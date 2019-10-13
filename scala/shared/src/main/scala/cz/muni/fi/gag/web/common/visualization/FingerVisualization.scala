@@ -3,7 +3,7 @@ package cz.muni.fi.gag.web.common.visualization
 import cz.muni.fi.gag.web.common.Hand
 import cz.muni.fi.gag.web.common.shared.VisualizationContextT
 
-class FingerVisualization(override val hi: Hand.type, override val app: VisualizationContextT,
+class FingerVisualization(override val hi: Hand.Hand, override val app: VisualizationContextT,
                           var sideOffset: Int, var length1: Int, var length2offset: Int, var length3offset: Int,
                           var length4offset: Int) extends HandVisualizationBase(hi, app) {
   var length2 = 0
@@ -12,7 +12,7 @@ class FingerVisualization(override val hi: Hand.type, override val app: Visualiz
   var offsetY = 0
 
   // for thumb
-  def this(hi: Hand.type, app: VisualizationContextT, sideOffset: Int, length1: Int, length2offset: Int, length3offset: Int) {
+  def this(hi: Hand.Hand, app: VisualizationContextT, sideOffset: Int, length1: Int, length2offset: Int, length3offset: Int) {
     this(hi,app, sideOffset, length1, length2offset, length3offset, -1)
     recalcLenghts(length1, length2offset, length3offset, length4offset)
   }
@@ -51,11 +51,7 @@ class FingerVisualization(override val hi: Hand.type, override val app: Visualiz
     app._translate(sideOffset, this.length1, 0)
     this.length1 = 0
     recalcLenghts(this.length1, length2offset, length3offset, length4offset)
-    /*
-             * app.rotateX(rotationX * (hi.ordinal() == 0 ? 1f : -1f));
-             * app.rotateY(rotationY * (hi.ordinal() == 0 ? 1f : -1f));
-             * app.rotateZ(rotationZ);// * (hi.ordinal() == 0 ? 1f : -1f));
-             */ val hiv = if (hi == Hand.LEFT) 1f
+    val hiv = if (hi == Hand.LEFT) 1f
     else -(1f)
     app._rotate(angle, rotationX * hiv, rotationY * hiv, rotationZ * hiv)
     app._stroke(0, 255, 0)
