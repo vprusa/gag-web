@@ -1,6 +1,6 @@
 package example3
 
-import cz.muni.fi.gag.web.common.Hand
+import cz.muni.fi.gag.web.common.{Hand, Log}
 import cz.muni.fi.gag.web.common.shared.VisualizationContextT
 import cz.muni.fi.gag.web.common.visualization.HandVisualization
 import org.denigma.threejs._
@@ -45,9 +45,19 @@ class MatrixStack(var m4: Matrix4) {
     this.stack.push(getCurrentMatrix())
   }
 
+  // aliases, TODO rename..
+  def push() = {
+    save()
+  }
+
+  def pop() = {
+    restore()
+  }
+
   // Gets a copy of the current matrix (top of the stack)
   def getCurrentMatrix(): Matrix4 = {
-    this.stack.top.clone()
+    //this.stack.top.clone()
+    this.stack.top
   }
 
   // Lets us set the current matrix
@@ -125,7 +135,7 @@ class VisualizationScene(val container: HTMLElement, val width: Double, val heig
   }
 
   //var m4s = new MatrixStack(scene.matrix)
-  var m4s = new MatrixStack(new Matrix4())
+  var m4s = new MatrixStack(this.scene.matrix)
 
   //var leftHandVis: HandVisualization = new HandVisualization(Hand.LEFT, this)
   var rightHandVis: HandVisualization = new HandVisualization(Hand.RIGHT, this)
@@ -157,12 +167,12 @@ class VisualizationScene(val container: HTMLElement, val width: Double, val heig
 
   override def _pushMatrix() = {
     // TODO this should get latest geometry?
-    m4s.save()
+    m4s.push()
   }
 
   override def _popMatrix()= {
     // TODO this should get latest geometry?
-    scene.applyMatrix(m4s.restore())
+    scene.applyMatrix(m4s.pop())
   }
 
   override def _point(x: Float, y: Float, z: Float)= {
@@ -170,6 +180,7 @@ class VisualizationScene(val container: HTMLElement, val width: Double, val heig
     geometry.applyMatrix(new Matrix4().makeTranslation(x, y, z))
     var material = new MeshBasicMaterial(dotMatParams); //color = 0xffff00
     var sphere = new Mesh( geometry, material );
+    sphere.applyMatrix(m4s.getCurrentMatrix())
     scene.add( sphere );
   }
 
@@ -183,20 +194,18 @@ class VisualizationScene(val container: HTMLElement, val width: Double, val heig
   }
 
   override def _translate(x: Float, y: Float, z: Float)= {
-    // TODO one-liner
-    //scene.matrix = m4s.getCurrentMatrix()
-    scene.translateX(x);
-    scene.translateY(y);
-    scene.translateZ(z);
+    m4s.getCurrentMatrix().makeTranslation(x,y,z)
   }
 
   override def _line(sx: Float, sy: Float, sz: Float, ex: Float, ey: Float, ez: Float)= {
+    Log.println("Line")
     var mat = new LineBasicMaterial(lineMatParams)
     var geo = new Geometry()
     geo.vertices.push(new Vector3(sx, sy, sz))
     geo.vertices.push(new Vector3(ex, ey, ez))
     var line = new Line(geo, mat)
-    scene.matrix = m4s.getCurrentMatrix()
+    line.applyMatrix(m4s.getCurrentMatrix())
+    //scene.matrix = m4s.getCurrentMatrix()
     scene.add(line)
   }
 
