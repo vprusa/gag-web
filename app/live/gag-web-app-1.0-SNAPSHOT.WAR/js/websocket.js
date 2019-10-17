@@ -120,7 +120,6 @@ angular.module('app').factory('WSTools', function(/*$rootScope*/) {
              //ws.websocketSession = $rootScope.websocketSession;
              //$rootScope.websocketSession.onmessage = ws.onMessage;
              ws.websocketSession.onmessage = ws.onMessage;
-
              console.log(ws.websocketSession);
         }
     };

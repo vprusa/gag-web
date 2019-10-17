@@ -95,6 +95,11 @@ angular
                   //console.log("playSelectedGesture");
                   console.log("playSelectedGesture");
                   if($scope.selectedGestureDetail.selectedGesture)
+                  $scope.ws.init();
+                  $scope.ws.onMessage = $scope.onMessage;
+                  console.log("x");
+                  console.log($scope.selectedGestureDetail.selectedGesture);
+                  console.log( $scope.ws.websocketSession.send(("{}")));
                   $scope.ws.websocketSession.send('{"action":"replay", "gestureId": '
                     + $scope.selectedGestureDetail.selectedGesture + '}');
               };
