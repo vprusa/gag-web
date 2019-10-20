@@ -3,7 +3,7 @@ package cz.muni.fi.gag.web.common.visualization
 import cz.muni.fi.gag.web.common.Hand
 import cz.muni.fi.gag.web.common.shared.VisualizationContextT
 
-class HandVisualizationBase(val hi: Hand.Hand, val app: VisualizationContextT) //this.app = Configuration.app();
+class HandVisualizationBase(val hi: Hand.Hand, val app: VisualizationContextT)
 {
   var rotationX = 0.0f
   var rotationY = 0.0f
@@ -16,6 +16,8 @@ class HandVisualizationBase(val hi: Hand.Hand, val app: VisualizationContextT) /
     this.rotationX = rotationX
     this.rotationY = rotationY
     this.rotationZ = rotationZ
+    this
+    app._rotate(angle, rotationX, rotationY, rotationZ)
   }
 
   def rotateX(rotationX: Float) = this.rotationX = rotationX

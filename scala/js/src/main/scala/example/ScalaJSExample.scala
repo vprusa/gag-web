@@ -44,7 +44,7 @@ object ScalaJSExample {
     }
 
     println("Hello Scala.js - scala-js") // In ES6: console.log("Hello Scala.js");
-    Log.println("Hello Scala.js - common")
+    Log.dump("Hello Scala.js - common")
 
     dom.window.setInterval(() => run, 50)
   }

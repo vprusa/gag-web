@@ -1,8 +1,8 @@
 package example3
 
-import cz.muni.fi.gag.web.common.{Hand, Log}
 import cz.muni.fi.gag.web.common.shared.VisualizationContextT
 import cz.muni.fi.gag.web.common.visualization.HandVisualization
+import cz.muni.fi.gag.web.common.{Hand, Log}
 import org.denigma.threejs._
 import org.denigma.threejs.extensions.Container3D
 import org.denigma.threejs.extensions.controls.{CameraControls, JumpCameraControls}
@@ -20,79 +20,82 @@ import scala.util.Random
 object VisualizationModel extends VisualizationData {
   def activate(): Unit = {
     val el: HTMLElement = dom.document.getElementById("container").asInstanceOf[HTMLElement]
-    val demo = new VisualizationScene(el, 1280, 500) // scalastyle:ignore
+    val demo = new VisualizationScene(el, 500, 300) // scalastyle:ignore
     demo.render()
   }
 }
 
-class MatrixStack(var m4: Matrix4) {
+class MatrixStack(val m4: Matrix4) {
+  val original = m4.clone()
   val stack = new mutable.Stack[Matrix4]()
-  restore()
+  Predef.println("MatrixStack")
+  Predef.println(m4)
+  //pop()
+  //push()
+  pop()
 
   // Pops the top of the stack restoring the previously saved matrix
-  def restore():Matrix4 = {
+  def pop():Matrix4 = {
+    Log.dump("pop")
+    Log.dump(this.stack.length)
     // Never let the stack be totally empty
     if (this.stack.length < 1) {
-      //this.stack[0] = m4.identity();
       this.stack.push(m4.identity())
-      m4.identity()
+      Log.dump(this.stack.top)
+      return this.stack.top
     }
-    this.stack.top
+    Log.dump(this.stack.top)
+    this.stack.pop()
   }
 
-  // Pushes a copy of the current matrix on the stack
-  def save() = {
-    this.stack.push(getCurrentMatrix())
-  }
-
-  // aliases, TODO rename..
   def push() = {
-    save()
+    Log.dump("push")
+    //this.stack.push(getCurrentMatrix().clone())
+    if(this.stack.length>0) {
+      Log.dump(this.stack)
+    }
+    /*this.stack.push(new Matrix4().set(
+      1,0,0,1,
+      0 , 1,0,1,
+      0, 0, 1, 1,
+      0, 0, 0, 1))
+    */
+    //this.stack.push(original.identity().clone)
+    this.stack.push(this.stack.top.clone())
   }
 
-  def pop() = {
-    restore()
+  def multiplyAll(matt: Matrix4): Matrix4 = {
+    stack.foreach(matt multiply _)
+    matt
   }
 
-  // Gets a copy of the current matrix (top of the stack)
+  def getCurrentMatrixAll(): Matrix4 = {
+    multiplyAll(getCurrentMatrix())
+  }
+    // Gets current matrix (top of the stack)
   def getCurrentMatrix(): Matrix4 = {
-    //this.stack.top.clone()
+    Log.dump("getCurrentMatrix")
+    if(this.stack.length < 1) {
+      this.pop()
+    }
+    Log.dump(this.stack.head)
     this.stack.top
   }
 
   // Lets us set the current matrix
   def setCurrentMatrix(m: Matrix4) {
-    this.stack.pop()
+    Log.dump("setCurrentMatrix")
+    if(this.stack.length > 0){
+      this.stack.pop()
+    }
     this.stack.push(m)
     getCurrentMatrix()
   }
 
-/*
-  // Translates the current matrix
-  def translate(x: Double, y:Double, z :Double ) {
-    var m = this.getCurrentMatrix();
-    //this.setCurrentMatrix(m4.translate(m, x, y, z));
-    this.setCurrentMatrix(m.makeTranslation(x, y, z));
-  };
-
-  // Rotates the current matrix around Z
-  MatrixStack.prototype.rotateZ = function(angleInRadians) {
-    var m = this.getCurrentMatrix();
-    this.setCurrentMatrix(m4.zRotate(m, angleInRadians));
-  };
-
-  // Scales the current matrix
-  MatrixStack.prototype.scale = function(x, y, z) {
-    var m = this.getCurrentMatrix();
-    this.setCurrentMatrix(m4.scale(m, x, y, z));
-  };
-*/
 }
 
 // scalastyle:off
 class VisualizationScene(val container: HTMLElement, val width: Double, val height: Double) extends Container3D with VisualizationContextT {
-
-  val geometry = new BoxGeometry(350, 300, 250)
 
   val colors = List("green", "red", "blue", "orange", "purple", "teal")
   val colorMap = Map(colors.head -> 0xA1CF64, colors(1) -> 0xD95C5C, colors(2) -> 0x6ECFF5,
@@ -100,31 +103,30 @@ class VisualizationScene(val container: HTMLElement, val width: Double, val heig
 
   def materialParams(name: String): MeshLambertMaterialParameters = js.Dynamic.literal(
     color = new Color(colorMap(name)) // wireframe = true
-    ).asInstanceOf[MeshLambertMaterialParameters]
+  ).asInstanceOf[MeshLambertMaterialParameters]
 
   def randColorName: String = colors(Random.nextInt(colors.size))
 
-  //protected def nodeTagFromTitle(title: String, colorName: String) = textarea(title, `class` := s"ui large ${colorName} message").render
-  //protected def nodeTagFromTitle(title: String, colorName: String) = textarea(title, `class` := s"ui large ${colorName} message").render
   protected def nodeTagFromTitle(title: String, colorName: String) = textarea(title, `class` := s"ui large ${colorName} message").render
 
   // var meshes = addMesh(new Vector3(0, 0, 0)) :: addMesh(new Vector3(400, 0, 200)) :: addMesh(new Vector3(-400, 0, 200)) :: Nil
-  var meshes = addMesh(new Vector3(0, 0, 0)) :: Nil
 
   var sprites = List.empty[HtmlSprite]
 
-  override val controls: CameraControls = new VisualizationControls(camera, this.container, scene, width, height, this.meshes.head.position.clone())
+  //override val controls: CameraControls = new VisualizationControls(camera, this.container, scene, width, height, this.meshes.head.position.clone())
+  override val controls: CameraControls = new VisualizationControls(camera, this.container, scene, width, height)
 
   val light = new DirectionalLight(0xffffff, 2)
   light.position.set(1, 1, 1).normalize()
   scene.add(light)
 
+  /*
   def addMesh(pos: Vector3 = new Vector3()): Mesh = {
     val material = new MeshLambertMaterial(this.materialParams(randColorName))
-    val mesh: Mesh = new Mesh(geometry, material)
-    mesh.name = pos.toString
-    mesh.position.set(pos.x, pos.y, pos.z)
-    mesh
+    //val mesh: Mesh = new Mesh(geometry, material)
+    //mesh.name = pos.toString
+    //mesh.position.set(pos.x, pos.y, pos.z)
+    //mesh
   }
 
   def addLabel(pos: Vector3, title: String = "hello three.js and ScalaJS!"): HtmlSprite = {
@@ -133,28 +135,53 @@ class VisualizationScene(val container: HTMLElement, val width: Double, val heig
     html.position.set(pos.x, pos.y, pos.z)
     html
   }
+  */
 
-  //var m4s = new MatrixStack(scene.matrix)
   var m4s = new MatrixStack(this.scene.matrix)
 
-  //var leftHandVis: HandVisualization = new HandVisualization(Hand.LEFT, this)
+  var leftHandVis: HandVisualization = new HandVisualization(Hand.LEFT, this)
   var rightHandVis: HandVisualization = new HandVisualization(Hand.RIGHT, this)
 
-  var rightHandGeom = new BoxGeometry(350, 300, 250)
+  def drawBothHands() = {
+    Log.dump("rightHandVis")
+    // center point
+    _pushMatrix()
+    // shift down
+    _translate(0,-150,0)
+    // TODO +scale
+    // center point
+    _point(0,0,0)
+    // right hand
+    _pushMatrix()
+    //_rotate(1,0,0,1)
+    _translate(170,0,0)
+    _rotateY((Math.PI).toFloat)
+    rightHandVis.drawRotateByHand()
+    _popMatrix()
 
-  //leftHandVis.draw()
-  rightHandVis.draw()
-  /*
-  meshes.foreach(scene.add)
-  meshes.zipWithIndex.foreach {
-    case (m, i) =>
-      this.sprites = addLabel(m.position.clone().setY(m.position.y + 200), "Text #" + i) :: this.sprites
+    // left hand
+    _pushMatrix()
+    _translate(-170,0,0)
+    //_rotateZ((Math.PI / 5.0f).toFloat)
+    leftHandVis.drawRotateByHand()
+    _popMatrix()
+    _popMatrix()
   }
-  sprites.foreach(cssScene.add)
-  */
+
+  drawBothHands()
 
   // Below are methods that implement with VisualizationContextT
   // docs https://threejs.org/docs/
+
+  // Some notes for visualization:
+  // ThreeJS does not implement native support for MatrixStack accessible via "scene"?
+  // - alternative was described here: https://webglfundamentals.org/webgl/lessons/webgl-2d-matrix-stack.html
+  // Well known true fact about matrixes: "Matrixes.. can't live with then. Can't simply describe world without them."
+  // Translations are used for moving center point to other rotation for current matrix (m4s.stack.top)
+  // RotationX over x does nothing for hand
+  // RotationZ over z rotates to left/right
+  // RotationY over y rotates around X axis (weird I know..)
+  // Rotation should be used after translation (in other case it would rotate already translated position)
 
   // https://stackoverflow.com/questions/45189592/in-scala-js-how-to-best-create-an-object-conforming-to-a-trait-from-a-js-fa%C3%A7ade
   val dotMatParams = js.Dynamic.literal(
@@ -171,8 +198,7 @@ class VisualizationScene(val container: HTMLElement, val width: Double, val heig
   }
 
   override def _popMatrix()= {
-    // TODO this should get latest geometry?
-    scene.applyMatrix(m4s.pop())
+    var popped = m4s.pop()
   }
 
   override def _point(x: Float, y: Float, z: Float)= {
@@ -185,27 +211,54 @@ class VisualizationScene(val container: HTMLElement, val width: Double, val heig
   }
 
   override def _rotate(angle: Float, rotationX: Float, rotationY: Float, rotationZ: Float)= {
-    scene.matrix = m4s.getCurrentMatrix()
-    scene.rotateOnAxis(new Vector3(rotationX, rotationY, rotationZ), angle);
+    //m4s.setCurrentMatrix(m4s.getCurrentMatrix().makeRotationAxis(new Vector3(rotationX, rotationY, rotationZ), angle))
+    var cur = m4s.getCurrentMatrix()
+    cur = cur.makeRotationZ(rotationZ)
+    m4s.setCurrentMatrix(cur)
+  }
+
+  override def _rotateX(rotationX: Float)= {
+    m4s.setCurrentMatrix(m4s.getCurrentMatrix().multiply(m4s.original.identity().makeRotationX(rotationX)))
+  }
+
+  override def _rotateY(rotationY: Float)= {
+    m4s.setCurrentMatrix(m4s.getCurrentMatrix().multiply(m4s.original.identity().makeRotationY(rotationY)))
+  }
+
+  override def _rotateZ(rotationZ: Float)= {
+    m4s.setCurrentMatrix(m4s.getCurrentMatrix().multiply(m4s.original.identity().makeRotationZ(rotationZ)))
   }
 
   override def _stroke(v1: Float, v2: Float, v3: Float)= {
     // TODO this should get latest geometry?
   }
 
+  /**
+   * TODO
+   * I admit that I do not know matrix operations that well so it is highly possible that there is a better way
+   * (one-liner performance friendly and easy extensible)
+   * */
   override def _translate(x: Float, y: Float, z: Float)= {
-    m4s.getCurrentMatrix().makeTranslation(x,y,z)
+    // TODO
+    Log.dump("translate")
+    var cur = m4s.getCurrentMatrix()
+    var vec = new Vector3();
+    vec.setFromMatrixPosition( cur );
+    Log.dump("Old: x " + vec.x + " -> " + x + ", y " + vec.y + " -> " + y + ", z " +vec.z+" -> " + z)
+    m4s.setCurrentMatrix(m4s.getCurrentMatrix().multiply(m4s.original.identity().makeTranslation(x,y,z)))
+    var newCur = m4s.getCurrentMatrix()
+    vec = new Vector3();
+    vec.setFromMatrixPosition( newCur );
+    Log.dump("New: x " + vec.x + " -> " + x + ", y " + vec.y + " -> " + y + ", z " +vec.z+" -> " + z)
   }
 
   override def _line(sx: Float, sy: Float, sz: Float, ex: Float, ey: Float, ez: Float)= {
-    Log.println("Line")
     var mat = new LineBasicMaterial(lineMatParams)
     var geo = new Geometry()
     geo.vertices.push(new Vector3(sx, sy, sz))
     geo.vertices.push(new Vector3(ex, ey, ez))
     var line = new Line(geo, mat)
     line.applyMatrix(m4s.getCurrentMatrix())
-    //scene.matrix = m4s.getCurrentMatrix()
     scene.add(line)
   }
 

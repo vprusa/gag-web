@@ -30,7 +30,7 @@ copyjs := {
   val outDir = baseDirectory.value / "../../app/live/gag-web-app-1.0-SNAPSHOT.WAR/public/"
   val inDir = baseDirectory.value / "target/scala-2.11"
   //val files = Seq("gag-web-scala-fastopt.js", "gag-web-scala-fastopt.js.map", "gag-web-scala-jsdeps.js") map { p =>   (inDir / p, outDir / p) }
-  val files = Seq("gag-web-scala-fastopt.js") map { p =>   (inDir / p, outDir / p) }
+  val files = Seq("gag-web-scala-fastopt.js", "gag-web-scala-fastopt.js.map") map { p =>   (inDir / p, outDir / p) }
   IO.copy(files, CopyOptions().withOverwrite(true))
 }
 

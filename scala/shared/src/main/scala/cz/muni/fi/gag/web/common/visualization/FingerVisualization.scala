@@ -33,8 +33,7 @@ class FingerVisualization(override val hi: Hand.Hand, override val app: Visualiz
     if (this.length4 == -1 || this.length4offset == -1) {
       this.app._strokeWeight(1)
       this.app._line(sideOffset, this.length2, 0, sideOffset, this.length3, 0)
-    }
-    else {
+    } else {
       app._lineWithDot(sideOffset, this.length2, 0, sideOffset, this.length3, 0)
       this.app._strokeWeight(1)
       this.app._line(sideOffset, this.length3, 0, sideOffset, this.length4, 0)
@@ -44,21 +43,37 @@ class FingerVisualization(override val hi: Hand.Hand, override val app: Visualiz
   def draw() = {
     val length1bkp = this.length1
     val sideOffsetbkp = this.sideOffset
+    //app._translate(0, 0, 0)
     drawStaticPart()
-    // translate magic
     app._pushMatrix()
-    app._translate(0, 0, 0)
+    //}
+    //app._popMatrix()
+    // translate magic
+    //app._pushMatrix()
+    //if(hi == Hand.LEFT) {
+    //app._translate(0, 0, 0)
     app._translate(sideOffset, this.length1, 0)
     this.length1 = 0
     recalcLenghts(this.length1, length2offset, length3offset, length4offset)
-    val hiv = if (hi == Hand.LEFT) 1f
-    else -(1f)
-    app._rotate(angle, rotationX * hiv, rotationY * hiv, rotationZ * hiv)
+    //val hiv = if (hi == Hand.LEFT) 1f else -(1f)
+    val hiv = 1.0f
+    //app._rotate(angle, rotationX * hiv, rotationY * hiv, rotationZ * hiv)
+    //if(hi == Hand.RIGHT) {
+      app._rotateZ(rotationZ)
+      app._rotateY(rotationY)
+      //app._rotateX(rotationX)
+      //, 50, 50, 50, 50)
+    //}
+    //app._rotate(angle, rotationX * hiv, rotationY * hiv, rotationZ * hiv)
     app._stroke(0, 255, 0)
     app._point(0, 0, 0)
     sideOffset = 0
     drawParts()
-    app._translate(0, 0, 0)
+    //app._translate(0, 0, 0)
+    //if(hi == Hand.LEFT) {
+    //Log.dump("IDK")
+    //cz.muni.fi.gag.web.common.shared.Log.dump("idk")
+    //}
     app._popMatrix()
     app._stroke(255, 0, 255) // purple
     this.length1 = length1bkp

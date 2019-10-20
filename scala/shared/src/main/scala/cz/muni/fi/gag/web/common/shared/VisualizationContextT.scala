@@ -27,4 +27,10 @@ trait VisualizationContextT {
     _point(x2, y2, z2)
   }
 
+  def _rotateX(rotationX: Float)
+
+  def _rotateY(rotationY: Float)
+
+  def _rotateZ(rotationZ: Float)
+
 }
