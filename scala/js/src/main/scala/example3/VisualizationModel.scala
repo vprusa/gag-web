@@ -28,31 +28,29 @@ object VisualizationModel extends VisualizationData {
 class MatrixStack(val m4: Matrix4) {
   val original = m4.clone()
   val stack = new mutable.Stack[Matrix4]()
-  Predef.println("MatrixStack")
-  Predef.println(m4)
-  //pop()
-  //push()
+  //Predef.println("MatrixStack")
+  //Predef.println(m4)
   pop()
 
   // Pops the top of the stack restoring the previously saved matrix
   def pop():Matrix4 = {
-    Log.dump("pop")
-    Log.dump(this.stack.length)
+    Log.dump("pop", Log.Level.VIS_MATRIX_STACK)
+    Log.dump(this.stack.length, Log.Level.VIS_MATRIX_STACK)
     // Never let the stack be totally empty
     if (this.stack.length < 1) {
       this.stack.push(m4.identity())
-      Log.dump(this.stack.top)
+      Log.dump(this.stack.top, Log.Level.VIS_MATRIX_STACK)
       return this.stack.top
     }
-    Log.dump(this.stack.top)
+    Log.dump(this.stack.top, Log.Level.VIS_MATRIX_STACK)
     this.stack.pop()
   }
 
   def push() = {
-    Log.dump("push")
+    Log.dump("push", Log.Level.VIS_MATRIX_STACK)
     //this.stack.push(getCurrentMatrix().clone())
     if(this.stack.length>0) {
-      Log.dump(this.stack)
+      Log.dump(this.stack, Log.Level.VIS_MATRIX_STACK)
     }
     /*this.stack.push(new Matrix4().set(
       1,0,0,1,
@@ -74,17 +72,17 @@ class MatrixStack(val m4: Matrix4) {
   }
     // Gets current matrix (top of the stack)
   def getCurrentMatrix(): Matrix4 = {
-    Log.dump("getCurrentMatrix")
+    Log.dump("getCurrentMatrix", Log.Level.VIS_MATRIX_STACK)
     if(this.stack.length < 1) {
       this.pop()
     }
-    Log.dump(this.stack.head)
+    Log.dump(this.stack.head, Log.Level.VIS_MATRIX_STACK)
     this.stack.top
   }
 
   // Lets us set the current matrix
   def setCurrentMatrix(m: Matrix4) {
-    Log.dump("setCurrentMatrix")
+    Log.dump("setCurrentMatrix", Log.Level.VIS_MATRIX_STACK)
     if(this.stack.length > 0){
       this.stack.pop()
     }
@@ -143,7 +141,7 @@ class VisualizationScene(val container: HTMLElement, val width: Double, val heig
   var rightHandVis: HandVisualization = new HandVisualization(Hand.RIGHT, this)
 
   def drawBothHands() = {
-    Log.dump("rightHandVis")
+    Log.dump("rightHandVis", Log.Level.VIS_CONTEXT)
     // center point
     _pushMatrix()
     // shift down
@@ -240,16 +238,16 @@ class VisualizationScene(val container: HTMLElement, val width: Double, val heig
    * */
   override def _translate(x: Float, y: Float, z: Float)= {
     // TODO
-    Log.dump("translate")
+    Log.dump("translate", Log.Level.VIS_CONTEXT)
     var cur = m4s.getCurrentMatrix()
     var vec = new Vector3();
     vec.setFromMatrixPosition( cur );
-    Log.dump("Old: x " + vec.x + " -> " + x + ", y " + vec.y + " -> " + y + ", z " +vec.z+" -> " + z)
+    Log.dump("Old: x " + vec.x + " -> " + x + ", y " + vec.y + " -> " + y + ", z " +vec.z+" -> " + z, Log.Level.VIS_CONTEXT)
     m4s.setCurrentMatrix(m4s.getCurrentMatrix().multiply(m4s.original.identity().makeTranslation(x,y,z)))
     var newCur = m4s.getCurrentMatrix()
     vec = new Vector3();
     vec.setFromMatrixPosition( newCur );
-    Log.dump("New: x " + vec.x + " -> " + x + ", y " + vec.y + " -> " + y + ", z " +vec.z+" -> " + z)
+    Log.dump("New: x " + vec.x + " -> " + x + ", y " + vec.y + " -> " + y + ", z " +vec.z+" -> " + z, Log.Level.VIS_CONTEXT)
   }
 
   override def _line(sx: Float, sy: Float, sz: Float, ex: Float, ey: Float, ez: Float)= {
