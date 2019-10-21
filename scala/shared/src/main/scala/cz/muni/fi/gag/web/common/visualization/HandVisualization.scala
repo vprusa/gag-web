@@ -13,7 +13,6 @@ class HandVisualization(override val hi: Hand.Hand, override val app: Visualizat
 
   def draw() = {
     app._point(0,0,0)
-
     thumpVis.draw()
     indexVis.draw()
     middleVis.draw()
@@ -23,6 +22,9 @@ class HandVisualization(override val hi: Hand.Hand, override val app: Visualizat
   }
 
   def drawRotateByHand() = {
+    app._rotateZ(rotationZ)
+    app._rotateY(rotationY)
+    app._rotateX(rotationX)
     draw()
     this
   }

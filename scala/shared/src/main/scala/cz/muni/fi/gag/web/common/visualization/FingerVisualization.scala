@@ -59,9 +59,9 @@ class FingerVisualization(override val hi: Hand.Hand, override val app: Visualiz
     val hiv = 1.0f
     //app._rotate(angle, rotationX * hiv, rotationY * hiv, rotationZ * hiv)
     //if(hi == Hand.RIGHT) {
-      app._rotateZ(rotationZ)
-      app._rotateY(rotationY)
-      //app._rotateX(rotationX)
+    app._rotateZ(rotationZ)
+    app._rotateY(rotationY)
+    app._rotateX(rotationX)
       //, 50, 50, 50, 50)
     //}
     //app._rotate(angle, rotationX * hiv, rotationY * hiv, rotationZ * hiv)

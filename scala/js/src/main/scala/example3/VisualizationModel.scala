@@ -7,21 +7,23 @@ import org.denigma.threejs._
 import org.denigma.threejs.extensions.Container3D
 import org.denigma.threejs.extensions.controls.{CameraControls, JumpCameraControls}
 import org.denigma.threejs.extras.HtmlSprite
-import org.scalajs.dom
+import org.scalajs
 import org.scalajs.dom.MouseEvent
 import org.scalajs.dom.raw.HTMLElement
 import scalatags.JsDom.all._
 
 import scala.collection.mutable
 import scala.scalajs.js
+import scala.scalajs.js.annotation.JSExport
 import scala.util.Random
 
 // TODO rename to more self-explanatory name in given context
 object VisualizationModel extends VisualizationData {
-  def activate(): Unit = {
-    val el: HTMLElement = dom.document.getElementById("container").asInstanceOf[HTMLElement]
+  def activate(): VisualizationScene = {
+    val el: HTMLElement = scalajs.dom.document.getElementById("container").asInstanceOf[HTMLElement]
     val demo = new VisualizationScene(el, 500, 300) // scalastyle:ignore
     demo.render()
+    demo
   }
 }
 
@@ -95,6 +97,16 @@ class MatrixStack(val m4: Matrix4) {
 // scalastyle:off
 class VisualizationScene(val container: HTMLElement, val width: Double, val height: Double) extends Container3D with VisualizationContextT {
 
+  @JSExport("updateMatrix")
+  def updateMatrix(): Unit ={
+    scene.updateMatrix()
+  }
+
+  @JSExport("renderAll")
+  def renderAll(): Int ={
+    super.render()
+  }
+
   val colors = List("green", "red", "blue", "orange", "purple", "teal")
   val colorMap = Map(colors.head -> 0xA1CF64, colors(1) -> 0xD95C5C, colors(2) -> 0x6ECFF5,
     colors(3) -> 0xF05940, colors(4) -> 0x564F8A, colors.tail -> 0x00B5AD)
@@ -164,6 +176,18 @@ class VisualizationScene(val container: HTMLElement, val width: Double, val heig
     leftHandVis.drawRotateByHand()
     _popMatrix()
     _popMatrix()
+  }
+
+  /**
+   * Clean all .. cause I am nasty and want to rape graphic resources but redrawing EVERYTHING
+   * TODO change redrawing just changed values ... keep track of drawn objects (modularize parts)
+   * this will require adding facade around VisualiyationContextT methods data and further changes of BaseVisualization
+   **/
+  @JSExport("cleanScene")
+  def cleanScene(){
+    while(scene.children.length > 0){
+      scene.remove(scene.children(0))
+    }
   }
 
   drawBothHands()

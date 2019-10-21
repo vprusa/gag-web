@@ -16,10 +16,15 @@ object HandsVisualization extends BindableView with scalajs.js.JSApp {
 
   lazy val elem: HTMLElement = dom.document.body
 
+  @JSExport("HandsVisualization.model")
+  val model = VisualizationModel
+  @JSExport("scene")
+  var scene:VisualizationScene = null
+
   @JSExport
   def main(): Unit = {
     this.bindView()
-    VisualizationModel.activate() //activate examples
+    scene = model.activate() //activate examples
   }
 
   @JSExport
