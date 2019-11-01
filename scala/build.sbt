@@ -55,5 +55,3 @@ lazy val fooJS = modules_.js
 lazy val fooJVM = modules_.jvm
 lazy val fooNative = modules_.native
 */
-
-
