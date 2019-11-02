@@ -14,6 +14,7 @@ import scalatags.JsDom.all._
 
 import scala.collection.mutable
 import scala.scalajs.js
+import scala.scalajs.js.Dynamic
 import scala.scalajs.js.annotation.JSExport
 import scala.util.Random
 
@@ -21,7 +22,7 @@ import scala.util.Random
 object VisualizationModel extends VisualizationData {
   def activate(): VisualizationScene = {
     val el: HTMLElement = scalajs.dom.document.getElementById("container").asInstanceOf[HTMLElement]
-    val demo = new VisualizationScene(el, 500, 300) // scalastyle:ignore
+    val demo = new VisualizationScene(el, 270, 300) // scalastyle:ignore
     demo.render()
     demo
   }
@@ -97,6 +98,13 @@ class MatrixStack(val m4: Matrix4) {
 // scalastyle:off
 class VisualizationScene(val container: HTMLElement, val width: Double, val height: Double) extends Container3D with VisualizationContextT {
 
+
+  override protected def initRenderer() = {
+    var vr = super.initRenderer()
+    vr.domElement.style.position = "relative"
+    vr
+  }
+
   @JSExport("updateMatrix")
   def updateMatrix(): Unit ={
     scene.updateMatrix()
@@ -157,6 +165,7 @@ class VisualizationScene(val container: HTMLElement, val width: Double, val heig
     // center point
     _pushMatrix()
     // shift down
+    scene.scale
     _translate(0,-150,0)
     // TODO +scale
     // center point
