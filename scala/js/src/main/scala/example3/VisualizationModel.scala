@@ -22,13 +22,7 @@ import scala.util.Random
 object VisualizationModel extends VisualizationData {
   def activate(): VisualizationScene = {
     val el: HTMLElement = scalajs.dom.document.getElementById("container").asInstanceOf[HTMLElement]
-    val demo = new VisualizationScene(el, 300, 300)
-    //demo.renderer.autoClear = true;
-    //if(demo.camera != null && demo.camera.isInstanceOf[PerspectiveCamera]){
-      var cam = new PerspectiveCamera( 45, 300 / 300, 1, 1000 );
-     // demo.scene.add( cam );
-    //}
-    //demo.renderer.render(demo.scene, demo.camera);
+    val demo = new VisualizationScene(el, 300, 250)
     demo.render()
     demo
   }
@@ -113,7 +107,7 @@ class VisualizationScene(val container: HTMLElement, val width: Double, val heig
     if(!camera.isInstanceOf[PerspectiveCamera]){
       var cam = initCamera()
       renderer.render(scene, cam)
-    }else{
+    } else {
       renderer.render(scene, camera)
     }
     cssRenderer.render(cssScene, camera)
@@ -132,8 +126,108 @@ class VisualizationScene(val container: HTMLElement, val width: Double, val heig
   }
 
   @JSExport("renderAll")
-  def renderAll(): Int ={
-    super.render()
+  def renderAll(): Any ={
+    cleanScene()
+    drawBothHands()
+  }
+
+  @JSExport("updateAngles")
+  def updateAngles(
+         rx: Float = rightHandVis.rotationX,
+         ry: Float = rightHandVis.rotationY,
+         rz: Float = rightHandVis.rotationZ,
+
+         rtx: Float = rightHandVis.thumpVis.rotationX,
+         rty: Float = rightHandVis.thumpVis.rotationY,
+         rtz: Float = rightHandVis.thumpVis.rotationZ,
+
+         rix: Float = rightHandVis.indexVis.rotationX,
+         riy: Float = rightHandVis.indexVis.rotationY,
+         riz: Float = rightHandVis.indexVis.rotationZ,
+
+         rmx: Float = rightHandVis.middleVis.rotationX,
+         rmy: Float = rightHandVis.middleVis.rotationY,
+         rmz: Float = rightHandVis.middleVis.rotationZ,
+
+         rrx: Float = rightHandVis.ringVis.rotationX,
+         rry: Float = rightHandVis.ringVis.rotationY,
+         rrz: Float = rightHandVis.ringVis.rotationZ,
+
+         rlx: Float = rightHandVis.littleVis.rotationX,
+         rly: Float = rightHandVis.littleVis.rotationY,
+         rlz: Float = rightHandVis.littleVis.rotationZ,
+
+         lx: Float = leftHandVis.rotationX,
+         ly: Float = leftHandVis.rotationY,
+         lz: Float = leftHandVis.rotationZ,
+
+         ltx: Float = leftHandVis.thumpVis.rotationX,
+         lty: Float = leftHandVis.thumpVis.rotationY,
+         ltz: Float = leftHandVis.thumpVis.rotationZ,
+
+         lix: Float = leftHandVis.indexVis.rotationX,
+         liy: Float = leftHandVis.indexVis.rotationY,
+         liz: Float = leftHandVis.indexVis.rotationZ,
+
+         lmx: Float = leftHandVis.middleVis.rotationX,
+         lmy: Float = leftHandVis.middleVis.rotationY,
+         lmz: Float = leftHandVis.middleVis.rotationZ,
+
+         lrx: Float = leftHandVis.ringVis.rotationX,
+         lry: Float = leftHandVis.ringVis.rotationY,
+         lrz: Float = leftHandVis.ringVis.rotationZ,
+
+         llx: Float = leftHandVis.littleVis.rotationX,
+         lly: Float = leftHandVis.littleVis.rotationY,
+         llz: Float = leftHandVis.littleVis.rotationZ
+      ): Any = {
+    rightHandVis.rotationX = rx
+    rightHandVis.rotationY = ry
+    rightHandVis.rotationZ = rz
+
+    rightHandVis.thumpVis.rotationX = rtx
+    rightHandVis.thumpVis.rotationY = rty
+    rightHandVis.thumpVis.rotationZ = rtz
+
+    rightHandVis.indexVis.rotationX = rix
+    rightHandVis.indexVis.rotationY = riy
+    rightHandVis.indexVis.rotationZ = riz
+
+    rightHandVis.middleVis.rotationX = rmx
+    rightHandVis.middleVis.rotationY = rmy
+    rightHandVis.middleVis.rotationZ = rmz
+
+    rightHandVis.ringVis.rotationX = rrx
+    rightHandVis.ringVis.rotationY = rry
+    rightHandVis.ringVis.rotationZ = rrz
+
+    rightHandVis.littleVis.rotationX = rlx
+    rightHandVis.littleVis.rotationY = rly
+    rightHandVis.littleVis.rotationZ = rlz
+
+    leftHandVis.rotationX = lx
+    leftHandVis.rotationY = ly
+    leftHandVis.rotationZ = lz
+
+    leftHandVis.thumpVis.rotationX = ltx
+    leftHandVis.thumpVis.rotationY = lty
+    leftHandVis.thumpVis.rotationZ = ltz
+
+    leftHandVis.indexVis.rotationX = lix
+    leftHandVis.indexVis.rotationY = liy
+    leftHandVis.indexVis.rotationZ = liz
+
+    leftHandVis.middleVis.rotationX = lmx
+    leftHandVis.middleVis.rotationY = lmy
+    leftHandVis.middleVis.rotationZ = lmz
+
+    leftHandVis.ringVis.rotationX = lrx
+    leftHandVis.ringVis.rotationY = lry
+    leftHandVis.ringVis.rotationZ = lrz
+
+    leftHandVis.littleVis.rotationX = llx
+    leftHandVis.littleVis.rotationY = lly
+    leftHandVis.littleVis.rotationZ = llz
   }
 
   val colors = List("green", "red", "blue", "orange", "purple", "teal")
@@ -323,7 +417,6 @@ class VisualizationControls(cam: Camera, el: HTMLElement, sc: Scene, width: Doub
           case mat: MeshLambertMaterial => mat.wireframe = true
           case _ => // do nothing
         }
-
       case _ => // do nothing
     }
 
@@ -333,7 +426,6 @@ class VisualizationControls(cam: Camera, el: HTMLElement, sc: Scene, width: Doub
           case mat: MeshLambertMaterial => mat.wireframe = false
           case _ => // do nothing
         }
-
       case _ => // do nothing
     }
 

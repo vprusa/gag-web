@@ -48,6 +48,81 @@ angular
                 data : []
               };
 
+              $scope.currentGesture = {
+                data: {
+                  rx: 0.0,ry: 0.0,rz: 0.0,
+                  rtx: 0.0,rty: 0.0,rtz: 0.0,
+                  rix: 0.0,riy: 0.0,riz: 0.0,
+                  rmx: 0.0,rmy: 0.0,rmz: 0.0,
+                  rrx: 0.0,rry: 0.0,rrz: 0.0,
+                  rlx: 0.0,rly: 0.0,rlz: 0.0,
+
+                  lx: 0.0,ly: 0.0,lz: 0.0,
+                  ltx: 0.0,lty: 0.0,ltz: 0.0,
+                  lix: 0.0,liy: 0.0,liz: 0.0,
+                  lmx: 0.0,lmy: 0.0,lmz: 0.0,
+                  lrx: 0.0,lry: 0.0,lrz: 0.0,
+                  llx: 0.0,lly: 0.0,llz: 0.0
+                }
+              };
+
+              $scope.updateVisFromDataLine = function(){
+                $scope.selectedGestureDetail.data;
+                console.log($scope.selectedGestureDetail.data);
+                $scope.updateVisualization();
+              }
+
+              $scope.updateVisualization = function(){
+                /*
+                handVisualization.scene.updateAngles(
+                  0,0,0,
+                  0,0,0,
+                  0,0,0,
+                  0,0,0,
+                  0,0,0,
+                  0,0,0,
+
+                  0,0,0,
+                  0,0,0,
+                  0,0,0,
+                  0,0,0,
+                  0,0,0,
+                  0,0,0
+                );
+                handVisualization.scene.renderAll();
+                <th>ID</th>
+                <th>Time</th>
+                <th>Position</th>
+                <th>quatA</th>
+                <th>quatX</th>
+                <th>quatY</th>
+                <th>quatZ</th>
+                <th>accX</th>
+                <th>accY</th>
+                <th>accZ</th>
+                <th>magX</th>
+                <th>magY</th>
+                <th>magZ</th>
+                */
+                handVisualization.scene.updateAngles(
+                  data.rx,data.ry,data.rz,
+                  data.rtx,data.rty,data.rtz,
+                  data.rix,data.riy,data.riz,
+                  data.rmx,data.rmy,data.rmz,
+                  data.rrx,data.rry,data.rrz,
+                  data.rlx,data.rly,data.rlz,
+
+                  data.lx,data.ly,data.lz,
+                  data.ltx,data.lty,data.ltz,
+                  data.lix,data.liy,data.liz,
+                  data.lmx,data.lmy,data.lmz,
+                  data.lrx,data.lry,data.lrz,
+                  data.llx,data.lly,data.llz
+                );
+
+                handVisualization.scene.renderAll();
+              };
+
               $scope.listDetail = function(id) {
                   if($scope.selectedGestureList.display == -1 || id != $scope.selectedGestureList.display ){
                       commonTools.getGestureDetailData(id).then(function(response) {
@@ -87,6 +162,7 @@ angular
                   console.log(dataLine);
                   //$scope.selectedGestureDetail.data.push(dataLine) ;
                   $scope.selectedGestureDetail.data = [dataLine];
+                  $scope.updateVisFromDataLine();
                   $scope.$apply();
               };
 

@@ -24,7 +24,7 @@ object HandsVisualization extends BindableView with scalajs.js.JSApp {
   @JSExport
   def main(): Unit = {
     this.bindView()
-    scene = model.activate() //activate examples
+    scene = model.activate()
   }
 
   @JSExport
