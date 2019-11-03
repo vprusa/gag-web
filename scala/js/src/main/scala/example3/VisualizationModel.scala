@@ -157,7 +157,7 @@ class VisualizationScene(val container: HTMLElement, val width: Double, val heig
   var leftHandVis: HandVisualization = new HandVisualization(Hand.LEFT, this)
   var rightHandVis: HandVisualization = new HandVisualization(Hand.RIGHT, this)
   // TODO chekc if ok
-  //camera.setLens(4,1)
+  camera.setLens(3,1)
 
   def drawBothHands() = {
     Log.dump("rightHandVis", Log.Level.VIS_CONTEXT)
