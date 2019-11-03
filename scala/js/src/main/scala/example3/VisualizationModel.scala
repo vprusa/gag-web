@@ -3,7 +3,7 @@ package example3
 import cz.muni.fi.gag.web.common.shared.VisualizationContextT
 import cz.muni.fi.gag.web.common.visualization.HandVisualization
 import cz.muni.fi.gag.web.common.{Hand, Log}
-import org.denigma.threejs._
+import org.denigma.threejs.{PerspectiveCamera, _}
 import org.denigma.threejs.extensions.Container3D
 import org.denigma.threejs.extensions.controls.{CameraControls, JumpCameraControls}
 import org.denigma.threejs.extras.HtmlSprite
@@ -22,7 +22,13 @@ import scala.util.Random
 object VisualizationModel extends VisualizationData {
   def activate(): VisualizationScene = {
     val el: HTMLElement = scalajs.dom.document.getElementById("container").asInstanceOf[HTMLElement]
-    val demo = new VisualizationScene(el, 270, 300) // scalastyle:ignore
+    val demo = new VisualizationScene(el, 300, 300)
+    //demo.renderer.autoClear = true;
+    //if(demo.camera != null && demo.camera.isInstanceOf[PerspectiveCamera]){
+      var cam = new PerspectiveCamera( 45, 300 / 300, 1, 1000 );
+     // demo.scene.add( cam );
+    //}
+    //demo.renderer.render(demo.scene, demo.camera);
     demo.render()
     demo
   }
@@ -95,13 +101,28 @@ class MatrixStack(val m4: Matrix4) {
 
 }
 
-// scalastyle:off
 class VisualizationScene(val container: HTMLElement, val width: Double, val height: Double) extends Container3D with VisualizationContextT {
 
+  /*
+  * To avoid exception
+  * THREE.WebGLRenderer.render: camera is not an instance of THREE.Camera
+  * it is necessary to initCamera()
+  */
+  override def onEnterFrame(): Unit = {
+    controls.update()
+    if(!camera.isInstanceOf[PerspectiveCamera]){
+      var cam = initCamera()
+      renderer.render(scene, cam)
+    }else{
+      renderer.render(scene, camera)
+    }
+    cssRenderer.render(cssScene, camera)
+  }
 
   override protected def initRenderer() = {
     var vr = super.initRenderer()
     vr.domElement.style.position = "relative"
+    vr.domElement.style.display = "inline-block"
     vr
   }
 
@@ -119,53 +140,30 @@ class VisualizationScene(val container: HTMLElement, val width: Double, val heig
   val colorMap = Map(colors.head -> 0xA1CF64, colors(1) -> 0xD95C5C, colors(2) -> 0x6ECFF5,
     colors(3) -> 0xF05940, colors(4) -> 0x564F8A, colors.tail -> 0x00B5AD)
 
-  def materialParams(name: String): MeshLambertMaterialParameters = js.Dynamic.literal(
-    color = new Color(colorMap(name)) // wireframe = true
-  ).asInstanceOf[MeshLambertMaterialParameters]
-
   def randColorName: String = colors(Random.nextInt(colors.size))
 
   protected def nodeTagFromTitle(title: String, colorName: String) = textarea(title, `class` := s"ui large ${colorName} message").render
 
-  // var meshes = addMesh(new Vector3(0, 0, 0)) :: addMesh(new Vector3(400, 0, 200)) :: addMesh(new Vector3(-400, 0, 200)) :: Nil
-
   var sprites = List.empty[HtmlSprite]
 
-  //override val controls: CameraControls = new VisualizationControls(camera, this.container, scene, width, height, this.meshes.head.position.clone())
   override val controls: CameraControls = new VisualizationControls(camera, this.container, scene, width, height)
 
   val light = new DirectionalLight(0xffffff, 2)
   light.position.set(1, 1, 1).normalize()
   scene.add(light)
 
-  /*
-  def addMesh(pos: Vector3 = new Vector3()): Mesh = {
-    val material = new MeshLambertMaterial(this.materialParams(randColorName))
-    //val mesh: Mesh = new Mesh(geometry, material)
-    //mesh.name = pos.toString
-    //mesh.position.set(pos.x, pos.y, pos.z)
-    //mesh
-  }
-
-  def addLabel(pos: Vector3, title: String = "hello three.js and ScalaJS!"): HtmlSprite = {
-    val helloHtml = nodeTagFromTitle(title, randColorName)
-    val html = new HtmlSprite(helloHtml)
-    html.position.set(pos.x, pos.y, pos.z)
-    html
-  }
-  */
-
   var m4s = new MatrixStack(this.scene.matrix)
 
   var leftHandVis: HandVisualization = new HandVisualization(Hand.LEFT, this)
   var rightHandVis: HandVisualization = new HandVisualization(Hand.RIGHT, this)
+  // TODO chekc if ok
+  //camera.setLens(4,1)
 
   def drawBothHands() = {
     Log.dump("rightHandVis", Log.Level.VIS_CONTEXT)
     // center point
     _pushMatrix()
     // shift down
-    scene.scale
     _translate(0,-150,0)
     // TODO +scale
     // center point

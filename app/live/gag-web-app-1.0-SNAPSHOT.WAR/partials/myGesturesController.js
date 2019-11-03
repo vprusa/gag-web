@@ -39,7 +39,7 @@ angular
               }
 
               $scope.selectedGestureDetail = {
-                info : "TODO: 3D model of replaying data",
+                info : "Watch 3D model of hands",
                 data : []
               };
 
