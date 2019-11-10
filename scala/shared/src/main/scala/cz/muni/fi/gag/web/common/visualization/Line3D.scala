@@ -12,7 +12,7 @@ import cz.muni.fi.gag.web.common.Configuration
  */
 class Line3D private[visualization](var begin: Point3D, var end: Point3D) {
   private[visualization] def draw(): Unit = {
-    if (Configuration.app == null) return
-    Configuration.app._line(begin.x, begin.y, begin.z, end.x, end.y, end.z)
+    //if (Configuration.app == null) return
+    //Configuration.app._line(begin.x, begin.y, begin.z, end.x, end.y, end.z)
   }
 }

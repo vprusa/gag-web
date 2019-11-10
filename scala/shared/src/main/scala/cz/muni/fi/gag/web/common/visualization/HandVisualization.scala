@@ -1,19 +1,22 @@
 package cz.muni.fi.gag.web.common.visualization
 
 import cz.muni.fi.gag.web.common.Hand
+import cz.muni.fi.gag.web.common.recognition.Sensor
 import cz.muni.fi.gag.web.common.shared.VisualizationContextT
 
-class HandVisualization(override val hi: Hand.Hand, override val app: VisualizationContextT) extends HandVisualizationBase(hi, app) {
-
-  var thumpVis = new FingerVisualization(hi, app, 50, 50, 50, 50)
-  var indexVis = new FingerVisualization(hi, app, 25, 112, 60, 45, 30)
-  var middleVis = new FingerVisualization(hi, app, 0, 120, 70, 50, 35)
-  var ringVis = new FingerVisualization(hi, app, -25, 112, 65, 48, 30)
-  var littleVis = new FingerVisualization(hi, app, -50, 102, 45, 35, 25)
+/**
+ * Contains Hand visualization data wrapper
+ * */
+class HandVisualization[GeomType](override val hi: Hand.Hand, override val app: VisualizationContextT[GeomType])
+  extends VisualizationBase(hi, app) {
+  var thumbVis = new FingerVisualization[GeomType](hi, this, app, 50, 50, 50, 50)
+  var indexVis = new FingerVisualization[GeomType](hi, this, app, 25, 112, 60, 45, 30)
+  var middleVis = new FingerVisualization[GeomType](hi, this, app,  0, 120, 70, 50, 35)
+  var ringVis = new FingerVisualization[GeomType](hi, this, app, -25, 112, 65, 48, 30)
+  var littleVis = new FingerVisualization[GeomType](hi, this, app, -50, 102, 45, 35, 25)
 
   def draw() = {
-    app._point(0,0,0)
-    thumpVis.draw()
+    thumbVis.draw()
     indexVis.draw()
     middleVis.draw()
     ringVis.draw()
@@ -21,25 +24,51 @@ class HandVisualization(override val hi: Hand.Hand, override val app: Visualizat
     this
   }
 
-  def drawRotateByHand() = {
-    app._rotateZ(rotationZ)
-    app._rotateY(rotationY)
-    app._rotateX(rotationX)
+  def drawWholeHand(p: GeomType) = {
+    setPivot(app._add(p, 0,0,0))
+    app._point(0,0,0, pivot)
     draw()
     this
   }
 
-  override def rotate(angle: Float, rotationX: Float, rotationY: Float, rotationZ: Float) = {
-    super.rotate(angle, rotationX, rotationY, rotationZ)
-    // translate magic
-    /* app._pushMatrix
-    //app._translate(0, 0, 0)
-    val hiv = if ((hi eq Hand.LEFT)) 1f else -(1f)
-    //app._rotate(angle, rotationX * hiv, rotationY * hiv, rotationZ * hiv)
-    draw()
-    //app._translate(0, 0, 0)
-    app._popMatrix
-    */
-    this
+  def getBy(s: Sensor.Sensor): VisualizationBase[GeomType] = {
+    s match {
+      case Sensor.WRIST => {
+        this
+      }
+      case Sensor.THUMB => {
+        this.thumbVis
+      }
+      case Sensor.INDEX => {
+        this.indexVis
+      }
+      case Sensor.MIDDLE => {
+        this.middleVis
+      }
+      case Sensor.RING => {
+        this.ringVis
+      }
+      case Sensor.LITTLE => {
+        this.littleVis
+      }
+    }
   }
+
+  // has to be defined otherwise not inherited via ScalaJS to JS ..
+  override def rotateX(angle: Float) = {
+    super.rotateX(angle)
+  }
+
+  override def rotateY(angle: Float) = {
+    super.rotateY(angle)
+  }
+
+  override def rotateZ(angle: Float) = {
+    super.rotateZ(angle)
+  }
+
+  override def rotate(x: Float, y: Float, z :Float) = {
+    super.rotate(x,y,z)
+  }
+
 }

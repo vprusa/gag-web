@@ -1,36 +1,41 @@
 package cz.muni.fi.gag.web.common.shared
 
-trait VisualizationContextT {
+import scala.collection.mutable.ArrayBuffer
 
-  def _pushMatrix()
+trait VisualizationContextT[GeomType] {
 
-  def _popMatrix()
+  def _add(geom: GeomType, x:Float, y:Float, z:Float): Option[GeomType]
 
-  def _point(x: Float, y: Float, z: Float)
+  def _point(fl: Float, fl1: Float, fl2: Float, geomHolder: Option[GeomType]): GeomType
 
-  def _rotate(angle: Float, rotationX: Float, rotationY: Float, rotationZ: Float)
+  def _line(sx: Float, sy: Float, sz: Float, ex: Float, ey: Float, ez: Float, geomHolder: Option[GeomType]): GeomType
 
-  def _stroke(v1: Float, v2: Float, v3: Float)
-
-  def _translate(x: Float, y: Float, z: Float)
-
-  //def line(sx: Int, sy: Int, sz: Int, ex: Int, ey: Int, ez: Int)
-
-  def _line(sx: Float, sy: Float, sz: Float, ex: Float, ey: Float, ez: Float)
-
-  def _strokeWeight(w: Int)
-
-  def _lineWithDot(x1: Float, y1: Float, z1: Float, x2: Float, y2: Float, z2: Float): Unit = {
-    _strokeWeight(1)
-    _line(x1, y1, z1, x2, y2, z2)
-    _strokeWeight(8)
-    _point(x2, y2, z2)
+  def _lineWithDot(x1: Float, y1: Float, z1: Float, x2: Float, y2: Float, z2: Float, geomHolder: Option[GeomType]): ArrayBuffer[GeomType] = {
+    val line = _line(x1, y1, z1, x2, y2, z2, geomHolder)
+    val point = _point(x2, y2, z2, geomHolder)
+    ArrayBuffer(line, point)
   }
 
-  def _rotateX(rotationX: Float)
+  // https://discourse.threejs.org/t/how-do-you-rotate-a-group-of-objects-around-an-arbitrary-axis/3433/10
+  // https://stackoverflow.com/questions/44287255/whats-the-right-way-to-rotate-an-object-around-a-point-in-three-js
+  def _rotateGeomsX( angle: Float, pivot: Option[GeomType]): Unit = {
+    _rotateGeoms(angle, pivot, Axis.X)
+  }
+  def _rotateGeomsY( angle: Float, pivot: Option[GeomType]): Unit = {
+    _rotateGeoms( angle, pivot, Axis.Y)
+  }
+  def _rotateGeomsZ( angle: Float, pivot: Option[GeomType]): Unit = {
+    _rotateGeoms(angle, pivot, Axis.Z)
+  }
 
-  def _rotateY(rotationY: Float)
+  // TODO use case class
+  trait AxisBase extends Enumeration {
+    type Axis = Value
+    val X,Y,Z = Value
+  }
 
-  def _rotateZ(rotationZ: Float)
+  object Axis extends AxisBase
+
+  def _rotateGeoms(angle: Float, pivot: Option[GeomType], axis: Axis.Axis): Unit
 
 }

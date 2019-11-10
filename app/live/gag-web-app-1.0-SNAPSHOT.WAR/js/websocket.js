@@ -93,12 +93,9 @@ angular.module('app').factory('WSTools', function(/*$rootScope*/) {
 
     ws.currentDataLines = [];
 
-    /*ws.currentDataLine = function(msg) {
-        $rootScope.websocketSession.send(msg);
-    };*/
-
-    //ws.selectedGestureDetail.player = {data: []};
-
+    ws.setOnMessage = function(f){
+        ws.websocketSession.onmessage = f;
+    }
     ws.onMessage = function(evt) {
         console.log(evt);
         //selectedGestureDetail.player.data

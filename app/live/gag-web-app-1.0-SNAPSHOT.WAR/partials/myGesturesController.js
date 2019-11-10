@@ -66,44 +66,110 @@ angular
                 }
               };
 
-              $scope.updateVisFromDataLine = function(){
-                $scope.selectedGestureDetail.data;
-                console.log($scope.selectedGestureDetail.data);
-                $scope.updateVisualization();
+              $scope.quatToAng = function(dl){
+                var quaternion = new THREE.Quaternion(parseFloat(dl.qX),
+                parseFloat(dl.qY), parseFloat(dl.qZ), parseFloat(dl.qA));
+                //quaternion.setFromAxisAngle( new THREE.Vector3( 1, 0, 0 ), Math.PI / 2 );
+                var vector = new THREE.Vector3(1,1,1);
+                vector.applyQuaternion( quaternion );
+                return vector;
               }
 
-              $scope.updateVisualization = function(){
-                /*
-                handVisualization.scene.updateAngles(
-                  0,0,0,
-                  0,0,0,
-                  0,0,0,
-                  0,0,0,
-                  0,0,0,
-                  0,0,0,
+              $scope.updateVisFromDataLine = function(){
+                //console.log( $scope.selectedGestureDetail.data[0]);
+                var dl = $scope.selectedGestureDetail.data[0];
+                //console.log(dl.p);
+                switch(dl.p) {
+                    case "WRIST":
+                        var ar = $scope.quatToAng(dl);
+                        $scope.currentGesture.data.rx = ar.x;
+                        $scope.currentGesture.data.ry = ar.y;
+                        $scope.currentGesture.data.rz = ar.z;
+                        break;
+                    case "THUMB":
+                        var ar = $scope.quatToAng(dl);
+                        $scope.currentGesture.data.rtx = ar.x;
+                        $scope.currentGesture.data.rty = ar.y;
+                        $scope.currentGesture.data.rtz = ar.z;
+                        $scope.updateVisualization();
+                        break;
+                    case "INDEX":
+                        var ar = $scope.quatToAng(dl);
+                        $scope.currentGesture.data.rix = ar.x;
+                        $scope.currentGesture.data.riy = ar.y;
+                        $scope.currentGesture.data.riz = ar.z;
+                        $scope.updateVisualization();
+                        break;
+                   case "MIDDLE":
+                        var ar = $scope.quatToAng(dl);
 
-                  0,0,0,
-                  0,0,0,
-                  0,0,0,
-                  0,0,0,
-                  0,0,0,
-                  0,0,0
-                );
-                handVisualization.scene.renderAll();
-                <th>ID</th>
-                <th>Time</th>
-                <th>Position</th>
-                <th>quatA</th>
-                <th>quatX</th>
-                <th>quatY</th>
-                <th>quatZ</th>
-                <th>accX</th>
-                <th>accY</th>
-                <th>accZ</th>
-                <th>magX</th>
-                <th>magY</th>
-                <th>magZ</th>
-                */
+                        $scope.currentGesture.data.rmx = ar.x;
+                        $scope.currentGesture.data.rmy = ar.y;
+                        $scope.currentGesture.data.rmz = ar.z;
+                        $scope.updateVisualization();
+                        break;
+                    case "RING":
+                        var ar = $scope.quatToAng(dl);
+                        $scope.currentGesture.data.rrx = ar.x;
+                        $scope.currentGesture.data.rry = ar.y;
+                        $scope.currentGesture.data.rrz = ar.z;
+                        $scope.updateVisualization();
+                        break;
+                    case "LITTLE":
+                        var ar = $scope.quatToAng(dl);
+                        $scope.currentGesture.data.rlx = ar.x;
+                        $scope.currentGesture.data.rly = ar.y;
+                        $scope.currentGesture.data.rlz = ar.z;
+                        $scope.updateVisualization();
+                        break;
+                    default:
+                }
+              }
+
+              /*
+                  handVisualization.scene.updateAngles(
+                    0,0,0,
+                    0,0,0,
+                    0,0,0,
+                    0,0,0,
+                    0,0,0,
+                    0,0,0,
+
+                    0,0,0,
+                    0,0,0,
+                    0,0,0,
+                    0,0,0,
+                    0,0,0,
+                    0,0,0
+                  );
+                  handVisualization.scene.renderAll();
+                  <th>ID</th>
+                  <th>Time</th>
+                  <th>Position</th>
+                  <th>quatA</th>
+                  <th>quatX</th>
+                  <th>quatY</th>
+                  <th>quatZ</th>
+                  <th>accX</th>
+                  <th>accY</th>
+                  <th>accZ</th>
+                  <th>magX</th>
+                  <th>magY</th>
+                  <th>magZ</th>
+              */
+              //console.log(data);
+
+              $scope.updateVisualization = function(){
+                console.log("updateVisualization");
+                var data = JSON.parse(JSON.stringify($scope.currentGesture.data));
+                $scope.currentGesture.data.rmx += 0.01;
+                console.log($scope.currentGesture.data);
+                $scope.updateVisualizationAsync(data);
+              };
+
+              $scope.updateVisualizationAsync = async function(data){
+
+                // await handVisualization.scene.updateAnglesAndRenderAll(
                 handVisualization.scene.updateAngles(
                   data.rx,data.ry,data.rz,
                   data.rtx,data.rty,data.rtz,
@@ -119,9 +185,8 @@ angular
                   data.lrx,data.lry,data.lrz,
                   data.llx,data.lly,data.llz
                 );
-
-                handVisualization.scene.renderAll();
-              };
+                await handVisualization.scene.renderAll();
+              }
 
               $scope.listDetail = function(id) {
                   if($scope.selectedGestureList.display == -1 || id != $scope.selectedGestureList.display ){
@@ -153,29 +218,20 @@ angular
 
               $scope.deleteGesture = function(id) {
                 console.log("deleteGesture: " + id);
-                //commonTools.
               }
 
               $scope.onMessage = function(evt) {
-                  //selectedGestureDetail.player.data
                   var dataLine = JSON.parse(evt.data);
-                  console.log(dataLine);
-                  //$scope.selectedGestureDetail.data.push(dataLine) ;
                   $scope.selectedGestureDetail.data = [dataLine];
                   $scope.updateVisFromDataLine();
                   $scope.$apply();
               };
 
-              //$scope.ws.websocketSession.onessage =  $scope.onMessage;
               $scope.ws.playSelectedGesture = function() {
-                  //console.log("playSelectedGesture");
-                  console.log("playSelectedGesture");
                   if($scope.selectedGestureDetail.selectedGesture)
                   $scope.ws.init();
-                  $scope.ws.onMessage = $scope.onMessage;
-                  console.log("x");
+                  $scope.ws.setOnMessage($scope.onMessage);
                   console.log($scope.selectedGestureDetail.selectedGesture);
-                  console.log( $scope.ws.websocketSession.send(("{}")));
                   $scope.ws.websocketSession.send('{"action":"replay", "gestureId": '
                     + $scope.selectedGestureDetail.selectedGesture + '}');
               };

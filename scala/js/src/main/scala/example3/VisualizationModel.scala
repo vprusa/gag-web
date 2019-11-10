@@ -1,9 +1,12 @@
 package example3
 
+import cz.muni.fi.gag.web.common.Hand.Hand
+import cz.muni.fi.gag.web.common.recognition.Sensor
+import cz.muni.fi.gag.web.common.recognition.Sensor.Sensor
 import cz.muni.fi.gag.web.common.shared.VisualizationContextT
-import cz.muni.fi.gag.web.common.visualization.HandVisualization
+import cz.muni.fi.gag.web.common.visualization.{HandVisualization, VisualizationBase}
 import cz.muni.fi.gag.web.common.{Hand, Log}
-import org.denigma.threejs.{PerspectiveCamera, _}
+import org.denigma.threejs.{Object3D, PerspectiveCamera, _}
 import org.denigma.threejs.extensions.Container3D
 import org.denigma.threejs.extensions.controls.{CameraControls, JumpCameraControls}
 import org.denigma.threejs.extras.HtmlSprite
@@ -13,89 +16,27 @@ import org.scalajs.dom.raw.HTMLElement
 import scalatags.JsDom.all._
 
 import scala.collection.mutable
+import scala.collection.mutable.ArrayBuffer
 import scala.scalajs.js
 import scala.scalajs.js.Dynamic
-import scala.scalajs.js.annotation.JSExport
+import scala.scalajs.js.annotation.{JSExport, JSName}
 import scala.util.Random
+
+
 
 // TODO rename to more self-explanatory name in given context
 object VisualizationModel extends VisualizationData {
-  def activate(): VisualizationScene = {
+  def activate(): VisualizationScene[Object3D] = {
     val el: HTMLElement = scalajs.dom.document.getElementById("container").asInstanceOf[HTMLElement]
-    val demo = new VisualizationScene(el, 300, 250)
+    val demo = new VisualizationScene[Object3D](el, 300, 250)
     demo.render()
+    //demo.renderAll()
     demo
   }
 }
 
-class MatrixStack(val m4: Matrix4) {
-  val original = m4.clone()
-  val stack = new mutable.Stack[Matrix4]()
-  //Predef.println("MatrixStack")
-  //Predef.println(m4)
-  pop()
-
-  // Pops the top of the stack restoring the previously saved matrix
-  def pop():Matrix4 = {
-    Log.dump("pop", Log.Level.VIS_MATRIX_STACK)
-    Log.dump(this.stack.length, Log.Level.VIS_MATRIX_STACK)
-    // Never let the stack be totally empty
-    if (this.stack.length < 1) {
-      this.stack.push(m4.identity())
-      Log.dump(this.stack.top, Log.Level.VIS_MATRIX_STACK)
-      return this.stack.top
-    }
-    Log.dump(this.stack.top, Log.Level.VIS_MATRIX_STACK)
-    this.stack.pop()
-  }
-
-  def push() = {
-    Log.dump("push", Log.Level.VIS_MATRIX_STACK)
-    //this.stack.push(getCurrentMatrix().clone())
-    if(this.stack.length>0) {
-      Log.dump(this.stack, Log.Level.VIS_MATRIX_STACK)
-    }
-    /*this.stack.push(new Matrix4().set(
-      1,0,0,1,
-      0 , 1,0,1,
-      0, 0, 1, 1,
-      0, 0, 0, 1))
-    */
-    //this.stack.push(original.identity().clone)
-    this.stack.push(this.stack.top.clone())
-  }
-
-  def multiplyAll(matt: Matrix4): Matrix4 = {
-    stack.foreach(matt multiply _)
-    matt
-  }
-
-  def getCurrentMatrixAll(): Matrix4 = {
-    multiplyAll(getCurrentMatrix())
-  }
-    // Gets current matrix (top of the stack)
-  def getCurrentMatrix(): Matrix4 = {
-    Log.dump("getCurrentMatrix", Log.Level.VIS_MATRIX_STACK)
-    if(this.stack.length < 1) {
-      this.pop()
-    }
-    Log.dump(this.stack.head, Log.Level.VIS_MATRIX_STACK)
-    this.stack.top
-  }
-
-  // Lets us set the current matrix
-  def setCurrentMatrix(m: Matrix4) {
-    Log.dump("setCurrentMatrix", Log.Level.VIS_MATRIX_STACK)
-    if(this.stack.length > 0){
-      this.stack.pop()
-    }
-    this.stack.push(m)
-    getCurrentMatrix()
-  }
-
-}
-
-class VisualizationScene(val container: HTMLElement, val width: Double, val height: Double) extends Container3D with VisualizationContextT {
+class VisualizationScene[GeomType<:Object3D](val container: HTMLElement, val width: Double, val height: Double)
+  extends Container3D with VisualizationContextT[GeomType] {
 
   /*
   * To avoid exception
@@ -104,7 +45,7 @@ class VisualizationScene(val container: HTMLElement, val width: Double, val heig
   */
   override def onEnterFrame(): Unit = {
     controls.update()
-    if(!camera.isInstanceOf[PerspectiveCamera]){
+    if (!camera.isInstanceOf[PerspectiveCamera]){
       var cam = initCamera()
       renderer.render(scene, cam)
     } else {
@@ -129,106 +70,107 @@ class VisualizationScene(val container: HTMLElement, val width: Double, val heig
   def renderAll(): Any ={
     cleanScene()
     drawBothHands()
+    //this.render()
+    onEnterFrame()
+    renderer.render(scene, camera)
   }
 
   @JSExport("updateAngles")
   def updateAngles(
-         rx: Float = rightHandVis.rotationX,
-         ry: Float = rightHandVis.rotationY,
-         rz: Float = rightHandVis.rotationZ,
+                    rx: Float, ry: Float, rz: Float,
+                    rtx: Float, rty: Float, rtz: Float,
+                    rix: Float, riy: Float, riz: Float,
+                    rmx: Float, rmy: Float, rmz: Float,
+                    rrx: Float, rry: Float, rrz: Float,
+                    rlx: Float, rly: Float, rlz: Float,
 
-         rtx: Float = rightHandVis.thumpVis.rotationX,
-         rty: Float = rightHandVis.thumpVis.rotationY,
-         rtz: Float = rightHandVis.thumpVis.rotationZ,
+                    lx: Float, ly: Float, lz: Float,
+                    ltx: Float, lty: Float, ltz: Float,
+                    lix: Float, liy: Float,  liz: Float,
+                    lmx: Float, lmy: Float, lmz: Float,
+                    lrx: Float, lry: Float, lrz: Float,
+                    llx: Float, lly: Float, llz: Float
+                  ): Any = {
+    hands(1).rotateX(rx)
+    hands(1).rotateY(ry)
+    hands(1).rotateZ(rz)
 
-         rix: Float = rightHandVis.indexVis.rotationX,
-         riy: Float = rightHandVis.indexVis.rotationY,
-         riz: Float = rightHandVis.indexVis.rotationZ,
+    hands(1).thumbVis.rotateX(rtx)
+    hands(1).thumbVis.rotateY(rty)
+    hands(1).thumbVis.rotateZ(rtz)
 
-         rmx: Float = rightHandVis.middleVis.rotationX,
-         rmy: Float = rightHandVis.middleVis.rotationY,
-         rmz: Float = rightHandVis.middleVis.rotationZ,
+    hands(1).indexVis.rotateX(rix)
+    hands(1).indexVis.rotateY(riy)
+    hands(1).indexVis.rotateZ(riz)
 
-         rrx: Float = rightHandVis.ringVis.rotationX,
-         rry: Float = rightHandVis.ringVis.rotationY,
-         rrz: Float = rightHandVis.ringVis.rotationZ,
+    hands(1).middleVis.rotateX(rmx)
+    hands(1).middleVis.rotateY(rmy)
+    hands(1).middleVis.rotateZ(rmz)
 
-         rlx: Float = rightHandVis.littleVis.rotationX,
-         rly: Float = rightHandVis.littleVis.rotationY,
-         rlz: Float = rightHandVis.littleVis.rotationZ,
+    hands(1).ringVis.rotateX(rrx)
+    hands(1).ringVis.rotateY(rry)
+    hands(1).ringVis.rotateZ(rrz)
 
-         lx: Float = leftHandVis.rotationX,
-         ly: Float = leftHandVis.rotationY,
-         lz: Float = leftHandVis.rotationZ,
+    hands(1).littleVis.rotateX(rlx)
+    hands(1).littleVis.rotateY(rly)
+    hands(1).littleVis.rotateZ(rlz)
 
-         ltx: Float = leftHandVis.thumpVis.rotationX,
-         lty: Float = leftHandVis.thumpVis.rotationY,
-         ltz: Float = leftHandVis.thumpVis.rotationZ,
+    hands(0).rotateX(lx)
+    hands(0).rotateY(ly)
+    hands(0).rotateZ(lz)
 
-         lix: Float = leftHandVis.indexVis.rotationX,
-         liy: Float = leftHandVis.indexVis.rotationY,
-         liz: Float = leftHandVis.indexVis.rotationZ,
+    hands(0).thumbVis.rotateX(ltx)
+    hands(0).thumbVis.rotateY(lty)
+    hands(0).thumbVis.rotateZ(ltz)
 
-         lmx: Float = leftHandVis.middleVis.rotationX,
-         lmy: Float = leftHandVis.middleVis.rotationY,
-         lmz: Float = leftHandVis.middleVis.rotationZ,
+    hands(0).indexVis.rotateX(lix)
+    hands(0).indexVis.rotateY(liy)
+    hands(0).indexVis.rotateZ(liz)
 
-         lrx: Float = leftHandVis.ringVis.rotationX,
-         lry: Float = leftHandVis.ringVis.rotationY,
-         lrz: Float = leftHandVis.ringVis.rotationZ,
+    hands(0).middleVis.rotateX(lmx)
+    hands(0).middleVis.rotateY(lmy)
+    hands(0).middleVis.rotateZ(lmz)
 
-         llx: Float = leftHandVis.littleVis.rotationX,
-         lly: Float = leftHandVis.littleVis.rotationY,
-         llz: Float = leftHandVis.littleVis.rotationZ
-      ): Any = {
-    rightHandVis.rotationX = rx
-    rightHandVis.rotationY = ry
-    rightHandVis.rotationZ = rz
+    hands(0).ringVis.rotateX(lrx)
+    hands(0).ringVis.rotateY(lry)
+    hands(0).ringVis.rotateZ(lrz)
 
-    rightHandVis.thumpVis.rotationX = rtx
-    rightHandVis.thumpVis.rotationY = rty
-    rightHandVis.thumpVis.rotationZ = rtz
-
-    rightHandVis.indexVis.rotationX = rix
-    rightHandVis.indexVis.rotationY = riy
-    rightHandVis.indexVis.rotationZ = riz
-
-    rightHandVis.middleVis.rotationX = rmx
-    rightHandVis.middleVis.rotationY = rmy
-    rightHandVis.middleVis.rotationZ = rmz
-
-    rightHandVis.ringVis.rotationX = rrx
-    rightHandVis.ringVis.rotationY = rry
-    rightHandVis.ringVis.rotationZ = rrz
-
-    rightHandVis.littleVis.rotationX = rlx
-    rightHandVis.littleVis.rotationY = rly
-    rightHandVis.littleVis.rotationZ = rlz
-
-    leftHandVis.rotationX = lx
-    leftHandVis.rotationY = ly
-    leftHandVis.rotationZ = lz
-
-    leftHandVis.thumpVis.rotationX = ltx
-    leftHandVis.thumpVis.rotationY = lty
-    leftHandVis.thumpVis.rotationZ = ltz
-
-    leftHandVis.indexVis.rotationX = lix
-    leftHandVis.indexVis.rotationY = liy
-    leftHandVis.indexVis.rotationZ = liz
-
-    leftHandVis.middleVis.rotationX = lmx
-    leftHandVis.middleVis.rotationY = lmy
-    leftHandVis.middleVis.rotationZ = lmz
-
-    leftHandVis.ringVis.rotationX = lrx
-    leftHandVis.ringVis.rotationY = lry
-    leftHandVis.ringVis.rotationZ = lrz
-
-    leftHandVis.littleVis.rotationX = llx
-    leftHandVis.littleVis.rotationY = lly
-    leftHandVis.littleVis.rotationZ = llz
+    hands(0).littleVis.rotateX(llx)
+    hands(0).littleVis.rotateY(lly)
+    hands(0).littleVis.rotateZ(llz)
   }
+
+  @JSExport("updateAnglesAndRenderAll")
+  def updateAnglesAndRenderAll(
+                                rx: Float,ry: Float,rz: Float,
+                                rtx: Float,rty: Float,rtz: Float,
+                                rix: Float,riy: Float,riz: Float,
+                                rmx: Float,rmy: Float,rmz: Float,
+                                rrx: Float,rry: Float,rrz: Float,
+                                rlx: Float,rly: Float,rlz: Float,
+                                lx: Float,ly: Float,lz: Float,
+                                ltx: Float,lty: Float,ltz: Float,
+                                lix: Float,liy: Float,liz: Float,
+                                lmx: Float,lmy: Float,lmz: Float,
+                                lrx: Float,lry: Float,lrz: Float,
+                                llx: Float,lly: Float, llz: Float
+                              ): Any = {
+    updateAngles(
+      rx,ry,rz,
+      rtx,rty,rtz,
+      rix,riy,riz,
+      rmx,rmy,rmz,
+      rrx,rry,rrz,
+      rlx,rly,rlz,
+      lx,ly,lz,
+      ltx,lty,ltz,
+      lix,liy,liz,
+      lmx,lmy,lmz,
+      lrx,lry,lrz,
+      llx,lly,llz)
+    renderAll()
+  }
+
 
   val colors = List("green", "red", "blue", "orange", "purple", "teal")
   val colorMap = Map(colors.head -> 0xA1CF64, colors(1) -> 0xD95C5C, colors(2) -> 0x6ECFF5,
@@ -246,37 +188,49 @@ class VisualizationScene(val container: HTMLElement, val width: Double, val heig
   light.position.set(1, 1, 1).normalize()
   scene.add(light)
 
-  var m4s = new MatrixStack(this.scene.matrix)
+  val hands: Array[HandVisualization[GeomType]] = Array(
+    new HandVisualization[GeomType](Hand.LEFT, this),
+    new HandVisualization[GeomType](Hand.RIGHT, this)
+  )
+  //camera.setLens(3,1)
 
-  var leftHandVis: HandVisualization = new HandVisualization(Hand.LEFT, this)
-  var rightHandVis: HandVisualization = new HandVisualization(Hand.RIGHT, this)
-  // TODO chekc if ok
-  camera.setLens(3,1)
+  var mesh:Mesh = null;
+  var mesh2:Mesh = null;
+  var mesh3:Mesh = null;
+  var geometry: Geometry = null;
+  var material:MeshBasicMaterial = null;
+  var material2:MeshBasicMaterial = null;
+  var p: Object3D = null;
+  var pivot2:Object3D = null;
+
+  Log.dump("drawBothHands", Log.Level.VIS_CONTEXT)
+  // center point
+
+  def update() {
+    // increase the mesh's rotation each frame
+    //pivot.rotation.z += 0.01;
+    //pivot2.rotation.z -= 0.03;
+  }
+
+  override def onEnterFrameFunction(double: Double): Unit = {
+    update()
+    super.onEnterFrameFunction(double)
+  }
 
   def drawBothHands() = {
-    Log.dump("rightHandVis", Log.Level.VIS_CONTEXT)
-    // center point
-    _pushMatrix()
-    // shift down
-    _translate(0,-150,0)
-    // TODO +scale
-    // center point
-    _point(0,0,0)
-    // right hand
-    _pushMatrix()
-    //_rotate(1,0,0,1)
-    _translate(170,0,0)
-    _rotateY((Math.PI).toFloat)
-    rightHandVis.drawRotateByHand()
-    _popMatrix()
+    val dot = new Object3D()
+    dot.position.set( 170, 0.0, 0.0)
+    scene.add(dot)
+
+    hands(1).drawWholeHand(dot.asInstanceOf[GeomType])
+    hands(1).rotateY((Math.PI).toFloat)
 
     // left hand
-    _pushMatrix()
-    _translate(-170,0,0)
-    //_rotateZ((Math.PI / 5.0f).toFloat)
-    leftHandVis.drawRotateByHand()
-    _popMatrix()
-    _popMatrix()
+    val dot2 = new Object3D()
+    dot2.position.set( -170, 0.0, 0.0)
+    scene.add(dot2)
+
+    hands(0).drawWholeHand(dot2.asInstanceOf[GeomType])
   }
 
   /**
@@ -287,10 +241,22 @@ class VisualizationScene(val container: HTMLElement, val width: Double, val heig
   @JSExport("cleanScene")
   def cleanScene(){
     while(scene.children.length > 0){
+      scene.children(0)
       scene.remove(scene.children(0))
     }
   }
 
+  @JSExport("rotatePart")
+  def rotatePart(hi: Int, si: Int, x: Float, y: Float, z: Float){
+    val h: Hand.Hand = if (hi == 0) Hand.RIGHT else Hand.LEFT
+    val s: Sensor = Sensor.values(si)
+    val hand = if (h == Hand.RIGHT) hands(1) else hands(0)
+    //part.rotate(0,x,y,z)
+    val part = hand.getBy(s)
+    part.rotateX(x)
+    part.rotateY(y)
+    part.rotateZ(z)
+  }
   drawBothHands()
 
   // Below are methods that implement with VisualizationContextT
@@ -315,80 +281,71 @@ class VisualizationScene(val container: HTMLElement, val width: Double, val heig
     color = 255.0
   ).asInstanceOf[LineBasicMaterialParameters]
 
-  override def _pushMatrix() = {
-    // TODO this should get latest geometry?
-    m4s.push()
-  }
-
-  override def _popMatrix()= {
-    var popped = m4s.pop()
-  }
-
-  override def _point(x: Float, y: Float, z: Float)= {
-    var geometry = new SphereGeometry( 5, 32, 32 );
+  override def _point(x: Float, y: Float, z: Float, geomHolder: Option[GeomType]): GeomType= {
+    val geometry = new SphereGeometry( 5, 32, 32 )
     geometry.applyMatrix(new Matrix4().makeTranslation(x, y, z))
-    var material = new MeshBasicMaterial(dotMatParams); //color = 0xffff00
-    var sphere = new Mesh( geometry, material );
-    sphere.applyMatrix(m4s.getCurrentMatrix())
-    scene.add( sphere );
+    val material = new MeshBasicMaterial(dotMatParams) //color = 0xffff00
+    val sphere = new Mesh( geometry, material )
+    val posObj = geomHolder.get
+    if(posObj.isInstanceOf[Object3D]){
+      val obj = posObj.asInstanceOf[Object3D]
+      obj.add( sphere )
+    }
+    Log.dump(sphere, Log.Level.VIS_CONTEXT)
+    sphere.asInstanceOf[GeomType]
   }
 
-  override def _rotate(angle: Float, rotationX: Float, rotationY: Float, rotationZ: Float)= {
-    //m4s.setCurrentMatrix(m4s.getCurrentMatrix().makeRotationAxis(new Vector3(rotationX, rotationY, rotationZ), angle))
-    var cur = m4s.getCurrentMatrix()
-    cur = cur.makeRotationZ(rotationZ)
-    m4s.setCurrentMatrix(cur)
-  }
-
-  override def _rotateX(rotationX: Float)= {
-    m4s.setCurrentMatrix(m4s.getCurrentMatrix().multiply(m4s.original.identity().makeRotationX(rotationX)))
-  }
-
-  override def _rotateY(rotationY: Float)= {
-    m4s.setCurrentMatrix(m4s.getCurrentMatrix().multiply(m4s.original.identity().makeRotationY(rotationY)))
-  }
-
-  override def _rotateZ(rotationZ: Float)= {
-    m4s.setCurrentMatrix(m4s.getCurrentMatrix().multiply(m4s.original.identity().makeRotationZ(rotationZ)))
-  }
-
-  override def _stroke(v1: Float, v2: Float, v3: Float)= {
-    // TODO this should get latest geometry?
-  }
-
-  /**
-   * TODO
-   * I admit that I do not know matrix operations that well so it is highly possible that there is a better way
-   * (one-liner performance friendly and easy extensible)
-   * */
-  override def _translate(x: Float, y: Float, z: Float)= {
-    // TODO
-    Log.dump("translate", Log.Level.VIS_CONTEXT)
-    var cur = m4s.getCurrentMatrix()
-    var vec = new Vector3();
-    vec.setFromMatrixPosition( cur );
-    Log.dump("Old: x " + vec.x + " -> " + x + ", y " + vec.y + " -> " + y + ", z " +vec.z+" -> " + z, Log.Level.VIS_CONTEXT)
-    m4s.setCurrentMatrix(m4s.getCurrentMatrix().multiply(m4s.original.identity().makeTranslation(x,y,z)))
-    var newCur = m4s.getCurrentMatrix()
-    vec = new Vector3();
-    vec.setFromMatrixPosition( newCur );
-    Log.dump("New: x " + vec.x + " -> " + x + ", y " + vec.y + " -> " + y + ", z " +vec.z+" -> " + z, Log.Level.VIS_CONTEXT)
-  }
-
-  override def _line(sx: Float, sy: Float, sz: Float, ex: Float, ey: Float, ez: Float)= {
-    var mat = new LineBasicMaterial(lineMatParams)
-    var geo = new Geometry()
+  override def _line(sx: Float, sy: Float, sz: Float, ex: Float, ey: Float, ez: Float
+                     ,geomHolder: Option[GeomType]): GeomType = {
+    val mat = new LineBasicMaterial(lineMatParams)
+    val geo = new Geometry()
     geo.vertices.push(new Vector3(sx, sy, sz))
     geo.vertices.push(new Vector3(ex, ey, ez))
-    var line = new Line(geo, mat)
-    line.applyMatrix(m4s.getCurrentMatrix())
-    scene.add(line)
+    val line = new Line(geo, mat)
+    geomHolder.get.add(line)
+    Log.dump(line, Log.Level.VIS_CONTEXT)
+    line.asInstanceOf[GeomType]
   }
 
-  override def _strokeWeight(w: Int)= {
-    // TODO this should get latest geometry?
+  override def _add(geom: GeomType, x:Float, y:Float, z:Float): Option[GeomType] = {
+    p = new Object3D()
+    p.position.set(x,y,z)
+    geom.asInstanceOf[Object3D].add( p )
+    Log.dump(geom)
+    Log.dump(p)
+    val opt = Option(p.asInstanceOf[GeomType])
+    opt
   }
 
+  // TODO use case class
+  object AxisVector {
+    type AxisVector = Vector3
+     val X = new Vector3(1,0,0)
+     val Y = new Vector3(0,1,0)
+     val Z = new Vector3(0,0,1)
+  }
+
+  // https://discourse.threejs.org/t/how-do-you-rotate-a-group-of-objects-around-an-arbitrary-axis/3433/10
+  // https://stackoverflow.com/questions/44287255/whats-the-right-way-to-rotate-an-object-around-a-point-in-three-js
+  override def _rotateGeoms(angle: Float, pivot:Option[GeomType], axis: Axis.Axis): Unit = {
+    if(!pivot.isEmpty){
+      val piv = pivot.get
+      axis match {
+        case Axis.X => {
+          piv.rotateOnAxis(AxisVector.X, angle)
+        }
+        case Axis.Y => {
+          piv.rotateOnAxis(AxisVector.Y, angle)
+        }
+        case Axis.Z => {
+          piv.rotateOnAxis(AxisVector.Z, angle)
+        }
+        case _ => {
+          // Log.error("_rotateGeoms")
+        }
+      }
+    }
+  }
 
 }
 // scalastyle: on
