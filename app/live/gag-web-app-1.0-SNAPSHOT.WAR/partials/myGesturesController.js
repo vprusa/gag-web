@@ -50,6 +50,37 @@ angular
 
               $scope.currentGesture = {
                 data: {
+                /*
+                  rq: new THREE.Quaternion(),
+                  rqt: new THREE.Quaternion(),
+                  rqi: new THREE.Quaternion(),
+                  rqm: new THREE.Quaternion(),
+                  rqr: new THREE.Quaternion(),
+                  rqi: new THREE.Quaternion(),
+
+                  lq: new THREE.Quaternion(),
+                  lqt: new THREE.Quaternion(),
+                  lqi: new THREE.Quaternion(),
+                  lqm: new THREE.Quaternion(),
+                  lqr: new THREE.Quaternion(),
+                  lqi: new THREE.Quaternion()
+                  */
+                    rq: null,
+                    rqt: null,
+                    rqi: null,
+                    rqm: null,
+                    rqr: null,
+                    rqi: null,
+
+                    lq: null,
+                    lqt: null,
+                    lqi: null,
+                    lqm: null,
+                    lqr: null,
+                    lqi: null
+
+                }
+               /* data: {
                   rx: 0.0,ry: 0.0,rz: 0.0,
                   rtx: 0.0,rty: 0.0,rtz: 0.0,
                   rix: 0.0,riy: 0.0,riz: 0.0,
@@ -63,7 +94,7 @@ angular
                   lmx: 0.0,lmy: 0.0,lmz: 0.0,
                   lrx: 0.0,lry: 0.0,lrz: 0.0,
                   llx: 0.0,lly: 0.0,llz: 0.0
-                }
+                }*/
               };
 
               $scope.quatToAng = function(dl){
@@ -80,46 +111,56 @@ angular
                 var dl = $scope.selectedGestureDetail.data[0];
                 //console.log(dl.p);
                 switch(dl.p) {
-                    case "WRIST":
+                    case "THUMB":
+                        //var ar = $scope.quatToAng(dl);
+//                        $scope.currentGesture.data.rtx = ar.x;
+//                        $scope.currentGesture.data.rty = ar.y;
+//                        $scope.currentGesture.data.rtz = ar.z;
+                        var ar = new THREE.Quaternion(parseFloat(dl.qX),parseFloat(dl.qY), parseFloat(dl.qZ), parseFloat(dl.qA));
+                        $scope.currentGesture.data.rqt = ar;
+                        $scope.updateVisualization();
+                        break;
+                    case "INDEX":
+                        //var ar = $scope.quatToAng(dl);
+//                        $scope.currentGesture.data.rix = ar.x;
+//                        $scope.currentGesture.data.riy = ar.y;
+//                        $scope.currentGesture.data.riz = ar.z;
+                        var ar = new THREE.Quaternion(parseFloat(dl.qX),parseFloat(dl.qY), parseFloat(dl.qZ), parseFloat(dl.qA));
+                        $scope.currentGesture.data.rqi = ar;
+                        $scope.updateVisualization();
+                        break;
+                   // TODO move wrist case up
+                   /*case "WRIST":
                         var ar = $scope.quatToAng(dl);
                         $scope.currentGesture.data.rx = ar.x;
                         $scope.currentGesture.data.ry = ar.y;
                         $scope.currentGesture.data.rz = ar.z;
-                        break;
-                    case "THUMB":
-                        var ar = $scope.quatToAng(dl);
-                        $scope.currentGesture.data.rtx = ar.x;
-                        $scope.currentGesture.data.rty = ar.y;
-                        $scope.currentGesture.data.rtz = ar.z;
-                        $scope.updateVisualization();
-                        break;
-                    case "INDEX":
-                        var ar = $scope.quatToAng(dl);
-                        $scope.currentGesture.data.rix = ar.x;
-                        $scope.currentGesture.data.riy = ar.y;
-                        $scope.currentGesture.data.riz = ar.z;
-                        $scope.updateVisualization();
-                        break;
+                        break;*/
                    case "MIDDLE":
-                        var ar = $scope.quatToAng(dl);
-
-                        $scope.currentGesture.data.rmx = ar.x;
-                        $scope.currentGesture.data.rmy = ar.y;
-                        $scope.currentGesture.data.rmz = ar.z;
+                        //var ar = $scope.quatToAng(dl);
+//                        $scope.currentGesture.data.rmx = ar.x;
+//                        $scope.currentGesture.data.rmy = ar.y;
+                        //$scope.currentGesture.data.rmz = ar.z;
+                        var ar = new THREE.Quaternion(parseFloat(dl.qX),parseFloat(dl.qY), parseFloat(dl.qZ), parseFloat(dl.qA));
+                        $scope.currentGesture.data.rqm = ar;
                         $scope.updateVisualization();
                         break;
                     case "RING":
-                        var ar = $scope.quatToAng(dl);
-                        $scope.currentGesture.data.rrx = ar.x;
-                        $scope.currentGesture.data.rry = ar.y;
-                        $scope.currentGesture.data.rrz = ar.z;
+                        //var ar = $scope.quatToAng(dl);
+                        //$scope.currentGesture.data.rrx = ar.x;
+                        //$scope.currentGesture.data.rry = ar.y;
+                        //$scope.currentGesture.data.rrz = ar.z;
+                        var ar = new THREE.Quaternion(parseFloat(dl.qX),parseFloat(dl.qY), parseFloat(dl.qZ), parseFloat(dl.qA));
+                        $scope.currentGesture.data.rqr = ar;
                         $scope.updateVisualization();
                         break;
                     case "LITTLE":
-                        var ar = $scope.quatToAng(dl);
-                        $scope.currentGesture.data.rlx = ar.x;
-                        $scope.currentGesture.data.rly = ar.y;
-                        $scope.currentGesture.data.rlz = ar.z;
+                        //var ar = $scope.quatToAng(dl);
+                        //$scope.currentGesture.data.rlx = ar.x;
+                        //$scope.currentGesture.data.rly = ar.y;
+                        //$scope.currentGesture.data.rlz = ar.z;
+                        var ar = new THREE.Quaternion(parseFloat(dl.qX),parseFloat(dl.qY), parseFloat(dl.qZ), parseFloat(dl.qA));
+                        $scope.currentGesture.data.rql = ar;
                         $scope.updateVisualization();
                         break;
                     default:
@@ -127,65 +168,158 @@ angular
               }
 
               /*
-                  handVisualization.scene.updateAngles(
-                    0,0,0,
-                    0,0,0,
-                    0,0,0,
-                    0,0,0,
-                    0,0,0,
-                    0,0,0,
+              handVisualization.scene.updateAngles(
+                0,0,0,
+                0,0,0,
+                0,0,0,
+                0,0,0,
+                0,0,0,
+                0,0,0,
 
-                    0,0,0,
-                    0,0,0,
-                    0,0,0,
-                    0,0,0,
-                    0,0,0,
-                    0,0,0
-                  );
-                  handVisualization.scene.renderAll();
-                  <th>ID</th>
-                  <th>Time</th>
-                  <th>Position</th>
-                  <th>quatA</th>
-                  <th>quatX</th>
-                  <th>quatY</th>
-                  <th>quatZ</th>
-                  <th>accX</th>
-                  <th>accY</th>
-                  <th>accZ</th>
-                  <th>magX</th>
-                  <th>magY</th>
-                  <th>magZ</th>
+                0,0,0,
+                0,0,0,
+                0,0,0,
+                0,0,0,
+                0,0,0,
+                0,0,0
+              );
+              handVisualization.scene.renderAll();
+              <th>ID</th>
+              <th>Time</th>
+              <th>Position</th>
+              <th>quatA</th>
+              <th>quatX</th>
+              <th>quatY</th>
+              <th>quatZ</th>
+              <th>accX</th>
+              <th>accY</th>
+              <th>accZ</th>
+              <th>magX</th>
+              <th>magY</th>
+              <th>magZ</th>
               */
               //console.log(data);
 
               $scope.updateVisualization = function(){
                 console.log("updateVisualization");
                 var data = JSON.parse(JSON.stringify($scope.currentGesture.data));
-                $scope.currentGesture.data.rmx += 0.01;
+               //a $scope.currentGesture.data.rmx += 0.01;
                 console.log($scope.currentGesture.data);
                 $scope.updateVisualizationAsync(data);
               };
 
               $scope.updateVisualizationAsync = async function(data){
+                //if(data.rq!= null && data.rqt!= null &&  data.rqi!= null &&  data.rqm!= null &&  data.rqr!= null &&  data.rql!= null &&
+                //                   data.lq!= null && data.lqt!= null &&  data.lqi!= null &&  data.lqm!= null &&  data.lqr!= null &&  data.lql !=null){
+                      if(data.rq == null){
+                        data.rq = new THREE.Quaternion();
+                        }
+                      if(data.rqt == null){
+                        data.rqt = new THREE.Quaternion();
+                        }
+                      if(data.rqi == null){
+                        data.rqi = new THREE.Quaternion();
+                        }
+                      if(data.rqm == null){
+                        data.rqm = new THREE.Quaternion();
+                        }
+                      if(data.rqr == null){
+                        data.rqr = new THREE.Quaternion();
+                        }
+                      if(data.rql == null){
+                        data.rql = new THREE.Quaternion();
+                        }
 
-                // await handVisualization.scene.updateAnglesAndRenderAll(
-                handVisualization.scene.updateAngles(
-                  data.rx,data.ry,data.rz,
-                  data.rtx,data.rty,data.rtz,
-                  data.rix,data.riy,data.riz,
-                  data.rmx,data.rmy,data.rmz,
-                  data.rrx,data.rry,data.rrz,
-                  data.rlx,data.rly,data.rlz,
+                      if(data.lq == null){
+                        data.lq = new THREE.Quaternion();
+                        }
+                      if(data.lqt == null){
+                        data.lqt = new THREE.Quaternion();
+                        }
+                      if(data.lqi == null){
+                        data.lqi = new THREE.Quaternion();
+                        }
+                      if(data.lqm == null){
+                        data.lqm = new THREE.Quaternion();
+                        }
+                      if(data.lqr== null){
+                        data.lqr= new THREE.Quaternion();
+                        }
+                      if(data.lql== null){
+                        data.lql= new THREE.Quaternion();
+                        }
+                    console.log("updateVisualizationAsync")
+                    console.log(data)
+                    handVisualization.scene.updateAngles(
 
-                  data.lx,data.ly,data.lz,
-                  data.ltx,data.lty,data.ltz,
-                  data.lix,data.liy,data.liz,
-                  data.lmx,data.lmy,data.lmz,
-                  data.lrx,data.lry,data.lrz,
-                  data.llx,data.lly,data.llz
-                );
-                await handVisualization.scene.renderAll();
+                      data.rq._x, data.rq._y, data.rq._z, data.rq._w,
+                      data.rqt._x, data.rqt._y, data.rqt._z, data.rqt._w,
+                      data.rqi._x, data.rqi._y, data.rqi._z, data.rqi._w,
+                      data.rqm._x, data.rqm._y, data.rqm._z, data.rqm._w,
+                      data.rqr._x, data.rqr._y, data.rqr._z, data.rqr._w,
+                      data.rql._x, data.rql._y, data.rql._z, data.rql._w,
+
+                      data.lq._x, data.lq._y, data.lq._z, data.lq._w,
+                      data.lqt._x, data.lqt._y, data.lqt._z, data.lqt._w,
+                      data.lqi._x, data.lqi._y, data.lqi._z, data.lqi._w,
+                      data.lqm._x, data.lqm._y, data.lqm._z, data.lqm._w,
+                      data.lqr._x, data.lqr._y, data.lqr._z, data.lqr._w,
+                      data.lql._x, data.lql._y, data.lql._z, data.lql._w
+
+                      //data.rq,data.rqt, data.rqi, data.rqm, data.rqr, data.rql,
+                      //data.lq,data.lqt, data.lqi, data.lqm, data.lqr, data.lql
+           /*           data.rx,data.ry,data.rz,
+                      //Math.PI,Math.PI,Math.PI,
+                      //0,0,0,
+                      data.rtx,data.rty,data.rtz,
+                      data.rix,data.riy,data.riz,
+                      data.rmx,data.rmy,data.rmz,
+                      data.rrx,data.rry,data.rrz,
+                      data.rlx,data.rly,data.rlz,
+
+
+
+                      data.lx,data.ly,data.lz,
+                      data.ltx,data.lty,data.ltz,
+                      data.lix,data.liy,data.liz,
+                      data.lmx,data.lmy,data.lmz,
+                      data.lrx,data.lry,data.lrz,
+                      data.llx,data.lly,data.llz
+
+
+                      data.rtx+data.rx,data.rty+data.ry,data.rtz+data.rz,
+                      data.rix+data.rx,data.riy+data.ry,data.riz+data.rz,
+                      data.rmx+data.rx,data.rmy+data.ry,data.rmz+data.rz,
+                      data.rrx+data.rx,data.rry+data.ry,data.rrz+data.rz,
+                      data.rlx+data.rx,data.rly+data.ry,data.rlz+data.rz,
+    */
+    /*
+                      data.rtx-data.rx,data.rty-data.ry,data.rtz-data.rz,
+                      data.rix-data.rx,data.riy-data.ry,data.riz-data.rz,
+                      data.rmx-data.rx,data.rmy-data.ry,data.rmz-data.rz,
+                      data.rrx-data.rx,data.rry-data.ry,data.rrz-data.rz,
+                      data.rlx-data.rx,data.rly-data.ry,data.rlz-data.rz,
+
+                      */
+                    );
+                    /*
+                } else {
+                  data.rq = new THREE.Quaternion();
+                  data.rqt = new THREE.Quaternion();
+                  data.rqi = new THREE.Quaternion();
+                  data.rqm = new THREE.Quaternion();
+                  data.rqr = new THREE.Quaternion();
+                  data.rql = new THREE.Quaternion();
+
+                  data.lq = new THREE.Quaternion();
+                  data.lqt = new THREE.Quaternion();
+                  data.lqi = new THREE.Quaternion();
+                  data.lqm = new THREE.Quaternion();
+                  data.lqr= new THREE.Quaternion();
+                  data.lql= new THREE.Quaternion();
+                }
+                */
+                //await handVisualization.scene.renderAll();
               }
 
               $scope.listDetail = function(id) {
@@ -236,351 +370,5 @@ angular
                     + $scope.selectedGestureDetail.selectedGesture + '}');
               };
 
-              $scope.ble = {
-                device : {
-                    name: "GAGGM",
-                    serviceUUID: "6e400001-b5a3-f393-e0a9-e50e24dcca9e",
-                    writeCharUUID: "6e400002-b5a3-f393-e0a9-e50e24dcca9e",
-                    notifyCharUUID: "6e400003-b5a3-f393-e0a9-e50e24dcca9e"
-                },
-                current : null,
-                currentDataLines : [
-                        {
-                        id: "0",
-                        timestamp: "0",
-                        position: "1",
-                        quatA: "",
-                        quatX: "",
-                        quatY: "",
-                        quatZ: "",
-                        accX: "",
-                        accY: "",
-                        accZ: "",
-                        magX: "",
-                        magY: "",
-                        magZ: ""
-                        }
-                    ]
-              };
-
-              $scope.log = function(msg){
-                console.log(msg);
-              }
-
-               /* Utils */
-
-               // This function keeps calling "toTry" until promise resolves or has
-               // retried "max" number of times. First retry has a delay of "delay" seconds.
-               // "success" is called upon success.
-               $scope.ble.exponentialBackoff = function (max, delay, toTry, success, fail) {
-                  toTry().then(result => success(result))
-                  .catch(_ => {
-                    if (max === 0) {
-                      return fail();
-                    }
-                    $scope.ble.time('Retrying in ' + delay + 's... (' + max + ' tries left)');
-                    setTimeout(function() {
-                      $scope.ble.exponentialBackoff(--max, delay * 2, toTry, success, fail);
-                    }, delay * 1000);
-                  });
-               }
-
-
-
-               $scope.ble.time = function (text) {
-                  $scope.log('[' + new Date().toJSON().substr(11, 8) + '] ' + text);
-               }
-
-               $scope.ble.convertNumberToFinger = function(nmb){
-                 // THUMB, INDEX, MIDDLE, RING, LITTLE, WRIST;
-                 switch(nmb){
-                   case 0:
-                    return "THUMB";
-                   case 1:
-                    return "INDEX";
-                   case 2:
-                    return "MIDDLE";
-                   case 3:
-                     return "RING";
-                   case 4:
-                     return "LITTLE";
-                   case 5:
-                     return "WRIST";
-                   default:
-                    return "NONE";
-                 }
-                 return "NONE";
-               }
-
-               $scope.ble.connect = function() {
-                   $scope.ble.exponentialBackoff(5 /* max retries */, 2 /* seconds delay */,
-                    function toTry() {
-                      $scope.ble.time('Connecting to Bluetooth Device... ');
-                      return $scope.ble.current.gatt.connect();
-                    },
-                    function success() {
-                      $scope.log('> Bluetooth Device connected.');
-                    },
-                    function fail() {
-                      $scope.ble.time('Failed to reconnect.');
-                    });
-               }
-
-               $scope.ble.onDisconnected = function() {
-                    $scope.log('> Bluetooth Device disconnected');
-                    $scope.ble.connect();
-               }
-
-               $scope.ble.showReceivedValue = function (value, timeNow, timeDiff) {
-                  console.log(value);
-                  /*$('#content table tr:last').after(
-                    "<tr><td>" + timeNow + "</td><td>" + timeDiff + "</td><td>" + value + "</td></tr>"
-                  );*/
-               }
-
-               $scope.ble.str2ab = function (str) {
-                  var buf = new ArrayBuffer(str.length*2); // 2 bytes for each char
-                  var bufView = new Uint8Array(buf);
-                  for (var i=0, strLen=str.length; i < strLen; i++) {
-                    bufView[i] = str.charCodeAt(i);
-                  }
-                  return buf;
-               }
-
-               $scope.ble.ab2str = function (buf) {
-                  return String.fromCharCode.apply(null, new Uint8Array(buf));
-               }
-
-               $scope.ble.bytesToInt = function(byte1, byte2) {
-                 //var number = parseInt(byte1) | parseInt(byte1)_ << 8;
-                 //var number = parseInt(byte1) | parseInt(byte1)_ << 8;
-                 var number = ((byte1 << 8) | byte2);
-                 //console.log("number");
-                 //console.log(number);
-                 var buffer = new ArrayBuffer(4);
-                 var view = new DataView(buffer);
-                 //console.log(byte1);
-                 //console.log(byte2)
-                 //console.log("number2");
-                 //console.log(number);
-
-                 number = number / 16384.0;
-                 //console.log("number3");
-                 //console.log(number);
-
-                 if (number >= 2){
-                   number = -4 + number;
-                 }
-                 //console.log("number4");
-                 //console.log(number);
-                 return number;
-               }
-
-               $scope.ble.convert = function(data){
-                    // g.e  [42, 153, 4, 6, 143, 197, 31, 231, 246, 2, 242, 0, 0, 13, 10]
-                    // g.e  [*, counter, finger, (6, 143), (197, 31), (231, 246), (2, 242), 0, 0, 13, 10]
-                    //let received = $scope.ble.ab2str(data.currentTarget.value.buffer);
-
-                    let received = new Uint8Array(data.currentTarget.value.buffer);
-
-                    //console.log(received);
-
-                    let hand = received[0];
-                    let finger = $scope.ble.convertNumberToFinger(received[2]);
-                    let quatA = $scope.ble.bytesToInt(received[3],received[4]);
-
-                    let quatX = $scope.ble.bytesToInt(received[5],received[6]);
-                    let quatY = $scope.ble.bytesToInt(received[7],received[8]);
-                    let quatZ = $scope.ble.bytesToInt(received[9],received[10]);
-
-                    /*
-                    console.log("quatA");
-                    console.log(quatA);
-                    console.log("quatX");
-                    console.log(quatX);
-                    console.log("quatY");
-                    console.log(quatY);
-                    console.log("quatZ");
-                    console.log(quatZ);
-                    */
-
-// {"id":1,"timestamp":-3599000,"quatA":1.0,"quatX":1.0,"quatY":1.0,"quatZ":1.0,"accX":1,"accY":1,"accZ":1,"position":"THUMB","magX":1,"magY":1,"magZ":1}
-                    var jsonMessage = {
-                      // "id": null,
-                      "t": $.now(),
-                      // TODO dynamic
-                      "gid": 2,
-                      "qA": quatA,
-                      "qX": quatX,
-                      "qY": quatY,
-                      "qZ": quatZ,
-                      "aX": 1,
-                      "aY": 1,
-                      "aZ": 1,
-                      "p": finger,
-
-                      //"magX": 1,
-                      //"magY": 1,
-                      //"magZ": 1
-                    };
-                    //console.log(jsonMessage);
-                    return jsonMessage;
-               }
-
-               $scope.test = function(){
-  // "id": null,
-                    var jsonMessage = {
-                      "t": $.now(),
-                      // TODO dynamic
-                      "gid": 2,
-                      "qA": 0,
-                      "qX": 0,
-                      "qY": 0,
-                      "qZ": 0,
-                      "aX": 1,
-                      "aY": 1,
-                      "aZ": 1,
-                      "p": "MIDDLE",
-                      //"magX": 1,
-                      //"magY": 1,
-                      //"magZ": 1
-                    };
-
-
-                    var jsonStr = JSON.stringify(jsonMessage);
-                    console.log(jsonStr);
-                    commonTools.createFingerDataLine(jsonStr).then(function (response) {
-                       //$scope.status = "New song successfully created.";
-                       //createUpdateTools.setAlerts([{type: 'success', title: 'Successful!', msg: $scope.status}]);
-                       //$location.path("/songsOverview");
-                       console.log("response");
-                       console.log(response);
-                    }, function (response) {
-                       //$scope.alerts.push({type: 'danger', title: 'Error ' + response.status, msg: response.statusText});
-                       console.log("response Error");
-                       console.log(response);
-                    });
-                }
-
-               $scope.connect2BLE = function(){
-                  console.log("connect2BLE");
-                  console.log($scope.ble);
-
-                  let serviceUuid = $scope.ble.device.serviceUUID;
-                  if (serviceUuid.startsWith('0x')) {
-                    serviceUuid = parseInt(serviceUuid);
-                  }
-
-                  let name = $scope.ble.device.name;
-
-                  let characteristicWriteUuid = $scope.ble.device.writeCharUUID;
-                  if (characteristicWriteUuid.startsWith('0x')) {
-                    characteristicWriteUuid = parseInt(characteristicWriteUuid);
-                  }
-                  let characteristicNotifyUuid = $scope.ble.device.notifyCharUUID;
-                  if (characteristicNotifyUuid.startsWith('0x')) {
-                    characteristicNotifyUuid = parseInt(characteristicNotifyUuid);
-                  }
-
-                  $scope.log('Requesting Bluetooth Device...');
-                  /*function resolve(){
-                    if ($scope.ble.current) {
-                      return $scope.ble.current;
-                    }
-                  }*/
-
-                  let promise = new Promise(
-                    function(resolve, reject) {
-                      if($scope.ble.current) {
-                        $scope.ble.connect();
-                        // TODO fix return values and reconnect ...
-                        console.log($scope.ble.current);
-                        resolve($scope.ble.current.gatt);
-                      } else {
-                        resolve(
-                          navigator.bluetooth.requestDevice({ filters: [{services: [serviceUuid], name: [name]}]}).then(device => {
-                            $scope.log('Connecting to GATT Server...');
-                            $scope.ble.current = device;
-                            $scope.ble.current.addEventListener('gattserverdisconnected', $scope.ble.onDisconnected);
-                            return $scope.ble.current.gatt.connect();
-                          })
-                        );
-                      }
-                    }
-                  )
-
-                  promise.then(server => {
-                    $scope.log('Getting Service...');
-                    return server.getPrimaryService(serviceUuid);
-                  })
-                  .then(service => {
-                    $scope.log('Getting Characteristics...');
-                    if (characteristicWriteUuid) {
-                      // Get all characteristics that match this UUID.
-                      console.log(service);
-                      // this requires both characteristics...
-                      return Promise.all([service.getCharacteristics(characteristicWriteUuid), service.getCharacteristics(characteristicNotifyUuid)]);
-                    }
-                    // Get all characteristics.
-                    return service.getCharacteristics();
-                  })
-                  .then(characteristics => {
-                    $scope.log('> Characteristics: ' +
-                      characteristics.map(c => c[0].uuid + " ("+(c[0].properties.write === true ? "WRITE" : (c[0].properties.notify === true ? "NOTIFY":"?"))+")").join('\n' + ' '.repeat(19)));
-                      console.log(characteristics);
-                      $scope.ble.bluetoothDeviceWriteChar = characteristics[0][0];
-                      $scope.ble.bluetoothDeviceNotifyChar = characteristics[1][0];
-                      //timeNow = window.performance.now();
-                      $scope.ble.timeNow = $.now();
-                      console.log("Time timeNow: " + $scope.ble.timeNow);
-
-                      $scope.ble.bluetoothDeviceNotifyChar.addEventListener("characteristicvaluechanged", async function(ev){
-                        //console.log(ev);
-                        var received = false;
-                        if(!(received = $scope.ble.convert(ev))) {return;}
-
-                        //console.log(received);
-
-                        //timeNow = window.performance.now();
-                        $scope.ble.timeNow = $.now();
-                        //console.log($scope.ble.timeNow);
-
-                        var timeDiff = $scope.ble.timeNow - $scope.ble.timeNotifyLast;
-                        //console.log("Time diff: " + timeDiff);
-                        //console.log(timeDiff);
-                        if($scope.ble.lastTS){
-                          var difference = ev.timeStamp - $scope.ble.lastTS;
-                          //console.log("Time difference: " + difference);
-                        }
-                        $scope.ble.showReceivedValue(received, $scope.ble.timeNow, timeDiff);
-                        $scope.ble.lastTS = ev.timeStamp;
-                        $scope.ble.timeNotifyLast = $scope.ble.timeNow;
-
-                        console.log("trying to push dataline:");
-                        if(received.p === "WRIST"){
-                            // TODO
-                            return;
-                        }
-                        var jsonStr = JSON.stringify(received);
-                        console.log(jsonStr);
-                        commonTools.createFingerDataLine(jsonStr).then(function (response) {
-                           //$scope.status = "New song successfully created.";
-                           //createUpdateTools.setAlerts([{type: 'success', title: 'Successful!', msg: $scope.status}]);
-                           //$location.path("/songsOverview");
-                           console.log("response");
-                           console.log(response);
-                        }, function (response) {
-                           //$scope.alerts.push({type: 'danger', title: 'Error ' + response.status, msg: response.statusText});
-                           console.log("response Error");
-                           console.log(response);
-                        });
-
-                      });
-                      $scope.ble.bluetoothDeviceNotifyChar.startNotifications();
-                  })
-                  .catch(error => {
-                    $scope.log('Argh! ' + error);
-                  });
-              }
 
             } ]);

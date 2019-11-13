@@ -7,13 +7,13 @@ import cz.muni.fi.gag.web.common.shared.VisualizationContextT
 /**
  * Contains Hand visualization data wrapper
  * */
-class HandVisualization[GeomType](override val hi: Hand.Hand, override val app: VisualizationContextT[GeomType])
+class HandVisualization[GeomType, QuaternionType](override val hi: Hand.Hand, override val app: VisualizationContextT[GeomType, QuaternionType])
   extends VisualizationBase(hi, app) {
-  var thumbVis = new FingerVisualization[GeomType](hi, this, app, 50, 50, 50, 50)
-  var indexVis = new FingerVisualization[GeomType](hi, this, app, 25, 112, 60, 45, 30)
-  var middleVis = new FingerVisualization[GeomType](hi, this, app,  0, 120, 70, 50, 35)
-  var ringVis = new FingerVisualization[GeomType](hi, this, app, -25, 112, 65, 48, 30)
-  var littleVis = new FingerVisualization[GeomType](hi, this, app, -50, 102, 45, 35, 25)
+  var thumbVis = new FingerVisualization[GeomType, QuaternionType](hi, this, app, 50, 50, 50, 50)
+  var indexVis = new FingerVisualization[GeomType, QuaternionType](hi, this, app, 25, 112, 60, 45, 30)
+  var middleVis = new FingerVisualization[GeomType, QuaternionType](hi, this, app,  0, 120, 70, 50, 35)
+  var ringVis = new FingerVisualization[GeomType, QuaternionType](hi, this, app, -25, 112, 65, 48, 30)
+  var littleVis = new FingerVisualization[GeomType, QuaternionType](hi, this, app, -50, 102, 45, 35, 25)
 
   def draw() = {
     thumbVis.draw()
@@ -31,7 +31,7 @@ class HandVisualization[GeomType](override val hi: Hand.Hand, override val app: 
     this
   }
 
-  def getBy(s: Sensor.Sensor): VisualizationBase[GeomType] = {
+  def getBy(s: Sensor.Sensor): VisualizationBase[GeomType, QuaternionType] = {
     s match {
       case Sensor.WRIST => {
         this
@@ -69,6 +69,13 @@ class HandVisualization[GeomType](override val hi: Hand.Hand, override val app: 
 
   override def rotate(x: Float, y: Float, z :Float) = {
     super.rotate(x,y,z)
+  }
+  override def rotate(q:QuaternionType) = {
+    log("rotate(q:QuaternionType)")
+    if(q!=null){
+      log(q)
+    }
+    super.rotate(q)
   }
 
 }

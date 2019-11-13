@@ -3,7 +3,7 @@ package example3
 import org.denigma.binding.binders.GeneralBinder
 import org.denigma.binding.extensions.sq
 import org.denigma.binding.views.BindableView
-import org.denigma.threejs.Object3D
+import org.denigma.threejs.{Object3D, Quaternion}
 import org.scalajs.dom
 import org.scalajs.dom.raw.HTMLElement
 
@@ -21,7 +21,7 @@ object HandsVisualization extends BindableView with scalajs.js.JSApp {
   val model = VisualizationModel
 
   @JSExport("scene")
-  var scene:VisualizationScene[Object3D] = null
+  var scene:VisualizationScene[Object3D, Quaternion] = null
 
   @JSExport
   def main(): Unit = {

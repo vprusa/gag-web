@@ -1,12 +1,12 @@
 package cz.muni.fi.gag.web.common.visualization
 
 import cz.muni.fi.gag.web.common.Hand
-import cz.muni.fi.gag.web.common.shared.VisualizationContextT
+import cz.muni.fi.gag.web.common.shared.{LogT, VisualizationContextT}
 
 /**
  * Vis base
  * */
-class VisualizationBase[GeomType](val hi: Hand.Hand, val app: VisualizationContextT[GeomType]){
+class VisualizationBase[GeomType, QuaternionType](val hi: Hand.Hand, val app: VisualizationContextT[GeomType, QuaternionType]){
 
   var pivot: Option[GeomType] = Option.empty[GeomType]
 
@@ -14,6 +14,10 @@ class VisualizationBase[GeomType](val hi: Hand.Hand, val app: VisualizationConte
     rotateX(x)
     rotateY(y)
     rotateZ(z)
+  }
+
+  def rotate(q:QuaternionType) = {
+    app._rotateGeoms(q, pivot)
   }
 
   def rotateX(angle: Float) = {
@@ -34,6 +38,21 @@ class VisualizationBase[GeomType](val hi: Hand.Hand, val app: VisualizationConte
 
   def setPivot(pivot: Option[GeomType]): Unit ={
     this.pivot = pivot
+  }
+
+  var log: Option[LogT] = Option.empty[LogT]
+
+  def getLog(): Option[LogT] = {
+    log
+  }
+  def setLog(log: LogT) = {
+    this.log = Option(log)
+  }
+
+  def log(msg:Any): Unit ={
+    if(!getLog().isEmpty){
+      getLog().get.dump(msg)
+    }
   }
 
 }

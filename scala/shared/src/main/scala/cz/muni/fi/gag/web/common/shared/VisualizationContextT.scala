@@ -2,7 +2,7 @@ package cz.muni.fi.gag.web.common.shared
 
 import scala.collection.mutable.ArrayBuffer
 
-trait VisualizationContextT[GeomType] {
+trait VisualizationContextT[GeomType, QuaternionType] {
 
   def _add(geom: GeomType, x:Float, y:Float, z:Float): Option[GeomType]
 
@@ -37,5 +37,6 @@ trait VisualizationContextT[GeomType] {
   object Axis extends AxisBase
 
   def _rotateGeoms(angle: Float, pivot: Option[GeomType], axis: Axis.Axis): Unit
+  def _rotateGeoms(q: QuaternionType, pivot: Option[GeomType]): Unit
 
 }

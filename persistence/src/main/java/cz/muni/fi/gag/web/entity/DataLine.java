@@ -2,15 +2,12 @@ package cz.muni.fi.gag.web.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.io.Serializable;
-import java.util.Date;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.ManyToOne;
+
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * @author Vojtech Prusa
@@ -29,6 +26,8 @@ public /*abstract */class DataLine extends GenericEntity implements Serializable
     @NotNull
     @PastOrPresent
     @JsonProperty("t")
+    //@Column(name = "timestamp", columnDefinition="DATETIME(6)")
+    //@Temporal(TemporalType.TIMESTAMP)
     protected Date timestamp;
 
     // https://stackoverflow.com/questions/26957554/
@@ -58,7 +57,7 @@ public /*abstract */class DataLine extends GenericEntity implements Serializable
 
     @Override
     public String toString() {
-        return "DataLine [id=" + id + ", timestamp=" + timestamp + ", gesture=" + gesture + "]";
+        return "DataLine [id=" + id + ", timestamp=" + timestamp + " ( " + timestamp.getTime() + " ), gesture=" + gesture + "]";
     }
 
     @Override

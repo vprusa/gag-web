@@ -6,10 +6,10 @@ import cz.muni.fi.gag.web.common.shared.VisualizationContextT
 /**
  * Contains Finger visualization data wrapper
  * */
-class FingerVisualization[GeomType](override val hi: Hand.Hand, val hand: VisualizationBase[GeomType],
-                                    override val app: VisualizationContextT[GeomType],
+class FingerVisualization[GeomType, QuaternionType](override val hi: Hand.Hand, val hand: VisualizationBase[GeomType, QuaternionType],
+                                    override val app: VisualizationContextT[GeomType, QuaternionType],
                                     var sideOffsetIn: Int, var length1: Int, var length2offset: Int, var length3offset: Int,
-                                    var length4offset: Int) extends VisualizationBase[GeomType](hi, app) {
+                                    var length4offset: Int) extends VisualizationBase[GeomType, QuaternionType](hi, app) {
   var length2 = 0
   var length3 = 0
   var length4 = 0
@@ -17,7 +17,7 @@ class FingerVisualization[GeomType](override val hi: Hand.Hand, val hand: Visual
   var sideOffset = 0
 
   // for thumb
-  def this(hi: Hand.Hand, hand:VisualizationBase[GeomType], app: VisualizationContextT[GeomType],
+  def this(hi: Hand.Hand, hand:VisualizationBase[GeomType, QuaternionType], app: VisualizationContextT[GeomType, QuaternionType],
            sideOffset: Int, length1: Int, length2offset: Int, length3offset: Int) {
     this(hi,hand,app, sideOffset, length1, length2offset, length3offset, -1)
     recalcLenghts(length1, length2offset, length3offset, length4offset)
@@ -72,5 +72,8 @@ class FingerVisualization[GeomType](override val hi: Hand.Hand, val hand: Visual
     super.rotate(x,y,z)
   }
 
+  override def rotate(q: QuaternionType) = {
+    super.rotate(q)
+  }
 
 }

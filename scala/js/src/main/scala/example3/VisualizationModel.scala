@@ -1,6 +1,5 @@
 package example3
 
-import cz.muni.fi.gag.web.common.Hand.Hand
 import cz.muni.fi.gag.web.common.recognition.Sensor
 import cz.muni.fi.gag.web.common.recognition.Sensor.Sensor
 import cz.muni.fi.gag.web.common.shared.VisualizationContextT
@@ -15,10 +14,7 @@ import org.scalajs.dom.MouseEvent
 import org.scalajs.dom.raw.HTMLElement
 import scalatags.JsDom.all._
 
-import scala.collection.mutable
-import scala.collection.mutable.ArrayBuffer
 import scala.scalajs.js
-import scala.scalajs.js.Dynamic
 import scala.scalajs.js.annotation.{JSExport, JSName}
 import scala.util.Random
 
@@ -26,17 +22,17 @@ import scala.util.Random
 
 // TODO rename to more self-explanatory name in given context
 object VisualizationModel extends VisualizationData {
-  def activate(): VisualizationScene[Object3D] = {
+  def activate(): VisualizationScene[Object3D, Quaternion] = {
     val el: HTMLElement = scalajs.dom.document.getElementById("container").asInstanceOf[HTMLElement]
-    val demo = new VisualizationScene[Object3D](el, 300, 250)
+    val demo = new VisualizationScene[Object3D, Quaternion](el, 300, 250)
     demo.render()
     //demo.renderAll()
     demo
   }
 }
 
-class VisualizationScene[GeomType<:Object3D](val container: HTMLElement, val width: Double, val height: Double)
-  extends Container3D with VisualizationContextT[GeomType] {
+class VisualizationScene[GeomType<:Object3D, QuaternionType<:Quaternion](val container: HTMLElement, val width: Double, val height: Double)
+  extends Container3D with VisualizationContextT[GeomType, QuaternionType] {
 
   /*
   * To avoid exception
@@ -75,6 +71,7 @@ class VisualizationScene[GeomType<:Object3D](val container: HTMLElement, val wid
     renderer.render(scene, camera)
   }
 
+  /*
   @JSExport("updateAngles")
   def updateAngles(
                     rx: Float, ry: Float, rz: Float,
@@ -139,7 +136,82 @@ class VisualizationScene[GeomType<:Object3D](val container: HTMLElement, val wid
     hands(0).littleVis.rotateY(lly)
     hands(0).littleVis.rotateZ(llz)
   }
+*/
 
+
+  @JSExport("updateAngles")
+  def updateAngles(
+                    /*rq: Quaternion,
+                    rqt: Quaternion,
+                    rqi: Quaternion,
+                    rqm: Quaternion,
+                    rqr: Quaternion,
+                    rql: Quaternion,
+
+                    lq: Quaternion,
+                    lqt: Quaternion,
+                    lqi: Quaternion,
+                    lqm: Quaternion,
+                    lqr: Quaternion,
+                    lql: Quaternion*/
+                    rx: Float, ry: Float, rz: Float, rw: Float,
+                    rtx: Float, rty: Float, rtz: Float, rtw: Float,
+                    rix: Float, riy: Float, riz: Float, riw: Float,
+                    rmx: Float, rmy: Float, rmz: Float, rmw: Float,
+                    rrx: Float, rry: Float, rrz: Float, rrw: Float,
+                    rlx: Float, rly: Float, rlz: Float, rlw: Float,
+
+                    lx: Float, ly: Float, lz: Float, lw: Float,
+                    ltx: Float, lty: Float, ltz: Float, ltw: Float,
+                    lix: Float, liy: Float,  liz: Float, liw: Float,
+                    lmx: Float, lmy: Float, lmz: Float, lmw: Float,
+                    lrx: Float, lry: Float, lrz: Float, lrw: Float,
+                    llx: Float, lly: Float, llz: Float, llw: Float
+                  ): Any = {
+    Log.dump("updateAngles")
+
+    val rq = new Quaternion(rx,ry,rz,rw)
+    val rqt = new Quaternion(rtx,rty,rtz,rtw)
+    val rqi = new Quaternion(rix,riy,riz,riw)
+    val rqm = new Quaternion(rmx,rmy,rmz,rmw)
+    val rqr = new Quaternion(rrx,rry,rrz,rrw)
+    val rql = new Quaternion(rlx,rly,rlz,rlw)
+
+    val lq = new Quaternion(lx,ly,lz,lw)
+    val lqt = new Quaternion(ltx,lty,ltz,ltw)
+    val lqi = new Quaternion(lix,liy,liz,liw)
+    val lqm = new Quaternion(lmx,lmy,lmz,lmw)
+    val lqr = new Quaternion(lrx,lry,lrz,lrw)
+    val lql = new Quaternion(llx,lly,llz,llw)
+
+    Log.dump(rq)
+    Log.dump(rqt)
+    hands(1).rotate(rq.asInstanceOf[QuaternionType])
+
+    hands(1).thumbVis.rotate(rqt.asInstanceOf[QuaternionType])
+
+    hands(1).indexVis.rotate(rqi.asInstanceOf[QuaternionType])
+
+    hands(1).middleVis.rotate(rqm.asInstanceOf[QuaternionType])
+
+    hands(1).ringVis.rotate(rqr.asInstanceOf[QuaternionType])
+
+    hands(1).littleVis.rotate(rql.asInstanceOf[QuaternionType])
+
+    hands(0).rotate(lq.asInstanceOf[QuaternionType])
+
+    hands(0).thumbVis.rotate(lqt.asInstanceOf[QuaternionType])
+
+    hands(0).indexVis.rotate(lqi.asInstanceOf[QuaternionType])
+
+    hands(0).middleVis.rotate(lqm.asInstanceOf[QuaternionType])
+
+    hands(0).ringVis.rotate(lqr.asInstanceOf[QuaternionType])
+
+    hands(0).littleVis.rotate(lql.asInstanceOf[QuaternionType])
+  }
+
+  /*
   @JSExport("updateAnglesAndRenderAll")
   def updateAnglesAndRenderAll(
                                 rx: Float,ry: Float,rz: Float,
@@ -169,7 +241,7 @@ class VisualizationScene[GeomType<:Object3D](val container: HTMLElement, val wid
       lrx,lry,lrz,
       llx,lly,llz)
     renderAll()
-  }
+  }*/
 
 
   val colors = List("green", "red", "blue", "orange", "purple", "teal")
@@ -188,28 +260,21 @@ class VisualizationScene[GeomType<:Object3D](val container: HTMLElement, val wid
   light.position.set(1, 1, 1).normalize()
   scene.add(light)
 
-  val hands: Array[HandVisualization[GeomType]] = Array(
-    new HandVisualization[GeomType](Hand.LEFT, this),
-    new HandVisualization[GeomType](Hand.RIGHT, this)
+  val hands: Array[HandVisualization[GeomType, QuaternionType]] = Array(
+    new HandVisualization[GeomType, QuaternionType](Hand.LEFT, this),
+    new HandVisualization[GeomType, QuaternionType](Hand.RIGHT, this)
   )
-  //camera.setLens(3,1)
+  camera.setLens(3,1)
 
-  var mesh:Mesh = null;
-  var mesh2:Mesh = null;
-  var mesh3:Mesh = null;
-  var geometry: Geometry = null;
-  var material:MeshBasicMaterial = null;
-  var material2:MeshBasicMaterial = null;
-  var p: Object3D = null;
-  var pivot2:Object3D = null;
+
+  hands(0).setLog(Log)
+  hands(1).setLog(Log)
 
   Log.dump("drawBothHands", Log.Level.VIS_CONTEXT)
   // center point
 
   def update() {
     // increase the mesh's rotation each frame
-    //pivot.rotation.z += 0.01;
-    //pivot2.rotation.z -= 0.03;
   }
 
   override def onEnterFrameFunction(double: Double): Unit = {
@@ -219,7 +284,7 @@ class VisualizationScene[GeomType<:Object3D](val container: HTMLElement, val wid
 
   def drawBothHands() = {
     val dot = new Object3D()
-    dot.position.set( 170, 0.0, 0.0)
+    dot.position.set( 170, -150, 0.0)
     scene.add(dot)
 
     hands(1).drawWholeHand(dot.asInstanceOf[GeomType])
@@ -227,7 +292,7 @@ class VisualizationScene[GeomType<:Object3D](val container: HTMLElement, val wid
 
     // left hand
     val dot2 = new Object3D()
-    dot2.position.set( -170, 0.0, 0.0)
+    dot2.position.set( -170, -150, 0.0)
     scene.add(dot2)
 
     hands(0).drawWholeHand(dot2.asInstanceOf[GeomType])
@@ -308,7 +373,7 @@ class VisualizationScene[GeomType<:Object3D](val container: HTMLElement, val wid
   }
 
   override def _add(geom: GeomType, x:Float, y:Float, z:Float): Option[GeomType] = {
-    p = new Object3D()
+    val p = new Object3D()
     p.position.set(x,y,z)
     geom.asInstanceOf[Object3D].add( p )
     Log.dump(geom)
@@ -327,23 +392,37 @@ class VisualizationScene[GeomType<:Object3D](val container: HTMLElement, val wid
 
   // https://discourse.threejs.org/t/how-do-you-rotate-a-group-of-objects-around-an-arbitrary-axis/3433/10
   // https://stackoverflow.com/questions/44287255/whats-the-right-way-to-rotate-an-object-around-a-point-in-three-js
+  // TODO fix rotateOnAxis -> rotate as set not add
   override def _rotateGeoms(angle: Float, pivot:Option[GeomType], axis: Axis.Axis): Unit = {
     if(!pivot.isEmpty){
       val piv = pivot.get
       axis match {
         case Axis.X => {
-          piv.rotateOnAxis(AxisVector.X, angle)
+          //piv.rotation.x=0.0;
+          //piv.rotateOnAxis(AxisVector.X, angle)
+          piv.rotateOnAxis(AxisVector.X, angle-piv.rotation.x)
         }
         case Axis.Y => {
-          piv.rotateOnAxis(AxisVector.Y, angle)
+          //piv.rotation.y=0.0;
+          //piv.rotateOnAxis(AxisVector.Y, angle)
+          piv.rotateOnAxis(AxisVector.Y, angle-piv.rotation.y)
         }
         case Axis.Z => {
-          piv.rotateOnAxis(AxisVector.Z, angle)
+          //piv.rotation.z=0.0;
+          //piv.rotateOnAxis(AxisVector.Z, angle)
+          piv.rotateOnAxis(AxisVector.Z, angle-piv.rotation.z)
         }
         case _ => {
           // Log.error("_rotateGeoms")
         }
       }
+    }
+  }
+
+  override def _rotateGeoms(q: QuaternionType, pivot:Option[GeomType]): Unit = {
+    if(!pivot.isEmpty){
+      val piv = pivot.get
+      piv.setRotationFromQuaternion(q)
     }
   }
 
