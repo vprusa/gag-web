@@ -3,8 +3,7 @@
 angular
     .module('app')
     .controller(
-        'NewGestureController',
-        [
+        'NewGestureController', [
             '$scope',
             '$location',
             '$route',
@@ -12,7 +11,8 @@ angular
             'createUpdateTools',
             'BLETools',
             'WSTools',
-            function($scope, $location, $route, commonTools, createUpdateTools, BLETools, WSTools) {
+            'VisTools',
+            function($scope, $location, $route, commonTools, createUpdateTools, BLETools, WSTools, VisTools) {
               commonTools.getGestures().then(function(response) {
                 $scope.gestures = response;
               }, function(response) {
@@ -25,6 +25,7 @@ angular
 
               $scope.ble = BLETools;
               $scope.ws = WSTools;
+              $scope.vis = VisTools;
 
               $scope.alerts = angular.copy(createUpdateTools.getAlerts());
               createUpdateTools.deleteAlerts();
@@ -92,5 +93,14 @@ angular
             $scope.stop = function(){
                 $scope.data.recordingInfo.isRecording = false;
             }
+
+            $scope.onSendMessage = function(data){
+              var dataLine = JSON.parse(data);
+              //console.log(dataLine);
+              $scope.vis.updateVisFromDataLine(dataLine);
+              $scope.$apply();
+            }
+
+            WSTools.onSendMessage = $scope.onSendMessage;
 
             } ]);

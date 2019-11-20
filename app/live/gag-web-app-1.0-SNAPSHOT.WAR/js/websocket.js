@@ -1,14 +1,5 @@
-/**
- * Edited by vprusa
- */
 'use strict';
 
-/*angular.module('app').controller('websocketController', [
-        '$scope',
-        '$location',
-        '$rootScope',
-        function($scope, $location, $rootScope) {
-        */
 angular.module('app').factory('WSTools', function(/*$rootScope*/) {
     let ws = {};
     //ws.dataLines = [];
@@ -73,12 +64,17 @@ angular.module('app').factory('WSTools', function(/*$rootScope*/) {
 
     ws.gestureId = "";
 
+    ws.onSendMessage = function(data){
+        // override
+    }
+
     ws.sendMessage = function(msg){
+        ws.onSendMessage(msg)
         if(ws.checkStates.isRecording()){
-            console.log("sending message");
+            //console.log("sending message");
             ws.websocketSession.send(msg);
         }else{
-            console.log("not sending message");
+            //console.log("not sending message");
         }
     }
 
@@ -98,15 +94,7 @@ angular.module('app').factory('WSTools', function(/*$rootScope*/) {
     }
     ws.onMessage = function(evt) {
         console.log(evt);
-        //selectedGestureDetail.player.data
-        var data = JSON.parse(evt.data);
-        //ws.dataLines.length = 0;
-        //angular.forEach(dataLine, function(item) {
-        //  ws.dataLines.push(item);
-        //});
-        //ws.selectedGestureDetail.player.data.push(data) ;
-        //ws.gestureId = "";
-        //ws.$apply();
+        //var data = JSON.parse(evt.data);
     };
     ws.init = function() {
         if (!ws.websocketSession) {
@@ -123,9 +111,9 @@ angular.module('app').factory('WSTools', function(/*$rootScope*/) {
 
     ws.destroy = function() {
         console.log("destroy");
-        if ($rootScope.websocketSession) {
-          $rootScope.websocketSession.close();
-        }
+        //if ($rootScope.websocketSession) {
+          //$rootScope.websocketSession.close();
+        //}
     };
 
     ws.test = function() {
@@ -164,5 +152,4 @@ angular.module('app').factory('WSTools', function(/*$rootScope*/) {
     }
 
     return ws;
-//} ]);
 } );

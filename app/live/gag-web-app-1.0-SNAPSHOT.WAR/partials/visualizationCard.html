@@ -1,0 +1,55 @@
+<div class="card">
+
+	<script src="./public/gag-web-scala-fastopt.js"></script>
+	<style>
+		#container canvas {position: relative;}
+		#container {text-align: center;}
+		.ui.inverted.green.segment { background: linear-gradient(60deg, #ab47bc, #8e24aa) !important;}
+	</style>
+
+	<script>
+		var handVisualization;
+		$( document ).ready(function() {
+			$('#container').hover(function() {
+				$('body').css('overflow','hidden');
+			}, function() {
+				$('body').css('overflow','visible');
+			});
+			//if(handVisualization == null){
+				handVisualization = HandsVisualization();
+				handVisualization.main(); //activate ScalaJS main class
+			//}
+	    });
+	</script>
+
+	<div class="card-header card-header-primary">
+		<h4 class="card-title ">Live</h4>
+		<p class="card-category">{{selectedGestureDetail.info}}</p>
+	</div>
+	<div class="card-body">
+		<div class="" ng-if="ble.isConnected"></div>
+
+		<div  class="pusher"> <!--it will be pushed by a sidebar-->
+			<main id="main" class="ui green tertiary inverted segment">
+				<section class="ui blue pilled message">
+					Vis
+				</section>
+				<section id="container"></section>
+			</main>
+		</div>
+			<table class="table">
+				<thead class="text-primary">
+				<th>ID</th>
+				<th>Time</th>
+				<th>Position</th>
+				</thead>
+				<tbody>
+				<tr ng-repeat="item in selectedGestureList.data">
+					<td>{{item.id}}</td>
+					<td>{{item.t | date: 'yyyy-MM-dd HH:MM'}}</td>
+					<td>{{item.p}}</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>

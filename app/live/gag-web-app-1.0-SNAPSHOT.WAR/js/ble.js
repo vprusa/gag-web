@@ -34,8 +34,8 @@ angular.module('app').factory('BLETools', ['WSTools', function(WSTools) {
    };
 
    let log = function(msg){
-     console.log("msg");
-         console.log(msg);
+     //console.log("msg");
+     //    console.log(msg);
      $('#LogMessages table tr:last').after(
        "<tr><td>" +  new Date().toLocaleTimeString() + "</td><td>" + msg + "</td></tr>"
      );
@@ -145,11 +145,17 @@ angular.module('app').factory('BLETools', ['WSTools', function(WSTools) {
 
         let hand = received[0];
         let finger = ble.convertNumberToFinger(received[2]);
+        /*
         let quatA = ble.bytesToInt(received[3],received[4]);
-
         let quatX = ble.bytesToInt(received[5],received[6]);
         let quatY = ble.bytesToInt(received[7],received[8]);
         let quatZ = ble.bytesToInt(received[9],received[10]);
+        */
+
+        let quatA = ble.bytesToInt(received[3],received[4]);
+        let quatX = -ble.bytesToInt(received[5],received[6]);
+        let quatY = ble.bytesToInt(received[7],received[8]);
+        let quatZ = -ble.bytesToInt(received[9],received[10]);
 
         var jsonMessage = {
           // "id": null,
@@ -218,8 +224,7 @@ angular.module('app').factory('BLETools', ['WSTools', function(WSTools) {
       promise.then(server => {
         log('Getting Service...');
         return server.getPrimaryService(serviceUuid);
-      })
-      .then(service => {
+      }).then(service => {
         log('Getting Characteristics...');
         if (characteristicWriteUuid) {
           // Get all characteristics that match this UUID.
@@ -229,8 +234,7 @@ angular.module('app').factory('BLETools', ['WSTools', function(WSTools) {
         }
         // Get all characteristics.
         return service.getCharacteristics();
-      })
-      .then(characteristics => {
+      }).then(characteristics => {
         log('> Characteristics: ' +
           characteristics.map(c => c[0].uuid + " ("+(c[0].properties.write === true ? "WRITE" : (c[0].properties.notify === true ? "NOTIFY":"?"))+")").join('\n' + ' '.repeat(19)));
           console.log(characteristics);
@@ -249,20 +253,12 @@ angular.module('app').factory('BLETools', ['WSTools', function(WSTools) {
             if(ble.lastTS){
               var difference = ev.timeStamp - ble.lastTS;
             }
-            ble.showReceivedValue(received, ble.timeNow, timeDiff);
+            //ble.showReceivedValue(received, ble.timeNow, timeDiff);
             ble.lastTS = ev.timeStamp;
             ble.timeNotifyLast = ble.timeNow;
 
             console.log("trying to push dataline:");
-            if(received.p === "WRIST"){
-                // TODO everything about wrist data
-                received.mX= 1;
-                received.mY= 1;
-                received.mZ= 1;
-            }
             var jsonStr = JSON.stringify(received);
-            console.log(jsonStr);
-
             WSTools.sendMessage(jsonStr);
 
             /*commonTools.createFingerDataLine(jsonStr).then(function (response) {
@@ -276,8 +272,7 @@ angular.module('app').factory('BLETools', ['WSTools', function(WSTools) {
 
           });
           ble.bluetoothDeviceNotifyChar.startNotifications();
-      })
-      .catch(error => {
+      }).catch(error => {
         log('Argh! ' + error);
       });
     }

@@ -26,7 +26,6 @@ object VisualizationModel extends VisualizationData {
     val el: HTMLElement = scalajs.dom.document.getElementById("container").asInstanceOf[HTMLElement]
     val demo = new VisualizationScene[Object3D, Quaternion](el, 300, 250)
     demo.render()
-    //demo.renderAll()
     demo
   }
 }
@@ -51,7 +50,7 @@ class VisualizationScene[GeomType<:Object3D, QuaternionType<:Quaternion](val con
   }
 
   override protected def initRenderer() = {
-    var vr = super.initRenderer()
+    val vr = super.initRenderer()
     vr.domElement.style.position = "relative"
     vr.domElement.style.display = "inline-block"
     vr
@@ -66,94 +65,13 @@ class VisualizationScene[GeomType<:Object3D, QuaternionType<:Quaternion](val con
   def renderAll(): Any ={
     cleanScene()
     drawBothHands()
-    //this.render()
     onEnterFrame()
     renderer.render(scene, camera)
   }
 
-  /*
   @JSExport("updateAngles")
   def updateAngles(
-                    rx: Float, ry: Float, rz: Float,
-                    rtx: Float, rty: Float, rtz: Float,
-                    rix: Float, riy: Float, riz: Float,
-                    rmx: Float, rmy: Float, rmz: Float,
-                    rrx: Float, rry: Float, rrz: Float,
-                    rlx: Float, rly: Float, rlz: Float,
 
-                    lx: Float, ly: Float, lz: Float,
-                    ltx: Float, lty: Float, ltz: Float,
-                    lix: Float, liy: Float,  liz: Float,
-                    lmx: Float, lmy: Float, lmz: Float,
-                    lrx: Float, lry: Float, lrz: Float,
-                    llx: Float, lly: Float, llz: Float
-                  ): Any = {
-    hands(1).rotateX(rx)
-    hands(1).rotateY(ry)
-    hands(1).rotateZ(rz)
-
-    hands(1).thumbVis.rotateX(rtx)
-    hands(1).thumbVis.rotateY(rty)
-    hands(1).thumbVis.rotateZ(rtz)
-
-    hands(1).indexVis.rotateX(rix)
-    hands(1).indexVis.rotateY(riy)
-    hands(1).indexVis.rotateZ(riz)
-
-    hands(1).middleVis.rotateX(rmx)
-    hands(1).middleVis.rotateY(rmy)
-    hands(1).middleVis.rotateZ(rmz)
-
-    hands(1).ringVis.rotateX(rrx)
-    hands(1).ringVis.rotateY(rry)
-    hands(1).ringVis.rotateZ(rrz)
-
-    hands(1).littleVis.rotateX(rlx)
-    hands(1).littleVis.rotateY(rly)
-    hands(1).littleVis.rotateZ(rlz)
-
-    hands(0).rotateX(lx)
-    hands(0).rotateY(ly)
-    hands(0).rotateZ(lz)
-
-    hands(0).thumbVis.rotateX(ltx)
-    hands(0).thumbVis.rotateY(lty)
-    hands(0).thumbVis.rotateZ(ltz)
-
-    hands(0).indexVis.rotateX(lix)
-    hands(0).indexVis.rotateY(liy)
-    hands(0).indexVis.rotateZ(liz)
-
-    hands(0).middleVis.rotateX(lmx)
-    hands(0).middleVis.rotateY(lmy)
-    hands(0).middleVis.rotateZ(lmz)
-
-    hands(0).ringVis.rotateX(lrx)
-    hands(0).ringVis.rotateY(lry)
-    hands(0).ringVis.rotateZ(lrz)
-
-    hands(0).littleVis.rotateX(llx)
-    hands(0).littleVis.rotateY(lly)
-    hands(0).littleVis.rotateZ(llz)
-  }
-*/
-
-
-  @JSExport("updateAngles")
-  def updateAngles(
-                    /*rq: Quaternion,
-                    rqt: Quaternion,
-                    rqi: Quaternion,
-                    rqm: Quaternion,
-                    rqr: Quaternion,
-                    rql: Quaternion,
-
-                    lq: Quaternion,
-                    lqt: Quaternion,
-                    lqi: Quaternion,
-                    lqm: Quaternion,
-                    lqr: Quaternion,
-                    lql: Quaternion*/
                     rx: Float, ry: Float, rz: Float, rw: Float,
                     rtx: Float, rty: Float, rtz: Float, rtw: Float,
                     rix: Float, riy: Float, riz: Float, riw: Float,
@@ -168,14 +86,17 @@ class VisualizationScene[GeomType<:Object3D, QuaternionType<:Quaternion](val con
                     lrx: Float, lry: Float, lrz: Float, lrw: Float,
                     llx: Float, lly: Float, llz: Float, llw: Float
                   ): Any = {
-    Log.dump("updateAngles")
 
-    val rq = new Quaternion(rx,ry,rz,rw)
-    val rqt = new Quaternion(rtx,rty,rtz,rtw)
-    val rqi = new Quaternion(rix,riy,riz,riw)
-    val rqm = new Quaternion(rmx,rmy,rmz,rmw)
-    val rqr = new Quaternion(rrx,rry,rrz,rrw)
-    val rql = new Quaternion(rlx,rly,rlz,rlw)
+    //data.rq._y, -data.rq._x, data.rq._z, data.rq._w,
+
+/*
+    val rq = new Quaternion(rx,rz,ry,rw)
+    val rqt = new Quaternion(rtx,rtz,rty,rtw)
+    val rqi = new Quaternion(rix,riz,riy,riw)
+    val rqm = new Quaternion(rmx,rmz,rmy,rmw)
+    val rqr = new Quaternion(rrx,rrz,rry,rrw)
+    val rql = new Quaternion(rlx,rlz,rly,rlw)
+*/
 
     val lq = new Quaternion(lx,ly,lz,lw)
     val lqt = new Quaternion(ltx,lty,ltz,ltw)
@@ -184,65 +105,44 @@ class VisualizationScene[GeomType<:Object3D, QuaternionType<:Quaternion](val con
     val lqr = new Quaternion(lrx,lry,lrz,lrw)
     val lql = new Quaternion(llx,lly,llz,llw)
 
-    Log.dump(rq)
-    Log.dump(rqt)
-    hands(1).rotate(rq.asInstanceOf[QuaternionType])
+    var rq = new Quaternion(rx,ry,rz,rw)
+    rq.normalize();
+    val rqRotated = new Quaternion(rq.y,-rq.x,rq.z,rq.w)
+    val rqt = new Quaternion(rtx,rty,rtz,rtw)
+    val rqi = new Quaternion(rix,riy,riz,riw)
+    val rqm = new Quaternion(rmx,rmy,rmz,rmw)
+    val rqr = new Quaternion(rrx,rry,rrz,rrw)
+    val rql = new Quaternion(rlx,rly,rlz,rlw)
+
+    rqt.normalize()
+    rqi.normalize()
+    rqm.normalize()
+    rqr.normalize()
+    rql.normalize()
+
+    var rqC = rqRotated.clone()
+    rqC.inverse()
+    rqt.multiply(rqC)
+    rqi.multiply(rqC)
+    rqm.multiply(rqC)
+    rqr.multiply(rqC)
+    rql.multiply(rqC)
+
 
     hands(1).thumbVis.rotate(rqt.asInstanceOf[QuaternionType])
-
     hands(1).indexVis.rotate(rqi.asInstanceOf[QuaternionType])
-
     hands(1).middleVis.rotate(rqm.asInstanceOf[QuaternionType])
-
     hands(1).ringVis.rotate(rqr.asInstanceOf[QuaternionType])
-
     hands(1).littleVis.rotate(rql.asInstanceOf[QuaternionType])
+    hands(1).rotate(rqRotated.asInstanceOf[QuaternionType])
 
     hands(0).rotate(lq.asInstanceOf[QuaternionType])
-
     hands(0).thumbVis.rotate(lqt.asInstanceOf[QuaternionType])
-
     hands(0).indexVis.rotate(lqi.asInstanceOf[QuaternionType])
-
     hands(0).middleVis.rotate(lqm.asInstanceOf[QuaternionType])
-
     hands(0).ringVis.rotate(lqr.asInstanceOf[QuaternionType])
-
     hands(0).littleVis.rotate(lql.asInstanceOf[QuaternionType])
   }
-
-  /*
-  @JSExport("updateAnglesAndRenderAll")
-  def updateAnglesAndRenderAll(
-                                rx: Float,ry: Float,rz: Float,
-                                rtx: Float,rty: Float,rtz: Float,
-                                rix: Float,riy: Float,riz: Float,
-                                rmx: Float,rmy: Float,rmz: Float,
-                                rrx: Float,rry: Float,rrz: Float,
-                                rlx: Float,rly: Float,rlz: Float,
-                                lx: Float,ly: Float,lz: Float,
-                                ltx: Float,lty: Float,ltz: Float,
-                                lix: Float,liy: Float,liz: Float,
-                                lmx: Float,lmy: Float,lmz: Float,
-                                lrx: Float,lry: Float,lrz: Float,
-                                llx: Float,lly: Float, llz: Float
-                              ): Any = {
-    updateAngles(
-      rx,ry,rz,
-      rtx,rty,rtz,
-      rix,riy,riz,
-      rmx,rmy,rmz,
-      rrx,rry,rrz,
-      rlx,rly,rlz,
-      lx,ly,lz,
-      ltx,lty,ltz,
-      lix,liy,liz,
-      lmx,lmy,lmz,
-      lrx,lry,lrz,
-      llx,lly,llz)
-    renderAll()
-  }*/
-
 
   val colors = List("green", "red", "blue", "orange", "purple", "teal")
   val colorMap = Map(colors.head -> 0xA1CF64, colors(1) -> 0xD95C5C, colors(2) -> 0x6ECFF5,
@@ -266,36 +166,24 @@ class VisualizationScene[GeomType<:Object3D, QuaternionType<:Quaternion](val con
   )
   camera.setLens(3,1)
 
-
   hands(0).setLog(Log)
   hands(1).setLog(Log)
 
-  Log.dump("drawBothHands", Log.Level.VIS_CONTEXT)
-  // center point
-
-  def update() {
-    // increase the mesh's rotation each frame
-  }
-
-  override def onEnterFrameFunction(double: Double): Unit = {
-    update()
-    super.onEnterFrameFunction(double)
-  }
-
   def drawBothHands() = {
     val dot = new Object3D()
+    scene.rotateY(Math.PI)
     dot.position.set( 170, -150, 0.0)
     scene.add(dot)
 
-    hands(1).drawWholeHand(dot.asInstanceOf[GeomType])
-    hands(1).rotateY((Math.PI).toFloat)
+    hands(0).drawWholeHand(dot.asInstanceOf[GeomType])
+    //hands(1).rotateY((Math.PI).toFloat)
 
     // left hand
     val dot2 = new Object3D()
     dot2.position.set( -170, -150, 0.0)
     scene.add(dot2)
 
-    hands(0).drawWholeHand(dot2.asInstanceOf[GeomType])
+    hands(1).drawWholeHand(dot2.asInstanceOf[GeomType])
   }
 
   /**
@@ -376,8 +264,6 @@ class VisualizationScene[GeomType<:Object3D, QuaternionType<:Quaternion](val con
     val p = new Object3D()
     p.position.set(x,y,z)
     geom.asInstanceOf[Object3D].add( p )
-    Log.dump(geom)
-    Log.dump(p)
     val opt = Option(p.asInstanceOf[GeomType])
     opt
   }

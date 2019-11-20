@@ -71,11 +71,13 @@ class HandVisualization[GeomType, QuaternionType](override val hi: Hand.Hand, ov
     super.rotate(x,y,z)
   }
   override def rotate(q:QuaternionType) = {
-    log("rotate(q:QuaternionType)")
-    if(q!=null){
-      log(q)
-    }
+    if(q!=null) log(q)
     super.rotate(q)
+    /*thumbVis.rotate(q)
+    indexVis.rotate(q)
+    middleVis.rotate(q)
+    ringVis.rotate(q)
+    littleVis.rotate(q)*/
   }
 
 }
