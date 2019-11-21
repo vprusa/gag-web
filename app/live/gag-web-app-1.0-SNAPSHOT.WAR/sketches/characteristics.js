@@ -1,8 +1,5 @@
 /**
- * This is a test js file for
- *
- *
- *
+ * This is a test js file for BLE communication with ESP32
  *
  */
 //https://googlechrome.github.io/samples/web-bluetooth/get-characteristics.html?service=6e400001-b5a3-f393-e0a9-e50e24dcca9e&characteristic_read=6e400002-b5a3-f393-e0a9-e50e24dcca9e

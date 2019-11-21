@@ -30,8 +30,17 @@ angular
           console.log("sendCmd");
           var cmd = $('#terminalInput').val();
           $('#terminalInput').val('');
-          BLETools.sendCmd(cmd);
-          console.log(cmd);
-          $scope.terminalMessages.push({cmd: cmd, output: ''});
-        }
+          BLETools.sendCmd(cmd).then(function(data){
+            $scope.pushToTerminal(data);
+          }).catch(function(err){
+            $scope.pushToTerminal(err);
+          });
+
+        };
+        $scope.pushToTerminal = function(data){
+          console.log("pushToTerminal");
+          console.log(data);
+          $scope.terminalMessages.push(data);
+          $scope.$apply();
+        };
       }]);
