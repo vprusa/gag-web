@@ -75,16 +75,5 @@ angular.module('app', [
             .when('/user', {templateUrl: 'partials/user.html', controller: 'UserController'})
             .when('/newgesture', {templateUrl: 'partials/newGesture.html', controller: 'NewGestureController'})
             .when('/mygestures', {templateUrl: 'partials/myGestures.html', controller: 'MyGesturesController'})
-
-            /*.when('/albumsOverview', {templateUrl: 'partials/albumsOverview.html', controller: 'albumsOverviewCtrl'})
-            .when('/artistDetail/:id?', {templateUrl: 'partials/artistDetail.html', controller: 'artistDetailCtrl'})
-            .when('/artistsOverview', {templateUrl: 'partials/artistsOverview.html', controller: 'artistsOverviewCtrl'})
-            .when('/editAlbum/:id?', {templateUrl: 'partials/editAlbum.html', controller: 'editAlbumCtrl'})
-            .when('/editArtist/:id?', {templateUrl: 'partials/editArtist.html', controller: 'editArtistCtrl'})
-            .when('/editSong/:id?', {templateUrl: 'partials/editSong.html', controller: 'editSongCtrl'})
-            .when('/songsOverview', {templateUrl: 'partials/songsOverview.html', controller: 'songsOverviewCtrl'})
-            .when('/myLibrary', {templateUrl: 'partials/myLibrary.html', controller: 'myLibraryCtrl'})
-            .when('/addSong', {templateUrl: 'partials/addSong.html', controller: 'addSongCtrl'})
-            */
             .otherwise({redirectTo: '/'});
     }]);

@@ -1,4 +1,4 @@
-package example3
+package cz.muni.fi.gag.scala.web.visualization
 
 import org.denigma.binding.binders.GeneralBinder
 import org.denigma.binding.extensions.sq

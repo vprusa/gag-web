@@ -1,5 +1,5 @@
 /**
- * Edited by vprusa
+ * @author vprusa
  */
 'use strict';
 
@@ -57,13 +57,13 @@ angular.module('app').factory('BLETools', ['WSTools', function(WSTools) {
           ble.exponentialBackoff(--max, delay * 2, toTry, success, fail);
         }, delay * 1000);
       });
-   }
+    }
 
-   ble.time = function (text) {
+    ble.time = function (text) {
       log('[' + new Date().toJSON().substr(11, 8) + '] ' + text);
-   }
+    }
 
-   ble.convertNumberToFinger = function(nmb){
+    ble.convertNumberToFinger = function(nmb){
      // THUMB, INDEX, MIDDLE, RING, LITTLE, WRIST;
      switch(nmb){
        case 0:
@@ -80,11 +80,11 @@ angular.module('app').factory('BLETools', ['WSTools', function(WSTools) {
          return "WRIST";
        default:
         return "NONE";
-     }
-     return "NONE";
-   }
+      }
+      return "NONE";
+    }
 
-   ble.connect = function() {
+    ble.connect = function() {
        ble.exponentialBackoff(5 /* max retries */, 2 /* seconds delay */,
         function toTry() {
           ble.time('Connecting to Bluetooth Device... ');
@@ -96,47 +96,47 @@ angular.module('app').factory('BLETools', ['WSTools', function(WSTools) {
         function fail() {
           ble.time('Failed to reconnect.');
         });
-   }
+    }
 
-   ble.onDisconnected = function() {
+    ble.onDisconnected = function() {
         log('> Bluetooth Device disconnected');
         ble.connect();
-   }
+    }
 
-   ble.showReceivedValue = function (value, timeNow, timeDiff) {
+    ble.showReceivedValue = function (value, timeNow, timeDiff) {
       //console.log(value);
       log(value);
       /*$('#content table tr:last').after(
         "<tr><td>" + timeNow + "</td><td>" + timeDiff + "</td><td>" + value + "</td></tr>"
       );*/
-   }
+    }
 
-   ble.str2ab = function (str) {
+    ble.str2ab = function (str) {
       var buf = new ArrayBuffer(str.length*2); // 2 bytes for each char
       var bufView = new Uint8Array(buf);
       for (var i=0, strLen=str.length; i < strLen; i++) {
         bufView[i] = str.charCodeAt(i);
       }
       return buf;
-   }
+    }
 
-   ble.ab2str = function (buf) {
+    ble.ab2str = function (buf) {
       return String.fromCharCode.apply(null, new Uint8Array(buf));
-   }
+    }
 
-   ble.bytesToInt = function(byte1, byte2) {
-     var number = ((byte1 << 8) | byte2);
-     var buffer = new ArrayBuffer(4);
-     var view = new DataView(buffer);
-     number = number / 16384.0;
+    ble.bytesToInt = function(byte1, byte2) {
+      var number = ((byte1 << 8) | byte2);
+      var buffer = new ArrayBuffer(4);
+      var view = new DataView(buffer);
+      number = number / 16384.0;
 
-     if (number >= 2){
-       number = -4 + number;
-     }
-     return number;
-   }
+      if (number >= 2){
+        number = -4 + number;
+      }
+      return number;
+    }
 
-   ble.convert = function(data, gestureId){
+    ble.convert = function(data, gestureId){
         // g.e  [42, 153, 4, 6, 143, 197, 31, 231, 246, 2, 242, 0, 0, 13, 10]
         // g.e  [*, counter, finger, (6, 143), (197, 31), (231, 246), (2, 242), 0, 0, 13, 10]
         //let received = ble.ab2str(data.currentTarget.value.buffer);
@@ -175,9 +175,16 @@ angular.module('app').factory('BLETools', ['WSTools', function(WSTools) {
           //"mZ": 1
         };
         return jsonMessage;
-   }
+    }
 
-   ble.connect2BLE = function(){
+    /**
+     *
+     */
+    ble.sendCmd = function(data) {
+
+    }
+
+    ble.connect2BLE = function(){
       console.log("connect2BLE");
       //log(ble);
       ble.isConnected = !ble.isConnected;
@@ -230,13 +237,16 @@ angular.module('app').factory('BLETools', ['WSTools', function(WSTools) {
           // Get all characteristics that match this UUID.
           console.log(service);
           // this requires both characteristics...
-          return Promise.all([service.getCharacteristics(characteristicWriteUuid), service.getCharacteristics(characteristicNotifyUuid)]);
+          return Promise.all([service.getCharacteristics(characteristicWriteUuid),
+            service.getCharacteristics(characteristicNotifyUuid)]);
         }
         // Get all characteristics.
         return service.getCharacteristics();
       }).then(characteristics => {
         log('> Characteristics: ' +
-          characteristics.map(c => c[0].uuid + " ("+(c[0].properties.write === true ? "WRITE" : (c[0].properties.notify === true ? "NOTIFY":"?"))+")").join('\n' + ' '.repeat(19)));
+          characteristics.map(c => c[0].uuid + " (" +
+                (c[0].properties.write === true ? "WRITE" : (c[0].properties.notify === true ? "NOTIFY":"?"))+")")
+            .join('\n' + ' '.repeat(19)));
           console.log(characteristics);
           ble.bluetoothDeviceWriteChar = characteristics[0][0];
           ble.bluetoothDeviceNotifyChar = characteristics[1][0];
@@ -253,7 +263,7 @@ angular.module('app').factory('BLETools', ['WSTools', function(WSTools) {
             if(ble.lastTS){
               var difference = ev.timeStamp - ble.lastTS;
             }
-            //ble.showReceivedValue(received, ble.timeNow, timeDiff);
+
             ble.lastTS = ev.timeStamp;
             ble.timeNotifyLast = ble.timeNow;
 

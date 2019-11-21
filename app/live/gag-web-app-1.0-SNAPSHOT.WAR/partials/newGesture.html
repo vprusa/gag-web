@@ -1,105 +1,85 @@
 <div data-ng-controller="NewGestureController" class="row">
-	<div class="col-lg-6 col-md-12">
-		<div class="card">
-			<div class="card-header card-header-primary">
-				<h4 class="card-title ">New gesture</h4>
-				<p class="card-category" ng-if="!data.recordingInfo.isRecording && !ble.isConnected">First connect device</p>
-				<p class="card-category" ng-if="!data.recordingInfo.isRecording && ble.isConnected">Press Record</p>
-				<p class="card-category" ng-if="data.recordingInfo.isRecording && !ble.isConnected">Device disconnected, you should stop recording</p>
-				<p class="card-category" ng-if="data.recordingInfo.isRecording && ble.isConnected">Recording now...</p>
-			</div>
-			<div class="card-body">
-				<style>select:before {content: '\e095'}</style>
-				<select ng-model="data.selectedGesture" ng-change="onSelectChange()"
-						 class="btn btn-info">
+    <div class="col-lg-6 col-md-12">
+        <div class="card">
+            <div class="card-header card-header-primary">
+                <h4 class="card-title ">New gesture</h4>
+                <p class="card-category" ng-if="!data.recordingInfo.isRecording && !ble.isConnected">First connect
+                    device</p>
+                <p class="card-category" ng-if="!data.recordingInfo.isRecording && ble.isConnected">Press Record</p>
+                <p class="card-category" ng-if="data.recordingInfo.isRecording && !ble.isConnected">Device disconnected,
+                    you should stop recording</p>
+                <p class="card-category" ng-if="data.recordingInfo.isRecording && ble.isConnected">Recording now...</p>
+            </div>
+            <div class="card-body">
+                <style>select:before {
+                    content: '\e095'
+                }</style>
+                <select ng-model="data.selectedGesture" ng-change="onSelectChange()"
+                        class="btn btn-info">
 
-					<option value="" selected style="content: '\e095'; ">New.. or? </option>
-					<option ng-style="{'background-color':(!item.isFiltered ? 'green':'') }"
-							ng-repeat="item in data.gesturesList" value="{{item.id}}">
-						{{item.userAlias}} ({{item.dateCreated | date: 'yyyy:mm:dd-HH:MM:ss'}})
-					</option>
-				</select>
+                    <option value="" selected style="content: '\e095'; ">New.. or?</option>
+                    <option ng-style="{'background-color':(!item.isFiltered ? 'green':'') }"
+                            ng-repeat="item in data.gesturesList" value="{{item.id}}">
+                        {{item.userAlias}} ({{item.dateCreated | date: 'yyyy:mm:dd-HH:MM:ss'}})
+                    </option>
+                </select>
 
-				<select ng-disabled="!data.selectedGesture" class="btn btn-info">
-					<option ng-repeat="opt in data.actionOptions" value="{{opt}}">
-						{{opt}}
-					</option>
-				</select>
-				<table class="table table-hover">
-					<tbody>
-					<tr>
-						<td>ID</td>
-						<td>Gesture name</td>
-						<td style="text-align:right; vertical-align: top;">
-							<!--<button  style="position: right;" type="button" class="btn btn-info desc" ng-click="stop()">Create</button>-->
-						</td>
-					</tr>
-					<tr>
-						<td>{{data.currentGesture.id}}</td>
-						<td><input class="form-control" ng-model="data.currentGesture.userAlias" type="text" placeholder="Gesture Name"></td>
-						<td style="text-align:right; vertical-align: top;">
-							<div ng-if="!(data.recordingInfo.isRecording)">
-								<button ng-disabled="!ble.isConnected" clicktype="button" class="btn btn-info desc" ng-click="record()">Record</button>
-							</div>
-							<div  style="text-align: right;" ng-if="data.recordingInfo.isRecording">
-								<button  style="position: right;" type="button" class="btn btn-info desc" ng-click="stop()">Stop</button>
-							</div>
-						</td>
-					</tr>
-					</tbody>
-				</table>
+                <select ng-disabled="!data.selectedGesture" class="btn btn-info">
+                    <option ng-repeat="opt in data.actionOptions" value="{{opt}}">
+                        {{opt}}
+                    </option>
+                </select>
+                <table class="table table-hover">
+                    <tbody>
+                    <tr>
+                        <td>ID</td>
+                        <td>Gesture name</td>
+                        <td style="text-align:right; vertical-align: top;">
+                            <!--<button  style="position: right;" type="button" class="btn btn-info desc" ng-click="stop()">Create</button>-->
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>{{data.currentGesture.id}}</td>
+                        <td><input class="form-control" ng-model="data.currentGesture.userAlias" type="text"
+                                   placeholder="Gesture Name"></td>
+                        <td style="text-align:right; vertical-align: top;">
+                            <div ng-if="!(data.recordingInfo.isRecording)">
+                                <button ng-disabled="!ble.isConnected" clicktype="button" class="btn btn-info desc"
+                                        ng-click="record()">Record
+                                </button>
+                            </div>
+                            <div style="text-align: right;" ng-if="data.recordingInfo.isRecording">
+                                <button style="position: right;" type="button" class="btn btn-info desc"
+                                        ng-click="stop()">Stop
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
 
-				<table class="table table-hover">
-					<tbody>
-					<tr>
-						<td>Time</td>
-						<td>{{data.recordingInfo.startTime | date: 'HH:MM:ss.sss'}}</td>
-					</tr>
-					<tr>
-						<td>Recording</td>
-						<td>{{data.recordingInfo.recordingTime | date: 'HH:MM:ss.sss'}}</td>
-					</tr>
-					<tr>
-						<td>Info #2</td>
-						<td>VLipsum</td>
-					</tr>
-					</tbody>
-				</table>
-			</div>
-		</div>
-	</div>
-	<!--
-	<div class="col-lg-6 col-md-12">
-		<div class="card">
-			<div class="card-header card-header-primary">
-				<h4 class="card-title ">Gesture detail - partial (live)</h4>
-				<p class="card-category">{{data.info}}</p>
-			</div>
-			<div class="card-body">
-				<div>
-					<! --<button class="btn btn-info desc"
-							ng-click='playSelectedGesture()'>Show</button></td> - ->
-					<! -- <p class="card-category">{{selectedGestureDetail.info}}</p>- ->
-					<table class="table">
-						<thead class="text-primary">
-						<th>ID</th>
-						<th>Time</th>
-						<th>Position</th>
-						</thead>
-						<tbody>
-						<tr ng-repeat="item in ble.currentDataLines">
-							<td>{{item.id}}</td>
-							<td>{{item.t | date: 'HH:MM:ss.sss'}}</td>
-							<td>{{item.p}}</td>
-						</tr>
-						</tbody>
-					</table>
-				</div>
-			</div>
-		</div>
-	</div>-->
-	<div class="col-lg-6 col-md-12">
-		<div ng-include="'partials/visualizationCard.html'"></div>
-	</div>
+                <table class="table table-hover">
+                    <tbody>
+                    <tr>
+                        <td>Time</td>
+                        <td>{{data.recordingInfo.startTime | date: 'HH:MM:ss.sss'}}</td>
+                    </tr>
+                    <tr>
+                        <td>Recording</td>
+                        <td>{{data.recordingInfo.recordingTime | date: 'HH:MM:ss.sss'}}</td>
+                    </tr>
+                    <tr>
+                        <td>Info #2</td>
+                        <td>VLipsum</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 col-md-12">
+        <div ng-include="'partials/visualizationCard.html'"></div>
+    </div>
 </div>
+<div ng-include="'partials/bleTerminal.html'"></div>
 <div ng-include="'partials/logMessages.html'"></div>

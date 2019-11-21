@@ -64,6 +64,10 @@ angular.module('app').factory('WSTools', function(/*$rootScope*/) {
 
     ws.gestureId = "";
 
+    /**
+     * This should be used for any dealing with message before possible sending
+     * e.g. used in visualization
+    */
     ws.onSendMessage = function(data){
         // override
     }

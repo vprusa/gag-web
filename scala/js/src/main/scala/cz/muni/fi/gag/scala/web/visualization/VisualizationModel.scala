@@ -1,4 +1,4 @@
-package example3
+package cz.muni.fi.gag.scala.web.visualization
 
 import cz.muni.fi.gag.web.common.recognition.Sensor
 import cz.muni.fi.gag.web.common.recognition.Sensor.Sensor
@@ -17,8 +17,6 @@ import scalatags.JsDom.all._
 import scala.scalajs.js
 import scala.scalajs.js.annotation.{JSExport, JSName}
 import scala.util.Random
-
-
 
 // TODO rename to more self-explanatory name in given context
 object VisualizationModel extends VisualizationData {
@@ -71,7 +69,6 @@ class VisualizationScene[GeomType<:Object3D, QuaternionType<:Quaternion](val con
 
   @JSExport("updateAngles")
   def updateAngles(
-
                     rx: Float, ry: Float, rz: Float, rw: Float,
                     rtx: Float, rty: Float, rtz: Float, rtw: Float,
                     rix: Float, riy: Float, riz: Float, riw: Float,
@@ -86,18 +83,6 @@ class VisualizationScene[GeomType<:Object3D, QuaternionType<:Quaternion](val con
                     lrx: Float, lry: Float, lrz: Float, lrw: Float,
                     llx: Float, lly: Float, llz: Float, llw: Float
                   ): Any = {
-
-    //data.rq._y, -data.rq._x, data.rq._z, data.rq._w,
-
-/*
-    val rq = new Quaternion(rx,rz,ry,rw)
-    val rqt = new Quaternion(rtx,rtz,rty,rtw)
-    val rqi = new Quaternion(rix,riz,riy,riw)
-    val rqm = new Quaternion(rmx,rmz,rmy,rmw)
-    val rqr = new Quaternion(rrx,rrz,rry,rrw)
-    val rql = new Quaternion(rlx,rlz,rly,rlw)
-*/
-
     val lq = new Quaternion(lx,ly,lz,lw)
     val lqt = new Quaternion(ltx,lty,ltz,ltw)
     val lqi = new Quaternion(lix,liy,liz,liw)
@@ -105,7 +90,7 @@ class VisualizationScene[GeomType<:Object3D, QuaternionType<:Quaternion](val con
     val lqr = new Quaternion(lrx,lry,lrz,lrw)
     val lql = new Quaternion(llx,lly,llz,llw)
 
-    var rq = new Quaternion(rx,ry,rz,rw)
+    val rq = new Quaternion(rx,ry,rz,rw)
     rq.normalize();
     val rqRotated = new Quaternion(rq.y,-rq.x,rq.z,rq.w)
     val rqt = new Quaternion(rtx,rty,rtz,rtw)
@@ -120,7 +105,7 @@ class VisualizationScene[GeomType<:Object3D, QuaternionType<:Quaternion](val con
     rqr.normalize()
     rql.normalize()
 
-    var rqC = rqRotated.clone()
+    val rqC = rqRotated.clone()
     rqC.inverse()
     rqt.multiply(rqC)
     rqi.multiply(rqC)
@@ -284,18 +269,12 @@ class VisualizationScene[GeomType<:Object3D, QuaternionType<:Quaternion](val con
       val piv = pivot.get
       axis match {
         case Axis.X => {
-          //piv.rotation.x=0.0;
-          //piv.rotateOnAxis(AxisVector.X, angle)
           piv.rotateOnAxis(AxisVector.X, angle-piv.rotation.x)
         }
         case Axis.Y => {
-          //piv.rotation.y=0.0;
-          //piv.rotateOnAxis(AxisVector.Y, angle)
           piv.rotateOnAxis(AxisVector.Y, angle-piv.rotation.y)
         }
         case Axis.Z => {
-          //piv.rotation.z=0.0;
-          //piv.rotateOnAxis(AxisVector.Z, angle)
           piv.rotateOnAxis(AxisVector.Z, angle-piv.rotation.z)
         }
         case _ => {

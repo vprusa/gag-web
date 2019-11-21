@@ -27,7 +27,7 @@ libraryDependencies += "org.denigma" %%% "codemirror-facade" % "5.13.2-0.8" //ad
 // publish generated js file to right directory (because WF does not handle soft links well.. at all.)
 lazy val copyjs = TaskKey[Unit]("copyjs", "Copy javascript files to target directory")
 copyjs := {
-  val outDir = baseDirectory.value / "../../app/live/gag-web-app-1.0-SNAPSHOT.WAR/public/"
+  val outDir = baseDirectory.value / "../../app/live/gag-web-app-1.0-SNAPSHOT.WAR/scala/"
   val inDir = baseDirectory.value / "target/scala-2.11"
   //val files = Seq("gag-web-scala-fastopt.js", "gag-web-scala-fastopt.js.map", "gag-web-scala-jsdeps.js") map { p =>   (inDir / p, outDir / p) }
   val files = Seq("gag-web-scala-fastopt.js", "gag-web-scala-fastopt.js.map") map { p =>   (inDir / p, outDir / p) }

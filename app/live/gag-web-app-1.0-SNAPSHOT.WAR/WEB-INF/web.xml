@@ -37,9 +37,15 @@
 	<security-constraint>
 		<web-resource-collection>
 			<url-pattern>/public/*</url-pattern>
-            <url-pattern>/theme/*</url-pattern>
-            <url-pattern>/assets/*</url-pattern>
-            <url-pattern>/datalinews/*</url-pattern>
+			<url-pattern>/theme/*</url-pattern>
+			<url-pattern>/assets/*</url-pattern>
+			<url-pattern>/datalinews/*</url-pattern>
+		</web-resource-collection>
+	</security-constraint>
+
+	<security-constraint>
+		<web-resource-collection>
+			<url-pattern>/scala/*</url-pattern>
 		</web-resource-collection>
 	</security-constraint>
 

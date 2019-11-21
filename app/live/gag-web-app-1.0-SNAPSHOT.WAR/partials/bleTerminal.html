@@ -1,0 +1,33 @@
+<div class="row">
+    <div class="card">
+        <div id="terminal" data-ng-controller="BLETerminalController">
+            <div class="card-header card-header-primary">
+                <h5 class="card-title ">BLE Terminal</h5>
+                <p class="card-category"></p>
+            </div>
+            <div class="card-body">
+                <form ng-submit="sendCmd()">
+                    <table class="table table-hover">
+                        <tr>
+                            <td><input id="terminalInput" type="text"
+                                       class="form-control ng-pristine ng-valid ng-empty ng-touched"/></td>
+                            <!-- ng-disabled="!ble.isConnected"-->
+                            <td><input type="submit" name="Send" class="btn btn-info desc" text="Send"/></td>
+                        </tr>
+                    </table>
+                </form>
+
+                <table id="terminalOutput">
+                    <tr ng-repeat="item in terminalMessages">
+                        <td>
+                            <ul>
+                                <li>{{item.cmd}}</li>
+                                <li>{{item.output}}</li>
+                            </ul>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
