@@ -23,19 +23,18 @@ angular
         $scope.ble = BLETools;
 
         $scope.terminalMessages = [
-          {cmd: 'ExampleCmd', output: 'ExampleCmd\'s output'},
+          {cmd: 'ExampleCmd', output: 'ExampleCmd\'s output'}
         ];
 
-        $scope.sendCmd = function () {
+        $scope.sendCmd = function() {
           console.log("sendCmd");
           var cmd = $('#terminalInput').val();
           $('#terminalInput').val('');
           BLETools.sendCmd(cmd).then(function(data){
-            $scope.pushToTerminal(data);
+          $scope.pushToTerminal(data);
           }).catch(function(err){
             $scope.pushToTerminal(err);
           });
-
         };
         $scope.pushToTerminal = function(data){
           console.log("pushToTerminal");

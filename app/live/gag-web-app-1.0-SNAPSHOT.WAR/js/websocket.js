@@ -99,7 +99,7 @@ angular.module('app').factory('WSTools', function (/*$rootScope*/) {
     ws.websocketSession.onmessage = f;
   }
   ws.onMessage = function (evt) {
-    console.log(evt);
+    //console.log(evt);
     //var data = JSON.parse(evt.data);
   };
   ws.init = function () {

@@ -43,6 +43,7 @@ public interface GestureMapper<DataLineEx extends DataLine> extends WSMsgBase {
         fdl.setQuatY(mfdl.getQuatY());
         fdl.setQuatZ(mfdl.getQuatZ());
         fdl.setPosition(mfdl.getPosition());
+        fdl.setHandPosition(mfdl.getHandPosition());
         return fdl;
     }
 
@@ -60,8 +61,7 @@ public interface GestureMapper<DataLineEx extends DataLine> extends WSMsgBase {
         wdl.setMagX(mwdl.getMagX());
         wdl.setMagY(mwdl.getMagY());
         wdl.setMagZ(mwdl.getMagZ());
-        // TODO ?
-        //wdl.setPosition(mwdl.getPosition());
+        wdl.setHandPosition(mwdl.getHandPosition());
         return wdl;
     }
 

@@ -13,7 +13,7 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 
 import cz.muni.fi.gag.web.dao.WristDataLineDao;
-import cz.muni.fi.gag.web.entity.FingerPosition;
+import cz.muni.fi.gag.web.entity.SensorFingerPosition;
 import cz.muni.fi.gag.web.entity.WristDataLine;
 
 import javax.inject.Inject;
@@ -53,7 +53,7 @@ public class WristDataLineTest extends TestServiceBase {
         WristDataLine r = new WristDataLine();
 
         r.setGesture(null);
-        r.setPosition(FingerPosition.INDEX);
+        r.setPosition(SensorFingerPosition.INDEX);
         r.setQuatA(0);
         r.setQuatX(0);
         r.setQuatY(0);

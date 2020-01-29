@@ -1,6 +1,6 @@
 package cz.muni.fi.gag.web.validation;
 
-import cz.muni.fi.gag.web.entity.FingerPosition;
+import cz.muni.fi.gag.web.entity.SensorFingerPosition;
 import cz.muni.fi.gag.web.entity.FingerSensorOffset;
 import cz.muni.fi.gag.web.entity.SensorOffset;
 import cz.muni.fi.gag.web.entity.WristSensorOffset;
@@ -29,7 +29,7 @@ public class ValidHandOffsetsValidator implements ConstraintValidator<ValidHandO
 
         boolean hasWristOffset = false;
         int otherOffsetCount = 0;
-        int[] fingersCount = new int[FingerPosition.values().length];
+        int[] fingersCount = new int[SensorFingerPosition.values().length];
         Arrays.fill(fingersCount, 0);
 
         for (SensorOffset offset : annotatedList) {

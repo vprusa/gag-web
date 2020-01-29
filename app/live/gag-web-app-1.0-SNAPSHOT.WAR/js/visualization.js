@@ -26,8 +26,8 @@ angular.module('app').factory('VisTools', function () {
   };
 
   vis.updateVisFromDataLine = function (dl) {
-    console.log("updateVisFromDataLine");
-    console.log(dl);
+    //console.log("updateVisFromDataLine");
+    //console.log(dl);
     switch (dl.p) {
       case "THUMB":
         var ar = new THREE.Quaternion(parseFloat(dl.qX), parseFloat(dl.qY), parseFloat(dl.qZ), parseFloat(dl.qA));
@@ -94,7 +94,7 @@ angular.module('app').factory('VisTools', function () {
     //data.rq._y *= 10.0;
     //data.rq._z *= 10.0;
     //data.rq._w *= 10.0;
-    console.log(data.rqm);
+    //console.log(data.rqm);
     handVisualization.scene.updateAngles(
       // TODO make wrist work
       //data.rq._y, -data.rq._x, data.rq._z, data.rq._w,

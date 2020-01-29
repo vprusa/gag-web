@@ -40,7 +40,7 @@ public class TestServiceBase extends TestBase {
     public FingerDataLine buildFingerDataLine() {
         FingerDataLine r = new FingerDataLine();
         r.setGesture(null);
-        r.setPosition(FingerPosition.INDEX);
+        r.setPosition(SensorFingerPosition.INDEX);
         r.setQuatA(0);
         r.setQuatX(0);
         r.setQuatY(0);
@@ -55,7 +55,7 @@ public class TestServiceBase extends TestBase {
     public WristDataLine buildWristDataLine() {
         WristDataLine r = new WristDataLine();
         r.setGesture(null);
-        r.setPosition(FingerPosition.INDEX);
+        r.setPosition(SensorFingerPosition.INDEX);
         r.setQuatA(0);
         r.setQuatX(0);
         r.setQuatY(0);
@@ -77,7 +77,7 @@ public class TestServiceBase extends TestBase {
         return r;
     }
 
-    public FingerSensorOffset buildFingerSensorOffset(FingerPosition fingerPosition) {
+    public FingerSensorOffset buildFingerSensorOffset(SensorFingerPosition fingerPosition) {
         FingerSensorOffset r = new FingerSensorOffset();
         HandDevice hd = null;
         r.setDevice(hd);
@@ -89,7 +89,7 @@ public class TestServiceBase extends TestBase {
         return r;
     }
 
-    public FingerSensorOffset buildFingerSensorOffsetWithPersistentRefs(FingerPosition fingerPosition) {
+    public FingerSensorOffset buildFingerSensorOffsetWithPersistentRefs(SensorFingerPosition fingerPosition) {
         FingerSensorOffset r = buildFingerSensorOffset(fingerPosition);
         HandDevice d = buildHandDeviceAndPersist();
         r.setDevice(d);
@@ -128,7 +128,7 @@ public class TestServiceBase extends TestBase {
         u = userDao.create(u);
 
         List<SensorOffset> o = new ArrayList<>();
-        for (FingerPosition fingerPosition : FingerPosition.values()) {
+        for (SensorFingerPosition fingerPosition : SensorFingerPosition.values()) {
             o.add(buildFingerSensorOffset(fingerPosition));
         }
 

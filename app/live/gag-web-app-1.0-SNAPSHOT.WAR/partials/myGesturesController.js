@@ -78,7 +78,9 @@ angular
         }
 
         $scope.deleteGesture = function (id) {
-          console.log("deleteGesture: " + id);
+          //console.log("deleteGesture: " + id);
+          commonTools.deleteGesture(id);
+          $scope.$apply();
         }
 
         $scope.onMessage = function (evt) {

@@ -5,10 +5,10 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
-//import toxi.geom.Quaternion;
-
 /**
  * @author Vojtech Prusa
+ *
+ * {@link WristDataLine}
  *
  */
 @Entity
@@ -34,16 +34,28 @@ public class FingerDataLine extends DataLine {
     @JsonProperty("aZ")
     private short accZ;
 
+    private SensorFingerPosition position;
+
     @Enumerated(EnumType.ORDINAL)
     @JsonProperty("p")
-    private FingerPosition position;
-
-    public FingerPosition getPosition() {
+    public SensorFingerPosition getPosition() {
         return position;
     }
 
-    public void setPosition(FingerPosition position) {
+    public void setPosition(SensorFingerPosition position) {
         this.position = position;
+    }
+
+    @Enumerated(EnumType.ORDINAL)
+    @JsonProperty("h")
+    private SensorHandPosition hand;
+
+    public SensorHandPosition getHandPosition() {
+        return hand;
+    }
+
+    public void setHandPosition(SensorHandPosition hand) {
+        this.hand = this.hand;
     }
 
     /**

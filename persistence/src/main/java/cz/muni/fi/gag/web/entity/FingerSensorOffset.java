@@ -16,14 +16,14 @@ import javax.persistence.Table;
 public class FingerSensorOffset extends SensorOffset {
     
     @Enumerated(EnumType.ORDINAL)
-    private FingerPosition position;
+    private SensorFingerPosition position;
 
     /**
      * Getter
      *
      * @return position instance
      */
-    public FingerPosition getPosition() {
+    public SensorFingerPosition getPosition() {
         return position;
     }
 
@@ -32,7 +32,7 @@ public class FingerSensorOffset extends SensorOffset {
      * 
      * @param position instance
      */
-    public void setPosition(FingerPosition position) {
+    public void setPosition(SensorFingerPosition position) {
         this.position = position;
     }
 

@@ -1,7 +1,7 @@
 package cz.muni.fi.gag.web.endpoint;
 
 import cz.muni.fi.gag.web.entity.FingerDataLine;
-import cz.muni.fi.gag.web.entity.FingerPosition;
+import cz.muni.fi.gag.web.entity.SensorFingerPosition;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -40,7 +40,7 @@ public class FingerDataLineEndpointTest extends EndpointTestBase<FingerDataLine>
     public FingerDataLine buildDataLine() {
         FingerDataLine r = new FingerDataLine();
         r.setGesture(null);
-        r.setPosition(FingerPosition.INDEX);
+        r.setPosition(SensorFingerPosition.INDEX);
         r.setQuatA(0);
         r.setQuatX(0);
         r.setQuatY(0);

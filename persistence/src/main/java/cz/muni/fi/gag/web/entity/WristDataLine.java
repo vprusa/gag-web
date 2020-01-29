@@ -1,7 +1,9 @@
 package cz.muni.fi.gag.web.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 
 /**
  * @author Vojtech Prusa
@@ -18,6 +20,15 @@ public class WristDataLine extends FingerDataLine {
 
     @JsonProperty("mZ")
     private short magZ;
+
+    // field SensorFingerPosition should not be used here - > Transient
+    @Transient
+    @Override
+    public SensorFingerPosition getPosition() {
+        return super.getPosition();
+    }
+
+
 
     /**
      * Getter
@@ -78,5 +89,7 @@ public class WristDataLine extends FingerDataLine {
         return "WristDataLine [magX=" + magX + ", magY=" + magY + ", magZ=" + magZ + "] "
                 + super.toString();
     }
+
+    
 
 }

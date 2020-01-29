@@ -1,5 +1,10 @@
 <div data-ng-controller="NewGestureController" class="row">
     <div class="col-lg-6 col-md-12">
+        <div ng-include="'partials/visualizationCard.html'"></div>
+        <div ng-include="'partials/bleTerminal.html'"></div>
+
+    </div>
+    <div class="col-lg-6 col-md-12">
         <div class="card">
             <div class="card-header card-header-primary">
                 <h4 class="card-title ">New gesture</h4>
@@ -77,9 +82,5 @@
             </div>
         </div>
     </div>
-    <div class="col-lg-6 col-md-12">
-        <div ng-include="'partials/visualizationCard.html'"></div>
-    </div>
 </div>
-<div ng-include="'partials/bleTerminal.html'"></div>
 <div ng-include="'partials/logMessages.html'"></div>

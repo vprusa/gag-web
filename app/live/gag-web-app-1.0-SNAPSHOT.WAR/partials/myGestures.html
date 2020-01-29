@@ -1,16 +1,19 @@
 <!--<script src="./partials/characteristics.js"></script>-->
 
 <div class="row" data-ng-controller="MyGesturesController"  >
+	<div class="col-lg-6 col-md-12">
+		<div ng-include="'partials/visualizationCard.html'"></div>
+	</div>
 
 	<div class="col-lg-6 col-md-12">
-	<div class="card">
-		<div class="card-header card-header-primary">
-			<h4 class="card-title ">Gestures list</h4>
-			<p class="card-category">click on "Detail" to get detail</p>
-		</div>
-		<div class="card-body">
-			<div class="" ng-if="selectedGestureDetail.play"></div>
-				<div >
+		<div class="card">
+			<div class="card-header card-header-primary">
+				<h4 class="card-title ">Gestures list</h4>
+				<p class="card-category">click on "Detail" to get detail</p>
+			</div>
+			<div class="card-body">
+				<div class="" ng-if="selectedGestureDetail.play"></div>
+				<div>
 					<button class="btn btn-info desc"
 							ng-click='test()'>Test</button></td>
 					<button ng-disabled="!selectedGestureDetail.selectedGesture" class="btn btn-info desc"
@@ -20,39 +23,35 @@
 				<div class="table-responsive">
 					<table class="table table-hover">
 						<thead class="text-warning">
-						<th>ID</th>
-						<th>Alias</th>
-						<th>Date created</th>
-						<th>Operations</th>
+							<th>ID</th>
+							<th>Alias</th>
+							<th>Date created</th>
+							<th>Operations</th>
 						</thead>
 						<tbody>
-						<tr ng-repeat="item in gestures">
-							<td>{{item.id}}</td>
-							<td><button class="btn btn-info desc"
-                                        ng-click='selectGesture(item.id)'>{{item.userAlias}}</button></td>
-							<td>{{item.dateCreated | date: 'yyyy-MM-dd HH:MM'}}</td>
-							<td>
-								<a href="" class="btn btn-info" ng-click='listDetail(item.id)'
-									 ng-style="{'background-color':(selectedGestureList.display == item.id? 'green':'') }">
-									<span class="glyphicon glyphicon-list-alt"></span>
-								</a>
-								<a href="" class="btn btn-info" ng-click='clearGesture(item.id)'>
-									<span class="glyphicon glyphicon-trash"></span>
-								</a>
-								<a href="" title="Remove" class="btn btn-info" ng-click='deleteGesture(item.id)'>
-									<span class="glyphicon glyphicon-remove"></span>
-								</a>
-							</td>
-						</tr>
+							<tr ng-repeat="item in gestures">
+								<td>{{item.id}}</td>
+								<td><button class="btn btn-info desc"
+											ng-click='selectGesture(item.id)'>{{item.userAlias}}</button></td>
+								<td>{{item.dateCreated | date: 'yyyy-MM-dd HH:MM'}}</td>
+								<td>
+									<a href="" class="btn btn-info" ng-click='listDetail(item.id)'
+										 ng-style="{'background-color':(selectedGestureList.display == item.id? 'green':'') }">
+										<span class="glyphicon glyphicon-list-alt"></span>
+									</a>
+									<!--<a href="" class="btn btn-info" ng-click='clearGesture(item.id)'>
+										<span class="glyphicon glyphicon-trash"></span>
+									</a>-->
+									<a href="" title="Remove" class="btn btn-info" ng-click='deleteGesture(item.id)'>
+										<span class="glyphicon glyphicon-remove"></span>
+									</a>
+								</td>
+							</tr>
 						</tbody>
 					</table>
 				</div>
 			</div>
 		</div>
-	</div>
-
-	<div class="col-lg-6 col-md-12">
-		<div ng-include="'partials/visualizationCard.html'"></div>
 	</div>
 </div>
 
