@@ -188,7 +188,26 @@ angular.module('app').factory('BLETools', ['WSTools', function (WSTools) {
       if(typeof ble.bluetoothDeviceWriteChar != 'undefined'){
 //        ble.bluetoothDeviceWriteChar.writeValue("c00\r\n");
         //ble.bluetoothDeviceWriteChar.writeValue(ble.str2ab("c00\r\n"));
-        ble.bluetoothDeviceWriteChar.writeValue(ble.str2ab("c"+cmd+"\r\n"));
+        /*
+         * set
+         * - O1gx9
+         * get
+         * - o1gx0
+         */
+        var cmdToSend = cmd;
+        if(cmd.charAt(0) === 'O'){
+            var nmb = parseInt(cmd.substr(4));
+            console.log("nmb");
+            console.log(nmb);
+            console.log(cmd.substr(1,3));
+            console.log(cmd.substr(4));
+            var nmb1 = (nmb << 0);
+            var nmb2 = (nmb << 8);
+            cmdToSend = cmd.substr(1,3) + String.fromCharCode(nmb1) +  String.fromCharCode(nmb2);
+            console.log(cmdToSend);
+        }
+
+        ble.bluetoothDeviceWriteChar.writeValue(ble.str2ab("C"+cmdToSend+"\r\n"));
 
       }
       if (typeof reply != 'undefined') {
