@@ -65,7 +65,7 @@
 	</dependencies>
 
 	<build>
-		<!-- <defaultGoal>wildfly:start wildfly:undeploy install wildfly:deploy 
+		<!-- <defaultGoal>wildfly:start wildfly:undeploy install wildfly:deploy
 			-DskipTests=true -Dcheckstyle.skip </defaultGoal> -->
 		<!-- <finalName>gag-web-app-1.0-SNAPSHOT.WAR</finalName> -->
 		<plugins>
@@ -75,11 +75,11 @@
 				<configuration>
 					<failOnMissingWebXml>true</failOnMissingWebXml>
 					<!--<warSourceDirectory>${basedir}/src/main/webapp</warSourceDirectory> -->
-					<!--<warSourceDirectory>src/main/webapp</warSourceDirectory> <webappDirectory>src/main/webapp</webappDirectory> 
+					<!--<warSourceDirectory>src/main/webapp</warSourceDirectory> <webappDirectory>src/main/webapp</webappDirectory>
 						<warSourceDirectory>src/main/webapp</warSourceDirectory> -->
-					<!--<webappDirectory>${basedir}/src/main/webapp</webappDirectory> <warSourceDirectory>${basedir}/src/main/webapp</warSourceDirectory> 
-						<webResources> <resource> <directory>${basedir}/src/main/webapp</directory> 
-						<filtering>true</filtering> <includes> <include>**/*</include> </includes> 
+					<!--<webappDirectory>${basedir}/src/main/webapp</webappDirectory> <warSourceDirectory>${basedir}/src/main/webapp</warSourceDirectory>
+						<webResources> <resource> <directory>${basedir}/src/main/webapp</directory>
+						<filtering>true</filtering> <includes> <include>**/*</include> </includes>
 						</resource> </webResources> -->
 				</configuration>
 			</plugin>
@@ -95,12 +95,15 @@
 				<artifactId>wildfly-maven-plugin</artifactId>
 				<version>${version.wildfly.maven.plugin}</version>
 				<configuration>
-					<jboss-home>${project.parent.basedir}/wildfly-16.0.0.Final/</jboss-home>
+					<java-opts>
+    				<java-opt>-Xmx5G</java-opt>
+					</java-opts>
+					<jboss-home>${project.parent.basedir}/wildfly-18.0.0.Final/</jboss-home>
 					<skip>false</skip>
 					<targetDir>
 						${project.basedir}/live
 					</targetDir>
-					<!-- because wildfly is stupid an can upload as exploded only if it 
+					<!-- because wildfly is stupid an can upload as exploded only if it
 						ends with .war -->
 					<filename>
 						gag-web-app-1.0-SNAPSHOT.WAR
@@ -111,10 +114,10 @@
 								<username>admin</username>
 								<password>admin</password>
 							</user>
-							<!-- <user> <username>admin-user</username> <password>user.1234</password> 
-								<groups> <group>admin</group> <group>user</group> </groups> <application-user>true</application-user> 
-								</user> <user> <username>default-user</username> <password>user.1234</password> 
-								<groups> <group>user</group> </groups> <application-user>true</application-user> 
+							<!-- <user> <username>admin-user</username> <password>user.1234</password>
+								<groups> <group>admin</group> <group>user</group> </groups> <application-user>true</application-user>
+								</user> <user> <username>default-user</username> <password>user.1234</password>
+								<groups> <group>user</group> </groups> <application-user>true</application-user>
 								</user> -->
 						</users>
 					</addUser>

@@ -6,6 +6,9 @@ var bluetoothDeviceNotifyChar;
 
 var timeNow, timeWriteLast, timeNotifyLast;
 
+function log(msg){
+console.log(msg);}
+
 function str2ab(str) {
   var buf = new ArrayBuffer(str.length*2); // 2 bytes for each char
   var bufView = new Uint8Array(buf);
@@ -20,6 +23,7 @@ function ab2str(buf) {
 }
 
 function sendValue() {
+    console.log("sendval");
   if(bluetoothDeviceWriteChar) {
     var toSend = $("#toSend").val();
     //console.log(toSend);

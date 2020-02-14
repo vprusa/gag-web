@@ -176,53 +176,71 @@ angular.module('app').factory('BLETools', ['WSTools', function (WSTools) {
     };
     return jsonMessage;
   }
-
+  ble.reconnectCounter = 0;
   /**
-   * returns Promise with resolved data {cmd: cmd, reply:reply})
+   * returns Promise with resolved data {cmd: cmd, reply: reply})
    */
   ble.sendCmd = (cmd) => {
-    return new Promise((resolve, reject) => {
+    let cmdPromise = new Promise((resolve, reject) => {
       /* stuff using cmd */
       let reply;
       // TODO propper check?
       if(typeof ble.bluetoothDeviceWriteChar != 'undefined'){
 //        ble.bluetoothDeviceWriteChar.writeValue("c00\r\n");
-        //ble.bluetoothDeviceWriteChar.writeValue(ble.str2ab("c00\r\n"));
         /*
          * set
          * - O1gx9
+         * - O3gz5000
          * get
          * - o1gx0
          */
         var cmdToSend = cmd;
-        if(cmd.charAt(0) === 'O'){
+        if(/*cmd.length >= 4 && */ cmd.charAt(0) === 'O' || cmd.charAt(0) === 'a') {
             var nmb = parseInt(cmd.substr(4));
             console.log("nmb");
             console.log(nmb);
-            console.log(cmd.substr(1,3));
-            console.log(cmd.substr(4));
-            var nmb1 = (nmb << 0);
-            var nmb2 = (nmb << 8);
-            cmdToSend = cmd.substr(1,3) + String.fromCharCode(nmb1) +  String.fromCharCode(nmb2);
+            var byte1 = (nmb & (255));
+            var byte2 = nmb;
+            byte2 = byte2>>8;
+            byte2 = byte2 & (255);
+
+            console.log("byte1: " + byte1 + " byte2: " + byte2);
+            cmdToSend = cmd.substr(0,4) + String.fromCharCode(byte1) +  String.fromCharCode(byte2);
+            console.log("cmdToSend");
             console.log(cmdToSend);
-        }
-
-        ble.bluetoothDeviceWriteChar.writeValue(ble.str2ab("C"+cmdToSend+"\r\n"));
-
+        }  //elseif(cmd.length < 4) {}
+        ble.bluetoothDeviceWriteChar.writeValue(ble.str2ab("C"+cmdToSend+"\r\n"))
+        .catch(error => {
+          console.log("err");
+          console.log(error);
+//          ble.bluetoothDeviceWriteChar = ;
+          if(++ble.reconnectCounter < 2){
+            ble.connect2BLE();
+            ble.sendCmd(cmd);
+          }else{
+            ble.reconnectCounter=0;
+          }
+        });
       }
       if (typeof reply != 'undefined') {
         resolve({cmd: cmd, reply:reply});
       } else {
         reject({cmd: cmd, reply:'Error: no reply!'});
       }
+    }).then(response => {
+      console.log("response");
+      console.log(response);
+    }).catch(error => {
+      console.log("err");
+      console.log(error);
     });
+    return cmdPromise;
   };
 
 
   ble.connect2BLE = function () {
     console.log("connect2BLE");
     //log(ble);
-    ble.isConnected = !ble.isConnected;
     WSTools.init();
 
     let serviceUuid = ble.device.serviceUUID;
@@ -243,7 +261,7 @@ angular.module('app').factory('BLETools', ['WSTools', function (WSTools) {
 
     log('Requesting Bluetooth Device...');
 
-    let promise = new Promise(
+    let serverPromise = new Promise(
       function (resolve, reject) {
         if (ble.current) {
           ble.connect();
@@ -263,8 +281,9 @@ angular.module('app').factory('BLETools', ['WSTools', function (WSTools) {
       }
     );
 
-    promise.then(server => {
+    serverPromise.then(server => {
       log('Getting Service...');
+      ble.server - server;
       return server.getPrimaryService(serviceUuid);
     }).then(service => {
       log('Getting Characteristics...');
@@ -275,24 +294,28 @@ angular.module('app').factory('BLETools', ['WSTools', function (WSTools) {
         return Promise.all([service.getCharacteristics(characteristicWriteUuid),
           service.getCharacteristics(characteristicNotifyUuid)]);
       }
+      ble.isConnected = !ble.isConnected;
       // Get all characteristics.
       return service.getCharacteristics();
     }).then(characteristics => {
+
       log('> Characteristics: ' +
         characteristics.map(c => c[0].uuid + " (" +
-          (c[0].properties.write === true ? "WRITE" : (c[0].properties.notify === true ? "NOTIFY" : "?")) + ")")
+          (c[0].properties.write === true ? "WRITE" : (c[0].properties.notify === true ? "NOTIFY" : (c[0].properties.indicate === true ? "INDICATE" : "?"))) + ")")
           .join('\n' + ' '.repeat(19)));
       console.log(characteristics);
       ble.bluetoothDeviceWriteChar = characteristics[0][0];
       ble.bluetoothDeviceNotifyChar = characteristics[1][0];
       ble.timeNow = $.now();
+      console.log("ble.bluetoothDeviceNotifyChar");
       console.log(ble.bluetoothDeviceNotifyChar);
+
       //ble.bluetoothDeviceNotifyChar.addEventListener("characteristicvaluechanged", async function (ev) {
       //});
-      var onNotif = async function (ev) {
-//        console.log("characteristicvaluechanged");
+      var onNotif = function (ev) {
+        //console.log("characteristicvaluechanged");
         var received = false;
-        // TODO move most of this method to WSTools...?!
+        // TODO move most of this method to WSTools?
 //        console.log(received);
 
         if (!(received = ble.convert(ev, WSTools.gestureId))) {
@@ -309,30 +332,19 @@ angular.module('app').factory('BLETools', ['WSTools', function (WSTools) {
         ble.lastTS = ev.timeStamp;
         ble.timeNotifyLast = ble.timeNow;
 
-        //console.log("trying to push dataline:");
         var jsonStr = JSON.stringify(received);
         WSTools.sendMessage(jsonStr);
-
-        /*commonTools.createFingerDataLine(jsonStr).then(function (response) {
-           console.log("response");
-           console.log(response);
-        }, function (response) {
-           //alerts.push({type: 'danger', title: 'Error ' + response.status, msg: response.statusText});
-           console.log("response Error");
-           console.log(response);
-        });*/
-
       };
 
 
-//        ble.bluetoothDeviceNotifyChar.oncharacteristicvaluechanged = onNotif;
+        //ble.bluetoothDeviceNotifyChar.oncharacteristicvaluechanged = onNotif;
         ble.bluetoothDeviceNotifyChar.addEventListener("characteristicvaluechanged", onNotif);
-
 //        console.log(ble.bluetoothDeviceNotifyChar);
 
       ble.bluetoothDeviceNotifyChar.startNotifications();
     }).catch(error => {
       log('Argh! ' + error);
+      console.log(error);
     });
 
   }

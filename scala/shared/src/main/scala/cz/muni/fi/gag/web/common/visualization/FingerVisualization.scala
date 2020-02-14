@@ -57,7 +57,11 @@ class FingerVisualization[GeomType, QuaternionType](override val hi: Hand.Hand, 
 
   // has to be defined otherwise not inherited via ScalaJS to JS ..
   override def rotateX(angle: Float) = {
-    super.rotateX(angle)
+    if(hi == Hand.LEFT){
+      super.rotateX(angle-Math.PI.toFloat)
+    }else{
+      super.rotateX(angle)
+    }
   }
 
   override def rotateY(angle: Float) = {
@@ -65,7 +69,11 @@ class FingerVisualization[GeomType, QuaternionType](override val hi: Hand.Hand, 
   }
 
   override def rotateZ(angle: Float) = {
-    super.rotateZ(angle)
+    if(hi == Hand.LEFT){
+      super.rotateZ(angle-Math.PI.toFloat)
+    }else{
+      super.rotateZ(angle)
+    }
   }
 
   override def rotate(x: Float, y: Float, z :Float) = {

@@ -49,7 +49,7 @@
 		<artifactId>jboss-parent</artifactId>
 		<version>16</version>
 	</parent>
-	
+
 	<dependencyManagement>
 		<dependencies>
 		 <!-- JBoss distributes a complete set of Java EE APIs including a Bill
@@ -57,7 +57,7 @@
                 of artifacts. We use this here so that we always get the correct versions
                 of artifacts. Here we use the jboss-eap-javaee8-with-tools stack (you can
                 read this as the JBoss stack of the Java EE APIs, with some extras tools
-                for your project, such as Arquillian for testing) 
+                for your project, such as Arquillian for testing)
             <dependency>
                 <groupId>org.wildfly.bom</groupId>
                 <artifactId>wildfly-javaee8-with-tools</artifactId>
@@ -153,7 +153,7 @@
 			<version>${version.org.wildfly.arquillian}</version>
 			<scope>test</scope>
 		</dependency>
-		<!-- <dependency> <groupId>org.eu.ingwar.tools</groupId> <artifactId>arquillian-suite-extension</artifactId> 
+		<!-- <dependency> <groupId>org.eu.ingwar.tools</groupId> <artifactId>arquillian-suite-extension</artifactId>
 			<version>1.2.0</version> <scope>test</scope> </dependency> -->
 		<dependency>
 			<groupId>org.jboss.logging</groupId>
@@ -261,7 +261,7 @@
 									<goal>wget</goal>
 								</goals>
 								<configuration>
-									<url>https://download.jboss.org/wildfly/16.0.0.Final/wildfly-16.0.0.Final.zip</url>
+									<url>https://download.jboss.org/wildfly/18.0.0.Final/wildfly-18.0.0.Final.zip</url>
 									<unpack>true</unpack>
 									<outputDirectory>${project.basedir}/</outputDirectory>
 								</configuration>
@@ -303,7 +303,7 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<build>
-				<!-- <defaultGoal>clean install wildfly:start wildfly:execute-commands 
+				<!-- <defaultGoal>clean install wildfly:start wildfly:execute-commands
 					wildfly:deploy</defaultGoal> -->
 				<pluginManagement>
 					<plugins>
@@ -344,7 +344,7 @@
 										<goal>wget</goal>
 									</goals>
 									<configuration>
-										<url>https://download.jboss.org/wildfly/16.0.0.Final/wildfly-16.0.0.Final.zip</url>
+										<url>https://download.jboss.org/wildfly/18.0.0.Final/wildfly-18.0.0.Final.zip</url>
 										<unpack>true</unpack>
 										<outputDirectory>${project.basedir}/</outputDirectory>
 									</configuration>

@@ -77,9 +77,16 @@
 							<li class="nav-item"><a class="nav-link"
 								href="javascript:void(0)"> <i class="material-icons">notifications</i>
 									<p class="d-lg-none d-md-block">Notifications</p>
+
 							</a></li>
 							<!-- your navbar here -->
 						</ul>
+					</div>
+					<div data-ng-controller="BLEController"  style="margin-bottom: 0px;">
+						<form id="connectBLE" ng-submit="ble.connect2BLE()" #connectBLE="ngForm">
+							<button ng-if="!ble.isConnected" class="btn btn-info desc" type="submit">Connect</button>
+							<button ng-if="ble.isConnected" class="btn btn-info desc" type="submit">Disconnect</button>
+						</form>
 					</div>
 				</div>
 			</nav>

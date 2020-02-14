@@ -2,7 +2,6 @@
     <div class="col-lg-6 col-md-12">
         <div ng-include="'partials/visualizationCard.html'"></div>
         <div ng-include="'partials/bleTerminal.html'"></div>
-
     </div>
     <div class="col-lg-6 col-md-12">
         <div class="card">
@@ -16,9 +15,11 @@
                 <p class="card-category" ng-if="data.recordingInfo.isRecording && ble.isConnected">Recording now...</p>
             </div>
             <div class="card-body">
-                <style>select:before {
-                    content: '\e095'
-                }</style>
+                <style>
+                    select:before {
+                        content: '\e095'
+                    }
+                </style>
                 <select ng-model="data.selectedGesture" ng-change="onSelectChange()"
                         class="btn btn-info">
 
