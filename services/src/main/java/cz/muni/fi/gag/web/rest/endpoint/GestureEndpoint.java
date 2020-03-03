@@ -1,24 +1,21 @@
 package cz.muni.fi.gag.web.rest.endpoint;
 
+import cz.muni.fi.gag.web.entity.DataLine;
 import cz.muni.fi.gag.web.entity.Gesture;
 import cz.muni.fi.gag.web.entity.User;
+import cz.muni.fi.gag.web.filters.RecordedDataFilter;
 import cz.muni.fi.gag.web.service.GestureService;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 import static cz.muni.fi.gag.web.entity.UserRole.USER_R;
 
@@ -31,6 +28,7 @@ public class GestureEndpoint extends BaseEndpoint {
 
     @Inject
     private GestureService gestureService;
+
     /*
      * @GET
      * 
@@ -141,6 +139,38 @@ public class GestureEndpoint extends BaseEndpoint {
             builder = Response.ok(updated);
         } catch (Exception e) {
             builder = Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage());
+        }
+        return builder.build();
+    }
+
+
+
+
+    @PUT
+    @Path("/filter/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed(USER_R)
+    public Response filterGesture(@PathParam("id") Long id) {
+        Response.ResponseBuilder builder;
+        Optional<Gesture> gopt = gestureService.findById(id);
+        if (!gopt.isPresent()) {
+            Response.status(Status.NOT_FOUND);
+            builder = Response.noContent();
+        } else {
+            Gesture g = gopt.get();
+//            if(!g.getFiltered()){
+            Gesture filtered = g;
+            filtered.setUserAlias(g.getUserAlias()+"-filtered");
+            filtered.setDateCreated(new Date());
+            filtered.setData(Collections.emptyList());
+            filtered = gestureService.create(filtered);
+            RecordedDataFilter<DataLine> rdf = new RecordedDataFilter<DataLine>(g, filtered);
+            rdf.filter(2, true);
+            filtered = gestureService.update(filtered);
+            builder = Response.ok(filtered);
+//            }
+//            builder = Response.status(Status.);
         }
         return builder.build();
     }

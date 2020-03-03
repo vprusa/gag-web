@@ -17,7 +17,10 @@
 					<button class="btn btn-info desc"
 							ng-click='test()'>Test</button></td>
 					<button ng-disabled="!selectedGestureDetail.selectedGesture" class="btn btn-info desc"
-							ng-click='ws.playSelectedGesture()'>Play Selected: {{selectedGestureDetail.selectedGesture}}</button></td>
+							ng-click='ws.playSelectedGesture()'>Play Selected: {{selectedGestureDetail.selectedGesture}}</button>
+					<button ng-disabled="!selectedGestureDetail.selectedGesture" class="btn btn-info desc"
+							ng-click='ws.stopPlaying()'>Play Selected: {{selectedGestureDetail.selectedGesture}}</button>
+					</td>
 					<!-- <p class="card-category">{{selectedGestureDetail.info}}</p>-->
 				</div>
 				<div class="table-responsive">

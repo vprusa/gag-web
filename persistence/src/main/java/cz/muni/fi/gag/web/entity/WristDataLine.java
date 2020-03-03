@@ -24,7 +24,7 @@ public class WristDataLine extends FingerDataLine {
     // field SensorFingerPosition should not be used here - > Transient
     @Transient
     @Override
-    public SensorFingerPosition getPosition() {
+    public Sensor getPosition() {
         return super.getPosition();
     }
 

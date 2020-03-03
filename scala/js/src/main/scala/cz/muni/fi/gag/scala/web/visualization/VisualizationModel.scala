@@ -22,7 +22,7 @@ import scala.util.Random
 object VisualizationModel extends VisualizationData {
   def activate(): VisualizationScene[Object3D, Quaternion] = {
     val el: HTMLElement = scalajs.dom.document.getElementById("container").asInstanceOf[HTMLElement]
-    val demo = new VisualizationScene[Object3D, Quaternion](el, 300, 250)
+    val demo = new VisualizationScene[Object3D, Quaternion](el, 400, 250)
     demo.render()
     demo
   }
@@ -69,59 +69,59 @@ class VisualizationScene[GeomType<:Object3D, QuaternionType<:Quaternion](val con
 
   @JSExport("updateAngles")
   def updateAngles(
-                    rx: Float, ry: Float, rz: Float, rw: Float,
-                    rtx: Float, rty: Float, rtz: Float, rtw: Float,
-                    rix: Float, riy: Float, riz: Float, riw: Float,
-                    rmx: Float, rmy: Float, rmz: Float, rmw: Float,
-                    rrx: Float, rry: Float, rrz: Float, rrw: Float,
-                    rlx: Float, rly: Float, rlz: Float, rlw: Float,
+      rx: Float, ry: Float, rz: Float, rw: Float,
+      rtx: Float, rty: Float, rtz: Float, rtw: Float,
+      rix: Float, riy: Float, riz: Float, riw: Float,
+      rmx: Float, rmy: Float, rmz: Float, rmw: Float,
+      rrx: Float, rry: Float, rrz: Float, rrw: Float,
+      rlx: Float, rly: Float, rlz: Float, rlw: Float,
 
-                    lx: Float, ly: Float, lz: Float, lw: Float,
-                    ltx: Float, lty: Float, ltz: Float, ltw: Float,
-                    lix: Float, liy: Float,  liz: Float, liw: Float,
-                    lmx: Float, lmy: Float, lmz: Float, lmw: Float,
-                    lrx: Float, lry: Float, lrz: Float, lrw: Float,
-                    llx: Float, lly: Float, llz: Float, llw: Float
-                  ): Any = {
-    val lq = new Quaternion(lx,ly,lz,lw)
-    val lqt = new Quaternion(ltx,lty,ltz,ltw)
-    val lqi = new Quaternion(lix,liy,liz,liw)
-    val lqm = new Quaternion(lmx,lmy,lmz,lmw)
-    val lqr = new Quaternion(lrx,lry,lrz,lrw)
-    val lql = new Quaternion(llx,lly,llz,llw)
+      lx: Float, ly: Float, lz: Float, lw: Float,
+      ltx: Float, lty: Float, ltz: Float, ltw: Float,
+      lix: Float, liy: Float,  liz: Float, liw: Float,
+      lmx: Float, lmy: Float, lmz: Float, lmw: Float,
+      lrx: Float, lry: Float, lrz: Float, lrw: Float,
+      llx: Float, lly: Float, llz: Float, llw: Float
+    ): Any = {
+    var lq = new Quaternion(lx,ly,lz,lw)
+    var lqt = new Quaternion(ltx,lty,ltz,ltw)
+    var lqi = new Quaternion(lix,liy,liz,liw)
+    var lqm = new Quaternion(lmx,lmy,lmz,lmw)
+    var lqr = new Quaternion(lrx,lry,lrz,lrw)
+    var lql = new Quaternion(llx,lly,llz,llw)
 
-    val rq = new Quaternion(rx,ry,rz,rw)
-    rq.normalize();
-    val rqRotated = new Quaternion(rq.y,-rq.x,rq.z,rq.w)
-    val rqt = new Quaternion(rtx,rty,rtz,rtw)
-    val rqi = new Quaternion(rix,riy,riz,riw)
-    val rqm = new Quaternion(rmx,rmy,rmz,rmw)
-    val rqr = new Quaternion(rrx,rry,rrz,rrw)
-    val rql = new Quaternion(rlx,rly,rlz,rlw)
+    var rq = new Quaternion(ry,-rx,rz,rw)
+    var rqt = new Quaternion(rtx,rty,rtz,rtw)
+    var rqi = new Quaternion(rix,riy,riz,riw)
+    var rqm = new Quaternion(rmx,rmy,rmz,rmw)
+    var rqr = new Quaternion(rrx,rry,rrz,rrw)
+    var rql = new Quaternion(rlx,rly,rlz,rlw)
 
-    rqt.normalize()
-    rqi.normalize()
-    rqm.normalize()
-    rqr.normalize()
-    rql.normalize()
+    rqt = rqt.normalize()
+    rqi = rqi.normalize()
+    rqm = rqm.normalize()
+    rqr = rqr.normalize()
+    rql = rql.normalize()
 
-    val rqC = rqRotated.clone()
-    rqC.inverse()
-    rqt.multiply(rqC)
-    rqi.multiply(rqC)
-    rqm.multiply(rqC)
-    rqr.multiply(rqC)
-    rql.multiply(rqC)
-
+    //val rqC = rq.conjugate().inverse()
+    //val rqC = rq.clone()
+    rq = rq.normalize()
+//    var rqC = new Quaternion(-rq.x,-rq.y,-rq.z,rq.w).normalize() //rq.normalize() //.conjugate() //.inverse()
+    var rqC = new Quaternion(-rq.x,rq.y,-rq.z,rq.w).normalize() //rq.normalize() //.conjugate() //.inverse()
+    rqt = rqt.multiply(rqC)
+    rqi = rqi.multiply(rqC)
+    rqm = rqm.multiply(rqC)
+    rqr = rqr.multiply(rqC)
+    rql = rql.multiply(rqC)
 
     hands(1).thumbVis.rotate(rqt.asInstanceOf[QuaternionType])
     hands(1).indexVis.rotate(rqi.asInstanceOf[QuaternionType])
     hands(1).middleVis.rotate(rqm.asInstanceOf[QuaternionType])
     hands(1).ringVis.rotate(rqr.asInstanceOf[QuaternionType])
     hands(1).littleVis.rotate(rql.asInstanceOf[QuaternionType])
-    hands(1).rotate(rqRotated.asInstanceOf[QuaternionType])
+    hands(1).rotate(rq.asInstanceOf[QuaternionType])
 
-    hands(0).rotate(lq.asInstanceOf[QuaternionType])
+    hands(0).rotate(lq.inverse().asInstanceOf[QuaternionType])
     hands(0).thumbVis.rotate(lqt.asInstanceOf[QuaternionType])
     hands(0).indexVis.rotate(lqi.asInstanceOf[QuaternionType])
     hands(0).middleVis.rotate(lqm.asInstanceOf[QuaternionType])

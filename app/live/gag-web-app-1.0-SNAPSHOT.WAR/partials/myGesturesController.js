@@ -84,18 +84,30 @@ angular
         }
 
         $scope.onMessage = function (evt) {
-          var dataLine = JSON.parse(evt.data);
-          $scope.vis.updateVisFromDataLine(dataLine);
-          $scope.$apply();
+          // TODO move to websocket.js
+          var message = JSON.parse(evt.data);
+          if($scope.ws.isMessageDataLine()){
+            $scope.vis.updateVisFromDataLine(message);
+            $scope.$apply();
+          }else{
+            $scope.ws.onMessage(message);
+          }
         };
 
         $scope.ws.playSelectedGesture = function () {
-          if ($scope.selectedGestureDetail.selectedGesture)
+          if ($scope.selectedGestureDetail.selectedGesture) {
             $scope.ws.init();
+          }
           $scope.ws.setOnMessage($scope.onMessage);
           console.log($scope.selectedGestureDetail.selectedGesture);
           $scope.ws.websocketSession.send('{"action":"replay", "gestureId": '
             + $scope.selectedGestureDetail.selectedGesture + '}');
+        };
+
+        $scope.ws.stopPlaying = function () {
+          if($scope.ws.isPlaying){
+            $scope.ws.stopPlaying();
+          }
         };
 
       }]);

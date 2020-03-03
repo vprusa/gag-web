@@ -1,15 +1,14 @@
 package cz.muni.fi.gag.web.service.impl;
 
-import cz.muni.fi.gag.web.service.GestureService;
-import cz.muni.fi.gag.web.service.generic.GenericCRUDServiceImpl;
 import cz.muni.fi.gag.web.dao.GestureDao;
 import cz.muni.fi.gag.web.entity.Gesture;
 import cz.muni.fi.gag.web.entity.User;
-
-import java.util.List;
+import cz.muni.fi.gag.web.service.GestureService;
+import cz.muni.fi.gag.web.service.generic.GenericCRUDServiceImpl;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import java.util.List;
 
 /**
  *

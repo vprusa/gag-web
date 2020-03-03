@@ -26,7 +26,7 @@ angular.module('app').factory('WSTools', function (/*$rootScope*/) {
     STOP: 0,
     RECORD: 1,
     REPLAY: 2
-  }
+  };
 
   ws.innerStates = {
     IDLE: 0,
@@ -34,7 +34,7 @@ angular.module('app').factory('WSTools', function (/*$rootScope*/) {
     REPLAYING: 2,
     PREPARE_RECORDING: 3,
     RECORDING: 4
-  }
+  };
   ws.state = ws.innerStates.IDLE;
 
   ws.setState = function (newState, gestureId) {
@@ -60,7 +60,7 @@ angular.module('app').factory('WSTools', function (/*$rootScope*/) {
         console.log("WSTools unknown state: ");
         console.log(newState);
     }
-  }
+  };
 
   ws.gestureId = "";
 
@@ -70,7 +70,7 @@ angular.module('app').factory('WSTools', function (/*$rootScope*/) {
    */
   ws.onSendMessage = function (data) {
     // override
-  }
+  };
 
   ws.sendMessage = function (msg) {
     ws.onSendMessage(msg)
@@ -80,7 +80,7 @@ angular.module('app').factory('WSTools', function (/*$rootScope*/) {
     } else {
       //console.log("not sending message");
     }
-  }
+  };
 
   ws.checkStates = {
     isRecording: function () {
@@ -89,7 +89,7 @@ angular.module('app').factory('WSTools', function (/*$rootScope*/) {
     isReplaying: function () {
       return ws.state == ws.innerStates.REPLAYING
     },
-  }
+  };
 
   ws.gestureId = "";
 
@@ -97,7 +97,7 @@ angular.module('app').factory('WSTools', function (/*$rootScope*/) {
 
   ws.setOnMessage = function (f) {
     ws.websocketSession.onmessage = f;
-  }
+  };
   ws.onMessage = function (evt) {
     //console.log(evt);
     //var data = JSON.parse(evt.data);
@@ -108,8 +108,8 @@ angular.module('app').factory('WSTools', function (/*$rootScope*/) {
       let wsProtocol = window.location.protocol == "https:" ? "wss" : "ws";
       ws.websocketSession = new WebSocket(wsProtocol + '://'
         + document.location.host + '/gagweb/datalinews');
-      //ws.websocketSession = $rootScope.websocketSession;
-      //$rootScope.websocketSession.onmessage = ws.onMessage;
+      // ws.websocketSession = $rootScope.websocketSession;
+      // $rootScope.websocketSession.onmessage = ws.onMessage;
       ws.websocketSession.onmessage = ws.onMessage;
       console.log(ws.websocketSession);
     }
@@ -157,7 +157,7 @@ angular.module('app').factory('WSTools', function (/*$rootScope*/) {
     }
 
     sendDataAndWait(5, jsonMessage);
-  }
+  };
 
   return ws;
 });

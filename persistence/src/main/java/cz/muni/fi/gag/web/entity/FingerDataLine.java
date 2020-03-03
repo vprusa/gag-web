@@ -1,9 +1,8 @@
 package cz.muni.fi.gag.web.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 
 /**
  * @author Vojtech Prusa
@@ -33,30 +32,6 @@ public class FingerDataLine extends DataLine {
     private short accY;
     @JsonProperty("aZ")
     private short accZ;
-
-    private SensorFingerPosition position;
-
-    @Enumerated(EnumType.ORDINAL)
-    @JsonProperty("p")
-    public SensorFingerPosition getPosition() {
-        return position;
-    }
-
-    public void setPosition(SensorFingerPosition position) {
-        this.position = position;
-    }
-
-    @Enumerated(EnumType.ORDINAL)
-    @JsonProperty("h")
-    private SensorHandPosition hand;
-
-    public SensorHandPosition getHandPosition() {
-        return hand;
-    }
-
-    public void setHandPosition(SensorHandPosition hand) {
-        this.hand = this.hand;
-    }
 
     /**
      * Getter
@@ -191,7 +166,7 @@ public class FingerDataLine extends DataLine {
         result = prime * result + accX;
         result = prime * result + accY;
         result = prime * result + accZ;
-        result = prime * result + ((position == null) ? 0 : position.hashCode());
+//        result = prime * result + ((getPosition() == null) ? 0 : getPosition().hashCode());
         result = prime * result + Float.floatToIntBits(quatA);
         result = prime * result + Float.floatToIntBits(quatX);
         result = prime * result + Float.floatToIntBits(quatY);
@@ -220,9 +195,6 @@ public class FingerDataLine extends DataLine {
         if (accZ != other.accZ) {
             return false;
         }
-        if (position != other.position) {
-            return false;
-        }
         if (Float.floatToIntBits(quatA) != Float.floatToIntBits(other.quatA)) {
             return false;
         }
@@ -241,7 +213,7 @@ public class FingerDataLine extends DataLine {
     @Override
     public String toString() {
         return "FingerDataLine [quatA=" + quatA + ", quatX=" + quatX + ", quatY=" + quatY + ", quatZ=" + quatZ
-                + ", accX=" + accX + ", accY=" + accY + ", accZ=" + accZ + ", position=" + position + "] "
+                + ", accX=" + accX + ", accY=" + accY + ", accZ=" + accZ + "] "
                 + super.toString();
     }
 

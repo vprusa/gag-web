@@ -1,7 +1,7 @@
 package cz.muni.fi.gag.web.service;
 
 import cz.muni.fi.gag.web.common.TestServiceBase;
-import cz.muni.fi.gag.web.entity.SensorFingerPosition;
+import cz.muni.fi.gag.web.entity.Sensor;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -49,8 +49,8 @@ public class FingerSensorOffsetTest extends TestServiceBase {
 
     @Before
     public void before() {
-        testFingerSensorOffset1 = buildFingerSensorOffsetWithPersistentRefs(SensorFingerPosition.INDEX);
-        testFingerSensorOffset2 = buildFingerSensorOffsetWithPersistentRefs(SensorFingerPosition.INDEX);
+        testFingerSensorOffset1 = buildFingerSensorOffsetWithPersistentRefs(Sensor.INDEX);
+        testFingerSensorOffset2 = buildFingerSensorOffsetWithPersistentRefs(Sensor.INDEX);
         printTestEntities(asList(testFingerSensorOffset1, testFingerSensorOffset2));
     }
 

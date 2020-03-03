@@ -3,7 +3,6 @@
  */
 'use strict';
 
-//angular.module('app').factory('BLETools', function() {
 angular.module('app').factory('BLETools', ['WSTools', function (WSTools) {
   let ble = {
     device: {
@@ -39,7 +38,7 @@ angular.module('app').factory('BLETools', ['WSTools', function (WSTools) {
     $('#LogMessages table tr:last').after(
       "<tr><td>" + new Date().toLocaleTimeString() + "</td><td>" + msg + "</td></tr>"
     );
-  }
+  };
   ble.log = log;
 
   /* Utils */
@@ -57,11 +56,11 @@ angular.module('app').factory('BLETools', ['WSTools', function (WSTools) {
           ble.exponentialBackoff(--max, delay * 2, toTry, success, fail);
         }, delay * 1000);
       });
-  }
+  };
 
   ble.time = function (text) {
     log('[' + new Date().toJSON().substr(11, 8) + '] ' + text);
-  }
+  };
 
   ble.convertNumberToFinger = function (nmb) {
     // THUMB, INDEX, MIDDLE, RING, LITTLE, WRIST;
@@ -82,7 +81,7 @@ angular.module('app').factory('BLETools', ['WSTools', function (WSTools) {
         return "NONE";
     }
     return "NONE";
-  }
+  };
 
   ble.connect = function () {
     ble.exponentialBackoff(5 /* max retries */, 2 /* seconds delay */,
@@ -96,12 +95,12 @@ angular.module('app').factory('BLETools', ['WSTools', function (WSTools) {
       function fail() {
         ble.time('Failed to reconnect.');
       });
-  }
+  };
 
   ble.onDisconnected = function () {
     log('> Bluetooth Device disconnected');
     ble.connect();
-  }
+  };
 
   ble.showReceivedValue = function (value, timeNow, timeDiff) {
     //console.log(value);
@@ -109,7 +108,7 @@ angular.module('app').factory('BLETools', ['WSTools', function (WSTools) {
     /*$('#content table tr:last').after(
       "<tr><td>" + timeNow + "</td><td>" + timeDiff + "</td><td>" + value + "</td></tr>"
     );*/
-  }
+  };
 
   ble.str2ab = function (str) {
     var buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
@@ -118,11 +117,11 @@ angular.module('app').factory('BLETools', ['WSTools', function (WSTools) {
       bufView[i] = str.charCodeAt(i);
     }
     return buf;
-  }
+  };
 
   ble.ab2str = function (buf) {
     return String.fromCharCode.apply(null, new Uint8Array(buf));
-  }
+  };
 
   ble.bytesToInt = function (byte1, byte2) {
     var number = ((byte1 << 8) | byte2);
@@ -134,7 +133,7 @@ angular.module('app').factory('BLETools', ['WSTools', function (WSTools) {
       number = -4 + number;
     }
     return number;
-  }
+  };
 
   ble.convert = function (data, gestureId) {
     // g.e  [42, 153, 4, 6, 143, 197, 31, 231, 246, 2, 242, 0, 0, 13, 10]
@@ -175,7 +174,7 @@ angular.module('app').factory('BLETools', ['WSTools', function (WSTools) {
       //"mZ": 1
     };
     return jsonMessage;
-  }
+  };
   ble.reconnectCounter = 0;
   /**
    * returns Promise with resolved data {cmd: cmd, reply: reply})
@@ -197,15 +196,14 @@ angular.module('app').factory('BLETools', ['WSTools', function (WSTools) {
         var cmdToSend = cmd;
         if(/*cmd.length >= 4 && */ cmd.charAt(0) === 'O' || cmd.charAt(0) === 'a') {
             var nmb = parseInt(cmd.substr(4));
-            console.log("nmb");
+            console.log("nmb");a
             console.log(nmb);
             var byte1 = (nmb & (255));
             var byte2 = nmb;
             byte2 = byte2>>8;
             byte2 = byte2 & (255);
-
             console.log("byte1: " + byte1 + " byte2: " + byte2);
-            cmdToSend = cmd.substr(0,4) + String.fromCharCode(byte1) +  String.fromCharCode(byte2);
+            cmdToSend = cmd.substr(0,4) + String.fromCharCode(byte2) +  String.fromCharCode(byte1);
             console.log("cmdToSend");
             console.log(cmdToSend);
         }  //elseif(cmd.length < 4) {}
@@ -336,9 +334,8 @@ angular.module('app').factory('BLETools', ['WSTools', function (WSTools) {
         WSTools.sendMessage(jsonStr);
       };
 
-
-        //ble.bluetoothDeviceNotifyChar.oncharacteristicvaluechanged = onNotif;
-        ble.bluetoothDeviceNotifyChar.addEventListener("characteristicvaluechanged", onNotif);
+      //ble.bluetoothDeviceNotifyChar.oncharacteristicvaluechanged = onNotif;
+      ble.bluetoothDeviceNotifyChar.addEventListener("characteristicvaluechanged", onNotif);
 //        console.log(ble.bluetoothDeviceNotifyChar);
 
       ble.bluetoothDeviceNotifyChar.startNotifications();
@@ -346,8 +343,7 @@ angular.module('app').factory('BLETools', ['WSTools', function (WSTools) {
       log('Argh! ' + error);
       console.log(error);
     });
-
-  }
+  };
 
   // TODO move here code from btController.js
   // or create custom library for it that would be included here

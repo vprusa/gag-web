@@ -30,7 +30,7 @@ angular.module('app', [
       });
     },
     clearGesture: function (id) {
-      return $http.post("/gagweb/api/gesture/" + userAlias + "/" + filtered).then(function (response) {
+      return $http.post("/gagweb/api/gesture/clear/" + id).then(function (response) {
         return response.data;
       });
     },
@@ -49,7 +49,6 @@ angular.module('app', [
         return response.data;
       });
     }
-
   };
 }]).service('createUpdateTools', function () {
   var alerts = [];
@@ -75,5 +74,7 @@ angular.module('app', [
       .when('/user', {templateUrl: 'partials/user.html', controller: 'UserController'})
       .when('/newgesture', {templateUrl: 'partials/newGesture.html', controller: 'NewGestureController'})
       .when('/mygestures', {templateUrl: 'partials/myGestures.html', controller: 'MyGesturesController'})
+      // if devel  ..
+      .when('/toolstests', {templateUrl: 'partials/tools.tests.html', controller: 'ToolsControllerTests'})
       .otherwise({redirectTo: '/'});
   }]);

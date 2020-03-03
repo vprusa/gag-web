@@ -55,9 +55,35 @@ public /*abstract */class DataLine extends GenericEntity implements Serializable
         this.gesture = gesture;
     }
 
+    private Sensor position;
+
+    @Enumerated(EnumType.ORDINAL)
+    @JsonProperty("p")
+    public Sensor getPosition() {
+        return position;
+    }
+
+    public void setPosition(Sensor position) {
+        this.position = position;
+    }
+
+    @Enumerated(EnumType.ORDINAL)
+    @JsonProperty("h")
+    private Hand hand;
+
+    public Hand getHandPosition() {
+        return hand;
+    }
+
+    public void setHandPosition(Hand hand) {
+        this.hand = this.hand;
+    }
+
+
     @Override
     public String toString() {
-        return "DataLine [id=" + id + ", timestamp=" + timestamp + " ( " + timestamp.getTime() + " ), gesture=" + gesture + "]";
+        return "DataLine [id=" + id + ", timestamp=" + timestamp + " ( " + timestamp.getTime() + " ), gesture=" + gesture
+                + ", hand=" + hand + ", position=" + position + "]";
     }
 
     @Override
@@ -66,6 +92,8 @@ public /*abstract */class DataLine extends GenericEntity implements Serializable
         int result = 1;
         result = prime * result + ((gesture == null) ? 0 : gesture.hashCode());
         result = prime * result + (int) (id ^ (id >>> 32));
+        result = prime * result + ((position == null) ? 0 : position.hashCode());
+        result = prime * result + ((hand == null) ? 0 : hand.hashCode());
         result = prime * result + ((timestamp == null) ? 0 : timestamp.hashCode());
         return result;
     }
@@ -97,6 +125,12 @@ public /*abstract */class DataLine extends GenericEntity implements Serializable
                 return false;
             }
         } else if (!timestamp.equals(other.timestamp)) {
+            return false;
+        }
+        if (position != other.getPosition()) {
+            return false;
+        }
+        if (hand != other.getHandPosition()) {
             return false;
         }
         return true;

@@ -1,7 +1,7 @@
 package cz.muni.fi.gag.web.service;
 
 import cz.muni.fi.gag.web.common.TestServiceBase;
-import cz.muni.fi.gag.web.entity.SensorFingerPosition;
+import cz.muni.fi.gag.web.entity.Sensor;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -52,7 +52,7 @@ public class FingerDataLineTest extends TestServiceBase {
     public FingerDataLine buildFingerDataLine() {
         FingerDataLine r = new FingerDataLine();
         r.setGesture(null);
-        r.setPosition(SensorFingerPosition.INDEX);
+        r.setPosition(Sensor.INDEX);
         r.setQuatA(0);
         r.setQuatX(0);
         r.setQuatY(0);

@@ -9,22 +9,14 @@ import cz.muni.fi.gag.web.service.GestureService;
 import cz.muni.fi.gag.web.service.UserService;
 import cz.muni.fi.gag.web.websocket.endpoint.packet.actions.ReplayAction;
 import cz.muni.fi.gag.web.websocket.endpoint.packet.actions.ReplayActionDecoder;
-import cz.muni.fi.gag.web.websocket.endpoint.packet.datalines.DataLineDecoder;
-import cz.muni.fi.gag.web.websocket.endpoint.packet.datalines.DataLineEncoder;
-import cz.muni.fi.gag.web.websocket.endpoint.packet.datalines.FingerDataLineDecoder;
-import cz.muni.fi.gag.web.websocket.endpoint.packet.datalines.FingerDataLineEncoder;
-import cz.muni.fi.gag.web.websocket.endpoint.packet.datalines.WristDataLineDecoder;
-import cz.muni.fi.gag.web.websocket.endpoint.packet.datalines.WristDataLineEncoder;
+import cz.muni.fi.gag.web.websocket.endpoint.packet.datalines.*;
 import cz.muni.fi.gag.web.websocket.service.DataLineRePlayer;
+import org.jboss.logging.Logger;
+
 import javax.faces.bean.SessionScoped;
 import javax.inject.Inject;
-import javax.websocket.OnClose;
-import javax.websocket.OnError;
-import javax.websocket.OnMessage;
-import javax.websocket.OnOpen;
-import javax.websocket.Session;
+import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
-import org.jboss.logging.Logger;
 
 /**
  * @author Vojtech Prusa
@@ -36,22 +28,13 @@ import org.jboss.logging.Logger;
                 //JsonEncoder.class
                 DataLineEncoder.class, FingerDataLineEncoder.class, WristDataLineEncoder.class
                  },
-        decoders = {
-            //JsonDecoder2.class
-            //ReplayActionDecoder.class, ActionDecoder.class,
-            /*
-            DataLineDecoder.class, FingerDataLineDecoder.class, WristDataLineDecoder.class
-            */}
-
+        decoders = {}
 )
 public class DataLineWsEndpoint {
 
     public static final Logger log = Logger.getLogger(DataLineWsEndpoint.class.getSimpleName());
 
     private static final String REPLAYER_KEY = "replayer";
-
-    //@Inject
-    //private SessionService sessionService;
 
     @Inject
     private DataLineService dataLineService;
@@ -86,7 +69,6 @@ public class DataLineWsEndpoint {
     private DataLineDecoder dld = new DataLineDecoder();
     private FingerDataLineDecoder fdld = new FingerDataLineDecoder();
     private WristDataLineDecoder wdld = new WristDataLineDecoder();
-    //private static ActionDecoder ad = new ActionDecoder();
     private ReplayActionDecoder rad = new ReplayActionDecoder();
 
     // https://docs.oracle.com/middleware/12213/wls/WLPRG/websockets.htm#WLPRG1000
@@ -118,16 +100,11 @@ public class DataLineWsEndpoint {
             dataLineService.create(mdl.getEntity(gestureService));
         } else if(rad.willDecode(msg)) {
             ReplayAction ra = rad.decode(msg);
-            //DataLineRePlayer rep = new DataLineRePlayer(session, dataLineService, ra.getGestureId());
-            //rep = new DataLineRePlayer(session, dataLineService, ra.getGestureId());
-            //DataLineRePlayer rep = new DataLineRePlayer(session, ra.getGestureId());
-            //if(rep.getSession() == null) {
             rep.setGestureId(ra.getGestureId());
             rep.setSession(session);
             Thread replayer = new Thread(rep);
             replayer.start();
             session.getUserProperties().put(REPLAYER_KEY, replayer);
-            //}
         } else {
             log.info("Unknown message: " + msg);
         }

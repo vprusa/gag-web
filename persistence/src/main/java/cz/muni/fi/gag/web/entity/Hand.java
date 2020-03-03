@@ -4,6 +4,6 @@ package cz.muni.fi.gag.web.entity;
  * @author Vojtech Prusa
  *
  */
-public enum SensorHandPosition {
+public enum Hand {
     LEFT, RIGHT
 }

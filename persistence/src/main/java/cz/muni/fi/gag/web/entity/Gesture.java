@@ -86,4 +86,8 @@ public class Gesture extends GenericEntity {
     public int hashCode() {
         return Objects.hash(getDateCreated(), getUserAlias(), getUser(), isFiltered, getData());
     }
+
+    public void addDataLine(DataLine dl) {
+        getData().add(dl);
+    }
 }
