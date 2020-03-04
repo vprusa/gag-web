@@ -9,7 +9,7 @@ public class FingerDataLineDecoder extends DataLineDecoders<MFingerDataLine> {
     @Override
     public boolean willDecode(String s) {
         log.info("FingerDataLineDecoder - willDecode: " + s);
-        return s.contains("\"qX\"") && !s.contains("\"mX\"");
+        // TODO check position 
+        return s.contains("\"qX\"") && !s.contains("\"mX\"") && !s.contains("\"p:\"WRIST\"\"");
     }
-
 }

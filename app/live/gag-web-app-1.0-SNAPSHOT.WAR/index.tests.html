@@ -156,7 +156,8 @@
         window_width = $(window).width();
 
         $('.fixed-plugin a').click(function(event) {
-          // Alex if we click on switch, stop propagation of the event, so the dropdown will not be hide, otherwise we set the  section active
+          // Alex if we click on switch, stop propagation of the event, so the dropdown will
+					// not be hide, otherwise we set the  section active
           if ($(this).hasClass('switch-trigger')) {
             if (event.stopPropagation) {
               event.stopPropagation();
@@ -262,15 +263,16 @@
 	<script src="/gagweb/vendor/angular-sanitize/angular-sanitize.js"></script>
 	<script src="/gagweb/vendor/chart.js/dist/Chart.js"></script>
 	<script src="/gagweb/vendor/angular-chart.js/dist/angular-chart.js"></script>
+	<script src="/gagweb/vendor/xstate/dist/xstate.js"></script>
 
 	<script src="/gagweb/js/app.js"></script>
 	<script src="/gagweb/js/websocket.js"></script>
-	<script src="/gagweb/js/websocket.test.js"></script>
+	<script src="/gagweb/js/websocket.tests.js"></script>
 	<script src="/gagweb/js/ble.js"></script>
 	<script src="/gagweb/js/logout.js"></script>
 
 	<script src="/gagweb/partials/userController.js"></script>
-    <script src="/gagweb/partials/homeController.js"></script>
+    <script src="/gagweb/partials/home.js"></script>
 	<script src="/gagweb/partials/myGesturesController.js"></script>
 	<script src="/gagweb/partials/newGestureController.js"></script>
 	<script src="/gagweb/partials/bleController.js"></script>

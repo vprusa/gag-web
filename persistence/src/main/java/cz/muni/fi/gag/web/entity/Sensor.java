@@ -5,5 +5,5 @@ package cz.muni.fi.gag.web.entity;
  *
  */
 public enum Sensor {
-    THUMB, INDEX, MIDDLE, RING, LITTLE
+    THUMB, INDEX, MIDDLE, RING, LITTLE, WRIST
 }

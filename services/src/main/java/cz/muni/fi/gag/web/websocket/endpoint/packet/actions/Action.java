@@ -4,13 +4,23 @@ import cz.muni.fi.gag.web.websocket.endpoint.packet.WSMsgBase;
 
 public class Action implements WSMsgBase {
     //extends BaseEntity {
-    protected String action;
 
-    public String getAction() {
-        return action;
+
+    public enum ActionsTypesEnum {
+        PLAYER
     }
 
-    public void setAction(String action) {
-        this.action = action;
+    protected ActionsTypesEnum type;
+
+    public ActionsTypesEnum getType() {
+        return type;
+    }
+
+    public void setType(Object type) {
+        if(type instanceof Integer){
+            this.type = ActionsTypesEnum.values()[(Integer) type];
+        }else if(type instanceof String){
+            this.type = ActionsTypesEnum.valueOf((String) type);
+        }
     }
 }

@@ -7,8 +7,8 @@ import cz.muni.fi.gag.web.mapped.MWristDataLine;
 import cz.muni.fi.gag.web.service.DataLineService;
 import cz.muni.fi.gag.web.service.GestureService;
 import cz.muni.fi.gag.web.service.UserService;
-import cz.muni.fi.gag.web.websocket.endpoint.packet.actions.ReplayAction;
-import cz.muni.fi.gag.web.websocket.endpoint.packet.actions.ReplayActionDecoder;
+import cz.muni.fi.gag.web.websocket.endpoint.packet.actions.PlayerActionDecoder;
+import cz.muni.fi.gag.web.websocket.endpoint.packet.actions.PlayerActions;
 import cz.muni.fi.gag.web.websocket.endpoint.packet.datalines.*;
 import cz.muni.fi.gag.web.websocket.service.DataLineRePlayer;
 import org.jboss.logging.Logger;
@@ -21,7 +21,6 @@ import javax.websocket.server.ServerEndpoint;
 /**
  * @author Vojtech Prusa
  */
-//@Singleton
 @SessionScoped
 @ServerEndpoint(value = "/datalinews",
         encoders = {
@@ -69,7 +68,7 @@ public class DataLineWsEndpoint {
     private DataLineDecoder dld = new DataLineDecoder();
     private FingerDataLineDecoder fdld = new FingerDataLineDecoder();
     private WristDataLineDecoder wdld = new WristDataLineDecoder();
-    private ReplayActionDecoder rad = new ReplayActionDecoder();
+    private PlayerActionDecoder pad = new PlayerActionDecoder();
 
     // https://docs.oracle.com/middleware/12213/wls/WLPRG/websockets.htm#WLPRG1000
     @OnMessage
@@ -98,13 +97,55 @@ public class DataLineWsEndpoint {
         } else if(dld.willDecode(msg)) {
             MDataLine mdl = dld.decode(msg);
             dataLineService.create(mdl.getEntity(gestureService));
-        } else if(rad.willDecode(msg)) {
-            ReplayAction ra = rad.decode(msg);
-            rep.setGestureId(ra.getGestureId());
-            rep.setSession(session);
-            Thread replayer = new Thread(rep);
-            replayer.start();
-            session.getUserProperties().put(REPLAYER_KEY, replayer);
+        } else if(pad.willDecode(msg)) {
+            PlayerActions pa = pad.decode(msg);
+            switch(pa.getType()){
+                case PLAYER: {
+                    switch (pa.getAction()) {
+                        case PLAY: {
+                            // stop existing first
+                            Thread replayer = (Thread) session.getUserProperties().get(REPLAYER_KEY);
+                            if (replayer != null) {
+//                            replayer.stop();
+                                replayer.interrupt();
+                            }
+
+                            rep.setGestureId(pa.getGestureId());
+                            rep.setSession(session);
+                            replayer = new Thread(rep);
+                            replayer.start();
+                            session.getUserProperties().put(REPLAYER_KEY, replayer);
+                        }
+                        break;
+                        case PAUSE: {
+                            Thread replayer = (Thread) session.getUserProperties().get(REPLAYER_KEY);
+                            if (replayer != null) {
+                                try {
+                                    replayer.wait();
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                        break;
+                        case CONTINUE: {
+                            Thread replayer = (Thread) session.getUserProperties().get(REPLAYER_KEY);
+                            if (replayer != null) {
+                                replayer.notify();
+                            }
+                        }
+                        break;
+                        case STOP: {
+                            Thread replayer = (Thread) session.getUserProperties().get(REPLAYER_KEY);
+                            if (replayer != null) {
+                                replayer.interrupt();
+                            }
+                        }
+                        break;
+                    }
+                }
+                break;
+            }
         } else {
             log.info("Unknown message: " + msg);
         }

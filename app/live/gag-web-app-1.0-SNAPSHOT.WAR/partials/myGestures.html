@@ -17,9 +17,14 @@
 					<button class="btn btn-info desc"
 							ng-click='test()'>Test</button></td>
 					<button ng-disabled="!selectedGestureDetail.selectedGesture" class="btn btn-info desc"
-							ng-click='ws.playSelectedGesture()'>Play Selected: {{selectedGestureDetail.selectedGesture}}</button>
+							ng-click='ws.startPlayer()'>Play Selected: {{selectedGestureDetail.selectedGesture}}</button>
 					<button ng-disabled="!selectedGestureDetail.selectedGesture" class="btn btn-info desc"
-							ng-click='ws.stopPlaying()'>Play Selected: {{selectedGestureDetail.selectedGesture}}</button>
+							ng-click='ws.stopPlayer()'>Stop</button>
+					<button ng-disabled="!selectedGestureDetail.selectedGesture" class="btn btn-info desc"
+									ng-click='ws.pausePlayer()'>Pause</button>
+					<button ng-disabled="!selectedGestureDetail.selectedGesture" class="btn btn-info desc"
+									ng-click='ws.continuePlayer()'>Continue: </button>
+
 					</td>
 					<!-- <p class="card-category">{{selectedGestureDetail.info}}</p>-->
 				</div>
@@ -32,7 +37,7 @@
 							<th>Operations</th>
 						</thead>
 						<tbody>
-							<tr ng-repeat="item in gestures">
+							<tr ng-repeat="item in gestures | orderBy:'id':true ">
 								<td>{{item.id}}</td>
 								<td><button class="btn btn-info desc"
 											ng-click='selectGesture(item.id)'>{{item.userAlias}}</button></td>

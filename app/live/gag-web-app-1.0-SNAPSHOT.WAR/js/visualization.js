@@ -41,6 +41,8 @@ angular.module('app').factory('VisTools', function () {
         break;
       // TODO move wrist case up
       case "WRIST":
+      // TODO fix, should be dealt in backend response... 
+      case null:
         var ar = new THREE.Quaternion(parseFloat(dl.qX), parseFloat(dl.qY), parseFloat(dl.qZ), parseFloat(dl.qA));
         vis.currentGesture.data.rq = ar;
         vis.updateVisualization();

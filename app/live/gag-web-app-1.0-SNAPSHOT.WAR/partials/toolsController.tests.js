@@ -11,8 +11,9 @@ angular
       'createUpdateTools',
       'BLETools',
       'WSTools',
+      'WSToolsTests',
       'VisTools',
-      function ($scope, $location, $route, commonTools, createUpdateTools, BLETools, WSTools, VisTools) {
+      function ($scope, $location, $route, commonTools, createUpdateTools, BLETools, WSTools, WSToolsTests, VisTools) {
         commonTools.getGestures().then(function (response) {
           $scope.gestures = response;
         }, function (response) {

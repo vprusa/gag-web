@@ -134,15 +134,14 @@ angular.module('app').factory('BLETools', ['WSTools', function (WSTools) {
     }
     return number;
   };
-
   ble.convert = function (data, gestureId) {
     // g.e  [42, 153, 4, 6, 143, 197, 31, 231, 246, 2, 242, 0, 0, 13, 10]
     // g.e  [*, counter, finger, (6, 143), (197, 31), (231, 246), (2, 242), 0, 0, 13, 10]
     //let received = ble.ab2str(data.currentTarget.value.buffer);
 
     let received = new Uint8Array(data.currentTarget.value.buffer);
-
-    let hand = received[0];
+    let hand = received[0] == '*'.charCodeAt(0) ? 'RIGHT' : 'LEFT';
+    //let hand = received[0] == '*'.charCodeAt(0) ? 0 : 1;
     let finger = ble.convertNumberToFinger(received[2]);
     /*
     let quatA = ble.bytesToInt(received[3],received[4]);
@@ -156,24 +155,47 @@ angular.module('app').factory('BLETools', ['WSTools', function (WSTools) {
     let quatY = ble.bytesToInt(received[7], received[8]);
     let quatZ = -ble.bytesToInt(received[9], received[10]);
 
-    var jsonMessage = {
-      // "id": null,
-      "t": $.now(),
-      // TODO dynamic
-      "gid": gestureId,
-      "qA": quatA,
-      "qX": quatX,
-      "qY": quatY,
-      "qZ": quatZ,
-      "aX": 1,
-      "aY": 1,
-      "aZ": 1,
-      "p": finger,
-      //"mX": 1,
-      //"mY": 1,
-      //"mZ": 1
-    };
-    return jsonMessage;
+    // if isWrist?
+    if ( finger == "WRIST" ){
+      var jsonMessage = {
+        // "id": null,
+        "t": $.now(),
+        "gid": gestureId,
+        "qA": quatA,
+        "qX": quatX,
+        "qY": quatY,
+        "qZ": quatZ,
+        "aX": 1,
+        "aY": 1,
+        "aZ": 1,
+        "p": finger,
+        "h": hand,
+        "mX": 1,
+        "mY": 1,
+        "mZ": 1
+      };
+      return jsonMessage;
+    }else{
+      var jsonMessage = {
+        // "id": null,
+        "t": $.now(),
+        // TODO dynamic
+        "gid": gestureId,
+        "qA": quatA,
+        "qX": quatX,
+        "qY": quatY,
+        "qZ": quatZ,
+        "aX": 1,
+        "aY": 1,
+        "aZ": 1,
+        "p": finger,
+        "h": hand
+        //"mX": 1,
+        //"mY": 1,
+        //"mZ": 1
+      };
+      return jsonMessage;
+    }
   };
   ble.reconnectCounter = 0;
   /**
@@ -289,10 +311,10 @@ angular.module('app').factory('BLETools', ['WSTools', function (WSTools) {
         // Get all characteristics that match this UUID.
         console.log(service);
         // this requires both characteristics...
+        ble.isConnected = !ble.isConnected;
         return Promise.all([service.getCharacteristics(characteristicWriteUuid),
           service.getCharacteristics(characteristicNotifyUuid)]);
       }
-      ble.isConnected = !ble.isConnected;
       // Get all characteristics.
       return service.getCharacteristics();
     }).then(characteristics => {
@@ -329,7 +351,6 @@ angular.module('app').factory('BLETools', ['WSTools', function (WSTools) {
 
         ble.lastTS = ev.timeStamp;
         ble.timeNotifyLast = ble.timeNow;
-
         var jsonStr = JSON.stringify(received);
         WSTools.sendMessage(jsonStr);
       };

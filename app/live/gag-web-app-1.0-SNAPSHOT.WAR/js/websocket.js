@@ -88,7 +88,7 @@ angular.module('app').factory('WSTools', function (/*$rootScope*/) {
     },
     isReplaying: function () {
       return ws.state == ws.innerStates.REPLAYING
-    },
+    }
   };
 
   ws.gestureId = "";
@@ -103,7 +103,8 @@ angular.module('app').factory('WSTools', function (/*$rootScope*/) {
     //var data = JSON.parse(evt.data);
   };
   ws.init = function () {
-    if (!ws.websocketSession) {
+    // console.log(ws.websocketSession);
+    if (!ws.websocketSession || ws.websocketSession.readyState == 3) {
       console.log("init");
       let wsProtocol = window.location.protocol == "https:" ? "wss" : "ws";
       ws.websocketSession = new WebSocket(wsProtocol + '://'
@@ -115,11 +116,11 @@ angular.module('app').factory('WSTools', function (/*$rootScope*/) {
     }
   };
 
-  ws.destroy = function () {
-    console.log("destroy");
-    //if ($rootScope.websocketSession) {
-    //$rootScope.websocketSession.close();
-    //}
+  ws.close = function () {
+    console.log("close");
+    if (ws.websocketSession) {
+      ws.websocketSession.close();
+    }
   };
 
   ws.test = function () {
@@ -157,6 +158,11 @@ angular.module('app').factory('WSTools', function (/*$rootScope*/) {
     }
 
     sendDataAndWait(5, jsonMessage);
+  };
+
+  ws.isMessageDataLine = function(message) {
+    // TODO
+    return true;
   };
 
   return ws;

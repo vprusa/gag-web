@@ -86,7 +86,7 @@ angular
         $scope.onMessage = function (evt) {
           // TODO move to websocket.js
           var message = JSON.parse(evt.data);
-          if($scope.ws.isMessageDataLine()){
+          if($scope.ws.isMessageDataLine(message)){
             $scope.vis.updateVisFromDataLine(message);
             $scope.$apply();
           }else{
@@ -94,20 +94,40 @@ angular
           }
         };
 
-        $scope.ws.playSelectedGesture = function () {
+        $scope.ws.startPlayer = function () {
           if ($scope.selectedGestureDetail.selectedGesture) {
             $scope.ws.init();
           }
           $scope.ws.setOnMessage($scope.onMessage);
           console.log($scope.selectedGestureDetail.selectedGesture);
-          $scope.ws.websocketSession.send('{"action":"replay", "gestureId": '
+          $scope.ws.websocketSession.send('{"type":0, "action":0, "gestureId": '
             + $scope.selectedGestureDetail.selectedGesture + '}');
         };
 
-        $scope.ws.stopPlaying = function () {
+        $scope.ws.stopPlayer = function () {
           if($scope.ws.isPlaying){
-            $scope.ws.stopPlaying();
+            console.log($scope.selectedGestureDetail.selectedGesture);
+            $scope.ws.websocketSession.send('{"type":0, "action":3, "gestureId": '
+              + $scope.selectedGestureDetail.selectedGesture + '}');
           }
+          $scope.ws.isPlaying = false;
+          $scope.ws.close();
+        };
+
+        $scope.ws.pausePlayer = function () {
+          // if($scope.ws.isPlaying){
+            //$scope.ws.stopPlaying();
+            $scope.ws.websocketSession.send('{"type":0, "action":1, "gestureId": '
+              + $scope.selectedGestureDetail.selectedGesture + '}');
+          // }
+        };
+
+        $scope.ws.continuePlayer = function () {
+          // if($scope.ws.isPlaying){
+            //$scope.ws.stopPlaying();
+            $scope.ws.websocketSession.send('{"type":0, "action":2, "gestureId": '
+              + $scope.selectedGestureDetail.selectedGesture + '}');
+          // }
         };
 
       }]);
