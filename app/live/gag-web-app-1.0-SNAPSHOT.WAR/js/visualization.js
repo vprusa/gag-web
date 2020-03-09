@@ -7,7 +7,12 @@ angular.module('app').factory('VisTools', function () {
       data: {}
     }
   };
+
   vis.currentGesture = {
+    startTime: 0,
+    currentTime: 0,
+    endTime: 0,
+    progressPercentage: 0,
     data: {
       rq: new THREE.Quaternion(),
       rqt: new THREE.Quaternion(),
@@ -29,42 +34,43 @@ angular.module('app').factory('VisTools', function () {
     //console.log("updateVisFromDataLine");
     //console.log(dl);
     switch (dl.p) {
-      case "THUMB":
-        var ar = new THREE.Quaternion(parseFloat(dl.qX), parseFloat(dl.qY), parseFloat(dl.qZ), parseFloat(dl.qA));
-        vis.currentGesture.data.rqt = ar;
-        vis.updateVisualization();
+      case "THUMB":{
+          let ar = new THREE.Quaternion(parseFloat(dl.qX), parseFloat(dl.qY), parseFloat(dl.qZ), parseFloat(dl.qA));
+          vis.currentGesture.data.rqt = ar;
+          vis.updateVisualization();
+        }
         break;
-      case "INDEX":
-        var ar = new THREE.Quaternion(parseFloat(dl.qX), parseFloat(dl.qY), parseFloat(dl.qZ), parseFloat(dl.qA));
+      case "INDEX": {
+        let ar = new THREE.Quaternion(parseFloat(dl.qX), parseFloat(dl.qY), parseFloat(dl.qZ), parseFloat(dl.qA));
         vis.currentGesture.data.rqi = ar;
         vis.updateVisualization();
-        break;
+      }break;
       // TODO move wrist case up
       case "WRIST":
       // TODO fix, should be dealt in backend response... 
-      case null:
-        var ar = new THREE.Quaternion(parseFloat(dl.qX), parseFloat(dl.qY), parseFloat(dl.qZ), parseFloat(dl.qA));
+      case null:{
+        let ar = new THREE.Quaternion(parseFloat(dl.qX), parseFloat(dl.qY), parseFloat(dl.qZ), parseFloat(dl.qA));
         vis.currentGesture.data.rq = ar;
         vis.updateVisualization();
-        break;
-      case "MIDDLE":
-        var ar = new THREE.Quaternion(parseFloat(dl.qX), parseFloat(dl.qY), parseFloat(dl.qZ), parseFloat(dl.qA));
+      }break;
+      case "MIDDLE":{
+        let ar = new THREE.Quaternion(parseFloat(dl.qX), parseFloat(dl.qY), parseFloat(dl.qZ), parseFloat(dl.qA));
         vis.currentGesture.data.rqm = ar;
         vis.updateVisualization();
-        break;
-      case "RING":
-        var ar = new THREE.Quaternion(parseFloat(dl.qX), parseFloat(dl.qY), parseFloat(dl.qZ), parseFloat(dl.qA));
+      }break;
+      case "RING":{
+        let ar = new THREE.Quaternion(parseFloat(dl.qX), parseFloat(dl.qY), parseFloat(dl.qZ), parseFloat(dl.qA));
         vis.currentGesture.data.rqr = ar;
         vis.updateVisualization();
-        break;
-      case "LITTLE":
-        var ar = new THREE.Quaternion(parseFloat(dl.qX), parseFloat(dl.qY), parseFloat(dl.qZ), parseFloat(dl.qA));
+      }break;
+      case "LITTLE":{
+        let ar = new THREE.Quaternion(parseFloat(dl.qX), parseFloat(dl.qY), parseFloat(dl.qZ), parseFloat(dl.qA));
         vis.currentGesture.data.rql = ar;
         vis.updateVisualization();
-        break;
+      }break;
       default:
     }
-  }
+  };
 
   /*
   handVisualization.scene.renderAll();
@@ -85,6 +91,8 @@ angular.module('app').factory('VisTools', function () {
 
   vis.updateVisualization = function () {
     var data = JSON.parse(JSON.stringify(vis.currentGesture.data));
+    vis.currentGesture.progressPercentage = (vis.currentGesture.currentTime - vis.currentGesture.startTime)/
+     (vis.currentGesture.endTime - vis.currentGesture.startTime);
     vis.updateVisualizationAsync(data);
   };
 
@@ -116,7 +124,7 @@ angular.module('app').factory('VisTools', function () {
       data.lqr._x, data.lqr._y, data.lqr._z, data.lqr._w,
       data.lql._x, data.lql._y, data.lql._z, data.lql._w
     );
-  }
+  };
 
   return vis;
 });

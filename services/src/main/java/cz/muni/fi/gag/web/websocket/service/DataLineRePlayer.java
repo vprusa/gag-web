@@ -3,16 +3,20 @@ package cz.muni.fi.gag.web.websocket.service;
 import cz.muni.fi.gag.web.entity.DataLine;
 import cz.muni.fi.gag.web.logging.Log;
 import cz.muni.fi.gag.web.service.DataLineService;
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.Date;
-import java.util.ListIterator;
+import org.jboss.logging.Logger;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.websocket.EncodeException;
 import javax.websocket.Session;
-import org.jboss.logging.Logger;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.ListIterator;
+
+import static cz.muni.fi.gag.web.websocket.service.DataLineRePlayer.PlayerState.*;
+import static cz.muni.fi.gag.web.websocket.service.DataLineRePlayer.PlayerState.IDLE;
 
 /**
  * @author Vojtech Prusa
@@ -31,6 +35,37 @@ public class DataLineRePlayer implements Runnable, Serializable {
 
     private Session session;
     private Date before;
+    private ListIterator<DataLine> dli;
+
+    public PlayerState getState() {
+        synchronized (state) {
+            return state;
+        }
+    }
+
+    private PlayerState state = IDLE;
+
+    public void play() {
+        synchronized (state) {
+            this.state = PLAYING;
+        }
+    }
+
+
+    public void stop() {
+        synchronized (state) {
+            this.state = STOPPED;
+        }
+    }
+
+    public void pause() {
+        synchronized (state){
+            state = PAUSED;
+        }
+    }
+
+    // preparing for further states
+    public enum PlayerState {IDLE, PLAYING, PAUSED, STOPPED};
 
     public Session getSession() {
         return session;
@@ -52,6 +87,7 @@ public class DataLineRePlayer implements Runnable, Serializable {
     private DataLineService dataLineService;
 
     volatile private long gestureId;
+
     /*
     public DataLineRePlayer(Session session, DataLineService dataLineService, long gestureId) {
         //public DataLineRePlayer(Session session, long gestureId) {
@@ -60,106 +96,70 @@ public class DataLineRePlayer implements Runnable, Serializable {
         this.gestureId = gestureId;
     }*/
 
+    public void prepare() {
+        prepare(false);
+    }
+    public void prepare(boolean force){
+        play();
+        if(dli == null){
+            dli = dataLineService.findByGestureId(gestureId).listIterator();
+        }else if(force){
+            dli = dataLineService.findByGestureId(gestureId).listIterator();
+        }
+    }
+
+    // https://stackoverflow.com/questions/28922040/alternative-to-thread-suspend-and-resume
     @Override
     public void run() {
+        prepare();
         Log.info("Running DataLine re-play");
         // https://stackoverflow.com/questions/16504140/thread-stop-deprecated
         // TODO fix the fix of the fix ?
         if (Thread.interrupted()) {
             return;
         }
-
-        /*
-        // TODO check if thread-safe?
-        Stream<DataLine> sdl = dataLineService.getStream(gestureId);
-        //sdl.forEachOrdered(dl -> {
-        sdl.forEach(dl -> {
-            log.info(dl.toString());
-
-            try {
-                //session.getBasicRemote().sendObject(dl);
-                before = dl.getTimestamp();
-                Date now = dl.getTimestamp();
-                //Log.info(now == null ? "New now null" : now.toString());
-                if (now != null && before != null) {
-                    long timeDiff = now.getTime() - before.getTime();
-                    if(timeDiff == 0){
-                        return;
-                    }
-                    session.getBasicRemote().sendObject(dl);
-                    Thread.sleep(timeDiff);
-                }else if(now != null){
-                    session.getBasicRemote().sendObject(dl);
-                }
-                before = now;
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (EncodeException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-        });
-        */
-        //DataLineGestureIterator dli = dataLineService.initIteratorByGesture(gestureId);
-        //DataLineGestureIterator dli = dataLineService.initIteratorByGesture(gestureId);
-        //List<DataLine> dll = dataLineService.findByGestureId(1);
-        /*
-        try {
-            session.getBasicRemote().sendObject(dll.get(0));
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (EncodeException e) {
-            e.printStackTrace();
-        }
-        */
-        //FingerDataLineEncoder dle = new FingerDataLineEncoder();
-        /*DataLineEncoder dle = new DataLineEncoder();
-        dll.forEach(dl -> {
-            try {
-                String dls = dle.encode(dl);
-                session.getBasicRemote().sendObject(dls);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (EncodeException e) {
-                e.printStackTrace();
-            }
-        });*/
-        //String dlds = dld.decode(dlds);
-
-
-        //List<DataLine> dli = dataLineService.findByGestureId(gestureId);
-        ListIterator<DataLine> dli = dataLineService.findByGestureId(gestureId).listIterator();
-
-        //ListIterator<DataLine> dli = dll.listIterator();
         Date before = null;
         Date now = null;
-        log.info("-1");
-        //dll.forEach(dl -> {log.info(dl.toString());});
-        //Response res = Response.ok(dll).build();
-        //log.info(res.getEntity().toString());
 
         try {
-            log.info("1");
             int diffZeroLimitCounter = 0;
-            while (dli.hasNext()) {
-                log.info("2");
+            while (dli != null && dli.hasNext()) {
                 DataLine dl = dli.next();
+                    switch (getState()) {
+                        case IDLE:
+                            // so far this should not happen, but that may be changed in the future when multiple
+                            // player over single WS connection are implemented
+                            // anyway ... lets continue to STOPPED state ..
+                        case STOPPED:
+                            return;
+                        case PAUSED:
+                            Thread cur = Thread.currentThread();
+                            synchronized (cur) {
+                                cur.wait();
+                            }
+                            break;
+                        case PLAYING:
+                            // noting, keep looping
+                            break;
+                    }
+
+                if(dl == null && dli!= null && dli.hasNext()){
+                    dl = dli.next();
+                }
                 Log.info(now == null ? "Now null" : now.toString());
-                Log.info(before  == null ? "Before null" : before.toString());
+                Log.info(before == null ? "Before null" : before.toString());
                 Log.info(dl.toString());
                 now = dl.getTimestamp();
 
                 Log.info(now == null ? "New now null" : now.toString());
                 if (now != null && before != null) {
                     long timeDiff = now.getTime() - before.getTime();
-                    if(timeDiff == 0 && (++diffZeroLimitCounter) > DataLineRePlayer.TIME_DIFF_ZERO_LIMIT){
-                         continue;
+                    if (timeDiff == 0 && (++diffZeroLimitCounter) > DataLineRePlayer.TIME_DIFF_ZERO_LIMIT) {
+                        continue;
                     }
                     session.getBasicRemote().sendObject(dl);
                     Thread.sleep(timeDiff);
-                }else if(now != null){
+                } else if (now != null) {
                     session.getBasicRemote().sendObject(dl);
                 }
                 before = now;
@@ -167,7 +167,6 @@ public class DataLineRePlayer implements Runnable, Serializable {
         } catch (InterruptedException | IOException | EncodeException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            //Log.info(e.getMessage());
         }
 
     }

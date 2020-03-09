@@ -105,11 +105,7 @@ public class DataLineWsEndpoint {
                         case PLAY: {
                             // stop existing first
                             Thread replayer = (Thread) session.getUserProperties().get(REPLAYER_KEY);
-                            if (replayer != null) {
-//                            replayer.stop();
-                                replayer.interrupt();
-                            }
-
+                            rep.prepare(true);
                             rep.setGestureId(pa.getGestureId());
                             rep.setSession(session);
                             replayer = new Thread(rep);
@@ -119,27 +115,33 @@ public class DataLineWsEndpoint {
                         break;
                         case PAUSE: {
                             Thread replayer = (Thread) session.getUserProperties().get(REPLAYER_KEY);
-                            if (replayer != null) {
-                                try {
-                                    replayer.wait();
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
+                            synchronized (replayer) {
+                                log.info("Replayer pause");
+                                log.info(replayer.toString());
+                                if (replayer != null) {
+                                    rep.pause();
                                 }
                             }
                         }
                         break;
                         case CONTINUE: {
                             Thread replayer = (Thread) session.getUserProperties().get(REPLAYER_KEY);
-                            if (replayer != null) {
-                                replayer.notify();
+                            synchronized (replayer) {
+                                if (replayer != null) {
+                                    rep.play();
+                                    replayer.notify();
+                                }
                             }
                         }
                         break;
                         case STOP: {
                             Thread replayer = (Thread) session.getUserProperties().get(REPLAYER_KEY);
-                            if (replayer != null) {
-                                replayer.interrupt();
+                            synchronized (replayer) {
+                                if (replayer != null) {
+                                    rep.stop();
+                                }
                             }
+
                         }
                         break;
                     }

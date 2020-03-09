@@ -14,16 +14,23 @@
 			<div class="card-body">
 				<div class="" ng-if="selectedGestureDetail.play"></div>
 				<div>
-					<button class="btn btn-info desc"
-							ng-click='test()'>Test</button></td>
-					<button ng-disabled="!selectedGestureDetail.selectedGesture" class="btn btn-info desc"
-							ng-click='ws.startPlayer()'>Play Selected: {{selectedGestureDetail.selectedGesture}}</button>
-					<button ng-disabled="!selectedGestureDetail.selectedGesture" class="btn btn-info desc"
-							ng-click='ws.stopPlayer()'>Stop</button>
-					<button ng-disabled="!selectedGestureDetail.selectedGesture" class="btn btn-info desc"
-									ng-click='ws.pausePlayer()'>Pause</button>
-					<button ng-disabled="!selectedGestureDetail.selectedGesture" class="btn btn-info desc"
-									ng-click='ws.continuePlayer()'>Continue: </button>
+					<!-- https://stackoverflow.com/questions/22885702/html-for-the-pause-symbol-in-audio-and-video-control/27053825 -->
+					<!--
+					<button class="btn btn-info desc" ng-click='test()'>Test</button></td>
+					-->
+					<button disabled class="btn btn-info desc">{{(selectedGestureDetail.selectedGesture == null || selectedGestureDetail.selectedGesture == "" ) ? "&nbsp;&nbsp;&nbsp;" : selectedGestureDetail.selectedGesture }}</button>
+					<button ng-if="player.state == player.states.IDLE || player.state == player.states.STOPPED" ng-disabled="!selectedGestureDetail.selectedGesture" class="btn btn-info desc"
+							ng-click='ws.startPlayer()'><i class="material-icons">play_circle_outline</i></button>
+					<button ng-if="player.state == player.states.PLAYING || player.state == player.states.PAUSED " ng-disabled="!selectedGestureDetail.selectedGesture" class="btn btn-info desc"
+							ng-click='ws.stopPlayer()'><i class="material-icons">stop</i></button>
+
+					<button ng-if="player.state != player.states.PAUSED"
+									ng-disabled="player.state != player.states.PLAYING || !selectedGestureDetail.selectedGesture" class="btn btn-info desc"
+									ng-click='ws.pausePlayer()'><i class="material-icons">pause_circle_outline</i></button>
+					<button ng-if="player.state == player.states.PAUSED" ng-disabled="player.state != player.states.PAUSED || !selectedGestureDetail.selectedGesture" class="btn btn-info desc"
+									ng-click='ws.continuePlayer()'><i class="material-icons">play_circle_outline</i></button>
+
+					<button disabled class="btn btn-info desc" ng-click='ws.switchLoop()'><i class="material-icons">loop</i></button>
 
 					</td>
 					<!-- <p class="card-category">{{selectedGestureDetail.info}}</p>-->

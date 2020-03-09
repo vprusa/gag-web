@@ -37,7 +37,12 @@
 				<section id="container"></section>
 			</main>
 		</div>
-			<table class="table">
+		<style>
+			progress::-webkit-progress-value { background: #ab47bc; }
+		</style>
+		<progress style="background: #ab47bc; width: 100%; height: 5px;" id="player-progress" max="100" value="{{vis.currentGesture.progressPercentage}}"></progress>
+
+		<table class="table">
 				<thead class="text-primary">
 					<th>ID</th>
 					<th>Time</th>

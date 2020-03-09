@@ -94,6 +94,18 @@ angular
           }
         };
 
+        let playerStates = {
+          IDLE: 0,
+          PLAYING: 1,
+          PAUSED: 2,
+          STOPPED: 3
+        };
+
+        $scope.player = {
+          states: playerStates,
+          state: playerStates.IDLE
+        };
+
         $scope.ws.startPlayer = function () {
           if ($scope.selectedGestureDetail.selectedGesture) {
             $scope.ws.init();
@@ -102,6 +114,9 @@ angular
           console.log($scope.selectedGestureDetail.selectedGesture);
           $scope.ws.websocketSession.send('{"type":0, "action":0, "gestureId": '
             + $scope.selectedGestureDetail.selectedGesture + '}');
+
+          // TODO move this after first message?
+          $scope.player.state = playerStates.PLAYING;
         };
 
         $scope.ws.stopPlayer = function () {
@@ -110,7 +125,7 @@ angular
             $scope.ws.websocketSession.send('{"type":0, "action":3, "gestureId": '
               + $scope.selectedGestureDetail.selectedGesture + '}');
           }
-          $scope.ws.isPlaying = false;
+          $scope.player.state = playerStates.STOPPED;
           $scope.ws.close();
         };
 
@@ -120,6 +135,7 @@ angular
             $scope.ws.websocketSession.send('{"type":0, "action":1, "gestureId": '
               + $scope.selectedGestureDetail.selectedGesture + '}');
           // }
+          $scope.player.state = playerStates.PAUSED;
         };
 
         $scope.ws.continuePlayer = function () {
@@ -128,6 +144,7 @@ angular
             $scope.ws.websocketSession.send('{"type":0, "action":2, "gestureId": '
               + $scope.selectedGestureDetail.selectedGesture + '}');
           // }
+          $scope.player.state = playerStates.PLAYING;
         };
 
       }]);
