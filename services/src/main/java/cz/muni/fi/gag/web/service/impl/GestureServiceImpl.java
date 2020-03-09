@@ -8,6 +8,7 @@ import cz.muni.fi.gag.web.service.generic.GenericCRUDServiceImpl;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import java.util.Date;
 import java.util.List;
 
 /**

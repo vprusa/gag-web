@@ -4,6 +4,7 @@ import cz.muni.fi.gag.web.dao.DataLineDao;
 import cz.muni.fi.gag.web.dao.impl.DataLineGestureIterator;
 import cz.muni.fi.gag.web.entity.DataLine;
 import cz.muni.fi.gag.web.service.generic.GenericCRUDService;
+
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -24,4 +25,7 @@ public interface DataLineService extends GenericCRUDService<DataLine, DataLineDa
     Stream<DataLine> getStream(long gestureId);
 
     int removeBy(Long gestureId);
+
+    List<DataLine> getInterestingTimes(Long gestureId);
+
 }

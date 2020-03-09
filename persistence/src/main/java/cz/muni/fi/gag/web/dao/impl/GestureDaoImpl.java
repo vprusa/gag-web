@@ -1,15 +1,15 @@
 package cz.muni.fi.gag.web.dao.impl;
 
-import java.io.Serializable;
-import java.util.List;
+import cz.muni.fi.gag.web.dao.GestureDao;
+import cz.muni.fi.gag.web.entity.Gesture;
+import cz.muni.fi.gag.web.entity.User;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
-
-import cz.muni.fi.gag.web.dao.GestureDao;
-import cz.muni.fi.gag.web.entity.Gesture;
-import cz.muni.fi.gag.web.entity.User;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author Vojtech Prusa
@@ -35,5 +35,6 @@ public class GestureDaoImpl extends AbstractGenericDao<Gesture> implements Gestu
     public Gesture findRefById(Long u) {
         return em.getReference(Gesture.class, u);
     }
+
 
 }

@@ -5,10 +5,11 @@ import cz.muni.fi.gag.web.dao.impl.DataLineGestureIterator;
 import cz.muni.fi.gag.web.entity.DataLine;
 import cz.muni.fi.gag.web.service.DataLineService;
 import cz.muni.fi.gag.web.service.generic.GenericCRUDServiceImpl;
-import java.util.List;
-import java.util.stream.Stream;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import java.util.List;
+import java.util.stream.Stream;
 
 /**
  *
@@ -45,6 +46,10 @@ public class DataLineServiceImpl extends GenericCRUDServiceImpl<DataLine, DataLi
         return getDao().removeBy(gestureId);
     }
 
+    @Override
+    public List<DataLine> getInterestingTimes(Long gestureId) {
+        return getDao().getInterestingTimes(gestureId);
+    }
 
     // TODO it seems wrong to instantiate iterator...? or should it be by
     // implementing Iterable? No more wrappers?

@@ -21,3 +21,8 @@ delete g from gesture as g where id < 15;
 ```
 select min(dl.timestamp), max(dl.timestamp), max(dl.timestamp) - min(dl.timestamp) from DataLine as dl where dl.gesture_id = 27 order by dl.timestamp;
 ```
+
+```
+select * from DataLine as dl where dl.gesture_id = 27 and dl.timestamp in (select min(dl2.timestamp) from DataLine as dl2 where dl2.gesture_id = 27);
+select * from DataLine as dl where dl.gesture_id = 27 and dl.timestamp in (select max(dl2.timestamp) from DataLine as dl2 where dl2.gesture_id = 27);
+```

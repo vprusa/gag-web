@@ -3,13 +3,15 @@ package cz.muni.fi.gag.web.dao.impl;
 import cz.muni.fi.gag.web.dao.DataLineDao;
 import cz.muni.fi.gag.web.entity.DataLine;
 import cz.muni.fi.gag.web.entity.FingerDataLine;
-import java.io.Serializable;
-import java.util.List;
-import java.util.stream.Stream;
+import org.jboss.logging.Logger;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
-import org.jboss.logging.Logger;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * @author Miloslav Zezulka, Vojtech Prusa
@@ -81,6 +83,21 @@ public class DataLineDaoImpl extends AbstractGenericDao<DataLine> implements Dat
         log.info("removeBy: gestureId: " + gestureId);
         return  em.createQuery("DELETE FROM DataLine g WHERE gesture_id = :gestureId")
             .setParameter("gestureId", gestureId).executeUpdate();
+    }
+
+    @Override
+    public List<DataLine> getInterestingTimes(Long gestureId) {
+        String ql = "SELECT min(dl.timestamp), max(dl.timestamp), max(dl.timestamp) - min(dl.timestamp) from DataLine" +
+                " as dl where dl.gesture_id = :gestureId order by dl.timestamp;";
+        // TODO add by gestureId AND userId ?
+        // select * from DataLine as dl where dl.gesture_id = 27 and dl.timestamp in (select min(dl2.timestamp)
+        // from DataLine as dl2 where dl2.gesture_id = 27);
+        // select * from DataLine as dl where dl.gesture_id = 27 and dl.timestamp in (select max(dl2.timestamp)
+        // from DataLine as dl2 where dl2.gesture_id = 27);
+        TypedQuery<DataLine> q = em.createQuery(ql, DataLine.class)
+                .setParameter("gestureId", gestureId);
+        List<DataLine> results = q.getResultList();
+        return results;
     }
 
 }
