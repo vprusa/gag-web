@@ -24,5 +24,5 @@ public interface DataLineDao extends GenericDao<DataLine> {
 
     int removeBy(Long gestureId);
 
-    List<DataLine> getInterestingTimes(Long gestureId);
+    List<DataLine> getInteresting(Long gestureId);
 }

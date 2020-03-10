@@ -46,7 +46,7 @@
 						<tbody>
 							<tr ng-repeat="item in gestures | orderBy:'id':true ">
 								<td>{{item.id}}</td>
-								<td><button class="btn btn-info desc"
+								<td><button class="btn btn-info desc" ng-disabled="player.state != player.states.STOPPED && player.state != player.states.IDLE"
 											ng-click='selectGesture(item.id)'>{{item.userAlias}}</button></td>
 								<td>{{item.dateCreated | date: 'yyyy-MM-dd HH:MM'}}</td>
 								<td>

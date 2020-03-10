@@ -26,6 +26,6 @@ public interface DataLineService extends GenericCRUDService<DataLine, DataLineDa
 
     int removeBy(Long gestureId);
 
-    List<DataLine> getInterestingTimes(Long gestureId);
+    List<DataLine> getInteresting(Long gestureId);
 
 }

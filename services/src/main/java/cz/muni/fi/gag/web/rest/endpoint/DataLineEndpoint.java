@@ -47,11 +47,11 @@ public class DataLineEndpoint {
     @Path("/gesture/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getDataLinesByGestureId(@PathParam("id") Long gestureId) {
-        List<DataLine> dataLine = dataLineService.findByGestureId(gestureId);
-        if (dataLine.isEmpty()) {
+        List<DataLine> dls = dataLineService.findByGestureId(gestureId);
+        if (dls.isEmpty()) {
             Response.status(Status.NOT_FOUND);
         }
-        return Response.ok(dataLine).build();
+        return Response.ok(dls).build();
     }
 
     @GET
@@ -64,6 +64,18 @@ public class DataLineEndpoint {
         }
         return Response.ok(count).build();
     }
+
+    @GET
+    @Path("/interesting/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response interesting(@PathParam("id") Long gestureId) {
+        List<DataLine> dls = dataLineService.getInteresting(gestureId);
+        if (dls.isEmpty()) {
+            Response.status(Status.NOT_FOUND);
+        }
+        return Response.ok(dls).build();
+    }
+
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)

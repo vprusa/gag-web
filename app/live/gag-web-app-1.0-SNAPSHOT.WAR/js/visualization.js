@@ -30,9 +30,16 @@ angular.module('app').factory('VisTools', function () {
     }
   };
 
+  vis.resetProgressBar = function () {
+    vis.currentGesture.currentPercentage = 0;
+    vis.currentGesture.startTime = 0;
+    vis.currentGesture.currentTime = 0;
+  };
+
   vis.updateVisFromDataLine = function (dl) {
     //console.log("updateVisFromDataLine");
     //console.log(dl);
+    vis.currentGesture.currentTime = dl.t;
     switch (dl.p) {
       case "THUMB":{
           let ar = new THREE.Quaternion(parseFloat(dl.qX), parseFloat(dl.qY), parseFloat(dl.qZ), parseFloat(dl.qA));
@@ -93,6 +100,7 @@ angular.module('app').factory('VisTools', function () {
     var data = JSON.parse(JSON.stringify(vis.currentGesture.data));
     vis.currentGesture.progressPercentage = (vis.currentGesture.currentTime - vis.currentGesture.startTime)/
      (vis.currentGesture.endTime - vis.currentGesture.startTime);
+    // console.log(vis.currentGesture.progressPercentage);
     vis.updateVisualizationAsync(data);
   };
 

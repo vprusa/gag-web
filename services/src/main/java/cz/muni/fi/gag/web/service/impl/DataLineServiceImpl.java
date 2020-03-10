@@ -47,8 +47,8 @@ public class DataLineServiceImpl extends GenericCRUDServiceImpl<DataLine, DataLi
     }
 
     @Override
-    public List<DataLine> getInterestingTimes(Long gestureId) {
-        return getDao().getInterestingTimes(gestureId);
+    public List<DataLine> getInteresting(Long gestureId) {
+        return getDao().getInteresting(gestureId);
     }
 
     // TODO it seems wrong to instantiate iterator...? or should it be by

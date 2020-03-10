@@ -2,21 +2,19 @@ package cz.muni.fi.gag.web.dao.impl;
 
 import cz.muni.fi.gag.web.dao.DataLineDao;
 import cz.muni.fi.gag.web.entity.DataLine;
-import cz.muni.fi.gag.web.entity.FingerDataLine;
 import org.jboss.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 import java.io.Serializable;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
 /**
  * @author Miloslav Zezulka, Vojtech Prusa
  *
- * {@link cz.muni.fi.gag.web.service.impl.DataLineServiceImpl}
  * {@link cz.muni.fi.gag.web.service.impl.DataLineServiceImpl}
  */
 @ApplicationScoped
@@ -50,7 +48,7 @@ public class DataLineDaoImpl extends AbstractGenericDao<DataLine> implements Dat
     @Transactional
     @Override
     public Stream<DataLine> getStream(long gestureId) {
-        log.info("getChunkForGesture: gestureId: " + gestureId);
+//        log.info("getChunkForGesture: gestureId: " + gestureId);
         return em
                 .createQuery("SELECT g FROM DataLine g WHERE gesture_id = :gestureId", // ORDER BY timestamp ASC
                         DataLine.class)
@@ -61,20 +59,17 @@ public class DataLineDaoImpl extends AbstractGenericDao<DataLine> implements Dat
     @Transactional
     @Override
     public List<DataLine> getChunkForGesture(long gestureId, int offset, int max) {
-        log.info("getChunkForGesture: gestureId: " + gestureId + " offset: " + offset + " max: " + max);
+//        log.info("getChunkForGesture: gestureId: " + gestureId + " offset: " + offset + " max: " + max);
         List<DataLine> dll = em
-                //.createQuery("SELECT g FROM DataLine g WHERE gesture_id = :gestureId ORDER BY timestamp ASC",
                 .createQuery("SELECT g FROM DataLine g WHERE gesture_id = :gestureId",
                         DataLine.class)
-                //.setParameter("gestureId", gestureId).setFirstResult(offset).setMaxResults(max).getResultList();
                 .setParameter("gestureId", gestureId).getResultList();
-        FingerDataLine[] dla = new FingerDataLine[dll.size()];
-        dla = (FingerDataLine[]) dll.toArray();
-
-        log.info("dll.toArray(): " +  dla.length);
-        for(FingerDataLine dl : dla){
-            log.info("DL: " + dl.toString());
-        }
+//        FingerDataLine[] dla = new FingerDataLine[dll.size()];
+//        dla = (FingerDataLine[]) dll.toArray();
+//        log.info("dll.toArray(): " +  dla.length);
+//        for(FingerDataLine dl : dla){
+//            log.info("DL: " + dl.toString());
+//        }
         return dll;
     }
 
@@ -86,17 +81,18 @@ public class DataLineDaoImpl extends AbstractGenericDao<DataLine> implements Dat
     }
 
     @Override
-    public List<DataLine> getInterestingTimes(Long gestureId) {
-        String ql = "SELECT min(dl.timestamp), max(dl.timestamp), max(dl.timestamp) - min(dl.timestamp) from DataLine" +
-                " as dl where dl.gesture_id = :gestureId order by dl.timestamp;";
+    public List<DataLine> getInteresting(Long gestureId) {
         // TODO add by gestureId AND userId ?
-        // select * from DataLine as dl where dl.gesture_id = 27 and dl.timestamp in (select min(dl2.timestamp)
-        // from DataLine as dl2 where dl2.gesture_id = 27);
-        // select * from DataLine as dl where dl.gesture_id = 27 and dl.timestamp in (select max(dl2.timestamp)
-        // from DataLine as dl2 where dl2.gesture_id = 27);
-        TypedQuery<DataLine> q = em.createQuery(ql, DataLine.class)
+        final String qlMin = "SELECT dl FROM DataLine dl WHERE gesture_id = :gestureId AND timestamp IN " +
+                "(SELECT MIN(timestamp) FROM DataLine where gesture_id = :gestureId) ";
+        final String qlMax = "SELECT dl FROM DataLine dl WHERE gesture_id = :gestureId AND timestamp IN " +
+                "(SELECT MAX(timestamp) FROM DataLine where gesture_id = :gestureId)";
+        TypedQuery<DataLine> qMin = em.createQuery(qlMin, DataLine.class)
                 .setParameter("gestureId", gestureId);
-        List<DataLine> results = q.getResultList();
+        List<DataLine> results= new ArrayList<DataLine>(qMin.getResultList());
+        TypedQuery<DataLine> qMax = em.createQuery(qlMax, DataLine.class)
+                .setParameter("gestureId", gestureId);
+        results.addAll(qMax.getResultList());
         return results;
     }
 

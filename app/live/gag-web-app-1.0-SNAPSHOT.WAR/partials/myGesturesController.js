@@ -34,11 +34,11 @@ angular
 
         this.$onInit = function () {
           WSTools.init();
-        }
+        };
 
         this.$onDestroy = function () {
           WSTools.destroy();
-        }
+        };
 
         $scope.selectedGestureDetail = {
           info: "Watch 3D model of hands",
@@ -71,17 +71,21 @@ angular
           console.log("selectGesture: " + id);
           $scope.selectedGestureDetail.play = !$scope.selectedGestureDetail.play;
           $scope.selectedGestureDetail.selectedGesture = id;
-        }
+          // [{"id":13687,"handPosition":"RIGHT","t":1583278939926,"p":"LITTLE","h":"RIGHT",
+          // "qA":0.999939,"qX":0.00213623,"qY":-0.00164795,"qZ":0.00811768,"aX":1,"aY":1,"aZ":1},
+          // {"id":14692,"handPosition":"RIGHT","t":1583278956377,"p":"LITTLE","h":"RIGHT",
+          // "qA":0.997742,"qX":0.00323486,"qY":-8.54492E-4,"qZ":-0.0666504,"aX":1,"aY":1,"aZ":1}]
+        };
 
         $scope.clearGesture = function (id) {
           console.log("clearGesture: " + id);
-        }
+        };
 
         $scope.deleteGesture = function (id) {
           //console.log("deleteGesture: " + id);
           commonTools.deleteGesture(id);
           $scope.$apply();
-        }
+        };
 
         $scope.onMessage = function (evt) {
           // TODO move to websocket.js
@@ -108,8 +112,17 @@ angular
 
         $scope.ws.startPlayer = function () {
           if ($scope.selectedGestureDetail.selectedGesture) {
+            commonTools.getGestureInteresting($scope.selectedGestureDetail.selectedGesture).then(function (response) {
+              // console.log(response);
+              $scope.vis.resetProgressBar();
+              $scope.vis.currentGesture.startTime = response[0].t;
+              $scope.vis.currentGesture.endTime = response[1].t;
+            }, function (response) {
+              $scope.alerts.push({type: 'danger', title: 'Error ' + response.status, msg: response.statusText});
+            });
             $scope.ws.init();
-          }
+          };
+
           $scope.ws.setOnMessage($scope.onMessage);
           console.log($scope.selectedGestureDetail.selectedGesture);
           $scope.ws.websocketSession.send('{"type":0, "action":0, "gestureId": '
@@ -121,6 +134,7 @@ angular
 
         $scope.ws.stopPlayer = function () {
           if($scope.ws.isPlaying){
+            $scope.vis.resetProgressBar();
             console.log($scope.selectedGestureDetail.selectedGesture);
             $scope.ws.websocketSession.send('{"type":0, "action":3, "gestureId": '
               + $scope.selectedGestureDetail.selectedGesture + '}');
