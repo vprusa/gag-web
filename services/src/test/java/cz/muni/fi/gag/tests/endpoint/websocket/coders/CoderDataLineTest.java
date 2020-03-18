@@ -1,8 +1,8 @@
-package cz.muni.fi.gag.web.endpoint.websocket.coders;
+package cz.muni.fi.gag.tests.endpoint.websocket.coders;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import cz.muni.fi.gag.web.common.TestServiceBase;
+import cz.muni.fi.gag.tests.common.TestServiceBase;
 import cz.muni.fi.gag.web.entity.DataLine;
 import cz.muni.fi.gag.web.entity.FingerDataLine;
 import cz.muni.fi.gag.web.entity.WristDataLine;

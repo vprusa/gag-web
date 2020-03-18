@@ -7,11 +7,12 @@ angular
       '$scope',
       '$location',
       '$route',
+      '$timeout',
       'commonTools',
       'createUpdateTools',
       'WSTools',
       'VisTools',
-      function ($scope, $location, $route, commonTools, createUpdateTools, WSTools, VisTools) {
+      function ($scope, $location, $route, $timeout, commonTools, createUpdateTools, WSTools, VisTools) {
         commonTools.getGestures().then(function (response) {
           $scope.gestures = response;
         }, function (response) {
@@ -82,9 +83,11 @@ angular
         };
 
         $scope.deleteGesture = function (id) {
-          //console.log("deleteGesture: " + id);
-          commonTools.deleteGesture(id);
-          $scope.$apply();
+          commonTools.deleteGesture(id).then(function(){
+              $scope.gestures = $scope.gestures.filter(function(item) {
+                return item.id !== id;
+              });
+            });
         };
 
         $scope.onMessage = function (evt) {

@@ -1,4 +1,4 @@
-package cz.muni.fi.gag.web.common;
+package cz.muni.fi.gag.tests.common;
 
 import cz.muni.fi.gag.web.entity.GenericEntity;
 import org.jboss.logging.Logger;
@@ -21,9 +21,22 @@ public class TestBase {
     public static String keycloakGroupId = "org.keycloak:";
     public static String keycloakVersion = ":6.0.1";
 
-    public static WebArchive getDeployment(Class clazz) {
+    public static WebArchive getDeployment(Class clazz
+
+
+
+
+    ) {
+
         File[] files = Maven.resolver()
                 .loadPomFromFile("../pom.xml")
+                .importCompileAndRuntimeDependencies()
+                .resolve()
+                .withTransitivity()
+                .asFile();
+
+        File[] serviceFiles = Maven.resolver()
+                .loadPomFromFile("../services/pom.xml")
                 .importCompileAndRuntimeDependencies()
                 .resolve()
                 .withTransitivity()
@@ -47,9 +60,12 @@ public class TestBase {
                 .addAsWebInfResource("web-test.xml", "web.xml")
                 //.addAsWebInfResource("web.xml", "web.xml")
                 .addAsWebInfResource("keycloak-test.json", "keycloak.json")
-                //.addAsWebInfResource("jboss-web-test.xml", "jboss-web.xml")
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
+//                .addAsWebInfResource("beans-test.xml", "beans.xml")
+                //.addAsWebInfResource("jboss-web-test.xml", "jboss-web.xml")
+//                .addAsWebInfResource("test-persistence.xml", "persistence.xml")
                 .addAsLibraries(files)
+//                .addAsLibraries(serviceFiles)
                 .addAsLibraries(filesKeycloak);
     }
 

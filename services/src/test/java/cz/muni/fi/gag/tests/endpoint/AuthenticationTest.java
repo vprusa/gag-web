@@ -1,4 +1,4 @@
-package cz.muni.fi.gag.web.endpoint;
+package cz.muni.fi.gag.tests.endpoint;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;

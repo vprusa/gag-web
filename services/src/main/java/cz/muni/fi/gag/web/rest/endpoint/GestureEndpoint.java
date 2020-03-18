@@ -21,7 +21,6 @@ import static cz.muni.fi.gag.web.entity.UserRole.USER_R;
 
 /**
  * @author Vojtech Prusa
- *
  */
 @Path("/gesture/")
 public class GestureEndpoint extends BaseEndpoint {
@@ -31,9 +30,9 @@ public class GestureEndpoint extends BaseEndpoint {
 
     /*
      * @GET
-     * 
+     *
      * @Path("/my")
-     * 
+     *
      * @Produces(MediaType.APPLICATION_JSON) public Response getMyGestures() {
      * LOG.info("getMyGestures"); User u = currentUser(); if(u != null) {
      * List<Gesture> myGestures = dataLineService.findByUser(u); return
@@ -68,14 +67,13 @@ public class GestureEndpoint extends BaseEndpoint {
     //@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed(USER_R)
-    @Path("{userAlias}/{filtered}")
-    //public Response createGesture(Gesture dataLine) {
-    public Response createGesture(@PathParam("userAlias") String userAlias, @PathParam("filtered") int filtered) {
+    @Path("{userAlias}")
+    public Response createGesture(@PathParam("userAlias") String userAlias) {
         Response.ResponseBuilder builder;
         try {
             Gesture g = new Gesture();
             g.setUserAlias(userAlias);
-            g.setFiltered(filtered != 0);
+            g.setFiltered(false);
             g.setDateCreated(new Date());
             g.setUser(currentUser());
             Gesture created = gestureService.create(g);
@@ -144,14 +142,12 @@ public class GestureEndpoint extends BaseEndpoint {
     }
 
 
-
-
     @PUT
-    @Path("/filter/{id}")
+    @Path("/filter/{id}/{newGestureName}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed(USER_R)
-    public Response filterGesture(@PathParam("id") Long id) {
+    public Response filterGesture(@PathParam("id") Long id, @PathParam("newGestureName") String newGestureName) {
         Response.ResponseBuilder builder;
         Optional<Gesture> gopt = gestureService.findById(id);
         if (!gopt.isPresent()) {
@@ -159,9 +155,9 @@ public class GestureEndpoint extends BaseEndpoint {
             builder = Response.noContent();
         } else {
             Gesture g = gopt.get();
-//            if(!g.getFiltered()){
             Gesture filtered = g;
-            filtered.setUserAlias(g.getUserAlias()+"-filtered");
+            filtered.setId(null);
+            filtered.setUserAlias(g.getUserAlias() + "-" + newGestureName);
             filtered.setDateCreated(new Date());
             filtered.setData(Collections.emptyList());
             filtered = gestureService.create(filtered);
@@ -169,8 +165,6 @@ public class GestureEndpoint extends BaseEndpoint {
             rdf.filter(2, true);
             filtered = gestureService.update(filtered);
             builder = Response.ok(filtered);
-//            }
-//            builder = Response.status(Status.);
         }
         return builder.build();
     }

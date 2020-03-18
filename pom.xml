@@ -40,14 +40,14 @@
 		<version.org.wildfly.server>10.1.0.Final</version.org.wildfly.server>
 		<version.wildfly.checkstyle.config>1.0.5.Final</version.wildfly.checkstyle.config>
 		<version.wildfly.maven.plugin>1.1.0.Final</version.wildfly.maven.plugin>
-        <version.server.bom>16.0.0.Final</version.server.bom>
+		<version.server.bom>18.0.0.Final</version.server.bom>
 		<version.keycloak>6.0.1</version.keycloak>
 	</properties>
 
 	<parent>
 		<groupId>org.jboss</groupId>
 		<artifactId>jboss-parent</artifactId>
-		<version>16</version>
+		<version>18</version>
 	</parent>
 
 	<dependencyManagement>
@@ -415,7 +415,7 @@
 										<goal>wget</goal>
 									</goals>
 									<configuration>
-										<url>https://download.jboss.org/wildfly/16.0.0.Final/wildfly-16.0.0.Final.zip</url>
+										<url>https://download.jboss.org/wildfly/18.0.0.Final/wildfly-18.0.0.Final.zip</url>
 										<unpack>true</unpack>
 										<outputDirectory>${project.basedir}/</outputDirectory>
 									</configuration>

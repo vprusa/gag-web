@@ -1,6 +1,7 @@
-package cz.muni.fi.gag.web.endpoint;
+package cz.muni.fi.gag.tests.endpoint;
 
-import cz.muni.fi.gag.web.common.TestEndpointBase;
+import cz.muni.fi.gag.tests.common.TestEndpointBase;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;

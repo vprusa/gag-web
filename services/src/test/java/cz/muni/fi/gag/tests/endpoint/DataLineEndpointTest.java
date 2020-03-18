@@ -1,7 +1,7 @@
-package cz.muni.fi.gag.web.endpoint;
+package cz.muni.fi.gag.tests.endpoint;
 
-import cz.muni.fi.gag.web.entity.GenericEntity;
-import cz.muni.fi.gag.web.entity.Gesture;
+import cz.muni.fi.gag.web.entity.FingerDataLine;
+import cz.muni.fi.gag.web.entity.Sensor;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -16,6 +16,7 @@ import org.junit.runner.RunWith;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.Date;
 import java.util.logging.Logger;
 
 /**
@@ -23,31 +24,37 @@ import java.util.logging.Logger;
  *
  * TODO refactor to endpoints ...
  *
- * {@link FingerDataLineEndpointTest}
  */
 @RunWith(Arquillian.class)
-public abstract class DataFilterTestBase<EntityExt extends GenericEntity>
-        extends AuthenticationTestBase {
+public class DataLineEndpointTest extends EndpointTestBase<FingerDataLine> {
 
-    private static Logger log = Logger.getLogger(DataFilterTestBase.class.getSimpleName());
-    protected static final String API_ENDPOINT = AuthenticationTestBase.APP_URL+"api/";
+    private static Logger log = Logger.getLogger(DataLineEndpointTest.class.getSimpleName());
 
-    public static final String TESTED_ENDPOINT = API_ENDPOINT + "fingerdataline";
+    public static final String TESTED_ENDPOINT = API_ENDPOINT + "dataline";
 
     @Deployment
     public static WebArchive deployment() {
-        return getDeployment(FingerDataLineEndpointTest.class);
+        return getDeployment(DataLineEndpointTest.class);
     }
 
-    public Gesture buildGesture() {
-        Gesture r = new Gesture();
-//        r.setGesture(null);
+    public FingerDataLine buildDataLine() {
+        FingerDataLine r = new FingerDataLine();
+        r.setGesture(null);
+        r.setPosition(Sensor.INDEX);
+        r.setQuatA(0);
+        r.setQuatX(0);
+        r.setQuatY(0);
+        r.setQuatZ(0);
+        r.setTimestamp(new Date());
+        r.setAccX((short) 0);
+        r.setAccY((short) 0);
+        r.setAccZ((short) 0);
         return r;
     }
 
     @Test
     @RunAsClient
-    public void testEndpoint() throws Exception {
+    public void testInterestingEndpoint() throws Exception {
         HttpClient client = new DefaultHttpClient();//ClientBuilder.newClient();
         String accessToken = basicLogin();
 
@@ -75,4 +82,5 @@ public abstract class DataFilterTestBase<EntityExt extends GenericEntity>
         String text = stringBuilder.toString();
         log.info(text);
     }
+
 }

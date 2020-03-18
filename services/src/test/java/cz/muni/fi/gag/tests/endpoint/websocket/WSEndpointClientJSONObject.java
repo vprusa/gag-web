@@ -1,4 +1,4 @@
-package cz.muni.fi.gag.web.endpoint.websocket;
+package cz.muni.fi.gag.tests.endpoint.websocket;
 
 import org.jboss.logging.Logger;
 

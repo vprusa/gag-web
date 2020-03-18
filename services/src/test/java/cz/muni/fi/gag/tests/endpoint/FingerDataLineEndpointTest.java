@@ -1,4 +1,4 @@
-package cz.muni.fi.gag.web.endpoint;
+package cz.muni.fi.gag.tests.endpoint;
 
 import cz.muni.fi.gag.web.entity.FingerDataLine;
 import cz.muni.fi.gag.web.entity.Sensor;

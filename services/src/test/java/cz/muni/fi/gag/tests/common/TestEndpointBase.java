@@ -1,4 +1,4 @@
-package cz.muni.fi.gag.web.common;
+package cz.muni.fi.gag.tests.common;
 
 import cz.muni.fi.gag.web.service.UserService;
 import org.jboss.logging.Logger;

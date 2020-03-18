@@ -12,6 +12,9 @@ import javax.inject.Named;
 /**
  * @author Vojtech Prusa
  *
+ * TODO here could actually by gesture filtering to obtain new gesture with referential data for recongition
+ * because that may take soooo long
+ *
  */
 @Named("commentaryBatchlet")
 @ApplicationScoped
@@ -26,9 +29,7 @@ public class GagBatchlet implements Batchlet {
     @Override
     public String process() throws Exception {
         Log.info(getClass(), "process");
-
         // TODO write process
-
         return "END";
     }
 

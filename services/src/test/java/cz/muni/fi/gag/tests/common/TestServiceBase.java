@@ -1,4 +1,4 @@
-package cz.muni.fi.gag.web.common;
+package cz.muni.fi.gag.tests.common;
 
 import cz.muni.fi.gag.web.dao.FingerSensorOffsetDao;
 import cz.muni.fi.gag.web.dao.HandDeviceDao;

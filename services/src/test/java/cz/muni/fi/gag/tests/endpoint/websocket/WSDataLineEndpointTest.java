@@ -1,6 +1,6 @@
-package cz.muni.fi.gag.web.endpoint.websocket;
+package cz.muni.fi.gag.tests.endpoint.websocket;
 
-import cz.muni.fi.gag.web.endpoint.AuthenticationTestBase;
+import cz.muni.fi.gag.tests.endpoint.AuthenticationTestBase;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;

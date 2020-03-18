@@ -182,52 +182,85 @@
 			<version>5.3.9.Final</version>
 			<scope>compile</scope>
 		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.wildfly/wildfly-arquillian-container-managed -->
+		<!--<dependency>
+			<groupId>org.wildfly</groupId>
+			<artifactId>wildfly-arquillian-container-managed</artifactId>
+			<version>8.2.1.Final</version>
+			<scope>test</scope>
+		</dependency>-->
+		<dependency>
+			<groupId>org.wildfly.arquillian</groupId>
+			<artifactId>wildfly-arquillian-container-managed</artifactId>
+			<version>2.2.0.Final</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.arquillian.junit</groupId>
+			<artifactId>arquillian-junit-container</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.arquillian.protocol</groupId>
+			<artifactId>arquillian-protocol-servlet</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.wildfly.plugins</groupId>
-				<artifactId>wildfly-maven-plugin</artifactId>
-				<configuration>
-					<skip>true</skip>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<configuration>
-					<skip>true</skip>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>Jar Package</id>
-						<phase>package</phase>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>Jar Tests Package</id>
-						<phase>package</phase>
-						<goals>
-							<goal>test-jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<filtering>true</filtering>
-			</resource>
-		</resources>
-	</build>
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.wildfly.plugins</groupId>
+      <artifactId>wildfly-maven-plugin</artifactId>
+      <configuration>
+        <skip>true</skip>
+      </configuration>
+    </plugin>
+    <plugin>
+      <groupId>org.codehaus.mojo</groupId>
+      <artifactId>exec-maven-plugin</artifactId>
+      <configuration>
+        <skip>true</skip>
+      </configuration>
+    </plugin>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-surefire-plugin</artifactId>
+      <configuration>
+        <systemPropertyVariables>
+          <arquillian.launch>widlfly-remote</arquillian.launch>
+        </systemPropertyVariables>
+      </configuration>
+    </plugin>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-jar-plugin</artifactId>
+      <executions>
+        <execution>
+          <id>Jar Package</id>
+          <phase>package</phase>
+          <goals>
+            <goal>jar</goal>
+          </goals>
+        </execution>
+        <execution>
+          <id>Jar Tests Package</id>
+          <phase>package</phase>
+          <goals>
+            <goal>test-jar</goal>
+          </goals>
+        </execution>
+      </executions>
+    </plugin>
+  </plugins>
+  <resources>
+    <resource>
+      <directory>src/main/resources</directory>
+      <filtering>true</filtering>
+    </resource>
+  </resources>
+</build>
 
 
 </project>
