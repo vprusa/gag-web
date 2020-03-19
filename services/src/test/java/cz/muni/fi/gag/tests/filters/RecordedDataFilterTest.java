@@ -1,24 +1,19 @@
 package cz.muni.fi.gag.tests.filters;
 
+import cz.muni.fi.gag.tests.common.TestServiceBase;
 import cz.muni.fi.gag.web.entity.DataLine;
 import cz.muni.fi.gag.web.entity.Gesture;
-import cz.muni.fi.gag.web.filters.RecordedDataFilter;
-import cz.muni.fi.gag.web.service.GestureService;
+import cz.muni.fi.gag.services.filters.RecordedDataFilter;
+import cz.muni.fi.gag.services.service.GestureService;
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.container.test.api.Testable;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jboss.shrinkwrap.api.asset.StringAsset;
-import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.ejb.EJB;
-import java.io.File;
+import javax.inject.Inject;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Optional;
@@ -30,72 +25,32 @@ import java.util.logging.Logger;
  *
  */
 @RunWith(Arquillian.class)
-public class RecordedDataFilterTest
-        //extends
-//        DataLineEndpointTest {
-//        EndpointTestBase<Gesture> {
-//        DataFilterTestBase {
-        //TestServiceBase {
-{
+public class RecordedDataFilterTest extends TestServiceBase {
+//        DataFilterEndpointTestBase {
 
     private static Logger log = Logger.getLogger(RecordedDataFilterTest.class.getSimpleName());
-
-//    public static final String TESTED_ENDPOINT = API_ENDPOINT + "gesture/filter/21/newGesture" + new Random().nextInt();
 
     @Deployment
     public static WebArchive deployment() {
 //        return getDeployment(cz.muni.fi.gag.web.filters.RecordedDataFilterTest.class);
-
 //                .addPackage(GestureServiceImpl.class.getPackage());
 //                .addAsServiceProviderAndClasses(GestureService.class, GestureServiceImpl.class);
 //                .addManifestResource(EmptyAsset.INSTANCE, "beans.xml");
-        Class clazz = RecordedDataFilterTest.class;
-        File[] persistenceFiles = Maven.resolver()
-                .loadPomFromFile("../persistence/pom.xml")
-//                .importCompileAndRuntimeDependencies()
-                .importRuntimeAndTestDependencies()
-                .resolve()
-                .withTransitivity()
-                .asFile();
 
-        File[] serviceFiles = Maven.resolver()
-                .loadPomFromFile("../pom.xml")
-                .importCompileAndRuntimeDependencies()
-                .resolve()
-                .withTransitivity()
-                .asFile();
-/*
-        File[] filesKeycloak = Maven.resolver()
-                .resolve(keycloakGroupId + "keycloak-core" + keycloakVersion,
-                        keycloakGroupId + "keycloak-common" + keycloakVersion,
-                        keycloakGroupId + "keycloak-adapter-core" + keycloakVersion,
-                        keycloakGroupId + "keycloak-adapter-spi" + keycloakVersion,
-                        keycloakGroupId + "keycloak-client-registration-api" + keycloakVersion)
-                .withTransitivity().asFile();
-*/
+        Class clazz = RecordedDataFilterTest.class;
         // https://stackoverflow.com/questions/52200635/arquillian-runclient-test-as-remote
         return ShrinkWrap.create(WebArchive.class, clazz.getSimpleName() + ".war")
-                .addPackages(true, "cz.muni.fi.gag.web.dao")
-                .addPackages(true, "cz.muni.fi.gag.web.entity")
-                .addPackages(true, "cz.muni.fi.gag.web.validation")
-                .addPackages(true, "cz.muni.fi.gag.web.service")
-                .addPackages(true, "cz.muni.fi.gag.web.tests.endpoint")
-                .addPackages(true, "cz.muni.fi.gag.web.tests.filters")
-                .addPackages(true, "cz.muni.fi.gag.web.tests.common")
-                .addPackages(true, "cz.muni.fi.gag.web.tests.service")
+                .addPackages(true, "cz.muni.fi.gag.web.services")
+                .addPackages(true, "cz.muni.fi.gag.tests")
                 .addAsResource("test-persistence.xml", "META-INF/persistence.xml")
                 .addAsWebResource("index-test.html", "index.html")
 //                .addAsWebResource("import-test.sql", "import.sql")
                 .addAsWebInfResource("web-test.xml", "web.xml")
                 .addAsWebInfResource("keycloak-test.json", "keycloak.json")
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
-//                .addAsLibraries(persistenceFiles)
-//                .addAsLibraries(serviceFiles);
-//                .addAsLibraries(filesKeycloak);
     }
 
-//    @Inject
-    @EJB
+    @Inject
     public GestureService gestureService;
 
     @Test

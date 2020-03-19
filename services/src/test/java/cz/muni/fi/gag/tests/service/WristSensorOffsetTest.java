@@ -1,7 +1,7 @@
 package cz.muni.fi.gag.tests.service;
 
 import cz.muni.fi.gag.tests.common.TestServiceBase;
-import cz.muni.fi.gag.web.service.WristSensorOffsetService;
+import cz.muni.fi.gag.services.service.WristSensorOffsetService;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.spec.WebArchive;

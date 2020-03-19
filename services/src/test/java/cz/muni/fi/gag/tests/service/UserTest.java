@@ -3,7 +3,7 @@ package cz.muni.fi.gag.tests.service;
 import cz.muni.fi.gag.tests.common.TestServiceBase;
 import cz.muni.fi.gag.web.dao.UserDao;
 import cz.muni.fi.gag.web.entity.User;
-import cz.muni.fi.gag.web.service.UserService;
+import cz.muni.fi.gag.services.service.UserService;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.WebArchive;

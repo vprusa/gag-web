@@ -8,7 +8,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 
 /**

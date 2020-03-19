@@ -2,7 +2,7 @@ package cz.muni.fi.gag.tests.service;
 
 import cz.muni.fi.gag.tests.common.TestServiceBase;
 import cz.muni.fi.gag.web.entity.Sensor;
-import cz.muni.fi.gag.web.service.FingerSensorOffsetService;
+import cz.muni.fi.gag.services.service.FingerSensorOffsetService;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
