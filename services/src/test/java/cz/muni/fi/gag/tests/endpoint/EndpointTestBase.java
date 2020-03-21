@@ -1,6 +1,6 @@
 package cz.muni.fi.gag.tests.endpoint;
 
-import cz.muni.fi.gag.web.entity.GenericEntity;
+import cz.muni.fi.gag.web.persistence.entity.GenericEntity;
 import org.apache.http.HttpResponse;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.runner.RunWith;

@@ -1,9 +1,9 @@
 package cz.muni.fi.gag.tests.common;
 
-import cz.muni.fi.gag.web.dao.FingerSensorOffsetDao;
-import cz.muni.fi.gag.web.dao.HandDeviceDao;
-import cz.muni.fi.gag.web.dao.UserDao;
-import cz.muni.fi.gag.web.entity.*;
+import cz.muni.fi.gag.web.persistence.dao.FingerSensorOffsetDao;
+import cz.muni.fi.gag.web.persistence.dao.HandDeviceDao;
+import cz.muni.fi.gag.web.persistence.dao.UserDao;
+import cz.muni.fi.gag.web.persistence.entity.*;
 import org.jboss.logging.Logger;
 
 import javax.inject.Inject;

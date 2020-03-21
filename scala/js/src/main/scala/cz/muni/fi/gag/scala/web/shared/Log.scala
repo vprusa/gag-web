@@ -2,6 +2,7 @@ package cz.muni.fi.gag.scala.web.shared
 
 import cz.muni.fi.gag.scala.web.shared.Log.Level.ALL
 import cz.muni.fi.gag.web.scala.shared.common.LogT
+
 import scala.scalajs.js.Dynamic.{global => g}
 
 object Log extends LogT {

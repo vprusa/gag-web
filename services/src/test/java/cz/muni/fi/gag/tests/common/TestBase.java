@@ -1,6 +1,6 @@
 package cz.muni.fi.gag.tests.common;
 
-import cz.muni.fi.gag.web.entity.GenericEntity;
+import cz.muni.fi.gag.web.persistence.entity.GenericEntity;
 import org.jboss.logging.Logger;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
@@ -21,12 +21,7 @@ public class TestBase {
     public static String keycloakGroupId = "org.keycloak:";
     public static String keycloakVersion = ":6.0.1";
 
-    public static WebArchive getDeployment(Class clazz
-
-
-
-
-    ) {
+    public static WebArchive getDeployment(Class clazz) {
 
         File[] files = Maven.resolver()
                 .loadPomFromFile("../pom.xml")

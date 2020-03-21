@@ -1,7 +1,7 @@
 package cz.muni.fi.gag.tests.service;
 
 import cz.muni.fi.gag.tests.common.TestServiceBase;
-import cz.muni.fi.gag.services.service.HandDeviceService;
+import cz.muni.fi.gag.web.services.service.HandDeviceService;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -13,10 +13,10 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 
-import cz.muni.fi.gag.web.dao.FingerSensorOffsetDao;
-import cz.muni.fi.gag.web.dao.HandDeviceDao;
-import cz.muni.fi.gag.web.dao.UserDao;
-import cz.muni.fi.gag.web.entity.HandDevice;
+import cz.muni.fi.gag.web.persistence.dao.FingerSensorOffsetDao;
+import cz.muni.fi.gag.web.persistence.dao.HandDeviceDao;
+import cz.muni.fi.gag.web.persistence.dao.UserDao;
+import cz.muni.fi.gag.web.persistence.entity.HandDevice;
 
 import javax.inject.Inject;
 

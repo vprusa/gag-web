@@ -1,6 +1,6 @@
 package cz.muni.fi.gag.tests.endpoint;
 
-import cz.muni.fi.gag.web.entity.Gesture;
+import cz.muni.fi.gag.web.persistence.entity.Gesture;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPut;

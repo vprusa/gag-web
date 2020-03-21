@@ -1,7 +1,7 @@
 package cz.muni.fi.gag.tests.endpoint;
 
-import cz.muni.fi.gag.web.entity.FingerDataLine;
-import cz.muni.fi.gag.web.entity.Sensor;
+import cz.muni.fi.gag.web.persistence.entity.FingerDataLine;
+import cz.muni.fi.gag.web.persistence.entity.Sensor;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;

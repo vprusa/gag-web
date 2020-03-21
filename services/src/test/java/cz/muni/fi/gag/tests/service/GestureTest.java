@@ -1,7 +1,7 @@
 package cz.muni.fi.gag.tests.service;
 
 import cz.muni.fi.gag.tests.common.TestServiceBase;
-import cz.muni.fi.gag.services.service.GestureService;
+import cz.muni.fi.gag.web.services.service.GestureService;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -13,13 +13,13 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 
-import cz.muni.fi.gag.web.dao.FingerDataLineDao;
-import cz.muni.fi.gag.web.dao.GestureDao;
-import cz.muni.fi.gag.web.dao.UserDao;
-import cz.muni.fi.gag.web.entity.DataLine;
-import cz.muni.fi.gag.web.entity.FingerDataLine;
-import cz.muni.fi.gag.web.entity.Gesture;
-import cz.muni.fi.gag.web.entity.User;
+import cz.muni.fi.gag.web.persistence.dao.FingerDataLineDao;
+import cz.muni.fi.gag.web.persistence.dao.GestureDao;
+import cz.muni.fi.gag.web.persistence.dao.UserDao;
+import cz.muni.fi.gag.web.persistence.entity.DataLine;
+import cz.muni.fi.gag.web.persistence.entity.FingerDataLine;
+import cz.muni.fi.gag.web.persistence.entity.Gesture;
+import cz.muni.fi.gag.web.persistence.entity.User;
 
 import javax.inject.Inject;
 

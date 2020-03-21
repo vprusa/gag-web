@@ -1,7 +1,7 @@
 package cz.muni.fi.gag.tests.service;
 
 import cz.muni.fi.gag.tests.common.TestServiceBase;
-import cz.muni.fi.gag.services.service.WristDataLineService;
+import cz.muni.fi.gag.web.services.service.WristDataLineService;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -13,9 +13,9 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 
-import cz.muni.fi.gag.web.dao.WristDataLineDao;
-import cz.muni.fi.gag.web.entity.Sensor;
-import cz.muni.fi.gag.web.entity.WristDataLine;
+import cz.muni.fi.gag.web.persistence.dao.WristDataLineDao;
+import cz.muni.fi.gag.web.persistence.entity.Sensor;
+import cz.muni.fi.gag.web.persistence.entity.WristDataLine;
 
 import javax.inject.Inject;
 

@@ -1,11 +1,11 @@
 package cz.muni.fi.gag.scala.web.visualization
 
-import cz.muni.fi.gag.web.scala.shared.recognition.Sensor.Sensor
 import cz.muni.fi.gag.web.scala.shared.visualization.{HandVisualization, VisualizationBase}
 import cz.muni.fi.gag.scala.web.shared.Log
 import cz.muni.fi.gag.web.scala.shared.Hand
-import cz.muni.fi.gag.web.scala.shared.recognition.Sensor
 import cz.muni.fi.gag.web.scala.shared.common.VisualizationContextT
+import cz.muni.fi.gag.web.scala.shared.recognition.Sensor
+import cz.muni.fi.gag.web.scala.shared.recognition.Sensor.Sensor
 import org.denigma.threejs.{Object3D, PerspectiveCamera, _}
 import org.denigma.threejs.extensions.Container3D
 import org.denigma.threejs.extensions.controls.{CameraControls, JumpCameraControls}

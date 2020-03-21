@@ -1,23 +1,6 @@
 package cz.muni.fi.gag.tests.endpoint;
 
 import cz.muni.fi.gag.tests.common.TestEndpointBase;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
-import javax.json.JsonString;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Response;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -29,6 +12,19 @@ import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.logging.Logger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import javax.json.JsonString;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Response;
+import java.io.*;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Vojtech Prusa
@@ -79,7 +75,7 @@ public abstract class AuthenticationTestBase extends TestEndpointBase {
         return APP_URL;
     }
 
-    private String login(String userName, String password) throws IOException, UnsupportedEncodingException {
+    private String login(String userName, String password) throws IOException {
         String url = getKeycloakUrl();
         HttpClient client = new DefaultHttpClient();
         HttpPost post = new HttpPost(url);

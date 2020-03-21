@@ -23,16 +23,16 @@
 		<jta-data-source>java:/MariaDBDS</jta-data-source>
 		<!--<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider> -->
 
-		<class>cz.muni.fi.gag.web.entity.GenericEntity</class>
-		<class>cz.muni.fi.gag.web.entity.DataLine</class>
-		<class>cz.muni.fi.gag.web.entity.FingerDataLine</class>
-		<class>cz.muni.fi.gag.web.entity.FingerSensorOffset</class>
-		<class>cz.muni.fi.gag.web.entity.Gesture</class>
-		<class>cz.muni.fi.gag.web.entity.HandDevice</class>
-		<class>cz.muni.fi.gag.web.entity.SensorOffset</class>
-		<class>cz.muni.fi.gag.web.entity.User</class>
-		<class>cz.muni.fi.gag.web.entity.WristDataLine</class>
-		<class>cz.muni.fi.gag.web.entity.WristSensorOffset</class>
+		<class>cz.muni.fi.gag.web.persistence.entity.GenericEntity</class>
+		<class>cz.muni.fi.gag.web.persistence.entity.DataLine</class>
+		<class>cz.muni.fi.gag.web.persistence.entity.FingerDataLine</class>
+		<class>cz.muni.fi.gag.web.persistence.entity.FingerSensorOffset</class>
+		<class>cz.muni.fi.gag.web.persistence.entity.Gesture</class>
+		<class>cz.muni.fi.gag.web.persistence.entity.HandDevice</class>
+		<class>cz.muni.fi.gag.web.persistence.entity.SensorOffset</class>
+		<class>cz.muni.fi.gag.web.persistence.entity.User</class>
+		<class>cz.muni.fi.gag.web.persistence.entity.WristDataLine</class>
+		<class>cz.muni.fi.gag.web.persistence.entity.WristSensorOffset</class>
 
 		<properties>
 

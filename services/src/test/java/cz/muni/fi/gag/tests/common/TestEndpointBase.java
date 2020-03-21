@@ -1,6 +1,6 @@
 package cz.muni.fi.gag.tests.common;
 
-import cz.muni.fi.gag.services.service.UserService;
+import cz.muni.fi.gag.web.services.service.UserService;
 import org.jboss.logging.Logger;
 
 import javax.inject.Inject;

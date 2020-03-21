@@ -19,33 +19,45 @@
 					  transaction-type="JTA">
 		<!-- If you are running in a production environment, add a managed data 
 			source, this example data source is just for development and testing! -->
-		<jta-data-source>java:jboss/datasources/ExampleDS</jta-data-source>
+<!--		<jta-data-source>java:jboss/datasources/ExampleDS</jta-data-source>-->
+		<jta-data-source>java:/MariaDBDS</jta-data-source>
 
-		<class>cz.muni.fi.gag.web.entity.GenericEntity</class>
-		<class>cz.muni.fi.gag.web.entity.DataLine</class>
-		<class>cz.muni.fi.gag.web.entity.FingerDataLine</class>
-		<class>cz.muni.fi.gag.web.entity.FingerSensorOffset</class>
-		<class>cz.muni.fi.gag.web.entity.Gesture</class>
-		<class>cz.muni.fi.gag.web.entity.HandDevice</class>
-		<class>cz.muni.fi.gag.web.entity.SensorOffset</class>
-		<class>cz.muni.fi.gag.web.entity.User</class>
-		<class>cz.muni.fi.gag.web.entity.WristDataLine</class>
-		<class>cz.muni.fi.gag.web.entity.WristSensorOffset</class>
+		<class>cz.muni.fi.gag.web.persistence.entity.GenericEntity</class>
+		<class>cz.muni.fi.gag.web.persistence.entity.DataLine</class>
+		<class>cz.muni.fi.gag.web.persistence.entity.FingerDataLine</class>
+		<class>cz.muni.fi.gag.web.persistence.entity.FingerSensorOffset</class>
+		<class>cz.muni.fi.gag.web.persistence.entity.Gesture</class>
+		<class>cz.muni.fi.gag.web.persistence.entity.HandDevice</class>
+		<class>cz.muni.fi.gag.web.persistence.entity.SensorOffset</class>
+		<class>cz.muni.fi.gag.web.persistence.entity.User</class>
+		<class>cz.muni.fi.gag.web.persistence.entity.WristDataLine</class>
+		<class>cz.muni.fi.gag.web.persistence.entity.WristSensorOffset</class>
 
 		<properties>
+
+			<property name="hibernate.dialect" value="org.hibernate.dialect.MariaDB103Dialect"/>
+			<!--<property name="hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect"/>-->
+			<property name="hibernate.generate_statistics" value="true"/>
+			<property name="hibernate.archive.autodetection" value="class"/>
+			<property name="hibernate.show_sql" value="true"/>
+			<property name="hibernate.format_sql" value="true"/>
+			<property name="hibernate.hbm2ddl.auto" value="update"/>
+			<property name="hbm2ddl.auto" value="update"/>
+
+
 			<!-- Properties for Hibernate -->
-			<property name="hibernate.hbm2ddl.auto" value="create-drop" />
-			<property name="hibernate.show_sql" value="true" />
-			<property name="hibernate.format_sql" value="true" />
-			<property name="hibernate.search.default.directory_provider"
-					  value="filesystem" />
-			<property name="hibernate.dialect"
-					  value="org.hibernate.dialect.H2Dialect" />
-			<!--Lucene is not deleting entries on the DB drop, so on the app restart 
+<!--			<property name="hibernate.hbm2ddl.auto" value="create-drop" />-->
+<!--			<property name="hibernate.show_sql" value="true" />-->
+<!--			<property name="hibernate.format_sql" value="true" />-->
+<!--			<property name="hibernate.search.default.directory_provider"-->
+<!--					  value="filesystem" />-->
+<!--			<property name="hibernate.dialect"-->
+<!--					  value="org.hibernate.dialect.H2Dialect" />-->
+			<!--Lucene is not deleting entries on the DB drop, so on the app restart
 				previously used indexed create new entries in this directory so moving into 
 				target folder -->
-			<property name="hibernate.search.default.indexBase"
-					  value="${build.directory}/lucene/test/indexes" />
+<!--			<property name="hibernate.search.default.indexBase"-->
+<!--					  value="${build.directory}/lucene/test/indexes" />-->
 		</properties>
 	</persistence-unit>
 </persistence>
