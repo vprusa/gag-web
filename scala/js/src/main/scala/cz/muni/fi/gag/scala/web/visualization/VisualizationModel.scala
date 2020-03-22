@@ -53,13 +53,13 @@ class VisualizationScene[GeomType<:Object3D, QuaternionType<:Quaternion](val con
   @JSExport("renderAll")
   def renderAll(): Any ={
     cleanScene()
-    drawBothHands()
+    drawAllHands()
     onEnterFrame()
     renderer.render(scene, camera)
   }
 
   @JSExport("updateAngles")
-  def updateAngles(
+  def updateAngles(handsPairIndex: Int,
       rx: Float, ry: Float, rz: Float, rw: Float,
       rtx: Float, rty: Float, rtz: Float, rtw: Float,
       rix: Float, riy: Float, riz: Float, riw: Float,
@@ -105,19 +105,19 @@ class VisualizationScene[GeomType<:Object3D, QuaternionType<:Quaternion](val con
     rqr = rqr.multiply(rqC)
     rql = rql.multiply(rqC)
 
-    hands(1).thumbVis.rotate(rqt.asInstanceOf[QuaternionType])
-    hands(1).indexVis.rotate(rqi.asInstanceOf[QuaternionType])
-    hands(1).middleVis.rotate(rqm.asInstanceOf[QuaternionType])
-    hands(1).ringVis.rotate(rqr.asInstanceOf[QuaternionType])
-    hands(1).littleVis.rotate(rql.asInstanceOf[QuaternionType])
-    hands(1).rotate(rq.asInstanceOf[QuaternionType])
+    hands(handsPairIndex)(1).thumbVis.rotate(rqt.asInstanceOf[QuaternionType])
+    hands(handsPairIndex)(1).indexVis.rotate(rqi.asInstanceOf[QuaternionType])
+    hands(handsPairIndex)(1).middleVis.rotate(rqm.asInstanceOf[QuaternionType])
+    hands(handsPairIndex)(1).ringVis.rotate(rqr.asInstanceOf[QuaternionType])
+    hands(handsPairIndex)(1).littleVis.rotate(rql.asInstanceOf[QuaternionType])
+    hands(handsPairIndex)(1).rotate(rq.asInstanceOf[QuaternionType])
 
-    hands(0).rotate(lq.inverse().asInstanceOf[QuaternionType])
-    hands(0).thumbVis.rotate(lqt.asInstanceOf[QuaternionType])
-    hands(0).indexVis.rotate(lqi.asInstanceOf[QuaternionType])
-    hands(0).middleVis.rotate(lqm.asInstanceOf[QuaternionType])
-    hands(0).ringVis.rotate(lqr.asInstanceOf[QuaternionType])
-    hands(0).littleVis.rotate(lql.asInstanceOf[QuaternionType])
+    hands(handsPairIndex)(0).rotate(lq.inverse().asInstanceOf[QuaternionType])
+    hands(handsPairIndex)(0).thumbVis.rotate(lqt.asInstanceOf[QuaternionType])
+    hands(handsPairIndex)(0).indexVis.rotate(lqi.asInstanceOf[QuaternionType])
+    hands(handsPairIndex)(0).middleVis.rotate(lqm.asInstanceOf[QuaternionType])
+    hands(handsPairIndex)(0).ringVis.rotate(lqr.asInstanceOf[QuaternionType])
+    hands(handsPairIndex)(0).littleVis.rotate(lql.asInstanceOf[QuaternionType])
   }
 
   val colors = List("green", "red", "blue", "orange", "purple", "teal")
@@ -136,16 +136,23 @@ class VisualizationScene[GeomType<:Object3D, QuaternionType<:Quaternion](val con
   light.position.set(1, 1, 1).normalize()
   scene.add(light)
 
-  val hands: Array[HandVisualization[GeomType, QuaternionType]] = Array(
-    new HandVisualization[GeomType, QuaternionType](Hand.LEFT, this),
-    new HandVisualization[GeomType, QuaternionType](Hand.RIGHT, this)
+  // consider that 1. pair is the default one and second is referential
+  val hands: Array[Array[HandVisualization[GeomType, QuaternionType]]] = Array(Array(
+      new HandVisualization[GeomType, QuaternionType](Hand.LEFT, this),
+      new HandVisualization[GeomType, QuaternionType](Hand.RIGHT, this)
+    ), Array(
+      new HandVisualization[GeomType, QuaternionType](Hand.LEFT, this),
+      new HandVisualization[GeomType, QuaternionType](Hand.RIGHT, this)
+    )
   )
   camera.setLens(3,1)
 
-  hands(0).setLog(Log)
-  hands(1).setLog(Log)
+  for(handsPair <- hands) {
+    handsPair(0).setLog(Log)
+    handsPair(1).setLog(Log)
+  }
 
-  def drawBothHands() = {
+  def drawBothHands(hands: Array[HandVisualization[GeomType, QuaternionType]], color: Color) = {
     val dot = new Object3D()
     scene.rotateY(Math.PI)
     dot.position.set( 170, -150, 0.0)
@@ -162,6 +169,28 @@ class VisualizationScene[GeomType<:Object3D, QuaternionType<:Quaternion](val con
     hands(1).drawWholeHand(dot2.asInstanceOf[GeomType])
   }
 
+  def getHandsColor(i: Int): Color ={
+    // TODO ...
+    i match{
+      case 0 => {
+        return new Color(0,1,1)
+      }
+      case 1 => {
+        return  new Color(1,0,1)
+      }
+    }
+    new Color(1,0,0)
+  }
+
+  def drawAllHands(): Unit ={
+    scene.rotateY(Math.PI)
+    var i:Int = 0
+    for(handsPair <- hands) {
+      drawBothHands(handsPair, getHandsColor(i))
+      i+=1
+    }
+  }
+
   /**
    * Clean all .. cause I am nasty and want to rape graphic resources but redrawing EVERYTHING
    * TODO change redrawing just changed values ... keep track of drawn objects (modularize parts)
@@ -176,17 +205,17 @@ class VisualizationScene[GeomType<:Object3D, QuaternionType<:Quaternion](val con
   }
 
   @JSExport("rotatePart")
-  def rotatePart(hi: Int, si: Int, x: Float, y: Float, z: Float){
+  def rotatePart(handsPair: Int, hi: Int, si: Int, x: Float, y: Float, z: Float){
     val h: Hand.Hand = if (hi == 0) Hand.RIGHT else Hand.LEFT
     val s: Sensor = Sensor.values(si)
-    val hand = if (h == Hand.RIGHT) hands(1) else hands(0)
+    val hand = if (h == Hand.RIGHT) hands(handsPair)(1) else hands(handsPair)(0)
     //part.rotate(0,x,y,z)
     val part = hand.getBy(s)
     part.rotateX(x)
     part.rotateY(y)
     part.rotateZ(z)
   }
-  drawBothHands()
+  drawAllHands()
 
   // Below are methods that implement with VisualizationContextT
   // docs https://threejs.org/docs/
