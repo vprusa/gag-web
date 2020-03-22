@@ -93,8 +93,7 @@ public class RecordedDataFilterTest extends TestServiceBase {
             filtered.setData(Collections.emptyList());
             filtered = gestureService.create(filtered);
             log.info("Created filtered (base): " + filtered.toString());
-            rdf.filter(g,filtered, 2, true);
-
+            rdf.filter(g,filtered, 1f, true);
             filtered.setFiltered(true);
             filtered = gestureService.update(filtered);
             log.info("Created filtered (final): " + filtered.toString());

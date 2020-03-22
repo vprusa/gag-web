@@ -36,17 +36,17 @@ angular.module('app').factory('VisTools', function () {
     vis.currentGesture.currentTime = 0;
   };
 
+  // TODO move parseFloat somewhere else, e.g. inside THREE.Quaternion ?
   vis.updateVisFromDataLine = function (dl) {
     //console.log("updateVisFromDataLine");
     //console.log(dl);
     vis.currentGesture.currentTime = dl.t;
     switch (dl.p) {
       case "THUMB":{
-          let ar = new THREE.Quaternion(parseFloat(dl.qX), parseFloat(dl.qY), parseFloat(dl.qZ), parseFloat(dl.qA));
-          vis.currentGesture.data.rqt = ar;
-          vis.updateVisualization();
-        }
-        break;
+        let ar = new THREE.Quaternion(parseFloat(dl.qX), parseFloat(dl.qY), parseFloat(dl.qZ), parseFloat(dl.qA));
+        vis.currentGesture.data.rqt = ar;
+        vis.updateVisualization();
+      }break;
       case "INDEX": {
         let ar = new THREE.Quaternion(parseFloat(dl.qX), parseFloat(dl.qY), parseFloat(dl.qZ), parseFloat(dl.qA));
         vis.currentGesture.data.rqi = ar;
@@ -113,7 +113,7 @@ angular.module('app').factory('VisTools', function () {
     //data.rq._z *= 10.0;
     //data.rq._w *= 10.0;
     //console.log(data.rqm);
-    handVisualization.scene.updateAngles(
+    handVisualization.scene.updateAngles(0,
       // TODO make wrist work
       //data.rq._y, -data.rq._x, data.rq._z, data.rq._w,
       data.rq._x, data.rq._y, data.rq._z, data.rq._w,

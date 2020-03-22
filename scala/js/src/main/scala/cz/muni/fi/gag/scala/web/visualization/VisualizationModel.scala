@@ -19,16 +19,6 @@ import scala.scalajs.js
 import scala.scalajs.js.annotation.{JSExport, JSName}
 import scala.util.Random
 
-// TODO rename to more self-explanatory name in given context
-object VisualizationModel extends VisualizationData {
-  def activate(): VisualizationScene[Object3D, Quaternion] = {
-    val el: HTMLElement = scalajs.dom.document.getElementById("container").asInstanceOf[HTMLElement]
-    val demo = new VisualizationScene[Object3D, Quaternion](el, 400, 250)
-    demo.render()
-    demo
-  }
-}
-
 class VisualizationScene[GeomType<:Object3D, QuaternionType<:Quaternion](val container: HTMLElement, val width: Double, val height: Double)
   extends Container3D with VisualizationContextT[GeomType, QuaternionType] {
 
