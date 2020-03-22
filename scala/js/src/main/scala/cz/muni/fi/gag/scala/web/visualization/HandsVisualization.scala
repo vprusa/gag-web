@@ -18,7 +18,7 @@ object HandsVisualization extends BindableView with scalajs.js.JSApp {
   lazy val elem: HTMLElement = org.scalajs.dom.document.body
 
 //  type GeomType = Object3D
-  type GeomType = Object3DWithMat
+  type GeomType = Object3DWithProps
   type QuaternionType = Quaternion
 //  GeomType<:Object3DWithMat, QuaternionType<:Quaternion
 

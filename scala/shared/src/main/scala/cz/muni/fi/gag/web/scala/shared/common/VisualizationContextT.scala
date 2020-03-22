@@ -4,6 +4,8 @@ import scala.collection.mutable.ArrayBuffer
 
 trait VisualizationContextT[GeomType, QuaternionType] {
 
+  // TODO ColorType setter/getter?
+
   def _add(geom: GeomType, x:Float, y:Float, z:Float): Option[GeomType]
 
   def _point(fl: Float, fl1: Float, fl2: Float, geomHolder: Option[GeomType]): GeomType

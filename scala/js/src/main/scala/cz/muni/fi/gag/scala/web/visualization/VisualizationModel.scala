@@ -6,7 +6,7 @@ import cz.muni.fi.gag.web.scala.shared.Hand
 import cz.muni.fi.gag.web.scala.shared.common.VisualizationContextT
 import cz.muni.fi.gag.web.scala.shared.recognition.Sensor
 import cz.muni.fi.gag.web.scala.shared.recognition.Sensor.Sensor
-import org.denigma.threejs.{Object3D, PerspectiveCamera, _}
+import org.denigma.threejs.{Color, Object3D, PerspectiveCamera, _}
 import org.denigma.threejs.extensions.Container3D
 import org.denigma.threejs.extensions.controls.{CameraControls, JumpCameraControls}
 import org.denigma.threejs.extras.HtmlSprite
@@ -19,7 +19,9 @@ import scala.scalajs.js
 import scala.scalajs.js.annotation.{JSExport, JSName}
 import scala.util.Random
 
-class VisualizationScene[GeomType<:Object3D, QuaternionType<:Quaternion](val container: HTMLElement, val width: Double, val height: Double)
+class VisualizationScene[GeomType<:Object3DWithProps, QuaternionType<:Quaternion](val container: HTMLElement, val width: Double, val height: Double)
+//class VisualizationScene[GeomType<:Object3D, QuaternionType<:Quaternion](val container: HTMLElement, val width: Double, val height: Double)
+//class VisualizationScene[GeomType, QuaternionType](val container: HTMLElement, val width: Double, val height: Double)
   extends Container3D with VisualizationContextT[GeomType, QuaternionType] {
 
   /*
@@ -136,6 +138,7 @@ class VisualizationScene[GeomType<:Object3D, QuaternionType<:Quaternion](val con
   light.position.set(1, 1, 1).normalize()
   scene.add(light)
 
+  // TODO remove tight-coupling
   // consider that 1. pair is the default one and second is referential
   val hands: Array[Array[HandVisualization[GeomType, QuaternionType]]] = Array(Array(
       new HandVisualization[GeomType, QuaternionType](Hand.LEFT, this),
@@ -152,8 +155,11 @@ class VisualizationScene[GeomType<:Object3D, QuaternionType<:Quaternion](val con
     handsPair(1).setLog(Log)
   }
 
-  def drawBothHands(hands: Array[HandVisualization[GeomType, QuaternionType]], color: Color) = {
-    val dot = new Object3D()
+  val defaultHandsColor = new Color(0xFFFFFF)
+  val anyHandsColor = new Color(0x00FFFF)
+
+  def drawBothHands(hands: Array[HandVisualization[GeomType, QuaternionType]], color:Color) = {
+    val dot = new Object3DWithProps(color)
     scene.rotateY(Math.PI)
     dot.position.set( 170, -150, 0.0)
     scene.add(dot)
@@ -162,7 +168,7 @@ class VisualizationScene[GeomType<:Object3D, QuaternionType<:Quaternion](val con
     //hands(1).rotateY((Math.PI).toFloat)
 
     // left hand
-    val dot2 = new Object3D()
+    val dot2 = new Object3DWithProps(color)
     dot2.position.set( -170, -150, 0.0)
     scene.add(dot2)
 
@@ -186,7 +192,11 @@ class VisualizationScene[GeomType<:Object3D, QuaternionType<:Quaternion](val con
     scene.rotateY(Math.PI)
     var i:Int = 0
     for(handsPair <- hands) {
-      drawBothHands(handsPair, getHandsColor(i))
+      var color = defaultHandsColor
+      if(i>0){
+        color = anyHandsColor
+      }
+      drawBothHands(handsPair, color)
       i+=1
     }
   }
@@ -232,43 +242,62 @@ class VisualizationScene[GeomType<:Object3D, QuaternionType<:Quaternion](val con
 
   // https://stackoverflow.com/questions/45189592/in-scala-js-how-to-best-create-an-object-conforming-to-a-trait-from-a-js-fa%C3%A7ade
   val dotMatParams = js.Dynamic.literal(
-    color = 255.0
+    color = 0xFFFF00
+//      color = 255
   ).asInstanceOf[MeshBasicMaterialParameters]
 
   val lineMatParams = js.Dynamic.literal(
-    color = 255.0
+    color = 0xFF33FF
   ).asInstanceOf[LineBasicMaterialParameters]
+
+  val lineMatParamColor = new Color(0xFFFF00)
 
   override def _point(x: Float, y: Float, z: Float, geomHolder: Option[GeomType]): GeomType= {
     val geometry = new SphereGeometry( 5, 32, 32 )
     geometry.applyMatrix(new Matrix4().makeTranslation(x, y, z))
-    val material = new MeshBasicMaterial(dotMatParams) //color = 0xffff00
-    val sphere = new Mesh( geometry, material )
+//    val material = new MeshBasicMaterial(dotMatParams) //color = 0xffff00
+    val mat = new MeshBasicMaterial()
+    if(geomHolder.nonEmpty){
+      mat.color = geomHolder.get.color
+    }
+    val sphere = new Mesh( geometry, mat )
     val posObj = geomHolder.get
     if(posObj.isInstanceOf[Object3D]){
       val obj = posObj.asInstanceOf[Object3D]
       obj.add( sphere )
     }
     Log.dump(sphere, Log.Level.VIS_CONTEXT)
+
+    if(geomHolder.nonEmpty){
+      sphere.asInstanceOf[GeomType].color = geomHolder.get.color
+    }
     sphere.asInstanceOf[GeomType]
   }
 
   override def _line(sx: Float, sy: Float, sz: Float, ex: Float, ey: Float, ez: Float
                      ,geomHolder: Option[GeomType]): GeomType = {
-    val mat = new LineBasicMaterial(lineMatParams)
+    val mat = new LineBasicMaterial()
+    if(geomHolder.nonEmpty){
+      mat.color = geomHolder.get.color
+    }
     val geo = new Geometry()
+
     geo.vertices.push(new Vector3(sx, sy, sz))
     geo.vertices.push(new Vector3(ex, ey, ez))
     val line = new Line(geo, mat)
     geomHolder.get.add(line)
     Log.dump(line, Log.Level.VIS_CONTEXT)
+
+    if(geomHolder.nonEmpty){
+      line.asInstanceOf[GeomType].color = geomHolder.get.color
+    }
     line.asInstanceOf[GeomType]
   }
 
   override def _add(geom: GeomType, x:Float, y:Float, z:Float): Option[GeomType] = {
-    val p = new Object3D()
+    val p = new Object3DWithProps(geom.color)
     p.position.set(x,y,z)
-    geom.asInstanceOf[Object3D].add( p )
+    geom.asInstanceOf[Object3DWithProps].add( p )
     val opt = Option(p.asInstanceOf[GeomType])
     opt
   }
@@ -351,7 +380,6 @@ class VisualizationControls(cam: Camera, el: HTMLElement, sc: Scene, width: Doub
     }
 
     rotateOnMove(event)
-
   }
 
 }

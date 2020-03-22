@@ -9,6 +9,7 @@ import cz.muni.fi.gag.web.scala.shared.common.VisualizationContextT
  * */
 class HandVisualization[GeomType, QuaternionType](override val hi: Hand.Hand, override val app: VisualizationContextT[GeomType, QuaternionType])
   extends VisualizationBase(hi, app) {
+
   var thumbVis = new FingerVisualization[GeomType, QuaternionType](hi, this, app, 50, 50, 50, 50)
   var indexVis = new FingerVisualization[GeomType, QuaternionType](hi, this, app, 25, 112, 60, 45, 30)
   var middleVis = new FingerVisualization[GeomType, QuaternionType](hi, this, app,  0, 120, 70, 50, 35)
