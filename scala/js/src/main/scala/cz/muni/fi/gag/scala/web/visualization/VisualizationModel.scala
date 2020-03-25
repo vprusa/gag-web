@@ -15,11 +15,13 @@ import org.scalajs.dom.MouseEvent
 import org.scalajs.dom.raw.HTMLElement
 import scalatags.JsDom.all._
 
+import scala.collection.mutable.ArrayBuffer
 import scala.scalajs.js
 import scala.scalajs.js.annotation.{JSExport, JSName}
 import scala.util.Random
 
-class VisualizationScene[GeomType<:Object3DWithProps, QuaternionType<:Quaternion](val container: HTMLElement, val width: Double, val height: Double)
+class VisualizationScene[GeomType<:Object3DWithProps, QuaternionType<:Quaternion]
+(val container: HTMLElement, val width: Double, val height: Double, var numberOfHandsPairs: Int = 1)
 //class VisualizationScene[GeomType<:Object3D, QuaternionType<:Quaternion](val container: HTMLElement, val width: Double, val height: Double)
 //class VisualizationScene[GeomType, QuaternionType](val container: HTMLElement, val width: Double, val height: Double)
   extends Container3D with VisualizationContextT[GeomType, QuaternionType] {
@@ -40,10 +42,12 @@ class VisualizationScene[GeomType<:Object3DWithProps, QuaternionType<:Quaternion
     cssRenderer.render(cssScene, camera)
   }
 
+
   override protected def initRenderer() = {
     val vr = super.initRenderer()
     vr.domElement.style.position = "relative"
     vr.domElement.style.display = "inline-block"
+
     vr
   }
 
@@ -138,22 +142,36 @@ class VisualizationScene[GeomType<:Object3DWithProps, QuaternionType<:Quaternion
   light.position.set(1, 1, 1).normalize()
   scene.add(light)
 
-  // TODO remove tight-coupling
+
+  @JSExport("getNumberOfHandsPairs")
+  def getNumberOfHandsPairs(): Int ={
+    numberOfHandsPairs
+  }
+
+  @JSExport("setNumberOfHandsPairs")
+  def setNumberOfHandsPairs(i:Int): Unit ={
+    numberOfHandsPairs = i
+    // TODO redraw hands (only new?) , if -lt prev then remove from the newest/lowest
+  }
+
+  // TODO refactor not to use tight-coupling
   // consider that 1. pair is the default one and second is referential
-  val hands: Array[Array[HandVisualization[GeomType, QuaternionType]]] = Array(Array(
-      new HandVisualization[GeomType, QuaternionType](Hand.LEFT, this),
-      new HandVisualization[GeomType, QuaternionType](Hand.RIGHT, this)
-    ), Array(
+  var hands: ArrayBuffer[Array[HandVisualization[GeomType, QuaternionType]]] = ArrayBuffer[Array[HandVisualization[GeomType, QuaternionType]]]()
+
+  for (i <- 1 to numberOfHandsPairs) {
+    hands += Array[HandVisualization[GeomType, QuaternionType]](
       new HandVisualization[GeomType, QuaternionType](Hand.LEFT, this),
       new HandVisualization[GeomType, QuaternionType](Hand.RIGHT, this)
     )
-  )
-  camera.setLens(3,1)
+  }
 
   for(handsPair <- hands) {
-    handsPair(0).setLog(Log)
-    handsPair(1).setLog(Log)
+    handsPair(Hand.LEFT.id).setLog(Log)
+    handsPair(Hand.RIGHT.id).setLog(Log)
   }
+
+  camera.setLens(3,1)
+
 
   val defaultHandsColor = new Color(0xFFFFFF)
   val anyHandsColor = new Color(0x00FFFF)
@@ -164,7 +182,7 @@ class VisualizationScene[GeomType<:Object3DWithProps, QuaternionType<:Quaternion
     dot.position.set( 170, -150, 0.0)
     scene.add(dot)
 
-    hands(0).drawWholeHand(dot.asInstanceOf[GeomType])
+    hands(Hand.LEFT.id).drawWholeHand(dot.asInstanceOf[GeomType])
     //hands(1).rotateY((Math.PI).toFloat)
 
     // left hand
@@ -172,30 +190,27 @@ class VisualizationScene[GeomType<:Object3DWithProps, QuaternionType<:Quaternion
     dot2.position.set( -170, -150, 0.0)
     scene.add(dot2)
 
-    hands(1).drawWholeHand(dot2.asInstanceOf[GeomType])
+    hands(Hand.RIGHT.id).drawWholeHand(dot2.asInstanceOf[GeomType])
   }
 
   def getHandsColor(i: Int): Color ={
     // TODO ...
     i match{
       case 0 => {
-        return new Color(0,1,1)
+        return defaultHandsColor
       }
       case 1 => {
-        return  new Color(1,0,1)
+        return  anyHandsColor
       }
     }
-    new Color(1,0,0)
+    defaultHandsColor
   }
 
   def drawAllHands(): Unit ={
     scene.rotateY(Math.PI)
     var i:Int = 0
     for(handsPair <- hands) {
-      var color = defaultHandsColor
-      if(i>0){
-        color = anyHandsColor
-      }
+      var color = getHandsColor(i)
       drawBothHands(handsPair, color)
       i+=1
     }

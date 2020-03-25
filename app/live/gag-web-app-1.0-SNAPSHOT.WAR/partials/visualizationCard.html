@@ -17,7 +17,16 @@
 			});
 			//if(handVisualization == null){
 				handVisualization = HandsVisualization();
+				//handVisualization.numberOfHandsPairs$2 = $('#vis-numberOfHandsPairs').val();
+				console.log("handVisualization.numberOfHandsPairs");
+				console.log(handVisualization.numberOfHandsPairs);
+				//handVisualization.scene$2.setNumberOfHandsPairs($('#vis-numberOfHandsPairs').val());
+				console.log("$('#vis-numberOfHandsPairs').val()");
+				var numberOfHandsPairs = $('#vis-numberOfHandsPairs').val();
+				console.log(numberOfHandsPairs);
+				handVisualization.setNumberOfHandsPairs(parseInt(numberOfHandsPairs));
 				handVisualization.main(); //activate ScalaJS main class
+
 			//}
 	    });
 	</script>

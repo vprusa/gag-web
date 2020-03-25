@@ -16,7 +16,7 @@ object Log extends LogT {
     case object ALL extends LogLevel
   }
 
-  var logLevel: Level.LogLevel = Level.VIS_CONTEXT
+  var logLevel: Level.LogLevel = Level.NONE
 
   def dump(msg: Any, lvl: Level.LogLevel): Unit = {
     if(lvl == logLevel || logLevel == ALL || logLevel.isInstanceOf[lvl.type]){dump(msg)}

@@ -3,13 +3,15 @@ package cz.muni.fi.gag.scala.web.visualization
 import org.denigma.binding.binders.GeneralBinder
 import org.denigma.binding.extensions.sq
 import org.denigma.binding.views.BindableView
-import org.denigma.threejs.{Material, Object3D, Quaternion}
+import org.denigma.threejs.Quaternion
 import org.scalajs.dom.raw.HTMLElement
 
-import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel}
+import scala.scalajs.js.annotation.JSExport
 
 
 /**
+ * @author Vojtech Prusa (prusa.vojtech@gmail.com)
+ *
  * Just a simple view for the whole app, if interested ( see https://github.com/antonkulaga/scala-js-binding )
  */
 @JSExport("HandsVisualization")
@@ -22,13 +24,25 @@ object HandsVisualization extends BindableView with scalajs.js.JSApp {
   type QuaternionType = Quaternion
 //  GeomType<:Object3DWithMat, QuaternionType<:Quaternion
 
+  var numberOfHandsPairs = 1
+
+  @JSExport("getNumberOfHandsPairs")
+  def getNumberOfHandsPairs(): Int ={
+    numberOfHandsPairs
+  }
+
+  @JSExport("setNumberOfHandsPairs")
+  def setNumberOfHandsPairs(i:Int): Unit ={
+    numberOfHandsPairs = i
+  }
+
   // Object3DWithMat Object3D
   // TODO rename to more self-explanatory name in given context
   @JSExport("VisualizationModel")
   object VisualizationModel extends VisualizationData {
     def activate(): VisualizationScene[GeomType, QuaternionType] = {
       val el: HTMLElement = org.scalajs.dom.document.getElementById("container").asInstanceOf[HTMLElement]
-      val demo = new VisualizationScene[GeomType, QuaternionType](el, 400, 250)
+      val demo = new VisualizationScene[GeomType, QuaternionType](el, 400, 250, numberOfHandsPairs)
       demo.render()
       demo
     }
