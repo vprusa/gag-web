@@ -174,7 +174,8 @@ public abstract class AuthenticationTestBase extends TestEndpointBase {
         try {
             WebTarget target = client.target(KEYCLOAK_AUTH_URL);
             Response response = target.request().get();
-            if (response.getStatusInfo().getStatusCode() == 200) {
+//            if (response.getStatusInfo().getStatusCode() == 200) {
+            if (response.getStatus() == 200) {
                 log.info("KC already running so lets NOT start it again.");
                 return;
             }

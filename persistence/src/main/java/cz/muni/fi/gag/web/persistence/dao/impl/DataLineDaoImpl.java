@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 /**
  * @author Miloslav Zezulka, Vojtech Prusa
  *
- * {@link cz.muni.fi.gag.web.service.impl.DataLineServiceImpl}
+ * {@link cz.muni.fi.gag.web.services.service.impl.DataLineServiceImpl}
  */
 @ApplicationScoped
 public class DataLineDaoImpl extends AbstractGenericDao<DataLine> implements DataLineDao, Serializable {
@@ -48,7 +48,7 @@ public class DataLineDaoImpl extends AbstractGenericDao<DataLine> implements Dat
     @Transactional
     @Override
     public Stream<DataLine> getStream(long gestureId) {
-//        log.info("getChunkForGesture: gestureId: " + gestureId);
+//        log.trace("getChunkForGesture: gestureId: " + gestureId);
         return em
                 .createQuery("SELECT g FROM DataLine g WHERE gesture_id = :gestureId", // ORDER BY timestamp ASC
                         DataLine.class)
@@ -59,23 +59,23 @@ public class DataLineDaoImpl extends AbstractGenericDao<DataLine> implements Dat
     @Transactional
     @Override
     public List<DataLine> getChunkForGesture(long gestureId, int offset, int max) {
-//        log.info("getChunkForGesture: gestureId: " + gestureId + " offset: " + offset + " max: " + max);
+//        log.trace("getChunkForGesture: gestureId: " + gestureId + " offset: " + offset + " max: " + max);
         List<DataLine> dll = em
                 .createQuery("SELECT g FROM DataLine g WHERE gesture_id = :gestureId",
                         DataLine.class)
                 .setParameter("gestureId", gestureId).getResultList();
 //        FingerDataLine[] dla = new FingerDataLine[dll.size()];
 //        dla = (FingerDataLine[]) dll.toArray();
-//        log.info("dll.toArray(): " +  dla.length);
+//        log.trace("dll.toArray(): " +  dla.length);
 //        for(FingerDataLine dl : dla){
-//            log.info("DL: " + dl.toString());
+//            log.trace("DL: " + dl.toString());
 //        }
         return dll;
     }
 
     @Override
     public int removeBy(Long gestureId) {
-        log.info("removeBy: gestureId: " + gestureId);
+        log.trace("removeBy: gestureId: " + gestureId);
         return  em.createQuery("DELETE FROM DataLine g WHERE gesture_id = :gestureId")
             .setParameter("gestureId", gestureId).executeUpdate();
     }

@@ -33,12 +33,12 @@ public class DataLineGestureIterator implements Iterator<DataLine> {
     }
 
     public void loadChunkIfPossible() {
-        log.info("loadChunkIfPossible: ");
+        log.trace("loadChunkIfPossible: ");
         if (dll == null || dll.isEmpty()) {
             dll = dataLineDao.getChunkForGesture(gestureId, offset, ITERATOR_MAX_COUNT);
-            log.info("First load: " + offset + " + " + dll.size());
+            log.trace("First load: " + offset + " + " + dll.size());
         } else if (!dll.iterator().hasNext()) {
-            log.info("Not having enough: " + offset + " + " + dll.size());
+            log.trace("Not having enough: " + offset + " + " + dll.size());
             offset += dll.size();
             dll = dataLineDao.getChunkForGesture(gestureId, offset, ITERATOR_MAX_COUNT);
         }
@@ -47,17 +47,17 @@ public class DataLineGestureIterator implements Iterator<DataLine> {
 
     @Override
     public boolean hasNext() {
-        log.info("hasNext");
+        log.trace("hasNext");
         loadChunkIfPossible();
         return dll.iterator().hasNext();
     }
 
     @Override
     public DataLine next() {
-        log.info("next");
+        log.trace("next");
         if(hasNext()) {
             DataLine dl = dll.iterator().next();
-            log.info("next - dl: " + dl.toString());
+            log.trace("next - dl: " + dl.toString());
             return dl;
         }
         return null;

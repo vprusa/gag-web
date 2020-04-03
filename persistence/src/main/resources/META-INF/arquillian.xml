@@ -28,9 +28,9 @@
 		<configuration>
 			<property name="jbossHome">${jbossHome:../wildfly-16.0.0.Final}</property>
 			<property name="allowConnectingToRunningServer">true</property>
+<!--			<property name="javaVmArguments">-Xrunjdwp=transport=dt_socket,address=8000,server=y,suspend=n -Djava.util.logging.manager=org.jboss.logmanager.LogManager</property>-->
 			<!--<property name="modulePath">${jbossHome:../target/wildfly-16.0.0.Final}/modules/</property> -->
-			<!-- <property name="javaVmArguments">-Xmx512m -XX:MaxPermSize=128m -Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=y 
-				</property> -->
+			 <property name="javaVmArguments">-Xmx5G -XX:MaxPermSize=128m -Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=y  </property>
 			<!--<property name="javaVmArguments">-Djboss.socket.binding.port-offset=${randomPortOffset:100} 
 				-Djboss.management.http.port=9054</property> -->
 			<!--<property name="waitForPortsTimeoutInSeconds">8</property> -->
