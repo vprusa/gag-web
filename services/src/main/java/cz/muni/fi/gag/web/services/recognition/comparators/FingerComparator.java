@@ -7,8 +7,8 @@ import cz.muni.fi.gag.web.persistence.entity.Sensor;
 /**
  * @author Vojtech Prusa
  */
-public class FingerSensorGestureR extends SensorGestureR<FingerDataLine> {
-    public FingerSensorGestureR(Sensor s, Gesture gRef) {
+public class FingerComparator extends SensorComparator<FingerDataLine> {
+    public FingerComparator(Sensor s, Gesture gRef) {
         super(s, gRef);
     }
 }

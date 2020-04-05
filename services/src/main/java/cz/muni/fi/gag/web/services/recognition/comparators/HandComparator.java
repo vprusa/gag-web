@@ -3,22 +3,22 @@ package cz.muni.fi.gag.web.services.recognition.comparators;
 import cz.muni.fi.gag.web.persistence.entity.FingerDataLine;
 import cz.muni.fi.gag.web.persistence.entity.Gesture;
 import cz.muni.fi.gag.web.persistence.entity.Sensor;
-import cz.muni.fi.gag.web.services.recognition.GestureComparator;
+import cz.muni.fi.gag.web.services.recognition.GestureMatchComparator;
 import cz.muni.fi.gag.web.services.recognition.GestureMatcher;
 
 /**
  * @author Vojtech Prusa
  */
-public class HandSensorGestureR implements GestureComparator<FingerDataLine> {
-    public final SensorGestureR[] fingers = new SensorGestureR[Sensor.values().length];
+public class HandComparator implements GestureMatchComparator<FingerDataLine> {
+    public final SensorComparator[] fingers = new SensorComparator[Sensor.values().length];
 
-    public HandSensorGestureR(Gesture gRef) {
+    public HandComparator(Gesture gRef) {
         for (int i = 0; i < fingers.length; i++) {
             Sensor s = Sensor.values()[i];
             if (s == Sensor.WRIST) {
-                fingers[i] = new WristSensorGestureR(s, gRef);
+                fingers[i] = new WristComparator(s, gRef);
             } else {
-                fingers[i] = new FingerSensorGestureR(s, gRef);
+                fingers[i] = new FingerComparator(s, gRef);
             }
         }
     }

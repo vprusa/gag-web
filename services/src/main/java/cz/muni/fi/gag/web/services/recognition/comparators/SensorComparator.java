@@ -10,11 +10,11 @@ import java.util.stream.Collectors;
 /**
  * @author Vojtech Prusa
  */
-public class SensorGestureR<T extends FingerDataLine> extends GestureR<T> {
+public class SensorComparator<T extends FingerDataLine> extends BaseComparator<T> {
 
     protected final Sensor s;
 
-    public SensorGestureR(final Sensor s, final Gesture gRef) {
+    public SensorComparator(final Sensor s, final Gesture gRef) {
         super(gRef);
         this.s = s;
         this.ref = this.filterDataLines(gRef.getData());

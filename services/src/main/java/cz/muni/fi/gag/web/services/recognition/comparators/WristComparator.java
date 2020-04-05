@@ -7,8 +7,8 @@ import cz.muni.fi.gag.web.persistence.entity.WristDataLine;
 /**
  * @author Vojtech Prusa
  */
-public class WristSensorGestureR extends SensorGestureR<WristDataLine> {
-    public WristSensorGestureR(Sensor s, Gesture gRef) {
+public class WristComparator extends SensorComparator<WristDataLine> {
+    public WristComparator(Sensor s, Gesture gRef) {
         super(s, gRef);
     }
 }

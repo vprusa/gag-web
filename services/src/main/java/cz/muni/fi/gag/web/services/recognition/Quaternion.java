@@ -17,13 +17,6 @@
 
 package cz.muni.fi.gag.web.services.recognition;
 
-//import org.apache.commons.math3.exception.DimensionMismatchException;
-//import org.apache.commons.math3.exception.ZeroException;
-//import org.apache.commons.math3.exception.util.LocalizedFormats;
-//import org.apache.commons.math3.util.FastMath;
-//import org.apache.commons.math3.util.MathUtils;
-//import org.apache.commons.math3.util.Precision;
-
 import org.h2.util.Utils;
 
 import java.io.Serializable;

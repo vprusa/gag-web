@@ -2,7 +2,7 @@ package cz.muni.fi.gag.web.services.recognition.comparators;
 
 import cz.muni.fi.gag.web.persistence.entity.FingerDataLine;
 import cz.muni.fi.gag.web.persistence.entity.Gesture;
-import cz.muni.fi.gag.web.services.recognition.GestureComparator;
+import cz.muni.fi.gag.web.services.recognition.GestureMatchComparator;
 import cz.muni.fi.gag.web.services.recognition.GestureMatcher;
 import cz.muni.fi.gag.web.services.recognition.Quaternion;
 
@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * @author Vojtech Prusa
  */
-public class GestureR<T extends FingerDataLine> implements GestureComparator<T> {
+public class BaseComparator<T extends FingerDataLine> implements GestureMatchComparator<T> {
 
     public static final int BUFFER_SIZE = 20;
     // List<T> firstNBuffer = new ArrayList<T>();
@@ -23,7 +23,7 @@ public class GestureR<T extends FingerDataLine> implements GestureComparator<T> 
     static final float matchDistanceThreshold = 0.5f;
     final protected List<GestureMatcher> matches = new ArrayList<GestureMatcher>();
 
-    public GestureR(final Gesture gRef) {
+    public BaseComparator(final Gesture gRef) {
         this.gRef = gRef;
     }
 
