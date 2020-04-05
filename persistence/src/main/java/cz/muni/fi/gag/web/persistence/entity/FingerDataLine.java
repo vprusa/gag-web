@@ -212,9 +212,8 @@ public class FingerDataLine extends DataLine {
 
     @Override
     public String toString() {
-        return "FingerDataLine [quatA=" + quatA + ", quatX=" + quatX + ", quatY=" + quatY + ", quatZ=" + quatZ
-                + ", accX=" + accX + ", accY=" + accY + ", accZ=" + accZ + "] "
-                + super.toString();
+        return super.toString() + " FingerDataLine [quatA=" + quatA + ", quatX=" + quatX + ", quatY=" + quatY + ", quatZ=" + quatZ
+                + ", accX=" + accX + ", accY=" + accY + ", accZ=" + accZ + "]";
     }
 
 }

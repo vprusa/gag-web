@@ -4,6 +4,9 @@ import cz.muni.fi.gag.tests.common.FileLogger;
 import cz.muni.fi.gag.tests.common.TestServiceBase;
 import cz.muni.fi.gag.web.persistence.entity.*;
 import cz.muni.fi.gag.web.services.filters.RecordedDataFilterImpl;
+import cz.muni.fi.gag.web.services.recognition.GestureMatcher;
+import cz.muni.fi.gag.web.services.recognition.comparators.HandSensorGestureR;
+import cz.muni.fi.gag.web.services.recognition.comparators.SensorGestureR;
 import cz.muni.fi.gag.web.services.service.GestureService;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -15,13 +18,16 @@ import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
 import java.io.File;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
+
+//import cz.muni.fi.gag.web.scala.shared.recognition.SensorGestureI;
 
 //import cz.muni.fi.gag.web.scala.shared.recognition.SensorGestureI;
 
@@ -30,11 +36,10 @@ import static org.junit.Assert.assertTrue;
  */
 @RunWith(Arquillian.class)
 public class RecognitionTest extends TestServiceBase {
-//        DataFilterEndpointTestBase {
 // And so I got to the point when arquillian debugging would be nice
 // http://arquillian.org/guides/getting_started_rinse_and_repeat/#debug_a_managed_server
-//    private static Logger log = Logger.getLogger(RecognitionTest.class.getSimpleName());
-    private static Logger log = FileLogger.getLogger(RecognitionTest.class.getSimpleName());
+
+    public static Logger log = FileLogger.getLogger(RecognitionTest.class.getSimpleName());
 
     @Deployment
     public static WebArchive deployment() {
@@ -70,14 +75,63 @@ public class RecognitionTest extends TestServiceBase {
     public GestureService gestureService;
 
     @Inject
-//    public RecordedDataFilter rdf;
     public RecordedDataFilterImpl rdf;
 
     @Test
-//    @RunAsClient
-    public void testGestureRecognitionMatch() {
-        log.info("testRecordedDataFilter");
+    public void testGestureRecognizedNoneSensorMatched() {
+        log.info("testGestureRecognizedNoneSensorMatched");
+        Long gId = 19L;
+        Long gIdRef = 35L;
+        testGestureEverySensorRecognitionMatchFor(gId,gIdRef);
+    }
+
+//    @Test
+    public void testGestureRecognizedEverySensorMatched() {
+        log.info("testGestureRecognizedEverySensorMatched");
         Long gId = 21L;
+        Long gIdRef = 35L;
+        testGestureEverySensorRecognitionMatchFor(gId,gIdRef);
+    }
+
+    public void testGestureEverySensorRecognitionMatchFor( Long gId,  Long gIdRef) {
+        Optional<Gesture> gOpt = gestureService.findById(gId);
+        Optional<Gesture> gRefOpt = gestureService.findById(gIdRef);
+        assertTrue("Gesture is not present", gOpt.isPresent());
+        assertTrue("Ref Gesture is not present", gRefOpt.isPresent());
+
+        Gesture g = gOpt.get();
+        Gesture gRef = gRefOpt.get();
+
+        List<FingerDataLine> l = g.getData();
+        HandSensorGestureR hgi = new HandSensorGestureR(gRef);
+        GestureMatcher match = null;
+
+        GestureMatcher[] handMatches = new GestureMatcher[Sensor.values().length];
+
+        Iterator<FingerDataLine> iter = l.iterator();
+        while (iter.hasNext()) {
+            DataLine dl = iter.next();
+            FingerDataLine fdl = (FingerDataLine) dl;
+            match = hgi.compare(fdl);
+            if (match != null) {
+                log.info("Found gesture match at: " + match);
+                handMatches[match.getAtDataLine().getPosition().ordinal()] = match;
+//                break;
+            }
+        }
+
+        for (int i = 0; i < Sensor.values().length; i++) {
+            assertNull("Some match detected at position " + Sensor.values()[i] + ", all matches: " + (Arrays.toString(handMatches)), handMatches[i]);
+        }
+    }
+
+    //    @Test
+//    @RunAsClient
+    public void testGestureIndexRecognitionMatch() {
+        log.info("testRecordedDataFilter");
+//        Long gId = 21L;
+        // For testing purposes lets compare 2 filtered gestures and as ref gesture use more filtered one.
+        Long gId = 36L;
         Long gIdRef = 35L;
 
         log.info((gestureService == null ? "gestureService is null" : "gestureService: " + gestureService.toString()));
@@ -87,70 +141,31 @@ public class RecognitionTest extends TestServiceBase {
         Optional<Gesture> gRefOpt = gestureService.findById(gIdRef);
         assertTrue("Gesture is not present", gOpt.isPresent());
         assertTrue("Ref Gesture is not present", gRefOpt.isPresent());
-//        BothHandsGesture bhg = new BothHandsGesture();
-//        System.out.println("Test: System.out.println");
-//        System.out.println("System.getProperty(user.dir)" + System.getProperty("user.dir"));
 
         Gesture g = gOpt.get();
         Gesture gRef = gRefOpt.get();
 
-//        WholeHandGestureI r = new WholeHandGestureI(Hand.RIGHT(), data);
-//        List<FingerDataLine> l = (List<FingerDataLine>) gRef.getData().stream().filter(dl -> ((FingerDataLine) dl).getPosition().equals(Sensor.INDEX)).collect(Collectors.toList());
         List<FingerDataLine> l = ((List<FingerDataLine>) g.getData()).stream().filter(dl -> dl.getPosition().equals(Sensor.INDEX)).collect(Collectors.toList());
         List<FingerDataLine> lRef = ((List<FingerDataLine>) gRef.getData()).stream().filter(dl -> dl.getPosition().equals(Sensor.INDEX)).collect(Collectors.toList());
-        SensorGestureI sgi = new SensorGestureI<FingerDataLine>(Sensor.INDEX, l);
+        SensorGestureR sgi = new SensorGestureR<FingerDataLine>(Sensor.INDEX, gRef);
+        GestureMatcher match = null;
 
-//        Iterator<DataLine> iter = g.getData().iterator();
         Iterator<FingerDataLine> iter = l.iterator();
         while (iter.hasNext()) {
             DataLine dl = iter.next();
             if (dl instanceof FingerDataLine) {
                 FingerDataLine fdl = (FingerDataLine) dl;
                 if (fdl.getPosition().equals(Sensor.INDEX)) {
-                    GestureMatcher match = sgi.compare(fdl);
+                    match = sgi.compare(fdl);
                     if (match != null) {
                         log.info("Found gesture match at: " + match);
-                    } else {
-
+                        break;
                     }
                 }
             } else if (dl instanceof WristDataLine) {
             }
         }
 
-
-        /*
-        Iterator<DataLine> iter = gRef.getData().iterator();
-        while(iter.hasNext()){
-            DataLine dl = iter.next();
-            if(dl instanceof FingerDataLine){
-                FingerDataLine fdl = (FingerDataLine) dl;
-                if(fdl.getPosition().equals(Sensor.INDEX)) {
-                    SensorGestureI sgi = new SensorGestureI<FingerDataLine>(Sensor.INDEX, );
-                }
-            }else if(dl instanceof WristDataLine){
-
-            }
-        }
-         */
-//        SensorGestureI sgi = new SensorGestureI(Sensor.INDEX, );
-
-//        gestureService.
-
-//        log.info("To filter: " + g.toString());
-//        Gesture filtered = new Gesture();
-//        filtered.setId(null);
-//        filtered.setUserAlias(g.getUserAlias() + "-" + (Math.abs(new Random().nextInt())));
-//        filtered.setUser(g.getUser());
-//        filtered.setDateCreated(new Date());
-//        filtered.setData(Collections.emptyList());
-//        filtered = gestureService.create(filtered);
-//        log.info("Created filtered (base): " + filtered.toString());
-//        rdf.filter(g,filtered, 1f, true);
-//        filtered.setFiltered(true);
-//        filtered = gestureService.update(filtered);
-//        log.info("Created filtered (final): " + filtered.toString());
-//        log.info(filtered.toString());
     }
 
 }

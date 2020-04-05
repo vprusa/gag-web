@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package cz.muni.fi.gag.tests.recognition;
+package cz.muni.fi.gag.web.services.recognition;
 
 //import org.apache.commons.math3.exception.DimensionMismatchException;
 //import org.apache.commons.math3.exception.ZeroException;

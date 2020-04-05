@@ -1,5 +1,6 @@
-package cz.muni.fi.gag.tests.recognition;
+package cz.muni.fi.gag.web.services.recognition;
 
+import cz.muni.fi.gag.web.persistence.entity.DataLine;
 import cz.muni.fi.gag.web.persistence.entity.Gesture;
 
 /**
@@ -8,6 +9,7 @@ import cz.muni.fi.gag.web.persistence.entity.Gesture;
 public class GestureMatcher {
     private Integer index;
     private Gesture g;
+    private DataLine atDataLine;
     // TODO
 //    private double matchedAccuracy;
 
@@ -34,5 +36,13 @@ public class GestureMatcher {
 
     public void incIndex() {
         this.index++;
+    }
+
+    public <T extends DataLine> void setAtDataLine(T atDataLine) {
+        this.atDataLine = atDataLine;
+    }
+
+    public DataLine getAtDataLine() {
+        return atDataLine;
     }
 }

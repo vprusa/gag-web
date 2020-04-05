@@ -12,3 +12,4 @@ class SensorGestureI private[recognition](override val sensor: Sensor) extends S
        */
   override def matchesBy(data: Nothing): Float = 0.5f
 }
+
