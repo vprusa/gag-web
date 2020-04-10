@@ -12,27 +12,27 @@ import scala.scalajs.js.annotation.JSExport
 /**
  * @author Vojtech Prusa (prusa.vojtech@gmail.com)
  *
- * Just a simple view for the whole app, if interested ( see https://github.com/antonkulaga/scala-js-binding )
+ *         Just a simple view for the whole app, if interested ( see https://github.com/antonkulaga/scala-js-binding )
  */
 @JSExport("HandsVisualization")
 object HandsVisualization extends BindableView with scalajs.js.JSApp {
 
   lazy val elem: HTMLElement = org.scalajs.dom.document.body
 
-//  type GeomType = Object3D
+  //  type GeomType = Object3D
   type GeomType = Object3DWithProps
   type QuaternionType = Quaternion
-//  GeomType<:Object3DWithMat, QuaternionType<:Quaternion
+  //  GeomType<:Object3DWithMat, QuaternionType<:Quaternion
 
-  var numberOfHandsPairs = 1
+  var numberOfHandsPairs = 2
 
   @JSExport("getNumberOfHandsPairs")
-  def getNumberOfHandsPairs(): Int ={
+  def getNumberOfHandsPairs(): Int = {
     numberOfHandsPairs
   }
 
   @JSExport("setNumberOfHandsPairs")
-  def setNumberOfHandsPairs(i:Int): Unit ={
+  def setNumberOfHandsPairs(i: Int): Unit = {
     numberOfHandsPairs = i
   }
 
@@ -52,7 +52,7 @@ object HandsVisualization extends BindableView with scalajs.js.JSApp {
   val model = VisualizationModel
 
   @JSExport("scene")
-  var scene:VisualizationScene[GeomType, QuaternionType] = null
+  var scene: VisualizationScene[GeomType, QuaternionType] = null
   //  var scene:VisualizationScene[Object3D, QuaternionType] = null
 
 

@@ -26,7 +26,7 @@ angular
         $scope.ws = WSTools;
         $scope.vis = VisTools;
 
-        $scope.vis.numberOfHandsPairs = 1;
+        $scope.vis.numberOfHandsPairs = 2;
 
         $scope.alerts = angular.copy(createUpdateTools.getAlerts());
         createUpdateTools.deleteAlerts();

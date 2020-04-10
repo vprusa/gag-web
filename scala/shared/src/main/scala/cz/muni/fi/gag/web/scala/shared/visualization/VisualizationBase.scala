@@ -7,8 +7,8 @@ import cz.muni.fi.gag.web.scala.shared.common.{LogT, VisualizationContextT}
  * Vis base
  *
  * @see cz.muni.fi.gag.web.scala.shared.visualization.HandVisualization
- * */
-class VisualizationBase[GeomType, QuaternionType](val hi: Hand.Hand, val app: VisualizationContextT[GeomType, QuaternionType]){
+ **/
+class VisualizationBase[GeomType, QuaternionType](val hi: Hand.Hand, val app: VisualizationContextT[GeomType, QuaternionType]) {
 
   var pivot: Option[GeomType] = Option.empty[GeomType]
 
@@ -18,7 +18,7 @@ class VisualizationBase[GeomType, QuaternionType](val hi: Hand.Hand, val app: Vi
     rotateZ(z)
   }
 
-  def rotate(q:QuaternionType) = {
+  def rotate(q: QuaternionType) = {
     app._rotateGeoms(q, pivot)
   }
 
@@ -38,7 +38,7 @@ class VisualizationBase[GeomType, QuaternionType](val hi: Hand.Hand, val app: Vi
     setPivot(Option(pivot))
   }
 
-  def setPivot(pivot: Option[GeomType]): Unit ={
+  def setPivot(pivot: Option[GeomType]): Unit = {
     this.pivot = pivot
   }
 
@@ -47,12 +47,13 @@ class VisualizationBase[GeomType, QuaternionType](val hi: Hand.Hand, val app: Vi
   def getLog(): Option[LogT] = {
     log
   }
+
   def setLog(log: LogT) = {
     this.log = Option(log)
   }
 
-  def log(msg:Any): Unit ={
-    if(!getLog().isEmpty){
+  def log(msg: Any): Unit = {
+    if (!getLog().isEmpty) {
       getLog().get.dump(msg)
     }
   }

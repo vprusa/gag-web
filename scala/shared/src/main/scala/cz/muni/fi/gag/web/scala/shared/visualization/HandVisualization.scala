@@ -22,8 +22,8 @@ class HandVisualization[GeomType, QuaternionType](override val hi: Hand.Hand, ov
     middleVis.draw()
     ringVis.draw()
     littleVis.draw()
-    if(hi == Hand.LEFT){
-      rotateY(Math.PI.toFloat);
+    if(hi == Hand.LEFT) {
+      rotateY(Math.PI.toFloat)
     }
     this
   }

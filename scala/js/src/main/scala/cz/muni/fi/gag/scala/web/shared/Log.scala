@@ -13,6 +13,7 @@ object Log extends LogT {
     case object VIS_NONE extends LogLevel
     case object VIS_MATRIX_STACK  extends LogLevel
     case object VIS_CONTEXT extends LogLevel
+    case object VIS_MODEL extends LogLevel
     case object ALL extends LogLevel
   }
 

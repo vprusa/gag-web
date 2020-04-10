@@ -1,5 +1,6 @@
 package cz.muni.fi.gag.web.scala.shared.common
 
+
 import scala.collection.mutable.ArrayBuffer
 
 trait VisualizationContextT[GeomType, QuaternionType] {

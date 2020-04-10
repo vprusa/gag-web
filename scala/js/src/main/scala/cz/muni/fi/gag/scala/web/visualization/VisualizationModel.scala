@@ -10,20 +10,17 @@ import org.denigma.threejs.{Color, Object3D, PerspectiveCamera, _}
 import org.denigma.threejs.extensions.Container3D
 import org.denigma.threejs.extensions.controls.{CameraControls, JumpCameraControls}
 import org.denigma.threejs.extras.HtmlSprite
-import org.scalajs
 import org.scalajs.dom.MouseEvent
 import org.scalajs.dom.raw.HTMLElement
 import scalatags.JsDom.all._
 
 import scala.collection.mutable.ArrayBuffer
 import scala.scalajs.js
-import scala.scalajs.js.annotation.{JSExport, JSName}
+import scala.scalajs.js.annotation.{JSExport, JSName, ScalaJSDefined}
 import scala.util.Random
 
-class VisualizationScene[GeomType<:Object3DWithProps, QuaternionType<:Quaternion]
+class VisualizationScene[GeomType <: Object3DWithProps, QuaternionType <: Quaternion]
 (val container: HTMLElement, val width: Double, val height: Double, var numberOfHandsPairs: Int = 1)
-//class VisualizationScene[GeomType<:Object3D, QuaternionType<:Quaternion](val container: HTMLElement, val width: Double, val height: Double)
-//class VisualizationScene[GeomType, QuaternionType](val container: HTMLElement, val width: Double, val height: Double)
   extends Container3D with VisualizationContextT[GeomType, QuaternionType] {
 
   /*
@@ -33,7 +30,7 @@ class VisualizationScene[GeomType<:Object3DWithProps, QuaternionType<:Quaternion
   */
   override def onEnterFrame(): Unit = {
     controls.update()
-    if (!camera.isInstanceOf[PerspectiveCamera]){
+    if (!camera.isInstanceOf[PerspectiveCamera]) {
       var cam = initCamera()
       renderer.render(scene, cam)
     } else {
@@ -42,22 +39,20 @@ class VisualizationScene[GeomType<:Object3DWithProps, QuaternionType<:Quaternion
     cssRenderer.render(cssScene, camera)
   }
 
-
   override protected def initRenderer() = {
     val vr = super.initRenderer()
     vr.domElement.style.position = "relative"
     vr.domElement.style.display = "inline-block"
-
     vr
   }
 
   @JSExport("updateMatrix")
-  def updateMatrix(): Unit ={
+  def updateMatrix(): Unit = {
     scene.updateMatrix()
   }
 
   @JSExport("renderAll")
-  def renderAll(): Any ={
+  def renderAll(): Any = {
     cleanScene()
     drawAllHands()
     onEnterFrame()
@@ -66,33 +61,34 @@ class VisualizationScene[GeomType<:Object3DWithProps, QuaternionType<:Quaternion
 
   @JSExport("updateAngles")
   def updateAngles(handsPairIndex: Int,
-      rx: Float, ry: Float, rz: Float, rw: Float,
-      rtx: Float, rty: Float, rtz: Float, rtw: Float,
-      rix: Float, riy: Float, riz: Float, riw: Float,
-      rmx: Float, rmy: Float, rmz: Float, rmw: Float,
-      rrx: Float, rry: Float, rrz: Float, rrw: Float,
-      rlx: Float, rly: Float, rlz: Float, rlw: Float,
+                   rx: Float, ry: Float, rz: Float, rw: Float,
+                   rtx: Float, rty: Float, rtz: Float, rtw: Float,
+                   rix: Float, riy: Float, riz: Float, riw: Float,
+                   rmx: Float, rmy: Float, rmz: Float, rmw: Float,
+                   rrx: Float, rry: Float, rrz: Float, rrw: Float,
+                   rlx: Float, rly: Float, rlz: Float, rlw: Float,
 
-      lx: Float, ly: Float, lz: Float, lw: Float,
-      ltx: Float, lty: Float, ltz: Float, ltw: Float,
-      lix: Float, liy: Float,  liz: Float, liw: Float,
-      lmx: Float, lmy: Float, lmz: Float, lmw: Float,
-      lrx: Float, lry: Float, lrz: Float, lrw: Float,
-      llx: Float, lly: Float, llz: Float, llw: Float
-    ): Any = {
-    var lq = new Quaternion(lx,ly,lz,lw)
-    var lqt = new Quaternion(ltx,lty,ltz,ltw)
-    var lqi = new Quaternion(lix,liy,liz,liw)
-    var lqm = new Quaternion(lmx,lmy,lmz,lmw)
-    var lqr = new Quaternion(lrx,lry,lrz,lrw)
-    var lql = new Quaternion(llx,lly,llz,llw)
+                   lx: Float, ly: Float, lz: Float, lw: Float,
+                   ltx: Float, lty: Float, ltz: Float, ltw: Float,
+                   lix: Float, liy: Float, liz: Float, liw: Float,
+                   lmx: Float, lmy: Float, lmz: Float, lmw: Float,
+                   lrx: Float, lry: Float, lrz: Float, lrw: Float,
+                   llx: Float, lly: Float, llz: Float, llw: Float
+                  ): Any = {
+    Log.dump("updateAngles", Log.Level.VIS_MODEL)
+    var lq = new Quaternion(lx, ly, lz, lw)
+    var lqt = new Quaternion(ltx, lty, ltz, ltw)
+    var lqi = new Quaternion(lix, liy, liz, liw)
+    var lqm = new Quaternion(lmx, lmy, lmz, lmw)
+    var lqr = new Quaternion(lrx, lry, lrz, lrw)
+    var lql = new Quaternion(llx, lly, llz, llw)
 
-    var rq = new Quaternion(ry,-rx,rz,rw)
-    var rqt = new Quaternion(rtx,rty,rtz,rtw)
-    var rqi = new Quaternion(rix,riy,riz,riw)
-    var rqm = new Quaternion(rmx,rmy,rmz,rmw)
-    var rqr = new Quaternion(rrx,rry,rrz,rrw)
-    var rql = new Quaternion(rlx,rly,rlz,rlw)
+    var rq = new Quaternion(ry, -rx, rz, rw)
+    var rqt = new Quaternion(rtx, rty, rtz, rtw)
+    var rqi = new Quaternion(rix, riy, riz, riw)
+    var rqm = new Quaternion(rmx, rmy, rmz, rmw)
+    var rqr = new Quaternion(rrx, rry, rrz, rrw)
+    var rql = new Quaternion(rlx, rly, rlz, rlw)
 
     rqt = rqt.normalize()
     rqi = rqi.normalize()
@@ -103,8 +99,8 @@ class VisualizationScene[GeomType<:Object3DWithProps, QuaternionType<:Quaternion
     //val rqC = rq.conjugate().inverse()
     //val rqC = rq.clone()
     rq = rq.normalize()
-//    var rqC = new Quaternion(-rq.x,-rq.y,-rq.z,rq.w).normalize() //rq.normalize() //.conjugate() //.inverse()
-    var rqC = new Quaternion(-rq.x,rq.y,-rq.z,rq.w).normalize() //rq.normalize() //.conjugate() //.inverse()
+    //    var rqC = new Quaternion(-rq.x,-rq.y,-rq.z,rq.w).normalize() //rq.normalize() //.conjugate() //.inverse()
+    var rqC = new Quaternion(-rq.x, rq.y, -rq.z, rq.w).normalize() //rq.normalize() //.conjugate() //.inverse()
     rqt = rqt.multiply(rqC)
     rqi = rqi.multiply(rqC)
     rqm = rqm.multiply(rqC)
@@ -144,12 +140,12 @@ class VisualizationScene[GeomType<:Object3DWithProps, QuaternionType<:Quaternion
 
 
   @JSExport("getNumberOfHandsPairs")
-  def getNumberOfHandsPairs(): Int ={
+  def getNumberOfHandsPairs(): Int = {
     numberOfHandsPairs
   }
 
   @JSExport("setNumberOfHandsPairs")
-  def setNumberOfHandsPairs(i:Int): Unit ={
+  def setNumberOfHandsPairs(i: Int): Unit = {
     numberOfHandsPairs = i
     // TODO redraw hands (only new?) , if -lt prev then remove from the newest/lowest
   }
@@ -165,54 +161,71 @@ class VisualizationScene[GeomType<:Object3DWithProps, QuaternionType<:Quaternion
     )
   }
 
-  for(handsPair <- hands) {
+  for (handsPair <- hands) {
     handsPair(Hand.LEFT.id).setLog(Log)
     handsPair(Hand.RIGHT.id).setLog(Log)
   }
 
-  camera.setLens(3,1)
+  camera.setLens(3, 1)
 
 
-  val defaultHandsColor = new Color(0xFFFFFF)
-  val anyHandsColor = new Color(0x00FFFF)
+  val handsColorDefault = new Color(0xFFFFFF)
+  val handsColorRef = new Color(0x00FFFF)
 
-  def drawBothHands(hands: Array[HandVisualization[GeomType, QuaternionType]], color:Color) = {
-    val dot = new Object3DWithProps(color)
+  var handsOpacityDefault: scala.Double = (1.0: scala.Double)
+  var handsOpacityRef: scala.Double = (0.5: scala.Double)
+
+  var visualizationSizeDefault: Int = 1
+  var visualizationSizeRef: Int = 5
+
+
+  val handsPropsDefault = new Object3DWithProps(PropsJsTrait.newProps(handsColorDefault, visualizationSizeDefault, visualizationSizeDefault))
+  val handsPropsRef = new Object3DWithProps(PropsJsTrait.newProps(handsColorRef, handsOpacityRef, visualizationSizeRef))
+
+  def drawBothHands(hands: Array[HandVisualization[GeomType, QuaternionType]], props: Object3DWithProps) = {
+    Log.dump("drawBothHands - props: ", Log.Level.VIS_MODEL)
+    Log.dump(props, Log.Level.VIS_MODEL)
+    val dot = new Object3DWithProps(props)
+
     scene.rotateY(Math.PI)
-    dot.position.set( 170, -150, 0.0)
+    dot.position.set(170, -150, 0.0)
+    Log.dump("add dot", Log.Level.VIS_MODEL)
+    Log.dump(dot, Log.Level.VIS_MODEL)
     scene.add(dot)
 
     hands(Hand.LEFT.id).drawWholeHand(dot.asInstanceOf[GeomType])
     //hands(1).rotateY((Math.PI).toFloat)
 
     // left hand
-    val dot2 = new Object3DWithProps(color)
-    dot2.position.set( -170, -150, 0.0)
+    val dot2 = new Object3DWithProps(props)
+    //    val dot2 = props
+    dot2.position.set(-170, -150, 0.0)
+    Log.dump("add dot2", Log.Level.VIS_MODEL)
+    Log.dump(dot2, Log.Level.VIS_MODEL)
     scene.add(dot2)
 
     hands(Hand.RIGHT.id).drawWholeHand(dot2.asInstanceOf[GeomType])
   }
 
-  def getHandsColor(i: Int): Color ={
+  def getHandsProps(i: Int): Object3DWithProps = {
     // TODO ...
-    i match{
+    i match {
       case 0 => {
-        return defaultHandsColor
+        return handsPropsDefault
       }
       case 1 => {
-        return  anyHandsColor
+        return handsPropsRef
       }
     }
-    defaultHandsColor
+    handsPropsDefault
   }
 
-  def drawAllHands(): Unit ={
+  def drawAllHands(): Unit = {
     scene.rotateY(Math.PI)
-    var i:Int = 0
-    for(handsPair <- hands) {
-      var color = getHandsColor(i)
-      drawBothHands(handsPair, color)
-      i+=1
+    var i: Int = 0
+    for (handsPair <- hands) {
+      drawBothHands(handsPair, getHandsProps(i))
+      i += 1
     }
   }
 
@@ -222,15 +235,15 @@ class VisualizationScene[GeomType<:Object3DWithProps, QuaternionType<:Quaternion
    * this will require adding facade around VisualiyationContextT methods data and further changes of BaseVisualization
    **/
   @JSExport("cleanScene")
-  def cleanScene(){
-    while(scene.children.length > 0){
+  def cleanScene() {
+    while (scene.children.length > 0) {
       scene.children(0)
       scene.remove(scene.children(0))
     }
   }
 
   @JSExport("rotatePart")
-  def rotatePart(handsPair: Int, hi: Int, si: Int, x: Float, y: Float, z: Float){
+  def rotatePart(handsPair: Int, hi: Int, si: Int, x: Float, y: Float, z: Float) {
     val h: Hand.Hand = if (hi == 0) Hand.RIGHT else Hand.LEFT
     val s: Sensor = Sensor.values(si)
     val hand = if (h == Hand.RIGHT) hands(handsPair)(1) else hands(handsPair)(0)
@@ -240,6 +253,7 @@ class VisualizationScene[GeomType<:Object3DWithProps, QuaternionType<:Quaternion
     part.rotateY(y)
     part.rotateZ(z)
   }
+
   drawAllHands()
 
   // Below are methods that implement with VisualizationContextT
@@ -258,7 +272,6 @@ class VisualizationScene[GeomType<:Object3DWithProps, QuaternionType<:Quaternion
   // https://stackoverflow.com/questions/45189592/in-scala-js-how-to-best-create-an-object-conforming-to-a-trait-from-a-js-fa%C3%A7ade
   val dotMatParams = js.Dynamic.literal(
     color = 0xFFFF00
-//      color = 255
   ).asInstanceOf[MeshBasicMaterialParameters]
 
   val lineMatParams = js.Dynamic.literal(
@@ -267,52 +280,129 @@ class VisualizationScene[GeomType<:Object3DWithProps, QuaternionType<:Quaternion
 
   val lineMatParamColor = new Color(0xFFFF00)
 
-  override def _point(x: Float, y: Float, z: Float, geomHolder: Option[GeomType]): GeomType= {
-    val geometry = new SphereGeometry( 5, 32, 32 )
+  // TODO refactor
+  override def _point(x: Float, y: Float, z: Float, geomHolderOpt: Option[GeomType]): GeomType = {
+    def calcRadius(_geomHolderOpt: Option[GeomType]): Double = {
+      val radius = 5
+      if (_geomHolderOpt.nonEmpty) {
+        val _geomHolder = _geomHolderOpt.get
+        if (_geomHolder.isInstanceOf[MeshWithProps]) {
+          val visSize = _geomHolder.asInstanceOf[MeshWithProps].props.visualizationSize
+          return visSize.asInstanceOf[Double] * radius / 2
+        } else if (_geomHolder.isInstanceOf[Object3DWithProps]) {
+          val visSize = _geomHolder.asInstanceOf[Object3DWithProps].props.visualizationSize
+          return visSize.asInstanceOf[Double] * radius / 2
+          //        } else if (_geomHolder.isInstanceOf[Object3D]) {
+          //          posObj.asInstanceOf[Object3D]
+        }
+      }
+      radius
+    }
+
+    val radius = calcRadius(geomHolderOpt)
+    val geometry = new SphereGeometry(radius, 32, 32)
+    Log.dump("geometry", Log.Level.VIS_CONTEXT)
+    Log.dump(geometry, Log.Level.VIS_CONTEXT)
+    Log.dump("radius: " + radius, Log.Level.VIS_CONTEXT)
+
     geometry.applyMatrix(new Matrix4().makeTranslation(x, y, z))
-//    val material = new MeshBasicMaterial(dotMatParams) //color = 0xffff00
+    //    val material = new MeshBasicMaterial(dotMatParams) //color = 0xffff00
     val mat = new MeshBasicMaterial()
-    if(geomHolder.nonEmpty){
-      mat.color = geomHolder.get.color
+    if (geomHolderOpt.nonEmpty) {
+      val geomHandler = geomHolderOpt.get
+      mat.color = geomHandler.color
+      mat.opacity = geomHandler.opacity.asInstanceOf[Double]
+      mat.transparent = true
     }
-    val sphere = new Mesh( geometry, mat )
-    val posObj = geomHolder.get
-    if(posObj.isInstanceOf[Object3D]){
-      val obj = posObj.asInstanceOf[Object3D]
-      obj.add( sphere )
+
+    val sphere = new MeshWithProps(geometry, mat, (if (geomHolderOpt.isEmpty) handsPropsDefault else geomHolderOpt.get.props))
+
+    if (geomHolderOpt.nonEmpty) {
+      val posObj = geomHolderOpt.get
+      Log.dump("posObj", Log.Level.VIS_CONTEXT)
+      Log.dump(posObj, Log.Level.VIS_CONTEXT)
+
+      val geomHolder = geomHolderOpt.get
+      sphere.setProps(geomHolder.props)
+
+      Log.dump("beforeAdd", Log.Level.VIS_CONTEXT)
+      if (posObj.isInstanceOf[MeshWithProps]) {
+        posObj.asInstanceOf[MeshWithProps].add(sphere)
+      } else if (posObj.isInstanceOf[LineWithProps]) {
+        posObj.asInstanceOf[LineWithProps].add(sphere)
+      } else if (posObj.isInstanceOf[Object3DWithProps]) {
+        posObj.asInstanceOf[Object3DWithProps].add(sphere)
+      } else if (posObj.isInstanceOf[Object3D]) {
+        posObj.asInstanceOf[Object3D].add(sphere)
+      }
+      Log.dump("afterAdd", Log.Level.VIS_CONTEXT)
     }
+
+    Log.dump("sphere", Log.Level.VIS_CONTEXT)
     Log.dump(sphere, Log.Level.VIS_CONTEXT)
 
-    if(geomHolder.nonEmpty){
-      sphere.asInstanceOf[GeomType].color = geomHolder.get.color
-    }
     sphere.asInstanceOf[GeomType]
   }
 
-  override def _line(sx: Float, sy: Float, sz: Float, ex: Float, ey: Float, ez: Float
-                     ,geomHolder: Option[GeomType]): GeomType = {
+  // TODO refactor
+  override def _line(sx: Float, sy: Float, sz: Float, ex: Float, ey: Float, ez: Float,
+                     geomHolderOpt: Option[GeomType]): GeomType = {
     val mat = new LineBasicMaterial()
-    if(geomHolder.nonEmpty){
-      mat.color = geomHolder.get.color
+    if (geomHolderOpt.nonEmpty) {
+      val geomHolder = geomHolderOpt.get
+      mat.color = geomHolder.color
+      mat.opacity = geomHolder.opacity.asInstanceOf[Double]
+      mat.transparent = true
+      mat.linewidth = geomHolder.visualizationSize.asInstanceOf[Double]
     }
+
     val geo = new Geometry()
 
     geo.vertices.push(new Vector3(sx, sy, sz))
     geo.vertices.push(new Vector3(ex, ey, ez))
-    val line = new Line(geo, mat)
-    geomHolder.get.add(line)
+    val line = new LineWithProps(geo, mat, (if (geomHolderOpt.isEmpty) handsPropsDefault else geomHolderOpt.get.props))
+    //    geomHolderOpt.get.add(line.asInstanceOf[Line])
+    if (geomHolderOpt.nonEmpty) {
+      val geomHolder = geomHolderOpt.get
+      if (geomHolder.isInstanceOf[MeshWithProps]) {
+        geomHolder.asInstanceOf[MeshWithProps].add(line)
+      } else if (geomHolder.isInstanceOf[LineWithProps]) {
+        geomHolder.asInstanceOf[LineWithProps].add(line)
+      } else if (geomHolder.isInstanceOf[Object3DWithProps]) {
+        geomHolder.asInstanceOf[Object3DWithProps].add(line)
+      } else if (geomHolder.isInstanceOf[Object3D]) {
+        geomHolder.asInstanceOf[Object3D].add(line)
+      }
+    }
+    Log.dump("line", Log.Level.VIS_CONTEXT)
     Log.dump(line, Log.Level.VIS_CONTEXT)
 
-    if(geomHolder.nonEmpty){
-      line.asInstanceOf[GeomType].color = geomHolder.get.color
-    }
     line.asInstanceOf[GeomType]
   }
 
-  override def _add(geom: GeomType, x:Float, y:Float, z:Float): Option[GeomType] = {
-    val p = new Object3DWithProps(geom.color)
-    p.position.set(x,y,z)
-    geom.asInstanceOf[Object3DWithProps].add( p )
+  // TODO refactor
+  override def _add(geom: GeomType, x: Float, y: Float, z: Float): Option[GeomType] = {
+    //    val p = new Object3DWithProps(geom)
+    val p = new Object3DWithProps(geom)
+    Log.dump("_add", Log.Level.VIS_CONTEXT)
+    Log.dump(p, Log.Level.VIS_CONTEXT)
+    Log.dump("_add-geom", Log.Level.VIS_CONTEXT)
+    Log.dump(geom, Log.Level.VIS_CONTEXT)
+
+    p.asInstanceOf[Object3DWithProps].position.set(x, y, z)
+
+    p.setProps(geom.props)
+
+    if (geom.isInstanceOf[MeshWithProps]) {
+      geom.asInstanceOf[MeshWithProps].add(p)
+    } else if (geom.isInstanceOf[LineWithProps]) {
+      geom.asInstanceOf[LineWithProps].add(p)
+    } else if (geom.isInstanceOf[Object3DWithProps]) {
+      geom.asInstanceOf[Object3DWithProps].add(p)
+    } else if (geom.isInstanceOf[Object3D]) {
+      geom.asInstanceOf[Object3D].add(p)
+    }
+
     val opt = Option(p.asInstanceOf[GeomType])
     opt
   }
@@ -320,26 +410,67 @@ class VisualizationScene[GeomType<:Object3DWithProps, QuaternionType<:Quaternion
   // TODO use case class
   object AxisVector {
     type AxisVector = Vector3
-     val X = new Vector3(1,0,0)
-     val Y = new Vector3(0,1,0)
-     val Z = new Vector3(0,0,1)
+    val X = new Vector3(1, 0, 0)
+    val Y = new Vector3(0, 1, 0)
+    val Z = new Vector3(0, 0, 1)
   }
 
   // https://discourse.threejs.org/t/how-do-you-rotate-a-group-of-objects-around-an-arbitrary-axis/3433/10
   // https://stackoverflow.com/questions/44287255/whats-the-right-way-to-rotate-an-object-around-a-point-in-three-js
   // TODO fix rotateOnAxis -> rotate as set not add
-  override def _rotateGeoms(angle: Float, pivot:Option[GeomType], axis: Axis.Axis): Unit = {
-    if(!pivot.isEmpty){
-      val piv = pivot.get
+  // TODO refactor
+  override def _rotateGeoms(angle: Float, pivotOpt: Option[GeomType], axis: Axis.Axis): Unit = {
+    if (!pivotOpt.isEmpty) {
+      val pivotP = pivotOpt.get
+
+      def getPivotVal(_pivot: GeomType, _axis: Axis.Value): Double = {
+        if (_pivot.isInstanceOf[MeshWithProps]) {
+          val p = _pivot.asInstanceOf[MeshWithProps]
+          _axis match {
+            case Axis.X => {
+              return p.rotation.x
+            }
+            case Axis.Y => {
+              return p.rotation.y
+            }
+            case Axis.Z => {
+              return p.rotation.z
+            }
+            case _ => {
+              return 0
+            }
+          }
+        } else if (_pivot.isInstanceOf[Object3DWithProps]) {
+          val p = _pivot.asInstanceOf[Object3DWithProps]
+          _axis match {
+            case Axis.X => {
+              return p.rotation.x
+            }
+            case Axis.Y => {
+              return p.rotation.y
+            }
+            case Axis.Z => {
+              return p.rotation.z
+            }
+            case _ => {
+              return 0
+            }
+          }
+        } else if (_pivot.isInstanceOf[Object3D]) {
+          //          pivot = pivot.asInstanceOf[Object3D]
+        }
+        return 0
+      }
+
       axis match {
         case Axis.X => {
-          piv.rotateOnAxis(AxisVector.X, angle-piv.rotation.x)
+          pivotP.rotateOnAxis(AxisVector.X, angle - getPivotVal(pivotP, Axis.X))
         }
         case Axis.Y => {
-          piv.rotateOnAxis(AxisVector.Y, angle-piv.rotation.y)
+          pivotP.rotateOnAxis(AxisVector.Y, angle - getPivotVal(pivotP, Axis.Y))
         }
         case Axis.Z => {
-          piv.rotateOnAxis(AxisVector.Z, angle-piv.rotation.z)
+          pivotP.rotateOnAxis(AxisVector.Z, angle - getPivotVal(pivotP, Axis.Z))
         }
         case _ => {
           // Log.error("_rotateGeoms")
@@ -348,26 +479,28 @@ class VisualizationScene[GeomType<:Object3DWithProps, QuaternionType<:Quaternion
     }
   }
 
-  override def _rotateGeoms(q: QuaternionType, pivot:Option[GeomType]): Unit = {
-    if(!pivot.isEmpty){
+  override def _rotateGeoms(q: QuaternionType, pivot: Option[GeomType]): Unit = {
+    if (!pivot.isEmpty) {
       val piv = pivot.get
       piv.setRotationFromQuaternion(q)
     }
   }
-
 }
+
 // scalastyle: on
 
 /**
  * Just shows that some effects are working
- * @param cam the camera control
- * @param el the html element
- * @param sc scene
+ *
+ * @param cam    the camera control
+ * @param el     the html element
+ * @param sc     scene
  * @param center center of screen
  */
 
 class VisualizationControls(cam: Camera, el: HTMLElement, sc: Scene, width: Double, height: Double,
                             center: Vector3 = new Vector3()) extends JumpCameraControls(cam, el, sc, width, height, center) {
+
   import org.querki.jquery._
 
   lazy val $el = $(el)
