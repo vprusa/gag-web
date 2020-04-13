@@ -88,12 +88,32 @@ public class GestureEndpoint extends BaseEndpoint {
     @RolesAllowed(USER_R)
     public Response removeGesture(@PathParam("id") Long id) throws Exception {
         Response.ResponseBuilder builder;
-        Optional<Gesture> dataLine = gestureService.findById(id);
-        if (!dataLine.isPresent()) {
+        Optional<Gesture> g = gestureService.findById(id);
+        if (!g.isPresent()) {
             Response.status(Status.NOT_FOUND);
         }
         try {
-            gestureService.remove(dataLine.get());
+            gestureService.remove(g.get());
+            builder = Response.ok();
+        } catch (Exception e) {
+            builder = Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage());
+        }
+        return builder.build();
+    }
+
+    @PUT
+    @Path("/setGestureActive/{id}/{active}")
+    @RolesAllowed(USER_R)
+    public Response setGestureActive(@PathParam("id") Long id, @PathParam("active") Long active) throws Exception {
+        Response.ResponseBuilder builder;
+        Optional<Gesture> gOpt = gestureService.findById(id);
+        if (!gOpt.isPresent()) {
+            Response.status(Status.NOT_FOUND);
+        }
+        try {
+            Gesture g = gOpt.get();
+            g.setActive(active != 0);
+            gestureService.update(g);
             builder = Response.ok();
         } catch (Exception e) {
             builder = Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage());

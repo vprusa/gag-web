@@ -29,9 +29,16 @@ public class Gesture extends GenericEntity {
     @Column(columnDefinition = "tinyint(1) default 0")
     private Boolean isFiltered;
 
+    @Column(columnDefinition = "tinyint(1) default 0")
+    private Boolean isActive;
+
     @OneToMany(mappedBy = "gesture", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE/*, orphanRemoval = true*/)
     @JsonIgnoreProperties({"gesture"})
     private List<DataLine> data = new ArrayList<>();
+
+    public Boolean getActive() { return isActive; }
+
+    public void setActive(Boolean active) { isActive = active; }
 
     public Boolean getFiltered() {
         return isFiltered;

@@ -26,7 +26,7 @@ angular
         $scope.ws = WSTools;
         $scope.vis = VisTools;
 
-        $scope.vis.numberOfHandsPairs = 2;
+        $scope.vis.numberOfHandsPairs = 1;
 
         $scope.alerts = angular.copy(createUpdateTools.getAlerts());
         createUpdateTools.deleteAlerts();
@@ -91,6 +91,14 @@ angular
               });
             });
         };
+
+        $scope.switchActivateGesture = function (id, active) {
+          commonTools.setGestureActive(id, !active).then(function(){
+            var index = $scope.gestures.map(function(e) { return e.id; }).indexOf(id);
+            $scope.gestures[index].active = !active;
+          });
+        };
+
 
         $scope.onMessage = function (evt) {
           // TODO move to websocket.js

@@ -61,6 +61,12 @@
 									<a href="" title="Remove" class="btn btn-info" ng-click='deleteGesture(item.id)'>
 										<span class="glyphicon glyphicon-remove"></span>
 									</a>
+									<a href="" title="Activate" class="btn btn-info" ng-disabled='!item.filtered'
+										 idk-active="{{item.active}}"
+										 ng-style="item.active && {'background-color': 'green'}"
+										 ng-click='switchActivateGesture(item.id, item.active)'>
+										<span class="glyphicon glyphicon-flag"></span>
+									</a>
 								</td>
 							</tr>
 						</tbody>
