@@ -3,7 +3,8 @@ package cz.muni.fi.gag.web.services.websocket.endpoint.packet.actions;
 public class PlayerActions extends Action {
 
     public enum ActionsEnum {
-        PLAY, PAUSE, CONTINUE, STOP
+        PLAY, PAUSE, CONTINUE, STOP,
+        START
     }
 
     protected ActionsEnum action;

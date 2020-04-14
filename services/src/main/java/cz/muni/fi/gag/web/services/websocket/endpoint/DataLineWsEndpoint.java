@@ -1,5 +1,6 @@
 package cz.muni.fi.gag.web.services.websocket.endpoint;
 
+import cz.muni.fi.gag.web.persistence.entity.DataLine;
 import cz.muni.fi.gag.web.services.logging.Log;
 import cz.muni.fi.gag.web.services.mapped.MDataLine;
 import cz.muni.fi.gag.web.services.mapped.MFingerDataLine;
@@ -11,6 +12,7 @@ import cz.muni.fi.gag.web.services.websocket.endpoint.packet.actions.PlayerActio
 import cz.muni.fi.gag.web.services.websocket.endpoint.packet.actions.PlayerActions;
 import cz.muni.fi.gag.web.services.websocket.endpoint.packet.datalines.*;
 import cz.muni.fi.gag.web.services.websocket.service.DataLineRePlayer;
+import cz.muni.fi.gag.web.services.websocket.service.GestureRecognizer;
 import org.jboss.logging.Logger;
 
 import javax.faces.bean.SessionScoped;
@@ -24,7 +26,7 @@ import javax.websocket.server.ServerEndpoint;
 @SessionScoped
 @ServerEndpoint(value = "/datalinews",
         encoders = {
-                //JsonEncoder.class
+                // JsonEncoder.class
                 DataLineEncoder.class, FingerDataLineEncoder.class, WristDataLineEncoder.class
                  },
         decoders = {}
@@ -34,6 +36,7 @@ public class DataLineWsEndpoint {
     public static final Logger log = Logger.getLogger(DataLineWsEndpoint.class.getSimpleName());
 
     private static final String REPLAYER_KEY = "replayer";
+    private static final String RECOGNITION_KEY = "recognition";
 
     @Inject
     private DataLineService dataLineService;
@@ -46,6 +49,9 @@ public class DataLineWsEndpoint {
 
     @Inject
     private DataLineRePlayer rep;
+
+    @Inject
+    private GestureRecognizer rec;
 
     @OnOpen
     public void onOpen(Session session) {
@@ -88,18 +94,51 @@ public class DataLineWsEndpoint {
         // 3) messages should be possibly simplified - no log fields, etc.
         // 3.1) TODO write (custom) json<->binary (de/en)coders?
 
+        DataLine dl = null;
+
         if(fdld.willDecode(msg)) {
             MFingerDataLine mfdl = fdld.decode(msg);
-            dataLineService.create(mfdl.getEntity(gestureService));
+            dl = dataLineService.create(mfdl.getEntity(gestureService));
         } else if(wdld.willDecode(msg)) {
             MWristDataLine mwdl = wdld.decode(msg);
-            dataLineService.create(mwdl.getEntity(gestureService));
+            dl = dataLineService.create(mwdl.getEntity(gestureService));
         } else if(dld.willDecode(msg)) {
             MDataLine mdl = dld.decode(msg);
-            dataLineService.create(mdl.getEntity(gestureService));
-        } else if(pad.willDecode(msg)) {
+            dl = dataLineService.create(mdl.getEntity(gestureService));
+        }
+
+        if(dl != null && rec.isRecognize() ){
+            rec.recognize(dl);
+        }
+
+        // considering no DataLine matched...
+        if(dl == null && pad.willDecode(msg)) {
             PlayerActions pa = pad.decode(msg);
-            switch(pa.getType()){
+            switch(pa.getType()) {
+                case RECOGNITION: {
+                    switch (pa.getAction()) {
+                        case START: {
+                            // stop existing first
+//                            Thread recognizer = (Thread) session.getUserProperties().get(RECOGNITION_KEY);
+//                            rec.setGestureId(pa.getGestureId());
+//                            rec.setSession(session);
+//                            if(recognizer == null) {
+//                                recognizer = new Thread(rec);
+//                            }
+                            rec.start();
+                            session.getUserProperties().put(RECOGNITION_KEY, rec);
+                        }
+                        case STOP: {
+                            Thread recognizer = (Thread) session.getUserProperties().get(RECOGNITION_KEY);
+                            synchronized (recognizer) {
+                                if (recognizer != null) {
+                                    rec.stop();
+                                }
+                            }
+                        }
+                    }
+                }
+
                 case PLAYER: {
                     switch (pa.getAction()) {
                         case PLAY: {
@@ -108,7 +147,9 @@ public class DataLineWsEndpoint {
                             rep.prepare(true);
                             rep.setGestureId(pa.getGestureId());
                             rep.setSession(session);
-                            replayer = new Thread(rep);
+                            if(replayer == null) {
+                                replayer = new Thread(rep);
+                            }
                             replayer.start();
                             session.getUserProperties().put(REPLAYER_KEY, replayer);
                         }
@@ -141,7 +182,6 @@ public class DataLineWsEndpoint {
                                     rep.stop();
                                 }
                             }
-
                         }
                         break;
                     }

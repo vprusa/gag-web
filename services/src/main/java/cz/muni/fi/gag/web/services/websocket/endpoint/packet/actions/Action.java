@@ -3,11 +3,9 @@ package cz.muni.fi.gag.web.services.websocket.endpoint.packet.actions;
 import cz.muni.fi.gag.web.services.websocket.endpoint.packet.WSMsgBase;
 
 public class Action implements WSMsgBase {
-    //extends BaseEntity {
-
 
     public enum ActionsTypesEnum {
-        PLAYER
+        PLAYER, RECOGNITION
     }
 
     protected ActionsTypesEnum type;

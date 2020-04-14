@@ -1,11 +1,11 @@
 package cz.muni.fi.gag.web.services.websocket.service;
 
-import cz.muni.fi.gag.web.services.service.DataLineService;
 import cz.muni.fi.gag.web.persistence.entity.DataLine;
 import cz.muni.fi.gag.web.services.logging.Log;
+import cz.muni.fi.gag.web.services.service.DataLineService;
 import org.jboss.logging.Logger;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.websocket.EncodeException;
@@ -16,7 +16,6 @@ import java.util.Date;
 import java.util.ListIterator;
 
 import static cz.muni.fi.gag.web.services.websocket.service.DataLineRePlayer.PlayerState.*;
-import static cz.muni.fi.gag.web.services.websocket.service.DataLineRePlayer.PlayerState.IDLE;
 
 /**
  * @author Vojtech Prusa
@@ -26,7 +25,8 @@ import static cz.muni.fi.gag.web.services.websocket.service.DataLineRePlayer.Pla
 //@Singleton
 //@Stateful
 //@SessionScoped
-@ApplicationScoped
+//@ApplicationScoped
+@SessionScoped
 public class DataLineRePlayer implements Runnable, Serializable {
 
     public static final String GESTURE_KEY = "gestureId";
@@ -37,13 +37,13 @@ public class DataLineRePlayer implements Runnable, Serializable {
     private Date before;
     private ListIterator<DataLine> dli;
 
+    private PlayerState state = IDLE;
+
     public PlayerState getState() {
         synchronized (state) {
             return state;
         }
     }
-
-    private PlayerState state = IDLE;
 
     public void play() {
         synchronized (state) {
