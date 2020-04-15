@@ -7,6 +7,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * @author Vojtech Prusa
@@ -109,5 +110,16 @@ public class Gesture extends GenericEntity {
                 ", user=" + (user != null ? user : "null") +
                 ", isFiltered=" + (isFiltered != null ? isFiltered : "null") +
                 '}';
+    }
+
+    public <T extends DataLine> Stream<T> getDataStream() {
+        List<DataLine> l = Collections.emptyList();
+        // TODO
+        return (Stream<T>) l.stream();
+    }
+
+    public List<Optional<Gesture>> findActive() {
+        // TODO findActive of current user
+        return Collections.emptyList();
     }
 }

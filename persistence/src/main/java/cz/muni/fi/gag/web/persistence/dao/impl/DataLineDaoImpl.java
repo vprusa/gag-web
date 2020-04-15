@@ -59,11 +59,10 @@ public class DataLineDaoImpl extends AbstractGenericDao<DataLine> implements Dat
     @Transactional
     @Override
     public List<DataLine> getChunkForGesture(long gestureId, int offset, int max) {
-//        log.trace("getChunkForGesture: gestureId: " + gestureId + " offset: " + offset + " max: " + max);
+        log.trace("getChunkForGesture: gestureId: " + gestureId + " offset: " + offset + " max: " + max);
         List<DataLine> dll = em
-                .createQuery("SELECT g FROM DataLine g WHERE gesture_id = :gestureId",
-                        DataLine.class)
-                .setParameter("gestureId", gestureId).getResultList();
+                .createQuery("SELECT g FROM DataLine g WHERE gesture_id = :gestureId ", DataLine.class)
+                .setParameter("gestureId", gestureId).setFirstResult(offset).setMaxResults(max).getResultList();
 //        FingerDataLine[] dla = new FingerDataLine[dll.size()];
 //        dla = (FingerDataLine[]) dll.toArray();
 //        log.trace("dll.toArray(): " +  dla.length);

@@ -1,5 +1,6 @@
 package cz.muni.fi.gag.web.services.recognition.comparators;
 
+import cz.muni.fi.gag.web.persistence.dao.impl.DataLineGestureIterator;
 import cz.muni.fi.gag.web.persistence.entity.FingerDataLine;
 import cz.muni.fi.gag.web.persistence.entity.Gesture;
 import cz.muni.fi.gag.web.services.recognition.GestureMatchComparator;
@@ -9,26 +10,57 @@ import cz.muni.fi.gag.web.services.recognition.Quaternion;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * @author Vojtech Prusa
  */
-public class BaseComparator<T extends FingerDataLine> implements GestureMatchComparator<T> {
+public abstract class BaseComparator<T extends FingerDataLine> implements GestureMatchComparator<T> {
 
     public static final int BUFFER_SIZE = 20;
-    // List<T> firstNBuffer = new ArrayList<T>();
     protected T first;
     protected final Gesture gRef;
-    protected List<T> ref;
+    protected List<T> refList;
+//    protected Stream<T> ref;
+
     static final float matchDistanceThreshold = 0.5f;
     final protected List<GestureMatcher> matches = new ArrayList<GestureMatcher>();
+    protected DataLineGestureIterator dlgIter = null;
 
-    public BaseComparator(final Gesture gRef) {
+    protected long refSize = 0;
+
+
+    public BaseComparator(final Gesture gRef, final DataLineGestureIterator dlgIter) {
         this.gRef = gRef;
+        this.dlgIter = dlgIter;
+        this.refList = new ArrayList<>();
+    }
+
+    public long getRefSize() {
+        refSize = refList.size();
+//        refSize = ref.count();
+        return refSize;
+    }
+
+    protected T getDL(int index) {
+        T dl = null;
+        while (getRefSize() < index) {
+            if (this.dlgIter.hasNext()) {
+                dl = (T) this.dlgIter.next();
+                // If not @Override then no filtering and everything is added to refList ...
+                refList.add(dl);
+            }
+
+        }
+        return (T) dl;
     }
 
     protected List<T> filterDataLines(List<T> dll) {
         return dll;
+    }
+
+    protected Stream<T> filterDataLines(Stream<T> dls) {
+        return dls;
     }
 
 
@@ -44,6 +76,9 @@ public class BaseComparator<T extends FingerDataLine> implements GestureMatchCom
     }
 
     public GestureMatcher compare(T fdl) {
+        if (fdl == null) {
+            return null;
+        }
         // TODO brainstorm 'matched = new List<GestureMatcher>()' so multiple gestures could be matched?
         // most likely not necessary and waste of CPU
         GestureMatcher matched = null;
@@ -51,7 +86,7 @@ public class BaseComparator<T extends FingerDataLine> implements GestureMatchCom
         int matcherIndex = 0; // this variable is here is for debug purposes
         while (matchesIt.hasNext()) {
             GestureMatcher matcher = matchesIt.next();
-            if (matcher.getIndex() >= ref.size()) {
+            if (matcher.getIndex() >= getRefSize()) {
                 // Matched!
                 matcher.setG(gRef);
                 matcher.setAtDataLine(fdl);
@@ -65,10 +100,26 @@ public class BaseComparator<T extends FingerDataLine> implements GestureMatchCom
             }
             int newPossibleMatchersIndex = matcher.getIndex();
 //            if(ref.size() >= newPossibleMatchersIndex){
-            T fdlRef1 = ref.get(newPossibleMatchersIndex);
-            //            if(ref.size() > matcher.getIndex()+1) {
-            //                T fdlRef2 = ref.get(matcher.getIndex()+1);
-            //            }
+
+//            T fdlRef1 = refList.get(newPossibleMatchersIndex);
+            T fdlRef1 = getDL(newPossibleMatchersIndex);
+            if (fdlRef1 == null) {
+                break;
+            }
+//            T fdlRef1 = null;
+            // TODO brainstorm:
+            //  fdlRef1 cannot be null and has to be refList.get(newPossibleMatchersIndex);
+            //  is it possible to obtain field at index with Stream..
+            //  no..
+            //  get it directly from DB (+ cache)? ..
+            //  I have to implement my own caching of GestureDataLines
+            //  - own because of future nativity (C++)
+            //  - it should work by loading data into memory and then adding it to list
+            //  -- fortunatelly i have
+
+            // if(ref.size() > matcher.getIndex()+1) {
+            //     T fdlRef2 = ref.get(matcher.getIndex()+1);
+            // }
             if (doesMatch(fdlRef1, fdl)) {
                 // Wee match, lets continue
                 matcher.incIndex();
@@ -91,7 +142,7 @@ public class BaseComparator<T extends FingerDataLine> implements GestureMatchCom
         // TODO consider moving this before rest?
         // there may happen a skip for match here when |list<DL>|==1 because matched is skipped here on purpose
         // but that should not be allowed
-        if (matched == null && doesMatch(ref.get(0), fdl)) {
+        if (matched == null && first != null && doesMatch(first, fdl)) {
             GestureMatcher newMatcher = new GestureMatcher(1, null);
             matches.add(newMatcher);
         }
@@ -106,5 +157,6 @@ public class BaseComparator<T extends FingerDataLine> implements GestureMatchCom
                 q1.getQ3() * q2.getQ3();
         return 2.f * Math.acos(sum);
     }
+
 }
     
