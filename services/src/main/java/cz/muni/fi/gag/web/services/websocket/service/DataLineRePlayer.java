@@ -5,7 +5,7 @@ import cz.muni.fi.gag.web.services.logging.Log;
 import cz.muni.fi.gag.web.services.service.DataLineService;
 import org.jboss.logging.Logger;
 
-import javax.enterprise.context.SessionScoped;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.websocket.EncodeException;
@@ -20,13 +20,17 @@ import static cz.muni.fi.gag.web.services.websocket.service.DataLineRePlayer.Pla
 /**
  * @author Vojtech Prusa
  *
+ * Note: Several times I was misled with difference of usage ApplicationScoped and SessionScoped
+ * SessionScoped leads to
+ * - https://stackoverflow.com/questions/15496374/weld-001303-no-active-contexts-for-scope-type-javax-enterprise-context-sessions
+ * - https://stackoverflow.com/questions/24105807/differences-sessionscoped-vs-stateful-and-applicationscoped-vs-singleton
+ * TODO .. @Stateless ? @Stateful
+ * Also fix this in {@link GestureRecognizer}
  */
 @Named
 //@Singleton
 //@Stateful
-//@SessionScoped
-//@ApplicationScoped
-@SessionScoped
+@ApplicationScoped
 public class DataLineRePlayer implements Runnable, Serializable {
 
     public static final String GESTURE_KEY = "gestureId";

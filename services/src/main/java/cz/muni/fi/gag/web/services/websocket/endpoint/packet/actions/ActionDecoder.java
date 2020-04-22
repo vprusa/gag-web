@@ -3,15 +3,14 @@ package cz.muni.fi.gag.web.services.websocket.endpoint.packet.actions;
 /**
  * @author Vojtech Prusa
  */
-public class ActionDecoder extends ActionDecoderBase<Action> {
+public class ActionDecoder<T extends Action> extends ActionDecoderBase<T> {
 
-    public ActionDecoder() {
-        super(Action.class);
+    public ActionDecoder(final Class<T> actionClass, final Action.ActionsTypesEnum typeEnum) {
+        super(actionClass, typeEnum);
     }
 
-    @Override
-    public boolean willDecode(String s) {
-        log.info("ActionDecoder - willDecode: " + s);
-        return !s.contains("gestureId");
+    public ActionDecoder(Class actionClass) {
+        super(actionClass, null);
     }
+
 }

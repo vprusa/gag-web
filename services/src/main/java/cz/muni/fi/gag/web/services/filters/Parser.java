@@ -5,6 +5,8 @@ package cz.muni.fi.gag.web.services.filters;
 
 import cz.muni.fi.gag.web.persistence.entity.DataLine;
 
+import java.io.Serializable;
+
 /**
  * @author Vojtech Prusa
  *
@@ -23,7 +25,7 @@ import cz.muni.fi.gag.web.persistence.entity.DataLine;
  *        methods in given context. TODO .. fix constructors
  * 
  */
-public interface Parser<T extends DataLine> {
+public interface Parser<T extends DataLine> extends Serializable {
 
     T parseLine();
 

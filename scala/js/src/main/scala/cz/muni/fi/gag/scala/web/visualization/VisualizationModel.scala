@@ -187,7 +187,6 @@ class VisualizationScene[GeomType <: Object3DWithProps, QuaternionType <: Quater
     Log.dump(props, Log.Level.VIS_MODEL)
     val dot = new Object3DWithProps(props)
 
-    scene.rotateY(Math.PI)
     dot.position.set(170, -150, 0.0)
     Log.dump("add dot", Log.Level.VIS_MODEL)
     Log.dump(dot, Log.Level.VIS_MODEL)
@@ -222,6 +221,8 @@ class VisualizationScene[GeomType <: Object3DWithProps, QuaternionType <: Quater
 
   def drawAllHands(): Unit = {
     scene.rotateY(Math.PI)
+    //    scene.rotateY(Math.PI)
+
     var i: Int = 0
     for (handsPair <- hands) {
       drawBothHands(handsPair, getHandsProps(i))

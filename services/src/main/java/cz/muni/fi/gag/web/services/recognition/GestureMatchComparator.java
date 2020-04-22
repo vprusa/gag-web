@@ -2,6 +2,8 @@ package cz.muni.fi.gag.web.services.recognition;
 
 import cz.muni.fi.gag.web.persistence.entity.FingerDataLine;
 
+import java.io.Serializable;
+
 /**
  * @author Vojtech Prusa
  *
@@ -10,6 +12,6 @@ import cz.muni.fi.gag.web.persistence.entity.FingerDataLine;
  * - move this to pacakge scala.shared.recognition.*
  * - change FingerDataLine with some interface based approach for reusage in (native) scala?
  */
-public interface GestureMatchComparator<T extends FingerDataLine> {
+public interface GestureMatchComparator<T extends FingerDataLine> extends Serializable {
     GestureMatcher compare(T dl);
 }

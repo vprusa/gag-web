@@ -1,5 +1,6 @@
 package cz.muni.fi.gag.tests.endpoint;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.muni.fi.gag.web.persistence.entity.Gesture;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -32,12 +33,8 @@ public class GestureEndpointTest extends EndpointTestBase<Gesture> {
         return getDeployment(GestureEndpointTest.class);
     }
 
-    @Test
-    @RunAsClient
-    public void testGestureFilterEndpoint() throws Exception {
-        HttpClient client = new DefaultHttpClient();
-        String accessToken = basicLogin();
-
+    public static Gesture getGesture(HttpClient client, String accessToken) throws Exception {
+//        Gesture g = getGesture(client, accessToken);
         HttpPut request = new HttpPut(TESTED_ENDPOINT);
         request.addHeader("Authorization", "Bearer " + accessToken);
         StringEntity params = new StringEntity("");
@@ -51,6 +48,17 @@ public class GestureEndpointTest extends EndpointTestBase<Gesture> {
         StringBuilder sb = entityContentToString(response);
         String text = (sb == null ? "BufferedReader is null" : sb.toString());
         log.info(text);
+        Gesture g = new ObjectMapper().reader().forType(Gesture.class).readValue(text);
+        log.info(g.toString());
+        return g;
+    }
+
+    @Test
+    @RunAsClient
+    public Gesture testGestureFilterEndpoint() throws Exception {
+        HttpClient client = new DefaultHttpClient();
+        String accessToken = basicLogin();
+        return getGesture(client, accessToken);
     }
 
 }

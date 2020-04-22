@@ -5,11 +5,14 @@ import cz.muni.fi.gag.web.services.logging.Log;
 import cz.muni.fi.gag.web.services.mapped.MDataLine;
 import cz.muni.fi.gag.web.services.mapped.MFingerDataLine;
 import cz.muni.fi.gag.web.services.mapped.MWristDataLine;
+import cz.muni.fi.gag.web.services.recognition.GestureMatcher;
 import cz.muni.fi.gag.web.services.service.DataLineService;
 import cz.muni.fi.gag.web.services.service.GestureService;
 import cz.muni.fi.gag.web.services.service.UserService;
-import cz.muni.fi.gag.web.services.websocket.endpoint.packet.actions.PlayerActionDecoder;
+import cz.muni.fi.gag.web.services.websocket.endpoint.packet.actions.Action;
+import cz.muni.fi.gag.web.services.websocket.endpoint.packet.actions.ActionDecoder;
 import cz.muni.fi.gag.web.services.websocket.endpoint.packet.actions.PlayerActions;
+import cz.muni.fi.gag.web.services.websocket.endpoint.packet.actions.RecognitionActions;
 import cz.muni.fi.gag.web.services.websocket.endpoint.packet.datalines.*;
 import cz.muni.fi.gag.web.services.websocket.service.DataLineRePlayer;
 import cz.muni.fi.gag.web.services.websocket.service.GestureRecognizer;
@@ -19,6 +22,8 @@ import javax.faces.bean.SessionScoped;
 import javax.inject.Inject;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * @author Vojtech Prusa
@@ -66,7 +71,7 @@ public class DataLineWsEndpoint {
         log.info(getClass().getSimpleName());
         Thread replayer = (Thread) session.getUserProperties().get(REPLAYER_KEY);
         if(replayer != null) {
-            replayer.interrupt();// stop();
+            replayer.interrupt(); // stop();
         }
     }
 
@@ -74,7 +79,10 @@ public class DataLineWsEndpoint {
     private DataLineDecoder dld = new DataLineDecoder();
     private FingerDataLineDecoder fdld = new FingerDataLineDecoder();
     private WristDataLineDecoder wdld = new WristDataLineDecoder();
-    private PlayerActionDecoder pad = new PlayerActionDecoder();
+    private ActionDecoder<Action> ad = new ActionDecoder(Action.class);
+    private ActionDecoder<PlayerActions> pad = new ActionDecoder(PlayerActions.class, Action.ActionsTypesEnum.PLAYER);
+    private ActionDecoder<RecognitionActions> rad = new ActionDecoder(RecognitionActions.class, Action.ActionsTypesEnum.RECOGNITION);
+//    private PlayerActionDecoder pad = new PlayerActionDecoder();
 
     // https://docs.oracle.com/middleware/12213/wls/WLPRG/websockets.htm#WLPRG1000
     @OnMessage
@@ -108,15 +116,27 @@ public class DataLineWsEndpoint {
         }
 
         if(dl != null && rec.isRecognize() ){
-            rec.recognize(dl);
+            List<GestureMatcher> lgm = rec.recognize(dl);
+            try {
+                session.getBasicRemote().sendObject(lgm);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (EncodeException e) {
+                e.printStackTrace();
+            }
         }
 
         // considering no DataLine matched...
-        if(dl == null && pad.willDecode(msg)) {
-            PlayerActions pa = pad.decode(msg);
-            switch(pa.getType()) {
-                case RECOGNITION: {
-                    switch (pa.getAction()) {
+        if(dl == null && ad.willDecode(msg)) {
+            log.info("ad.decode(msg)");
+            log.info(msg);
+//            Action act = ad.decode(msg);
+//            switch(act.getType()) {
+//                case RECOGNITION: {
+                if(rad.willDecode(msg)) {
+                    log.info("rad");
+                    RecognitionActions ra = (RecognitionActions) rad.decode(msg);
+                    switch (ra.getAction()) {
                         case START: {
                             // stop existing first
 //                            Thread recognizer = (Thread) session.getUserProperties().get(RECOGNITION_KEY);
@@ -137,17 +157,20 @@ public class DataLineWsEndpoint {
                             }
                         }
                     }
-                }
-
-                case PLAYER: {
+                } else if(pad.willDecode(msg)) {
+                    log.info("pad");
+//                }
+//                case PLAYER: {
+                    PlayerActions pa = (PlayerActions) pad.decode(msg);
                     switch (pa.getAction()) {
                         case PLAY: {
                             // stop existing first
+                            log.info("action: " + PlayerActions.ActionsEnum.PLAY);
                             Thread replayer = (Thread) session.getUserProperties().get(REPLAYER_KEY);
                             rep.prepare(true);
                             rep.setGestureId(pa.getGestureId());
                             rep.setSession(session);
-                            if(replayer == null) {
+                            if (replayer == null) {
                                 replayer = new Thread(rep);
                             }
                             replayer.start();
@@ -186,8 +209,9 @@ public class DataLineWsEndpoint {
                         break;
                     }
                 }
-                break;
-            }
+//                }
+//                break;
+//            }
         } else {
             log.info("Unknown message: " + msg);
         }

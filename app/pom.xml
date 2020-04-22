@@ -97,7 +97,7 @@
 				<configuration>
 					<java-opts>
 						<java-opt>-Xmx5G</java-opt>
-						<java-opt>-agentlib:jdwp=transport=dt_socket,address=8787,server=y,suspend=y</java-opt>
+<!--						<java-opt>-agentlib:jdwp=transport=dt_socket,address=8787,server=y,suspend=y</java-opt>-->
 					</java-opts>
 					<jboss-home>${project.parent.basedir}/wildfly-18.0.0.Final/</jboss-home>
 					<skip>false</skip>

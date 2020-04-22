@@ -55,7 +55,6 @@ object HandsVisualization extends BindableView with scalajs.js.JSApp {
   var scene: VisualizationScene[GeomType, QuaternionType] = null
   //  var scene:VisualizationScene[Object3D, QuaternionType] = null
 
-
   @JSExport
   def main(): Unit = {
     this.bindView()

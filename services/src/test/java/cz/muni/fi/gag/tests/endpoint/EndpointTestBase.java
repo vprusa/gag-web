@@ -24,7 +24,7 @@ public abstract class EndpointTestBase<EntityExt extends GenericEntity>
     private static Logger log = Logger.getLogger(EndpointTestBase.class.getSimpleName());
     protected static final String API_ENDPOINT = AuthenticationTestBase.APP_URL+"api/";
 
-    protected StringBuilder entityContentToString(HttpResponse response) {
+    public static StringBuilder entityContentToString(HttpResponse response) {
         StringBuilder stringBuilder = new StringBuilder();
         String line = null;
         try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()))) {

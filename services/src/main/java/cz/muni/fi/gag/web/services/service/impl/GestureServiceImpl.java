@@ -1,5 +1,6 @@
 package cz.muni.fi.gag.web.services.service.impl;
 
+import cz.muni.fi.gag.web.persistence.entity.DataLine;
 import cz.muni.fi.gag.web.persistence.entity.User;
 import cz.muni.fi.gag.web.services.service.generic.GenericCRUDServiceImpl;
 import cz.muni.fi.gag.web.persistence.dao.GestureDao;
@@ -8,7 +9,10 @@ import cz.muni.fi.gag.web.services.service.GestureService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  *
@@ -36,6 +40,19 @@ public class GestureServiceImpl extends GenericCRUDServiceImpl<Gesture, GestureD
     @Override
     public Gesture findRefById(Long u) {
         return getDao().findRefById(u);
+    }
+
+    @Override
+    public <T extends DataLine> Stream<T> getDataStream() {
+        List<DataLine> l = Collections.emptyList();
+        // TODO
+        return (Stream<T>) l.stream();
+    }
+
+    @Override
+    public List<Optional<Gesture>> findActive() {
+        // TODO findActive of current user
+        return Collections.emptyList();
     }
 
 }

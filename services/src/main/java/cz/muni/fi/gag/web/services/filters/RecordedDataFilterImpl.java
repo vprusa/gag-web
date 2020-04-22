@@ -5,17 +5,17 @@ package cz.muni.fi.gag.web.services.filters;
 
 import cz.muni.fi.gag.web.persistence.entity.DataLine;
 import cz.muni.fi.gag.web.persistence.entity.Gesture;
-import cz.muni.fi.gag.web.persistence.entity.Hand;
-import cz.muni.fi.gag.web.persistence.entity.Sensor;
 import cz.muni.fi.gag.web.services.service.DataLineService;
 
-import javax.enterprise.context.SessionScoped;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -36,8 +36,10 @@ import java.util.logging.Logger;
  * <p>
  * TODO fix samplesPerSensorPerSecond - its messed up and do not
  * contains values reliable considering variables name.. rename it?
+ *
  */
-@SessionScoped
+//@SessionScoped
+@ApplicationScoped
 public class RecordedDataFilterImpl implements RecordedDataFilter {
     // TODO add class variables for filtering data ... do not pass them via method
     // parameters ...
@@ -45,82 +47,6 @@ public class RecordedDataFilterImpl implements RecordedDataFilter {
 
     @Inject
     private DataLineService dlService;
-
-    private Gesture orig;
-    private Gesture g;
-
-
-//    public RecordedDataFilterImpl() {}
-
-    /*
-    public RecordedDataFilterImpl(Gesture orig, Gesture g) {
-        this.orig = orig;
-        this.g = g;
-    }*/
-
-    class HistoryArrayList<T> extends ArrayList<T> {
-        int historyCount = 25;
-
-        public HistoryArrayList(int historyCount) {
-            this.historyCount = historyCount;
-        }
-
-        @Override
-        public boolean add(T e) {
-            if (this.size() > historyCount) {
-                this.remove(this.size() - 1);
-            }
-            return super.add(e);
-        }
-    }
-
-    class BothHandsWrapper {
-
-        int historyCountPerSensorOnHand = 25;
-
-        public Map<Hand, Map<Sensor, List<DataLine>>> lastNDataOfEachSensorOfHand = new HashMap<Hand, Map<Sensor, List<DataLine>>>();
-
-        public Map<Hand, Map<Sensor, DataLine>> lastFilteredDataOfEachSensorOfHand = new HashMap<Hand, Map<Sensor, DataLine>>();
-
-        public BothHandsWrapper(int historyCountPerSensorOnHand) {
-            this.historyCountPerSensorOnHand = historyCountPerSensorOnHand;
-            for (Hand h : Hand.values()) {
-                HashMap<Sensor, List<DataLine>> lastNDataOfEachSensor = new HashMap<Sensor, List<DataLine>>();
-                lastNDataOfEachSensorOfHand.put(h, lastNDataOfEachSensor);
-
-                HashMap<Sensor, DataLine> lastFilteredDataOfEachSensor = new HashMap<Sensor, DataLine>();
-                lastFilteredDataOfEachSensorOfHand.put(h, lastFilteredDataOfEachSensor);
-
-                for (Sensor s : Sensor.values()) {
-                    lastNDataOfEachSensor.put(s, new HistoryArrayList<DataLine>(historyCountPerSensorOnHand));
-                    lastFilteredDataOfEachSensor.put(s, null);
-                }
-            }
-        }
-
-        public void add(DataLine line) {
-            lastNDataOfEachSensorOfHand.get(line.getHandPosition()).get(line.getPosition()).add(line);
-        }
-
-        public DataLine getTop(Hand h, Sensor s) {
-            return get(h, s, 0);
-        }
-
-        public DataLine get(Hand h, Sensor s, int i) {
-            int size = lastNDataOfEachSensorOfHand.get(h).get(s).size();
-            if (i >= 0 && size > i)
-                return lastNDataOfEachSensorOfHand.get(h).get(s).get(size - 1 - i);
-            return null;
-        }
-
-        public DataLine getLastFiltered(Hand h, Sensor s) {
-            return bhw.lastFilteredDataOfEachSensorOfHand.get(h).get(s);
-        }
-
-        public void setLastFiltered(DataLine line) {
-            lastFilteredDataOfEachSensorOfHand.get(line.getHandPosition()).put(line.getPosition(), line);
-        }
-    }
 
     List<DataLine> filteredData = null;
     BothHandsWrapper bhw = null;
@@ -151,9 +77,9 @@ public class RecordedDataFilterImpl implements RecordedDataFilter {
         }
     }
 
-    public void filter(float samplesPerSensorPerSecond, boolean findEdges /* parameters */) {
-        filter(this.orig, this.g, samplesPerSensorPerSecond, findEdges);
-    }
+//    public void filter(Gesture ref, Gesture filtered, float samplesPerSensorPerSecond, boolean findEdges /* parameters */) {
+//        filter(ref, filtered, samplesPerSensorPerSecond, findEdges);
+//    }
 
     private boolean isLineValid(DataLine line, float samplesPerSensorPerSecond, boolean findEdges) {
         // check if time matches filtered samples rate per sensor on hand
@@ -182,9 +108,9 @@ public class RecordedDataFilterImpl implements RecordedDataFilter {
     // TODO add methods that call filter(<parameters>) and name them smth like
     // filter<Basic|Minimal|Maximal|TimeOnly|etc.>(<parameters>) based on parameters
     // example
-    public void filterBasic(/* less parameters */) {
-        filter(orig, g, 0.5f, false);
-    }
+//    public void filterBasic(/* less parameters */) {
+//        filter(orig, g, 0.5f, false);
+//    }
 
     public void saveFilteredToFile(String filePath) throws IOException {
         saveFilteredToFile(filePath, false);

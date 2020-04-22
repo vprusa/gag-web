@@ -2,11 +2,13 @@ package cz.muni.fi.gag.tests.recognition;
 
 import cz.muni.fi.gag.tests.common.FileLogger;
 import cz.muni.fi.gag.tests.common.TestServiceBase;
+import cz.muni.fi.gag.web.persistence.dao.impl.DataLineGestureIterator;
 import cz.muni.fi.gag.web.persistence.entity.*;
 import cz.muni.fi.gag.web.services.filters.RecordedDataFilterImpl;
 import cz.muni.fi.gag.web.services.recognition.GestureMatcher;
 import cz.muni.fi.gag.web.services.recognition.comparators.HandComparator;
 import cz.muni.fi.gag.web.services.recognition.comparators.SensorComparator;
+import cz.muni.fi.gag.web.services.service.DataLineService;
 import cz.muni.fi.gag.web.services.service.GestureService;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -25,7 +27,8 @@ import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Vojtech Prusa
@@ -71,25 +74,28 @@ public class RecognitionTest extends TestServiceBase {
     public GestureService gestureService;
 
     @Inject
+    public DataLineService dataLineService;
+
+    @Inject
     public RecordedDataFilterImpl rdf;
 
-    @Test
-    public void testGestureRecognizedNoneSensorMatched() {
+//    @Test
+    public void testNoSensorGestureRecognizedMatched() {
         log.info("testGestureRecognizedNoneSensorMatched");
         Long gId = 19L;
         Long gIdRef = 35L;
-        testGestureEverySensorRecognitionMatchFor(gId,gIdRef);
+        testEverySensorGestureRecognitionMatchFor(gId,gIdRef);
     }
 
 //    @Test
-    public void testGestureRecognizedEverySensorMatched() {
+    public void testEverySensorGestureRecognizedMatched() {
         log.info("testGestureRecognizedEverySensorMatched");
         Long gId = 21L;
         Long gIdRef = 35L;
-        testGestureEverySensorRecognitionMatchFor(gId,gIdRef);
+        testEverySensorGestureRecognitionMatchFor(gId,gIdRef);
     }
 
-    public void testGestureEverySensorRecognitionMatchFor(Long gId,  Long gIdRef) {
+    public void testEverySensorGestureRecognitionMatchFor(Long gId,  Long gIdRef) {
         Optional<Gesture> gOpt = gestureService.findById(gId);
         Optional<Gesture> gRefOpt = gestureService.findById(gIdRef);
         assertTrue("Gesture is not present", gOpt.isPresent());
@@ -99,7 +105,7 @@ public class RecognitionTest extends TestServiceBase {
         Gesture gRef = gRefOpt.get();
 
         List<FingerDataLine> l = g.getData();
-        HandComparator hgi = new HandComparator(gRef);
+        HandComparator hgi = new HandComparator(gRef,dataLineService.buildIteratorByGesture(gRef.getId()));
         GestureMatcher match = null;
 
         GestureMatcher[] handMatches = new GestureMatcher[Sensor.values().length];
@@ -121,9 +127,9 @@ public class RecognitionTest extends TestServiceBase {
         }
     }
 
-    //    @Test
+    @Test
 //    @RunAsClient
-    public void testGestureIndexRecognitionMatch() {
+    public void testIndexGestureRecognitionMatch() {
         log.info("testRecordedDataFilter");
 //        Long gId = 21L;
         // For testing purposes lets compare 2 filtered gestures and as ref gesture use more filtered one.
@@ -143,7 +149,9 @@ public class RecognitionTest extends TestServiceBase {
 
         List<FingerDataLine> l = ((List<FingerDataLine>) g.getData()).stream().filter(dl -> dl.getPosition().equals(Sensor.INDEX)).collect(Collectors.toList());
         List<FingerDataLine> lRef = ((List<FingerDataLine>) gRef.getData()).stream().filter(dl -> dl.getPosition().equals(Sensor.INDEX)).collect(Collectors.toList());
-        SensorComparator sgi = new SensorComparator<FingerDataLine>(Sensor.INDEX, gRef);
+        DataLineGestureIterator dlgIter = dataLineService.buildIteratorByGesture(gRef.getId());
+        SensorComparator sgi = new SensorComparator<FingerDataLine>(Sensor.INDEX, gRef, dlgIter);
+
         GestureMatcher match = null;
 
         Iterator<FingerDataLine> iter = l.iterator();

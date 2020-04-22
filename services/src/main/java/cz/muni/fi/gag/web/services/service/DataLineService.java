@@ -23,7 +23,7 @@ public interface DataLineService extends GenericCRUDService<DataLine, DataLineDa
 
     List<DataLine> findByGestureId(long gestureId);
 
-    DataLineGestureIterator initIteratorByGesture(long gestureId);
+    DataLineGestureIterator buildIteratorByGesture(long gestureId);
 
     Stream<DataLine> getStream(long gestureId);
 

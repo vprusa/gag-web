@@ -112,14 +112,4 @@ public class Gesture extends GenericEntity {
                 '}';
     }
 
-    public <T extends DataLine> Stream<T> getDataStream() {
-        List<DataLine> l = Collections.emptyList();
-        // TODO
-        return (Stream<T>) l.stream();
-    }
-
-    public List<Optional<Gesture>> findActive() {
-        // TODO findActive of current user
-        return Collections.emptyList();
-    }
 }

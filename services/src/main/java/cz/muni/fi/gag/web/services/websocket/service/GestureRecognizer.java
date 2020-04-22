@@ -4,14 +4,14 @@ import cz.muni.fi.gag.web.persistence.dao.impl.DataLineGestureIterator;
 import cz.muni.fi.gag.web.persistence.entity.DataLine;
 import cz.muni.fi.gag.web.persistence.entity.FingerDataLine;
 import cz.muni.fi.gag.web.persistence.entity.Gesture;
-import cz.muni.fi.gag.web.persistence.entity.Sensor;
 import cz.muni.fi.gag.web.services.logging.Log;
 import cz.muni.fi.gag.web.services.recognition.GestureMatcher;
-import cz.muni.fi.gag.web.services.recognition.comparators.SensorComparator;
+import cz.muni.fi.gag.web.services.recognition.comparators.HandComparator;
 import cz.muni.fi.gag.web.services.service.DataLineService;
+import cz.muni.fi.gag.web.services.service.GestureService;
 import org.jboss.logging.Logger;
 
-import javax.enterprise.context.SessionScoped;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.Serializable;
@@ -22,10 +22,12 @@ import static cz.muni.fi.gag.web.services.websocket.service.GestureRecognizer.Re
 
 /**
  * @author Vojtech Prusa
+ *
+ * TODO for bean type change take a look at TODO
+ * {@link DataLineRePlayer}
  */
 @Named
-//@ApplicationScoped
-@SessionScoped
+@ApplicationScoped
 public class GestureRecognizer implements Serializable {
 
     public static final Logger log = Logger.getLogger(GestureRecognizer.class.getSimpleName());
@@ -36,7 +38,7 @@ public class GestureRecognizer implements Serializable {
     private DataLineService dataLineService;
 
     @Inject
-    private Gesture gestureService;
+    private GestureService gestureService;
 
     List<GestureMatcher> recognizedGestures = new ArrayList<GestureMatcher>();
     Map<Gesture, DataLineGestureIterator> gesturesIters;
@@ -66,7 +68,7 @@ public class GestureRecognizer implements Serializable {
                 Optional<Gesture> gOpt = git.next();
                 if(gOpt.isPresent()){
                     Gesture g = gOpt.get();
-                    DataLineGestureIterator dlgIter = dataLineService.initIteratorByGesture(g.getId());
+                    DataLineGestureIterator dlgIter = dataLineService.buildIteratorByGesture(g.getId());
                     gesturesIters.put(g, dlgIter);
                 }
             }
@@ -90,7 +92,8 @@ public class GestureRecognizer implements Serializable {
                     Gesture gRef = git.next();
                     DataLineGestureIterator dlgIter = gesturesIters.get(gRef);
                     // for any sensor it should behave as  SensorComparator<FingerDataLine>
-                    SensorComparator sgi = new SensorComparator<FingerDataLine>(Sensor.INDEX, gRef, dlgIter);
+//                    SensorComparator sgi = new SensorComparator<FingerDataLine>(Sensor.INDEX, gRef, dlgIter);
+                    HandComparator sgi = new HandComparator(gRef, dlgIter);
                     GestureMatcher match = null;
 
 //                        if (dl instanceof FingerDataLine) {

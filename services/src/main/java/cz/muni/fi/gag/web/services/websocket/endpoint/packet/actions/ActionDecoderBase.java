@@ -2,13 +2,18 @@ package cz.muni.fi.gag.web.services.websocket.endpoint.packet.actions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
-import java.io.IOException;
+import org.jboss.logging.Logger;
+
 import javax.websocket.Decoder;
 import javax.websocket.EndpointConfig;
-import org.jboss.logging.Logger;
+import java.io.IOException;
 
 /**
  * @author Vojtech Prusa
+ * <p>
+ * {@link ActionDecoder}
+ * {@link RecognitionActions}
+ * {@link PlayerActions}
  */
 public abstract class ActionDecoderBase<Act extends Action> implements Decoder.Text<Act> {
 
@@ -16,17 +21,19 @@ public abstract class ActionDecoderBase<Act extends Action> implements Decoder.T
 
     private ObjectMapper objectMapper;
 
-    Class type;
+    private final Action.ActionsTypesEnum typeEnum;
+    private final Class actionClass;
 
-    public ActionDecoderBase(Class type) {
-        this.type = type;
+    public ActionDecoderBase(final Class actionClass, final Action.ActionsTypesEnum typeEnum) {
+        this.typeEnum = typeEnum;
+        this.actionClass = actionClass;
         objectMapper = new ObjectMapper();
     }
 
     @Override
     public Act decode(String s) {
         log.info("decode: " + this.getClass().getSimpleName());
-        ObjectReader objectReader = objectMapper.reader().forType(type);
+        ObjectReader objectReader = objectMapper.reader().forType(actionClass);
         try {
             Act cmd = objectReader.readValue(s);
             log.info(cmd.toString());
@@ -40,9 +47,20 @@ public abstract class ActionDecoderBase<Act extends Action> implements Decoder.T
 
     @Override
     public boolean willDecode(String s) {
-        // TODO
-        log.info("TODO ... willDecode");
-        return true;
+        log.info("willDecode(String s)");
+        log.info(s);
+        log.info("typeEnum");
+        log.info(typeEnum);
+        log.info("actionClass");
+        log.info(actionClass);
+        if (typeEnum == null) {
+            log.info("Will ret? " + s.contains("\"type\""));
+            return s.contains("\"type\"");
+        } else {
+            log.info("Will ret? " + (s.contains("\"type\"") && s.contains("\"" + typeEnum.toString() + "\"")));
+//            return s.contains("\"type\"") && s.contains("\"" + actionClass.toString() + "\"");
+            return s.contains("\"type\":" + typeEnum.ordinal()) || s.contains("\"type\":\"" + typeEnum.toString() + "\"");
+        }
     }
 
     @Override

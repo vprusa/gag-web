@@ -17,7 +17,7 @@ import java.util.stream.Stream;
  */
 public abstract class BaseComparator<T extends FingerDataLine> implements GestureMatchComparator<T> {
 
-    public static final int BUFFER_SIZE = 20;
+    public static final int BUFFER_SIZE = 40; // TODO guess optimal max/min
     protected T first;
     protected final Gesture gRef;
     protected List<T> refList;
@@ -132,7 +132,7 @@ public abstract class BaseComparator<T extends FingerDataLine> implements Gestur
 
 //            if (matcher.getIndex() >= ref.size() && matcher.getIndex() > BUFFER_SIZE) { }
             // Boundary for memory usage..
-            if (matcher.getIndex() > 40) {
+            if (matcher.getIndex() > BUFFER_SIZE) {
 //                matchesIt.remove();
             }
 

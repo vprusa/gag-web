@@ -3,10 +3,12 @@ package cz.muni.fi.gag.web.services.recognition;
 import cz.muni.fi.gag.web.persistence.entity.DataLine;
 import cz.muni.fi.gag.web.persistence.entity.Gesture;
 
+import java.io.Serializable;
+
 /**
  * @author Vojtech Prusa
  */
-public class GestureMatcher {
+public class GestureMatcher implements Serializable {
     private Integer index;
     private Gesture g;
     private DataLine atDataLine;

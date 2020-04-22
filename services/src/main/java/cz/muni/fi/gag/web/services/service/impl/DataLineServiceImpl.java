@@ -54,7 +54,7 @@ public class DataLineServiceImpl extends GenericCRUDServiceImpl<DataLine, DataLi
     // TODO it seems wrong to instantiate iterator...? or should it be by
     // implementing Iterable? No more wrappers?
     @Override
-    public DataLineGestureIterator initIteratorByGesture(long gestureId) {
+    public DataLineGestureIterator buildIteratorByGesture(long gestureId) {
         return new DataLineGestureIterator(getDao(), gestureId);
     }
 
