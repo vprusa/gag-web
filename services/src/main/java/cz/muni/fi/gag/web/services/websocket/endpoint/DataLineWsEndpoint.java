@@ -1,11 +1,13 @@
 package cz.muni.fi.gag.web.services.websocket.endpoint;
 
 import cz.muni.fi.gag.web.persistence.entity.DataLine;
+import cz.muni.fi.gag.web.persistence.entity.User;
 import cz.muni.fi.gag.web.services.logging.Log;
 import cz.muni.fi.gag.web.services.mapped.MDataLine;
 import cz.muni.fi.gag.web.services.mapped.MFingerDataLine;
 import cz.muni.fi.gag.web.services.mapped.MWristDataLine;
 import cz.muni.fi.gag.web.services.recognition.GestureMatcher;
+import cz.muni.fi.gag.web.services.rest.endpoint.BaseEndpoint;
 import cz.muni.fi.gag.web.services.service.DataLineService;
 import cz.muni.fi.gag.web.services.service.GestureService;
 import cz.muni.fi.gag.web.services.service.UserService;
@@ -23,6 +25,7 @@ import javax.inject.Inject;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
+import java.security.Principal;
 import java.util.List;
 
 /**
@@ -33,10 +36,11 @@ import java.util.List;
         encoders = {
                 // JsonEncoder.class
                 DataLineEncoder.class, FingerDataLineEncoder.class, WristDataLineEncoder.class
-                 },
-        decoders = {}
+        },
+        decoders = {},
+        configurator = CustomServerEndpointConfiguration.class
 )
-public class DataLineWsEndpoint {
+public class DataLineWsEndpoint { // extends BaseEndpoint {
 
     public static final Logger log = Logger.getLogger(DataLineWsEndpoint.class.getSimpleName());
 
@@ -58,11 +62,24 @@ public class DataLineWsEndpoint {
     @Inject
     private GestureRecognizer rec;
 
+
     @OnOpen
-    public void onOpen(Session session) {
+    public void onOpen(Session session, EndpointConfig config) {
         Log.info("onOpen");
         log.info(getClass().getSimpleName());
         //sessionService.addSession(session);
+        log.info("config.getUserProperties()");
+        Principal userPrincipal = (Principal) config.getUserProperties().get("UserPrincipal");
+        log.info("userPrincipal");
+        log.info(userPrincipal);
+        User current = BaseEndpoint.current(userPrincipal, userService);
+        log.info("User: current");
+        log.info(current);
+        // TODO if user not in role stop! (with sufficient error message)
+
+//        Boolean userInRole =  (Boolean) config.getUserProperties().get("userInRole");
+//        log.info("userInRole");
+//        log.info(userInRole);
     }
 
     @OnClose
@@ -70,7 +87,7 @@ public class DataLineWsEndpoint {
         Log.info("onClose");
         log.info(getClass().getSimpleName());
         Thread replayer = (Thread) session.getUserProperties().get(REPLAYER_KEY);
-        if(replayer != null) {
+        if (replayer != null) {
             replayer.interrupt(); // stop();
         }
     }
@@ -104,18 +121,18 @@ public class DataLineWsEndpoint {
 
         DataLine dl = null;
 
-        if(fdld.willDecode(msg)) {
+        if (fdld.willDecode(msg)) {
             MFingerDataLine mfdl = fdld.decode(msg);
             dl = dataLineService.create(mfdl.getEntity(gestureService));
-        } else if(wdld.willDecode(msg)) {
+        } else if (wdld.willDecode(msg)) {
             MWristDataLine mwdl = wdld.decode(msg);
             dl = dataLineService.create(mwdl.getEntity(gestureService));
-        } else if(dld.willDecode(msg)) {
+        } else if (dld.willDecode(msg)) {
             MDataLine mdl = dld.decode(msg);
             dl = dataLineService.create(mdl.getEntity(gestureService));
         }
 
-        if(dl != null && rec.isRecognize() ){
+        if (dl != null && rec.isRecognizing()) {
             List<GestureMatcher> lgm = rec.recognize(dl);
             try {
                 session.getBasicRemote().sendObject(lgm);
@@ -127,88 +144,100 @@ public class DataLineWsEndpoint {
         }
 
         // considering no DataLine matched...
-        if(dl == null && ad.willDecode(msg)) {
+        if (dl == null && ad.willDecode(msg)) {
             log.info("ad.decode(msg)");
             log.info(msg);
 //            Action act = ad.decode(msg);
 //            switch(act.getType()) {
 //                case RECOGNITION: {
-                if(rad.willDecode(msg)) {
-                    log.info("rad");
-                    RecognitionActions ra = (RecognitionActions) rad.decode(msg);
-                    switch (ra.getAction()) {
-                        case START: {
-                            // stop existing first
+            if (rad.willDecode(msg)) {
+                log.info("rad");
+                RecognitionActions ra = (RecognitionActions) rad.decode(msg);
+                switch (ra.getAction()) {
+                    case START: {
+                        // stop existing first
 //                            Thread recognizer = (Thread) session.getUserProperties().get(RECOGNITION_KEY);
 //                            rec.setGestureId(pa.getGestureId());
 //                            rec.setSession(session);
 //                            if(recognizer == null) {
 //                                recognizer = new Thread(rec);
 //                            }
-                            rec.start();
-                            session.getUserProperties().put(RECOGNITION_KEY, rec);
-                        }
-                        case STOP: {
-                            Thread recognizer = (Thread) session.getUserProperties().get(RECOGNITION_KEY);
-                            synchronized (recognizer) {
-                                if (recognizer != null) {
-                                    rec.stop();
-                                }
-                            }
-                        }
+                        log.info("RECOGNITION - START, RECOGNITION_KEY: " + RECOGNITION_KEY);
+
+                        Principal userPrincipal = (Principal) session.getUserProperties().get("UserPrincipal");
+                        log.info("userPrincipal");
+                        log.info(userPrincipal);
+                        User current = BaseEndpoint.current(userPrincipal, userService);
+                        log.info("current");
+                        log.info(current);
+                        rec.start(current);
+                        session.getUserProperties().put(RECOGNITION_KEY, rec);
+                        break;
                     }
-                } else if(pad.willDecode(msg)) {
-                    log.info("pad");
+                    case STOP: {
+                        // TODO fix,
+                        // - this is not a Runnable (comparing to Player ..)
+                        GestureRecognizer recStored = (GestureRecognizer) session.getUserProperties().get(RECOGNITION_KEY);
+//                        synchronized (recStored) {
+                            if (recStored != null) {
+                                rec.stop();
+                            }
+//                        }
+                        break;
+                    }
+                }
+            } else if (pad.willDecode(msg)) {
+                log.info("pad");
 //                }
 //                case PLAYER: {
-                    PlayerActions pa = (PlayerActions) pad.decode(msg);
-                    switch (pa.getAction()) {
-                        case PLAY: {
-                            // stop existing first
-                            log.info("action: " + PlayerActions.ActionsEnum.PLAY);
-                            Thread replayer = (Thread) session.getUserProperties().get(REPLAYER_KEY);
-                            rep.prepare(true);
-                            rep.setGestureId(pa.getGestureId());
-                            rep.setSession(session);
-                            if (replayer == null) {
-                                replayer = new Thread(rep);
-                            }
-                            replayer.start();
-                            session.getUserProperties().put(REPLAYER_KEY, replayer);
+                PlayerActions pa = (PlayerActions) pad.decode(msg);
+                switch (pa.getAction()) {
+                    case PLAY: {
+                        // stop existing first
+                        log.info("action: " + PlayerActions.ActionsEnum.PLAY);
+                        Thread replayer = (Thread) session.getUserProperties().get(REPLAYER_KEY);
+                        rep.prepare(true);
+                        rep.setGestureId(pa.getGestureId());
+                        rep.setSession(session);
+                        if (replayer == null) {
+                            replayer = new Thread(rep);
                         }
+                        replayer.start();
+                        session.getUserProperties().put(REPLAYER_KEY, replayer);
                         break;
-                        case PAUSE: {
-                            Thread replayer = (Thread) session.getUserProperties().get(REPLAYER_KEY);
-                            synchronized (replayer) {
-                                log.info("Replayer pause");
-                                log.info(replayer.toString());
-                                if (replayer != null) {
-                                    rep.pause();
-                                }
-                            }
-                        }
-                        break;
-                        case CONTINUE: {
-                            Thread replayer = (Thread) session.getUserProperties().get(REPLAYER_KEY);
-                            synchronized (replayer) {
-                                if (replayer != null) {
-                                    rep.play();
-                                    replayer.notify();
-                                }
+                    }
+                    case PAUSE: {
+                        Thread replayer = (Thread) session.getUserProperties().get(REPLAYER_KEY);
+                        synchronized (replayer) {
+                            log.info("Replayer pause");
+                            log.info(replayer.toString());
+                            if (replayer != null) {
+                                rep.pause();
                             }
                         }
                         break;
-                        case STOP: {
-                            Thread replayer = (Thread) session.getUserProperties().get(REPLAYER_KEY);
-                            synchronized (replayer) {
-                                if (replayer != null) {
-                                    rep.stop();
-                                }
+                    }
+                    case CONTINUE: {
+                        Thread replayer = (Thread) session.getUserProperties().get(REPLAYER_KEY);
+                        synchronized (replayer) {
+                            if (replayer != null) {
+                                rep.play();
+                                replayer.notify();
+                            }
+                        }
+                        break;
+                    }
+                    case STOP: {
+                        Thread replayer = (Thread) session.getUserProperties().get(REPLAYER_KEY);
+                        synchronized (replayer) {
+                            if (replayer != null) {
+                                rep.stop();
                             }
                         }
                         break;
                     }
                 }
+            }
 //                }
 //                break;
 //            }
@@ -224,7 +253,7 @@ public class DataLineWsEndpoint {
         log.info(getClass().getSimpleName());
         t.printStackTrace();
         Thread replayer = (Thread) session.getUserProperties().get(REPLAYER_KEY);
-        if(replayer != null) {
+        if (replayer != null) {
             replayer.interrupt();// stop();
         }
     }

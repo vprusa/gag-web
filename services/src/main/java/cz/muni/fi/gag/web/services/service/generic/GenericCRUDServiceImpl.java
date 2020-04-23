@@ -1,10 +1,8 @@
 package cz.muni.fi.gag.web.services.service.generic;
 
-import cz.muni.fi.gag.web.services.logging.Log;
-import cz.muni.fi.gag.web.services.service.impl.DataLineServiceImpl;
-import cz.muni.fi.gag.web.services.service.impl.FingerDataLineServiceImpl;
 import cz.muni.fi.gag.web.persistence.dao.GenericDao;
 import cz.muni.fi.gag.web.persistence.entity.GenericEntity;
+import cz.muni.fi.gag.web.services.logging.Log;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,9 +13,10 @@ import java.util.Optional;
  * @param <T>
  * @param <TDao>
  * 
- * {@link DataLineServiceImpl}
- * {@link FingerDataLineServiceImpl}
- * 
+ * {@link cz.muni.fi.gag.web.services.service.impl.DataLineServiceImpl}
+ * {@link cz.muni.fi.gag.web.services.service.impl.FingerDataLineServiceImpl}
+ * {@link cz.muni.fi.gag.web.services.service.impl.GestureServiceImpl}
+ *
  */
 public abstract class GenericCRUDServiceImpl<T extends GenericEntity, TDao extends GenericDao<T>>
         implements GenericCRUDService<T, TDao> {

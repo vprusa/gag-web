@@ -67,4 +67,13 @@ public class User extends GenericEntity {
         final User other = (User) obj;
         return getThirdPartyId() != null && getThirdPartyId().equals(other.getThirdPartyId());
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "thirdPartyId='" + thirdPartyId + '\'' +
+                ", role=" + role +
+                ", id=" + id +
+                '}';
+    }
 }

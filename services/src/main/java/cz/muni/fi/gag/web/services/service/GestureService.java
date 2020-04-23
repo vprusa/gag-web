@@ -1,14 +1,13 @@
 package cz.muni.fi.gag.web.services.service;
 
+import cz.muni.fi.gag.web.persistence.dao.GestureDao;
 import cz.muni.fi.gag.web.persistence.entity.DataLine;
+import cz.muni.fi.gag.web.persistence.entity.Gesture;
 import cz.muni.fi.gag.web.persistence.entity.User;
 import cz.muni.fi.gag.web.services.service.generic.GenericCRUDService;
 import cz.muni.fi.gag.web.services.service.impl.GestureServiceImpl;
-import cz.muni.fi.gag.web.persistence.dao.GestureDao;
-import cz.muni.fi.gag.web.persistence.entity.Gesture;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
@@ -24,5 +23,5 @@ public interface GestureService extends GenericCRUDService<Gesture, GestureDao> 
     Gesture findRefById(Long u);
 
     <T extends DataLine> Stream<T> getDataStream();
-    List<Optional<Gesture>> findActive();
+    List<Gesture> findActive(User u);
 }

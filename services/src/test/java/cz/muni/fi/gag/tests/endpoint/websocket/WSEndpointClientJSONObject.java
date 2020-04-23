@@ -26,10 +26,10 @@ public class WSEndpointClientJSONObject extends Endpoint {
     @Override
     public void onOpen(Session session, EndpointConfig config) {
         response = new ArrayList<String>();
+        log.info("WSEndpointClientJSONObject.onOpen");
         final RemoteEndpoint.Basic remote = session.getBasicRemote();
-        //session.addMessageHandler(mhw);
         try {
-            session.getBasicRemote().sendText(JSON);
+            remote.sendText(JSON);
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }

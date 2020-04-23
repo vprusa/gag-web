@@ -61,10 +61,15 @@
 									<a href="" title="Remove" class="btn btn-info" ng-click='deleteGesture(item.id)'>
 										<span class="glyphicon glyphicon-remove"></span>
 									</a>
+									<!--
+										TODO Add filter button that will pop up simple form with filtering options (and new-name, active) ;
+										  from RecordedDataFilterImpl:
+										  filter(float samplesPerSensorPerSecond, boolean findEdges)
+									 -->
 									<a href="" title="Activate" class="btn btn-info" ng-disabled='!item.filtered'
 										 idk-active="{{item.active}}"
 										 ng-style="item.active && {'background-color': 'green'}"
-										 ng-click='switchActivateGesture(item.id, item.active)'>
+										 ng-click='item.filtered && switchActivateGesture(item.id, item.active)'>
 										<span class="glyphicon glyphicon-flag"></span>
 									</a>
 								</td>

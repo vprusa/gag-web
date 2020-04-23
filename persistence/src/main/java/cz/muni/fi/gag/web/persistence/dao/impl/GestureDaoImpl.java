@@ -1,8 +1,8 @@
 package cz.muni.fi.gag.web.persistence.dao.impl;
 
-import cz.muni.fi.gag.web.persistence.entity.User;
 import cz.muni.fi.gag.web.persistence.dao.GestureDao;
 import cz.muni.fi.gag.web.persistence.entity.Gesture;
+import cz.muni.fi.gag.web.persistence.entity.User;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.TypedQuery;
@@ -35,5 +35,13 @@ public class GestureDaoImpl extends AbstractGenericDao<Gesture> implements Gestu
         return em.getReference(Gesture.class, u);
     }
 
+    @Override
+    public List<Gesture> findUsersActive(User u) {
+//        return getDao().findActive();
+        TypedQuery<Gesture> q = em.createQuery("SELECT g FROM Gesture g WHERE user_id = :userId and isActive = 1", Gesture.class)
+                .setParameter("userId", u.getId());
+        List<Gesture> results = q.getResultList();
+        return results;
+    }
 
 }

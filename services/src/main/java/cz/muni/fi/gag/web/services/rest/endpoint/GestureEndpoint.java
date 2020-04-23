@@ -51,7 +51,7 @@ public class GestureEndpoint extends BaseEndpoint {
             log.info("getGestureById");
             return Response.ok(gestureOpt.get()).build();
         } catch (NumberFormatException ex) {
-            User u = currentUser();
+            User u = current();
             if (u != null) {
                 List<Gesture> myGestures = gestureService.findByUser(u);
                 log.info("getGestureByUser");
@@ -74,7 +74,7 @@ public class GestureEndpoint extends BaseEndpoint {
             g.setUserAlias(userAlias);
             g.setFiltered(false);
             g.setDateCreated(new Date());
-            g.setUser(currentUser());
+            g.setUser(current());
             Gesture created = gestureService.create(g);
             builder = Response.ok(created);
         } catch (Exception e) {

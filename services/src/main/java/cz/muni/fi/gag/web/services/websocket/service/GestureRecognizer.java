@@ -4,6 +4,7 @@ import cz.muni.fi.gag.web.persistence.dao.impl.DataLineGestureIterator;
 import cz.muni.fi.gag.web.persistence.entity.DataLine;
 import cz.muni.fi.gag.web.persistence.entity.FingerDataLine;
 import cz.muni.fi.gag.web.persistence.entity.Gesture;
+import cz.muni.fi.gag.web.persistence.entity.User;
 import cz.muni.fi.gag.web.services.logging.Log;
 import cz.muni.fi.gag.web.services.recognition.GestureMatcher;
 import cz.muni.fi.gag.web.services.recognition.comparators.HandComparator;
@@ -40,11 +41,15 @@ public class GestureRecognizer implements Serializable {
     @Inject
     private GestureService gestureService;
 
-    List<GestureMatcher> recognizedGestures = new ArrayList<GestureMatcher>();
-    Map<Gesture, DataLineGestureIterator> gesturesIters;
+//    @Inject
+//    private AuthenticationService authService;
 
-    public boolean isRecognize() {
-        return state == RECOGNIZING;
+    // TODO fix re-init with start()
+    protected List<GestureMatcher> recognizedGestures = new ArrayList<GestureMatcher>();
+    protected Map<Gesture, DataLineGestureIterator> gesturesIters = new HashMap<Gesture, DataLineGestureIterator>();
+
+    public boolean isRecognizing() {
+        return getState() == RECOGNIZING;
     }
 
     // preparing for further states
@@ -56,21 +61,18 @@ public class GestureRecognizer implements Serializable {
         }
     }
 
-    public void start() {
+    public void start(User current) {
         synchronized (state) {
             this.state = RECOGNIZING;
             recognizedGestures = new ArrayList<GestureMatcher>();
-            List<Optional<Gesture>> lGOpts = gestureService.findActive();
+            List<Gesture> lGOpts = gestureService.findActive(current);
             gesturesIters = new HashMap<Gesture, DataLineGestureIterator>();
 
-            Iterator<Optional<Gesture>> git = lGOpts.iterator();
+            Iterator<Gesture> git = lGOpts.iterator();
             while (git.hasNext()) {
-                Optional<Gesture> gOpt = git.next();
-                if(gOpt.isPresent()){
-                    Gesture g = gOpt.get();
-                    DataLineGestureIterator dlgIter = dataLineService.buildIteratorByGesture(g.getId());
-                    gesturesIters.put(g, dlgIter);
-                }
+                Gesture g = git.next();
+                DataLineGestureIterator dlgIter = dataLineService.buildIteratorByGesture(g.getId());
+                gesturesIters.put(g, dlgIter);
             }
         }
     }

@@ -13,5 +13,4 @@ import cz.muni.fi.gag.web.persistence.entity.FingerDataLine;
  *
  */
 public interface FingerDataLineService extends GenericCRUDService<FingerDataLine, FingerDataLineDao> {
-
 }

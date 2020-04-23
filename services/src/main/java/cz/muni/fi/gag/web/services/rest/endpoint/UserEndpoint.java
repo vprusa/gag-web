@@ -1,26 +1,11 @@
 package cz.muni.fi.gag.web.services.rest.endpoint;
 
-import cz.muni.fi.gag.web.persistence.entity.User;
-import cz.muni.fi.gag.web.persistence.entity.UserRole;
-import cz.muni.fi.gag.web.services.service.UserService;
-
-import java.util.logging.Logger;
-
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-
+import cz.muni.fi.gag.web.persistence.entity.User;
+import cz.muni.fi.gag.web.persistence.entity.UserRole;
+import cz.muni.fi.gag.web.services.service.UserService;
 import org.keycloak.KeycloakPrincipal;
 import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.adapters.AdapterDeploymentContext;
@@ -29,8 +14,15 @@ import org.keycloak.common.util.KeycloakUriBuilder;
 import org.keycloak.constants.ServiceUrlConstants;
 import org.keycloak.representations.AccessToken;
 
+import javax.inject.Inject;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 /**
  * @author Vojtech Prusa
@@ -95,12 +87,12 @@ public class UserEndpoint extends BaseEndpoint {
     @GET
     @Path("/currentdetail")
     public Response currentdetail() {
-        if (sc.getUserPrincipal() instanceof KeycloakPrincipal) {
+        if (getSc().getUserPrincipal() instanceof KeycloakPrincipal) {
             // https://stackoverflow.com/questions/31864062/
             // fetch-logged-in-username-in-a-webapp-secured-with-keycloak
-            if (sc.getUserPrincipal() instanceof KeycloakPrincipal) {
+            if (getSc().getUserPrincipal() instanceof KeycloakPrincipal) {
                 @SuppressWarnings("unchecked")
-                KeycloakPrincipal<KeycloakSecurityContext> kp = (KeycloakPrincipal<KeycloakSecurityContext>) sc
+                KeycloakPrincipal<KeycloakSecurityContext> kp = (KeycloakPrincipal<KeycloakSecurityContext>) getSc()
                         .getUserPrincipal();
                 return Response.ok(kp.getKeycloakSecurityContext().getIdToken()).build();
             }
@@ -111,7 +103,7 @@ public class UserEndpoint extends BaseEndpoint {
     @GET
     @Path("/current")
     public Response currentsimple() {
-        User currentUser = currentUser();
+        User currentUser = current();
         if(currentUser != null) {
             return Response.ok(currentUser).build();
         }
