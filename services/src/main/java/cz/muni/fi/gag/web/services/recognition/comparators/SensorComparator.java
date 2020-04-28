@@ -11,6 +11,9 @@ import java.util.stream.Stream;
 
 /**
  * @author Vojtech Prusa
+ *  {@link HandComparator}
+ *  {@link FingerComparator}
+ *  {@link WristComparator}
  */
 public class SensorComparator<T extends FingerDataLine> extends BaseComparator<T> {
 
@@ -19,10 +22,10 @@ public class SensorComparator<T extends FingerDataLine> extends BaseComparator<T
     public SensorComparator(final Sensor s, final Gesture gRef, final DataLineGestureIterator dlgIter) {
         super(gRef, dlgIter);
         this.s = s;
-        if (dlgIter.hasNext()) {
-            this.first = getDL(0);
-            this.refList.add(this.first);
-        }
+//        if (dlgIter.hasNext()) {
+        this.first = getDL(0);
+//        this.refList.add(this.first);
+//        }
     }
 
     Sensor getSensor() {
@@ -41,17 +44,25 @@ public class SensorComparator<T extends FingerDataLine> extends BaseComparator<T
 
     @Override
     protected T getDL(int index) {
-        T dl = null;
-        while (getRefSize() < index) {
+        T ret = null;
+        while (getRefSize() <= index) {
+            T dl = null;
             if (this.dlgIter.hasNext()) {
                 dl = (T) this.dlgIter.next();
-                if(this.s.equals(dl.getPosition())){
+                if(this.s.equals(dl.getPosition())) {
                     refList.add(dl);
+                    ret = dl;
                 }
+            } else {
+                // TODO return null;
+                // not found
+                break;
             }
-
         }
-        return dl;
+        if(ret == null && getRefSize()>index){
+            ret = refList.get(index);
+        }
+        return ret;
     }
 }
     

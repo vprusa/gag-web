@@ -3,6 +3,7 @@ package cz.muni.fi.gag.web.persistence.dao;
 import cz.muni.fi.gag.web.persistence.dao.impl.DataLineDaoImpl;
 import cz.muni.fi.gag.web.persistence.dao.impl.DataLineGestureIterator;
 import cz.muni.fi.gag.web.persistence.entity.DataLine;
+import cz.muni.fi.gag.web.persistence.entity.Sensor;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -23,8 +24,13 @@ public interface DataLineDao extends GenericDao<DataLine> {
     Stream<DataLine> getStream(long gestureId);
 
     List<DataLine> getChunkForGesture(long gestureId, int offset, int limit);
+    List<DataLine> getChunkForGesture(long gestureId, int offset, int limit, Sensor s);
 
     int removeBy(Long gestureId);
 
     List<DataLine> getInteresting(Long gestureId);
+
+    long getSize(long gestureId, Sensor s);
+    long getSize(long gestureId);
+
 }

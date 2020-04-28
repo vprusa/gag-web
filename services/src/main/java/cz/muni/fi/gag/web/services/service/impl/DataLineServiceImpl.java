@@ -1,10 +1,12 @@
 package cz.muni.fi.gag.web.services.service.impl;
 
-import cz.muni.fi.gag.web.persistence.dao.impl.DataLineGestureIterator;
-import cz.muni.fi.gag.web.services.service.generic.GenericCRUDServiceImpl;
 import cz.muni.fi.gag.web.persistence.dao.DataLineDao;
+import cz.muni.fi.gag.web.persistence.dao.impl.DataLineGestureIterator;
+import cz.muni.fi.gag.web.persistence.dao.impl.DataLineGestureSensorIterator;
 import cz.muni.fi.gag.web.persistence.entity.DataLine;
+import cz.muni.fi.gag.web.persistence.entity.Sensor;
 import cz.muni.fi.gag.web.services.service.DataLineService;
+import cz.muni.fi.gag.web.services.service.generic.GenericCRUDServiceImpl;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -53,8 +55,15 @@ public class DataLineServiceImpl extends GenericCRUDServiceImpl<DataLine, DataLi
 
     // TODO it seems wrong to instantiate iterator...? or should it be by
     // implementing Iterable? No more wrappers?
+    // TODO return DataLineGestureIterator <-> SensorDataLineGestureIterator ... refactor to facade pattern
+    // or remove unused DataLineGestureIterator ..?
     @Override
-    public DataLineGestureIterator buildIteratorByGesture(long gestureId) {
+    public DataLineGestureSensorIterator buildIterator(long gestureId, Sensor s) {
+        return new DataLineGestureSensorIterator(getDao(), gestureId, s);
+    }
+
+    @Override
+    public DataLineGestureIterator buildIterator(long gestureId) {
         return new DataLineGestureIterator(getDao(), gestureId);
     }
 

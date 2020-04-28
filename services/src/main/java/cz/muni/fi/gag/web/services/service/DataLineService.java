@@ -2,7 +2,9 @@ package cz.muni.fi.gag.web.services.service;
 
 import cz.muni.fi.gag.web.persistence.dao.DataLineDao;
 import cz.muni.fi.gag.web.persistence.dao.impl.DataLineGestureIterator;
+import cz.muni.fi.gag.web.persistence.dao.impl.DataLineGestureSensorIterator;
 import cz.muni.fi.gag.web.persistence.entity.DataLine;
+import cz.muni.fi.gag.web.persistence.entity.Sensor;
 import cz.muni.fi.gag.web.services.service.generic.GenericCRUDService;
 import cz.muni.fi.gag.web.services.service.impl.DataLineServiceImpl;
 import cz.muni.fi.gag.web.services.service.impl.FingerDataLineServiceImpl;
@@ -23,7 +25,8 @@ public interface DataLineService extends GenericCRUDService<DataLine, DataLineDa
 
     List<DataLine> findByGestureId(long gestureId);
 
-    DataLineGestureIterator buildIteratorByGesture(long gestureId);
+    DataLineGestureSensorIterator buildIterator(long gestureId, Sensor s);
+    DataLineGestureIterator buildIterator(long gestureId);
 
     Stream<DataLine> getStream(long gestureId);
 

@@ -1,7 +1,6 @@
 package cz.muni.fi.gag.web.services.websocket.endpoint;
 
-import cz.muni.fi.gag.web.persistence.entity.DataLine;
-import cz.muni.fi.gag.web.persistence.entity.User;
+import cz.muni.fi.gag.web.persistence.entity.*;
 import cz.muni.fi.gag.web.services.logging.Log;
 import cz.muni.fi.gag.web.services.mapped.MDataLine;
 import cz.muni.fi.gag.web.services.mapped.MFingerDataLine;
@@ -24,6 +23,7 @@ import javax.faces.bean.SessionScoped;
 import javax.inject.Inject;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
+import javax.websocket.server.ServerEndpointConfig;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
@@ -39,8 +39,18 @@ import java.util.List;
         },
         decoders = {},
         configurator = CustomServerEndpointConfiguration.class
+//        configurator = ServerEndpointConfig.Configurator.class
 )
 public class DataLineWsEndpoint { // extends BaseEndpoint {
+
+    DataLineWsEndpoint() {
+    }
+
+    DataLineWsEndpoint(CustomServerEndpointConfiguration config) {
+    }
+
+    DataLineWsEndpoint(ServerEndpointConfig.Configurator config) {
+    }
 
     public static final Logger log = Logger.getLogger(DataLineWsEndpoint.class.getSimpleName());
 
@@ -62,30 +72,16 @@ public class DataLineWsEndpoint { // extends BaseEndpoint {
     @Inject
     private GestureRecognizer rec;
 
-
     @OnOpen
     public void onOpen(Session session, EndpointConfig config) {
-        Log.info("onOpen");
-        log.info(getClass().getSimpleName());
         //sessionService.addSession(session);
-        log.info("config.getUserProperties()");
         Principal userPrincipal = (Principal) config.getUserProperties().get("UserPrincipal");
-        log.info("userPrincipal");
-        log.info(userPrincipal);
         User current = BaseEndpoint.current(userPrincipal, userService);
-        log.info("User: current");
-        log.info(current);
         // TODO if user not in role stop! (with sufficient error message)
-
-//        Boolean userInRole =  (Boolean) config.getUserProperties().get("userInRole");
-//        log.info("userInRole");
-//        log.info(userInRole);
     }
 
     @OnClose
     public void onClose(Session session) {
-        Log.info("onClose");
-        log.info(getClass().getSimpleName());
         Thread replayer = (Thread) session.getUserProperties().get(REPLAYER_KEY);
         if (replayer != null) {
             replayer.interrupt(); // stop();
@@ -99,8 +95,10 @@ public class DataLineWsEndpoint { // extends BaseEndpoint {
     private ActionDecoder<Action> ad = new ActionDecoder(Action.class);
     private ActionDecoder<PlayerActions> pad = new ActionDecoder(PlayerActions.class, Action.ActionsTypesEnum.PLAYER);
     private ActionDecoder<RecognitionActions> rad = new ActionDecoder(RecognitionActions.class, Action.ActionsTypesEnum.RECOGNITION);
+
 //    private PlayerActionDecoder pad = new PlayerActionDecoder();
 
+//    private static int limit = 0;
     // https://docs.oracle.com/middleware/12213/wls/WLPRG/websockets.htm#WLPRG1000
     @OnMessage
     public void onMessage(String msg, Session session) {
@@ -121,25 +119,55 @@ public class DataLineWsEndpoint { // extends BaseEndpoint {
 
         DataLine dl = null;
 
-        if (fdld.willDecode(msg)) {
-            MFingerDataLine mfdl = fdld.decode(msg);
-            dl = dataLineService.create(mfdl.getEntity(gestureService));
-        } else if (wdld.willDecode(msg)) {
-            MWristDataLine mwdl = wdld.decode(msg);
-            dl = dataLineService.create(mwdl.getEntity(gestureService));
-        } else if (dld.willDecode(msg)) {
-            MDataLine mdl = dld.decode(msg);
-            dl = dataLineService.create(mdl.getEntity(gestureService));
+         if(!rec.isRecognizing()){
+             // This was an ugly way to duplicate real data ...
+//        if (limit <= 12) {
+//            limit++;
+//            long gid = 79l;
+            if (fdld.willDecode(msg)) {
+                MFingerDataLine mfdl = fdld.decode(msg);
+//                mfdl.setGestureID(gid);
+                FingerDataLine fdl = mfdl.getEntity(gestureService);
+//                fdl.setGestureID(gid);
+                dl = dataLineService.create(fdl);
+            } else if (wdld.willDecode(msg)) {
+                MWristDataLine mwdl = wdld.decode(msg);
+//                mwdl.setGestureID(gid);
+                mwdl.setPosition(Sensor.WRIST); // TODO move this somewhere else...
+                WristDataLine wdl = mwdl.getEntity(gestureService);
+                wdl.setPosition(Sensor.WRIST);
+                dl = dataLineService.create(wdl);
+            } else if (dld.willDecode(msg)) {
+                MDataLine mdl = dld.decode(msg);
+//                mdl.setGestureID(gid);
+                dl = dataLineService.create(mdl.getEntity(gestureService));
+            }
+        } else {
+            if (fdld.willDecode(msg)) {
+//                MFingerDataLine dl = fdld.decode(msg);
+                dl = fdld.decode(msg);
+            } else if (wdld.willDecode(msg)) {
+//                MWristDataLine dl = wdld.decode(msg);
+                dl = wdld.decode(msg);
+            } else if (dld.willDecode(msg)) {
+//                MDataLine dl = dld.decode(msg);
+                dl = dld.decode(msg);
+            }
         }
 
         if (dl != null && rec.isRecognizing()) {
+            log.info("isRecognizing");
             List<GestureMatcher> lgm = rec.recognize(dl);
-            try {
-                session.getBasicRemote().sendObject(lgm);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (EncodeException e) {
-                e.printStackTrace();
+            if (!lgm.isEmpty()) {
+                log.info("sendObject(lgm)");
+                log.info(lgm);
+                try {
+                    session.getBasicRemote().sendObject(lgm);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (EncodeException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -172,6 +200,12 @@ public class DataLineWsEndpoint { // extends BaseEndpoint {
                         log.info(current);
                         rec.start(current);
                         session.getUserProperties().put(RECOGNITION_KEY, rec);
+                        try {
+                            // Send ACK
+                            session.getBasicRemote().sendText(msg);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                         break;
                     }
                     case STOP: {
@@ -179,9 +213,9 @@ public class DataLineWsEndpoint { // extends BaseEndpoint {
                         // - this is not a Runnable (comparing to Player ..)
                         GestureRecognizer recStored = (GestureRecognizer) session.getUserProperties().get(RECOGNITION_KEY);
 //                        synchronized (recStored) {
-                            if (recStored != null) {
-                                rec.stop();
-                            }
+                        if (recStored != null) {
+                            rec.stop();
+                        }
 //                        }
                         break;
                     }
@@ -242,7 +276,9 @@ public class DataLineWsEndpoint { // extends BaseEndpoint {
 //                break;
 //            }
         } else {
-            log.info("Unknown message: " + msg);
+            if(!rec.isRecognizing()) {
+                log.info("Unknown message: " + msg);
+            }
         }
     }
 

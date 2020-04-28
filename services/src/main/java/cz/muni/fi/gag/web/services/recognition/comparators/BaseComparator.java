@@ -10,12 +10,22 @@ import cz.muni.fi.gag.web.services.recognition.Quaternion;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
+
+import static java.lang.Double.isNaN;
 
 /**
  * @author Vojtech Prusa
+ * <p>
+ * {@link SensorComparator}
+ * {@link FingerComparator}
+ * {@link WristComparator}
+ * {@link HandComparator}
  */
 public abstract class BaseComparator<T extends FingerDataLine> implements GestureMatchComparator<T> {
+
+    public static Logger log = Logger.getLogger(BaseComparator.class.getSimpleName());
 
     public static final int BUFFER_SIZE = 40; // TODO guess optimal max/min
     protected T first;
@@ -28,12 +38,13 @@ public abstract class BaseComparator<T extends FingerDataLine> implements Gestur
     protected DataLineGestureIterator dlgIter = null;
 
     protected long refSize = 0;
-
+    private long refTotalSize = -1;
 
     public BaseComparator(final Gesture gRef, final DataLineGestureIterator dlgIter) {
         this.gRef = gRef;
         this.dlgIter = dlgIter;
         this.refList = new ArrayList<>();
+        this.refTotalSize = this.dlgIter.getTotalSize();
     }
 
     public long getRefSize() {
@@ -41,6 +52,11 @@ public abstract class BaseComparator<T extends FingerDataLine> implements Gestur
 //        refSize = ref.count();
         return refSize;
     }
+
+    public long getRefTotalSize() {
+        return refTotalSize;
+    }
+
 
     protected T getDL(int index) {
         T dl = null;
@@ -63,7 +79,6 @@ public abstract class BaseComparator<T extends FingerDataLine> implements Gestur
         return dls;
     }
 
-
     boolean doesMatch(final T fdlRef, T fdl) {
         Quaternion qRef = new Quaternion(fdlRef.getQuatA(), fdlRef.getQuatX(), fdlRef.getQuatY(), fdlRef.getQuatZ()).normalize();
         Quaternion q = new Quaternion(fdl.getQuatA(), fdl.getQuatX(), fdl.getQuatY(), fdl.getQuatZ()).normalize();
@@ -71,6 +86,7 @@ public abstract class BaseComparator<T extends FingerDataLine> implements Gestur
 //        RecognitionTest.log.info(qRef.toString());
 //        RecognitionTest.log.info(q.toString());
         double dist = quatsAbsDist(qRef, q);
+
 //        RecognitionTest.log.info("dist: " + dist + "( dist < matchThreshold)" + (dist < matchDistanceThreshold));
         return (dist < matchDistanceThreshold);
     }
@@ -86,7 +102,7 @@ public abstract class BaseComparator<T extends FingerDataLine> implements Gestur
         int matcherIndex = 0; // this variable is here is for debug purposes
         while (matchesIt.hasNext()) {
             GestureMatcher matcher = matchesIt.next();
-            if (matcher.getIndex() >= getRefSize()) {
+            if (matcher.getIndex() >= getRefTotalSize()) {
                 // Matched!
                 matcher.setG(gRef);
                 matcher.setAtDataLine(fdl);
@@ -115,7 +131,7 @@ public abstract class BaseComparator<T extends FingerDataLine> implements Gestur
             //  I have to implement my own caching of GestureDataLines
             //  - own because of future nativity (C++)
             //  - it should work by loading data into memory and then adding it to list
-            //  -- fortunatelly i have
+            //  -- fortunately i have
 
             // if(ref.size() > matcher.getIndex()+1) {
             //     T fdlRef2 = ref.get(matcher.getIndex()+1);
@@ -143,8 +159,19 @@ public abstract class BaseComparator<T extends FingerDataLine> implements Gestur
         // there may happen a skip for match here when |list<DL>|==1 because matched is skipped here on purpose
         // but that should not be allowed
         if (matched == null && first != null && doesMatch(first, fdl)) {
-            GestureMatcher newMatcher = new GestureMatcher(1, null);
-            matches.add(newMatcher);
+            GestureMatcher matcher = new GestureMatcher(1, gRef);
+            matches.add(matcher);
+            if (matcher.getIndex() >= getRefTotalSize()) {
+                // Matched!
+                matcher.setG(gRef);
+                matcher.setAtDataLine(fdl);
+                matched = matcher;
+                // also this will be overwritten by reverse-chronologically previous match
+                // or not? break;
+                // should not matter considering this is just for single gesture..
+//                matchesIt.remove();
+//                matches.clear();
+            }
         }
         return matched;
     }
@@ -155,7 +182,12 @@ public abstract class BaseComparator<T extends FingerDataLine> implements Gestur
                 q1.getQ1() * q2.getQ1() +
                 q1.getQ2() * q2.getQ2() +
                 q1.getQ3() * q2.getQ3();
-        return 2.f * Math.acos(sum);
+        double dist = 2.d * Math.acos(sum);
+        // TODO fix .. also make sure it works on 32bit for micro-controllers
+        if (isNaN(dist)) {
+            return 0;
+        }
+        return dist;
     }
 
 }

@@ -47,4 +47,14 @@ public class GestureMatcher implements Serializable {
     public DataLine getAtDataLine() {
         return atDataLine;
     }
+
+    @Override
+    public String toString() {
+        return "GestureMatcher{" +
+                "index=" + index +
+                ", g.id=" + g.getId() +
+                ", g.userAlias=" + g.getUserAlias() +
+                ", atDataLine=" + atDataLine +
+                '}';
+    }
 }

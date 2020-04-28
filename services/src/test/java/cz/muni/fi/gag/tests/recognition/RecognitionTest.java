@@ -2,7 +2,7 @@ package cz.muni.fi.gag.tests.recognition;
 
 import cz.muni.fi.gag.tests.common.FileLogger;
 import cz.muni.fi.gag.tests.common.TestServiceBase;
-import cz.muni.fi.gag.web.persistence.dao.impl.DataLineGestureIterator;
+import cz.muni.fi.gag.web.persistence.dao.impl.DataLineGestureSensorIterator;
 import cz.muni.fi.gag.web.persistence.entity.*;
 import cz.muni.fi.gag.web.services.filters.RecordedDataFilterImpl;
 import cz.muni.fi.gag.web.services.recognition.GestureMatcher;
@@ -27,7 +27,6 @@ import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -79,23 +78,25 @@ public class RecognitionTest extends TestServiceBase {
     @Inject
     public RecordedDataFilterImpl rdf;
 
-//    @Test
+    //    @Test
     public void testNoSensorGestureRecognizedMatched() {
         log.info("testGestureRecognizedNoneSensorMatched");
         Long gId = 19L;
         Long gIdRef = 35L;
-        testEverySensorGestureRecognitionMatchFor(gId,gIdRef);
+        testEverySensorGestureRecognitionMatchFor(gId, gIdRef);
     }
 
-//    @Test
+    //    @Test
     public void testEverySensorGestureRecognizedMatched() {
         log.info("testGestureRecognizedEverySensorMatched");
         Long gId = 21L;
         Long gIdRef = 35L;
-        testEverySensorGestureRecognitionMatchFor(gId,gIdRef);
+        testEverySensorGestureRecognitionMatchFor(gId, gIdRef);
     }
-
-    public void testEverySensorGestureRecognitionMatchFor(Long gId,  Long gIdRef) {
+    public void testEverySensorGestureRecognitionMatchFor(Long gId, Long gIdRef) {
+        testEverySensorGestureRecognitionMatchFor(gId, gIdRef, true);
+    }
+    public void testEverySensorGestureRecognitionMatchFor(Long gId, Long gIdRef, boolean shouldMatch) {
         Optional<Gesture> gOpt = gestureService.findById(gId);
         Optional<Gesture> gRefOpt = gestureService.findById(gIdRef);
         assertTrue("Gesture is not present", gOpt.isPresent());
@@ -105,15 +106,22 @@ public class RecognitionTest extends TestServiceBase {
         Gesture gRef = gRefOpt.get();
 
         List<FingerDataLine> l = g.getData();
-        HandComparator hgi = new HandComparator(gRef,dataLineService.buildIteratorByGesture(gRef.getId()));
-        GestureMatcher match = null;
+//        HandComparator hgi = new HandComparator(gRef, dataLineService);
 
+        DataLineGestureSensorIterator dlgsIters[] = new DataLineGestureSensorIterator[6];
+        for (int i = 0; i < Sensor.values().length; i++) {
+            DataLineGestureSensorIterator dlgsIter = dataLineService.buildIterator(g.getId(), Sensor.values()[i]);
+            dlgsIters[i] = dlgsIter;
+        }
+        HandComparator hgi = new HandComparator(gRef, dlgsIters);
+        GestureMatcher match = null;
         GestureMatcher[] handMatches = new GestureMatcher[Sensor.values().length];
 
         Iterator<FingerDataLine> iter = l.iterator();
         while (iter.hasNext()) {
             DataLine dl = iter.next();
             FingerDataLine fdl = (FingerDataLine) dl;
+            log.info(fdl.toString());
             match = hgi.compare(fdl);
             if (match != null) {
                 log.info("Found gesture match at: " + match);
@@ -123,11 +131,13 @@ public class RecognitionTest extends TestServiceBase {
         }
 
         for (int i = 0; i < Sensor.values().length; i++) {
-            assertNull("Some match detected at position " + Sensor.values()[i] + ", all matches: " + (Arrays.toString(handMatches)), handMatches[i]);
+            assertTrue((shouldMatch?"None":"Some") + " match detected at position " + Sensor.values()[i] + ", all matches: "
+                    + (Arrays.toString(handMatches)), ((shouldMatch && handMatches[i] != null)
+                    || (!shouldMatch && handMatches[i] == null)));
         }
     }
 
-    @Test
+    //    @Test
 //    @RunAsClient
     public void testIndexGestureRecognitionMatch() {
         log.info("testRecordedDataFilter");
@@ -147,10 +157,12 @@ public class RecognitionTest extends TestServiceBase {
         Gesture g = gOpt.get();
         Gesture gRef = gRefOpt.get();
 
+        Sensor s = Sensor.INDEX;
+
         List<FingerDataLine> l = ((List<FingerDataLine>) g.getData()).stream().filter(dl -> dl.getPosition().equals(Sensor.INDEX)).collect(Collectors.toList());
         List<FingerDataLine> lRef = ((List<FingerDataLine>) gRef.getData()).stream().filter(dl -> dl.getPosition().equals(Sensor.INDEX)).collect(Collectors.toList());
-        DataLineGestureIterator dlgIter = dataLineService.buildIteratorByGesture(gRef.getId());
-        SensorComparator sgi = new SensorComparator<FingerDataLine>(Sensor.INDEX, gRef, dlgIter);
+        DataLineGestureSensorIterator dlgIter = (DataLineGestureSensorIterator) dataLineService.buildIterator(gRef.getId(), s);
+        SensorComparator sgi = new SensorComparator<FingerDataLine>(s, gRef, dlgIter);
 
         GestureMatcher match = null;
 
@@ -171,5 +183,14 @@ public class RecognitionTest extends TestServiceBase {
         }
 
     }
+
+    @Test
+    public void testEverySensorGestureRecognizedMatched6OnRight() {
+        log.info("testEverySensorGestureRecognizedMatched6OnRight");
+        Long gId = 72L; // 79 72
+        Long gIdRef = 72L;
+        testEverySensorGestureRecognitionMatchFor(gId, gIdRef);
+    }
+
 
 }
