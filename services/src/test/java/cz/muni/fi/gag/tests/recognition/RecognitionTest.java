@@ -31,6 +31,8 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * @author Vojtech Prusa
+ *
+ * mvn clean install test -Dtest=RecognitionTest -Dcheckstyle.skip | tee test.log
  */
 @RunWith(Arquillian.class)
 public class RecognitionTest extends TestServiceBase {
@@ -110,7 +112,7 @@ public class RecognitionTest extends TestServiceBase {
 
         DataLineGestureSensorIterator dlgsIters[] = new DataLineGestureSensorIterator[6];
         for (int i = 0; i < Sensor.values().length; i++) {
-            DataLineGestureSensorIterator dlgsIter = dataLineService.buildIterator(g.getId(), Sensor.values()[i]);
+            DataLineGestureSensorIterator dlgsIter = dataLineService.buildIterator(gRef.getId(), Sensor.values()[i]);
             dlgsIters[i] = dlgsIter;
         }
         HandComparator hgi = new HandComparator(gRef, dlgsIters);
@@ -181,16 +183,16 @@ public class RecognitionTest extends TestServiceBase {
             } else if (dl instanceof WristDataLine) {
             }
         }
-
     }
 
     @Test
     public void testEverySensorGestureRecognizedMatched6OnRight() {
         log.info("testEverySensorGestureRecognizedMatched6OnRight");
-        Long gId = 72L; // 79 72
+//        Long gId = 72L; // 79 72
+//        Long gIdRef = 72L;
+        Long gId = 79L; // 79 72
         Long gIdRef = 72L;
         testEverySensorGestureRecognitionMatchFor(gId, gIdRef);
     }
-
 
 }

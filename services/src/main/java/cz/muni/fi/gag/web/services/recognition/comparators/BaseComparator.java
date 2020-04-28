@@ -169,6 +169,8 @@ public abstract class BaseComparator<T extends FingerDataLine> implements Gestur
                 // also this will be overwritten by reverse-chronologically previous match
                 // or not? break;
                 // should not matter considering this is just for single gesture..
+                // TODO in practice gesture should not be matched just by 1 Hand<DataLine> set and should be restricted
+                // by some lower boundary (3?)
 //                matchesIt.remove();
 //                matches.clear();
             }
@@ -177,12 +179,12 @@ public abstract class BaseComparator<T extends FingerDataLine> implements Gestur
     }
 
     // http://www.boris-belousov.net/2016/12/01/quat-dist/
-    static double quatsAbsDist(Quaternion q1, Quaternion q2) {
+    static float quatsAbsDist(Quaternion q1, Quaternion q2) {
         double sum = q1.getQ0() * q2.getQ0() +
                 q1.getQ1() * q2.getQ1() +
                 q1.getQ2() * q2.getQ2() +
                 q1.getQ3() * q2.getQ3();
-        double dist = 2.d * Math.acos(sum);
+        float dist = (float) Math.acos(2.d*sum -1 );
         // TODO fix .. also make sure it works on 32bit for micro-controllers
         if (isNaN(dist)) {
             return 0;
