@@ -1,0 +1,142 @@
+<!--<script src="./partials/characteristics.js"></script>-->
+
+<div class="row" data-ng-controller="MyGesturesController">
+  <div class="col-lg-6 col-md-12">
+    <input id="vis-numberOfHandsPairs" type="hidden" ng-value="{{vis.numberOfHandsPairs}}">
+    <div ng-include="'partials/visualizationCard.html'"></div>
+  </div>
+
+  <div class="col-lg-6 col-md-12">
+    <div class="card">
+      <div class="card-header card-header-primary">
+        <h4 class="card-title ">Recognition Control</h4>
+        <p class="card-category">Click on <i class="material-icons" style="font-size: 15px; top: 3px;">play_circle_outline</i> to start recognizing!</p>
+      </div>
+      <div class="card-body">
+        <div>
+          <!-- https://stackoverflow.com/questions/22885702/html-for-the-pause-symbol-in-audio-and-video-control/27053825 -->
+          <!--
+          <button class="btn btn-info desc" ng-click='test()'>Test</button></td>
+          -->
+          <!--
+          <button disabled class="btn btn-info desc">{{(selectedGestureDetail.selectedGesture == null || selectedGestureDetail.selectedGesture == "" ) ? "&nbsp;&nbsp;&nbsp;" : selectedGestureDetail.selectedGesture }}</button>
+          <button ng-if="player.state == player.states.IDLE || player.state == player.states.STOPPED" ng-disabled="!selectedGestureDetail.selectedGesture" class="btn btn-info desc"
+              ng-click='ws.startPlayer()'><i class="material-icons">play_circle_outline</i></button>
+          <button ng-if="player.state == player.states.PLAYING || player.state == player.states.PAUSED " ng-disabled="!selectedGestureDetail.selectedGesture" class="btn btn-info desc"
+              ng-click='ws.stopPlayer()'><i class="material-icons">stop</i></button>
+
+          <button ng-if="player.state != player.states.PAUSED"
+                  ng-disabled="player.state != player.states.PLAYING || !selectedGestureDetail.selectedGesture" class="btn btn-info desc"
+                  ng-click='ws.pausePlayer()'><i class="material-icons">pause_circle_outline</i></button>
+          <button ng-if="player.state == player.states.PAUSED" ng-disabled="player.state != player.states.PAUSED || !selectedGestureDetail.selectedGesture" class="btn btn-info desc"
+                  ng-click='ws.continuePlayer()'><i class="material-icons">play_circle_outline</i></button>
+
+          <button disabled class="btn btn-info desc" ng-click='ws.switchLoop()'><i class="material-icons">loop</i></button>
+          </td>
+          -->
+          <button ng-if="!recognizer.isRecognizing()" class="btn btn-info desc" ng-click='ws.startRecognizing()'>
+						<i class="material-icons">play_circle_outline</i></button>
+					<button ng-if="recognizer.isRecognizing()" class="btn btn-info desc" ng-click='ws.stopRecognizing()'>
+						<i class="material-icons">stop</i></button>
+
+          <!-- <p class="card-category">{{selectedGestureDetail.info}}</p>-->
+        </div>
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead class="text-warning">
+            <th>ID</th>
+            <th>Alias</th>
+            <!--							<th>Date created</th>-->
+            <th>Operations</th>
+            </thead>
+            <tbody>
+            <tr ng-repeat="item in gestures | orderBy:'id':true ">
+              <td>{{item.id}}</td>
+              <td>
+                <button class="btn btn-info desc"
+                        ng-disabled="player.state != player.states.STOPPED && player.state != player.states.IDLE"
+                        ng-click='selectGesture(item.id)'>{{item.userAlias}}</button>
+              </td>
+              <!--<td>{{item.dateCreated | date: 'yyyy-MM-dd HH:MM'}}</td>-->
+              <td>
+                <a href="" class="btn btn-info" ng-click='listDetail(item.id)'
+                   ng-style="{'background-color':(selectedGestureList.display == item.id? 'green':'') }">
+                  <span class="glyphicon glyphicon-list-alt"></span>
+                </a>
+                <!--<a href="" class="btn btn-info" ng-click='clearGesture(item.id)'>
+                  <span class="glyphicon glyphicon-trash"></span>
+                </a>
+                -->
+								<!--<a href="" title="Remove" class="btn btn-info" ng-click='deleteGesture(item.id)'>
+                  <span class="glyphicon glyphicon-remove"></span>
+                </a>-->
+                <!--
+                  TODO Add filter button that will pop up simple form with filtering options (and new-name, active) ;
+                    from RecordedDataFilterImpl:
+                    filter(float samplesPerSensorPerSecond, boolean findEdges)
+                 -->
+                <a href="" title="Activate" class="btn btn-info" ng-disabled='!item.filtered'
+                   idk-active="{{item.active}}"
+                   ng-style="item.active && {'background-color': 'green'}"
+                   ng-click='item.filtered && switchActivateGesture(item.id, item.active)'>
+                  <span class="glyphicon glyphicon-flag"></span>
+                </a>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="card">
+    <div class="card-header card-header-primary">
+      <h4 class="card-title ">Gesture detail - whole (RS)</h4>
+      <p class="card-category">{{selectedGestureList.info}}</p>
+    </div>
+    <div class="card-body">
+      <div class=""></div>
+      <div class="table-responsive" ng-if="selectedGestureList.display != -1">
+        <table class="table">
+          <thead class="text-primary">
+          <th>ID</th>
+          <th>Time</th>
+          <th>Position</th>
+          <th>quatA</th>
+          <th>quatX</th>
+          <th>quatY</th>
+          <th>quatZ</th>
+          <th>accX</th>
+          <th>accY</th>
+          <th>accZ</th>
+          <th>magX</th>
+          <th>magY</th>
+          <th>magZ</th>
+          </thead>
+          <tbody>
+          <tr ng-repeat="item in selectedGestureList.data">
+            <td>{{item.id}}</td>
+            <td>{{item.t | date: 'yyyy-MM-dd HH:MM'}}</td>
+            <td>{{item.p}}</td>
+            <td>{{item.qA}}</td>
+            <td>{{item.qX}}</td>
+            <td>{{item.qY}}</td>
+            <td>{{item.qZ}}</td>
+            <td>{{item.aX}}</td>
+            <td>{{item.aY}}</td>
+            <td>{{item.aZ}}</td>
+            <td>{{item.mX}}</td>
+            <td>{{item.mY}}</td>
+            <td>{{item.mZ}}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div ng-include="'partials/logMessages.html'"></div>

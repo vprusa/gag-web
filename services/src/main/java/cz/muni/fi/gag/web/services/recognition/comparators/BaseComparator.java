@@ -57,7 +57,6 @@ public abstract class BaseComparator<T extends FingerDataLine> implements Gestur
         return refTotalSize;
     }
 
-
     protected T getDL(int index) {
         T dl = null;
         while (getRefSize() < index) {

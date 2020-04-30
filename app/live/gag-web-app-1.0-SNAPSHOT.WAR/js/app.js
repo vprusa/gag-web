@@ -84,6 +84,7 @@ angular.module('app', [
       .when('/user', {templateUrl: 'partials/user.html', controller: 'UserController'})
       .when('/newgesture', {templateUrl: 'partials/newGesture.html', controller: 'NewGestureController'})
       .when('/mygestures', {templateUrl: 'partials/myGestures.html', controller: 'MyGesturesController'})
+      .when('/recognize', {templateUrl: 'partials/recognizeGestures.html', controller: 'RecognizeGesturesController'})
       // if devel  ..
       .when('/toolstests', {templateUrl: 'partials/tools.tests.html', controller: 'ToolsControllerTests'})
       .otherwise({redirectTo: '/'});
