@@ -65,7 +65,7 @@ angular
         $scope.onSelectChange = function () {
           // $scope.data.selectedGesture = $("#toSelectGesture option:selected").value();
           $scope.data.currentGesture = $scope.data.gesturesList[$scope.data.selectedGesture - 1];
-        }
+        };
 
         commonTools.getGestures().then(function (gestures) {
           console.log(gestures);
@@ -90,18 +90,18 @@ angular
             // using ws.checkState.isRecording();
             $scope.data.recordingInfo.isRecording = true;
           }
-        }
+        };
 
         $scope.stop = function () {
           $scope.data.recordingInfo.isRecording = false;
-        }
+        };
 
         $scope.onSendMessage = function (data) {
           var dataLine = JSON.parse(data);
           //console.log(dataLine);
           $scope.vis.updateVisFromDataLine(dataLine);
           $scope.$apply();
-        }
+        };
 
         WSTools.onSendMessage = $scope.onSendMessage;
 

@@ -27,7 +27,7 @@ public class ActionEncoderBase<Act extends Action> implements Encoder.Text<Act> 
 
     @Override
     public String encode(Act a) {
-        log.info("decode: " + this.getClass().getSimpleName());
+//        log.info("decode: " + this.getClass().getSimpleName());
         String str = null;
         try {
             str = objectMapper.writeValueAsString(a);

@@ -25,7 +25,8 @@ angular.module('app').factory('WSTools', function (/*$rootScope*/) {
   ws.reqStates = {
     STOP: 0,
     RECORD: 1,
-    REPLAY: 2
+    REPLAY: 2,
+    RECOGNIZE: 3
   };
 
   ws.innerStates = {
@@ -33,7 +34,8 @@ angular.module('app').factory('WSTools', function (/*$rootScope*/) {
     PREPARE_REPLAYING: 1,
     REPLAYING: 2,
     PREPARE_RECORDING: 3,
-    RECORDING: 4
+    RECORDING: 4,
+    RECOGNIZING: 5
   };
   ws.state = ws.innerStates.IDLE;
 
@@ -51,10 +53,11 @@ angular.module('app').factory('WSTools', function (/*$rootScope*/) {
         ws.state = ws.innerStates.RECORDING;
         break;
       case ws.reqStates.REPLAY:
-
         break;
       case ws.reqStates.STOP:
-
+        break;
+      case ws.reqStates.RECOGNIZE:
+        ws.state = ws.innerStates.RECOGNIZING;
         break;
       default:
         console.log("WSTools unknown state: ");
@@ -64,6 +67,7 @@ angular.module('app').factory('WSTools', function (/*$rootScope*/) {
 
   ws.gestureId = "";
 
+  // TODO refactor this callback used in visualization (remove/rename/idk/wtf)
   /**
    * This should be used for any dealing with message before possible sending
    * e.g. used in visualization
@@ -73,13 +77,18 @@ angular.module('app').factory('WSTools', function (/*$rootScope*/) {
   };
 
   ws.sendMessage = function (msg) {
-    ws.onSendMessage(msg)
-    if (ws.checkStates.isRecording()) {
+    if (ws.checkStates.isRecording() || ws.checkStates.isRecognizing()) {
+      ws.onSendMessage(msg);
       //console.log("sending message");
       ws.websocketSession.send(msg);
-    } else {
-      //console.log("not sending message");
+    }else if (msg.includes("type")) {
+      console.log("Sending Action message: " + msg);
+      // its an action
+      ws.websocketSession.send(msg);
+    }else{
+      ws.onSendMessage(msg);
     }
+    //console.log("not sending message");
   };
 
   ws.checkStates = {
@@ -88,6 +97,9 @@ angular.module('app').factory('WSTools', function (/*$rootScope*/) {
     },
     isReplaying: function () {
       return ws.state == ws.innerStates.REPLAYING
+    },
+    isRecognizing: function () {
+      return ws.state == ws.innerStates.RECOGNIZING
     }
   };
 
@@ -123,6 +135,7 @@ angular.module('app').factory('WSTools', function (/*$rootScope*/) {
     }
   };
 
+  /*
   ws.test = function () {
     var jsonMessage = {
       "t": $.now(),
@@ -159,8 +172,9 @@ angular.module('app').factory('WSTools', function (/*$rootScope*/) {
 
     sendDataAndWait(5, jsonMessage);
   };
+  */
 
-  ws.isMessageDataLine = function(message) {
+  ws.isMessageDataLine = function (message) {
     // TODO
     return true;
   };

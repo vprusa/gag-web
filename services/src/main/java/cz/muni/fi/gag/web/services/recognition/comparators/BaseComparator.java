@@ -65,7 +65,6 @@ public abstract class BaseComparator<T extends FingerDataLine> implements Gestur
                 // If not @Override then no filtering and everything is added to refList ...
                 refList.add(dl);
             }
-
         }
         return (T) dl;
     }

@@ -32,11 +32,11 @@ public abstract class ActionDecoderBase<Act extends Action> implements Decoder.T
 
     @Override
     public Act decode(String s) {
-        log.info("decode: " + this.getClass().getSimpleName());
+//        log.info("decode: " + this.getClass().getSimpleName());
         ObjectReader objectReader = objectMapper.reader().forType(actionClass);
         try {
             Act cmd = objectReader.readValue(s);
-            log.info(cmd.toString());
+//            log.info(cmd.toString());
             return cmd;
         } catch (IOException e) {
             e.printStackTrace();
@@ -47,17 +47,16 @@ public abstract class ActionDecoderBase<Act extends Action> implements Decoder.T
 
     @Override
     public boolean willDecode(String s) {
-        log.info("willDecode(String s)");
-        log.info(s);
-        log.info("typeEnum");
-        log.info(typeEnum);
-        log.info("actionClass");
-        log.info(actionClass);
+//        log.info(s);
+//        log.info("typeEnum");
+//        log.info(typeEnum);
+//        log.info("actionClass");
+//        log.info(actionClass);
         if (typeEnum == null) {
-            log.info("Will ret? " + s.contains("\"type\""));
+//            log.info("Will ret? " + s.contains("\"type\""));
             return s.contains("\"type\"");
         } else {
-            log.info("Will ret? " + (s.contains("\"type\"") && s.contains("\"" + typeEnum.toString() + "\"")));
+//            log.info("Will ret? " + (s.contains("\"type\"") && s.contains("\"" + typeEnum.toString() + "\"")));
 //            return s.contains("\"type\"") && s.contains("\"" + actionClass.toString() + "\"");
             return s.contains("\"type\":" + typeEnum.ordinal()) || s.contains("\"type\":\"" + typeEnum.toString() + "\"");
         }

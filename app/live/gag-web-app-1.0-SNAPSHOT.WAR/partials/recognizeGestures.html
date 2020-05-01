@@ -10,7 +10,8 @@
     <div class="card">
       <div class="card-header card-header-primary">
         <h4 class="card-title ">Recognition Control</h4>
-        <p class="card-category">Click on <i class="material-icons" style="font-size: 15px; top: 3px;">play_circle_outline</i> to start recognizing!</p>
+        <p class="card-category">1. Connect GAG<br>
+          2. Click on <i class="material-icons" style="font-size: 15px; top: 3px;">play_circle_outline</i> to start recognizing!</p>
       </div>
       <div class="card-body">
         <div>
@@ -34,9 +35,9 @@
           <button disabled class="btn btn-info desc" ng-click='ws.switchLoop()'><i class="material-icons">loop</i></button>
           </td>
           -->
-          <button ng-if="!recognizer.isRecognizing()" class="btn btn-info desc" ng-click='ws.startRecognizing()'>
+          <button ng-if="!recognizer.isRecognizing()" class="btn btn-info desc" ng-click='startRecognizing()'>
 						<i class="material-icons">play_circle_outline</i></button>
-					<button ng-if="recognizer.isRecognizing()" class="btn btn-info desc" ng-click='ws.stopRecognizing()'>
+					<button ng-if="recognizer.isRecognizing()" class="btn btn-info desc" ng-click='stopRecognizing()'>
 						<i class="material-icons">stop</i></button>
 
           <!-- <p class="card-category">{{selectedGestureDetail.info}}</p>-->

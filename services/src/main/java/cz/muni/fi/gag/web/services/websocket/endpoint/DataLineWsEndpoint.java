@@ -1,5 +1,6 @@
 package cz.muni.fi.gag.web.services.websocket.endpoint;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.muni.fi.gag.web.persistence.entity.*;
 import cz.muni.fi.gag.web.services.logging.Log;
 import cz.muni.fi.gag.web.services.mapped.MDataLine;
@@ -17,40 +18,36 @@ import cz.muni.fi.gag.web.services.websocket.endpoint.packet.actions.Recognition
 import cz.muni.fi.gag.web.services.websocket.endpoint.packet.datalines.*;
 import cz.muni.fi.gag.web.services.websocket.service.DataLineRePlayer;
 import cz.muni.fi.gag.web.services.websocket.service.GestureRecognizer;
+import jdk.nashorn.internal.ir.debug.JSONWriter;
 import org.jboss.logging.Logger;
 
 import javax.faces.bean.SessionScoped;
 import javax.inject.Inject;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
-import javax.websocket.server.ServerEndpointConfig;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 
 /**
  * @author Vojtech Prusa
+ * <p>
+ * TODO
+ * split this to 3 endpoints
+ * 1. record
+ * 2. replay
+ * 3. recognize
+ * also consider how to make it possible to combine 1. & 3.
  */
 @SessionScoped
 @ServerEndpoint(value = "/datalinews",
         encoders = {
-                // JsonEncoder.class
                 DataLineEncoder.class, FingerDataLineEncoder.class, WristDataLineEncoder.class
         },
         decoders = {},
         configurator = CustomServerEndpointConfiguration.class
-//        configurator = ServerEndpointConfig.Configurator.class
 )
 public class DataLineWsEndpoint { // extends BaseEndpoint {
-
-    DataLineWsEndpoint() {
-    }
-
-    DataLineWsEndpoint(CustomServerEndpointConfiguration config) {
-    }
-
-    DataLineWsEndpoint(ServerEndpointConfig.Configurator config) {
-    }
 
     public static final Logger log = Logger.getLogger(DataLineWsEndpoint.class.getSimpleName());
 
@@ -96,16 +93,17 @@ public class DataLineWsEndpoint { // extends BaseEndpoint {
     private ActionDecoder<PlayerActions> pad = new ActionDecoder(PlayerActions.class, Action.ActionsTypesEnum.PLAYER);
     private ActionDecoder<RecognitionActions> rad = new ActionDecoder(RecognitionActions.class, Action.ActionsTypesEnum.RECOGNITION);
 
+    private ObjectMapper objectMapper = new ObjectMapper();
+
+
 //    private PlayerActionDecoder pad = new PlayerActionDecoder();
 
-//    private static int limit = 0;
+    //    private static int limit = 0;
     // https://docs.oracle.com/middleware/12213/wls/WLPRG/websockets.htm#WLPRG1000
     @OnMessage
     public void onMessage(String msg, Session session) {
         Log.info("onDataLineMessage");
         log.info(msg.toString());
-        //String loggedUserName = session.getUserPrincipal().getName();
-        // TODO add role check and restrict access for users gestures only... etc. etc.
 
         // TODO input message as Object was not working and inheritance for multiple decoders neither ..
         // 1) it turned out that mvn install was not changing decoders properly for preinstalled non-clean instance of
@@ -119,8 +117,8 @@ public class DataLineWsEndpoint { // extends BaseEndpoint {
 
         DataLine dl = null;
 
-         if(!rec.isRecognizing()){
-             // This was an ugly way to duplicate real data ...
+        if (!rec.isRecognizing()) {
+        // This was an ugly way to duplicate real data but it was at hand ... TODO move this to test as automation
 //        if (limit <= 12) {
 //            limit++;
 //            long gid = 79l;
@@ -162,10 +160,8 @@ public class DataLineWsEndpoint { // extends BaseEndpoint {
                 log.info("sendObject(lgm)");
                 log.info(lgm);
                 try {
-                    session.getBasicRemote().sendObject(lgm);
+                    session.getBasicRemote().sendText(objectMapper.writeValueAsString(lgm));
                 } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (EncodeException e) {
                     e.printStackTrace();
                 }
             }
@@ -276,7 +272,7 @@ public class DataLineWsEndpoint { // extends BaseEndpoint {
 //                break;
 //            }
         } else {
-            if(!rec.isRecognizing()) {
+            if (!rec.isRecognizing()) {
                 log.info("Unknown message: " + msg);
             }
         }
