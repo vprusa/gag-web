@@ -39,6 +39,7 @@ angular.module('app').factory('WSTools', function (/*$rootScope*/) {
   };
   ws.state = ws.innerStates.IDLE;
 
+  // TODO rename to requestState?
   ws.setState = function (newState, gestureId) {
     switch (newState) {
       case ws.reqStates.RECORD:
@@ -55,6 +56,7 @@ angular.module('app').factory('WSTools', function (/*$rootScope*/) {
       case ws.reqStates.REPLAY:
         break;
       case ws.reqStates.STOP:
+        ws.state = ws.innerStates.IDLE;
         break;
       case ws.reqStates.RECOGNIZE:
         ws.state = ws.innerStates.RECOGNIZING;
@@ -78,14 +80,16 @@ angular.module('app').factory('WSTools', function (/*$rootScope*/) {
 
   ws.sendMessage = function (msg) {
     if (ws.checkStates.isRecording() || ws.checkStates.isRecognizing()) {
+    // if (ws.checkStates.isRecording()) {
       ws.onSendMessage(msg);
       //console.log("sending message");
       ws.websocketSession.send(msg);
-    }else if (msg.includes("type")) {
+    } else if (msg.includes("type")) {
       console.log("Sending Action message: " + msg);
       // its an action
       ws.websocketSession.send(msg);
-    }else{
+    } else {
+      // visualization callback
       ws.onSendMessage(msg);
     }
     //console.log("not sending message");
@@ -93,13 +97,13 @@ angular.module('app').factory('WSTools', function (/*$rootScope*/) {
 
   ws.checkStates = {
     isRecording: function () {
-      return ws.state == ws.innerStates.RECORDING
+      return ws.state == ws.innerStates.RECORDING;
     },
     isReplaying: function () {
-      return ws.state == ws.innerStates.REPLAYING
+      return ws.state == ws.innerStates.REPLAYING;
     },
     isRecognizing: function () {
-      return ws.state == ws.innerStates.RECOGNIZING
+      return ws.state == ws.innerStates.RECOGNIZING;
     }
   };
 

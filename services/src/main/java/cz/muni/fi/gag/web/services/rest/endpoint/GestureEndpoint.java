@@ -42,19 +42,19 @@ public class GestureEndpoint extends BaseEndpoint {
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getGestureById(@PathParam("id") String identifier) {
-        log.info("getGestureById");
+//        log.info("getGestureById");
         try {
             Optional<Gesture> gestureOpt = gestureService.findById(Long.parseLong(identifier));
             if (!gestureOpt.isPresent()) {
                 Response.status(Status.NOT_FOUND);
             }
-            log.info("getGestureById");
+//            log.info("getGestureById");
             return Response.ok(gestureOpt.get()).build();
         } catch (NumberFormatException ex) {
             User u = current();
             if (u != null) {
                 List<Gesture> myGestures = gestureService.findByUser(u);
-                log.info("getGestureByUser");
+//                log.info("getGestureByUser");
                 return Response.ok(myGestures).build();
             }
             return getResponseNotLoggedIn();

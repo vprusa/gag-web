@@ -18,7 +18,6 @@ import cz.muni.fi.gag.web.services.websocket.endpoint.packet.actions.Recognition
 import cz.muni.fi.gag.web.services.websocket.endpoint.packet.datalines.*;
 import cz.muni.fi.gag.web.services.websocket.service.DataLineRePlayer;
 import cz.muni.fi.gag.web.services.websocket.service.GestureRecognizer;
-import jdk.nashorn.internal.ir.debug.JSONWriter;
 import org.jboss.logging.Logger;
 
 import javax.faces.bean.SessionScoped;
@@ -102,7 +101,7 @@ public class DataLineWsEndpoint { // extends BaseEndpoint {
     // https://docs.oracle.com/middleware/12213/wls/WLPRG/websockets.htm#WLPRG1000
     @OnMessage
     public void onMessage(String msg, Session session) {
-        Log.info("onDataLineMessage");
+        log.info("onDataLineMessage");
         log.info(msg.toString());
 
         // TODO input message as Object was not working and inheritance for multiple decoders neither ..

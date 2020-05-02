@@ -12,7 +12,17 @@ angular.module('app').controller(
     'VisTools',
     function ($scope, $location, $route, $timeout, commonTools, createUpdateTools, WSTools, VisTools) {
       commonTools.getGestures().then(function (response) {
-        $scope.gestures = response;
+        // $scope.gestures = response;
+        // console.log("response");
+        // console.log(response);
+        $scope.gestures = response.map(function (e) {
+          // e.recognized = true;
+          e.recognized = false;
+          return e;
+        });
+
+        // console.log(response);
+        // response
       }, function (response) {
         $scope.alerts.push({
           type: 'danger',
@@ -117,19 +127,64 @@ angular.module('app').controller(
 
       $scope.stopRecognizing = function () {
         console.log("stopRecognizing");
-        WSTools.setState(WSTools.reqStates.IDLE);
+        WSTools.setState(WSTools.reqStates.STOP);
+      };
+
+      var gestureMatches = {
+        current: null,
+        last: null,
+        all: []
       };
 
       WSTools.onMessage = function (evt) {
-        console.log("onMessage");
-        console.log(evt);
+        // console.log("onMessage");
+        // console.log(evt);
         // var msg = JSON.stringify(JSON.parse(evt.data));
         var msg = evt.data;
-        console.log(msg);
-        if (msg.includes(startActionStr.replace(/\s/g, ''))) {
+        gestureMatches.last = null;
+
+        var changed = false;
+        $scope.gestures = $scope.gestures.map(function (e) {
+          if (e.recognized) {
+            e.recognized = false;
+            changed = true;
+          }
+         return e;
+        });
+        // console.log(msg);
+        var msgObj = JSON.parse(msg);
+        if (typeof msgObj[0] !== 'undefined' && typeof msgObj[0].index !== 'undefined') {
+          // console.log(msgObj);
+          gestureMatches.last = msgObj[0];
+          $scope.gestures = $scope.gestures.map(function (e) {
+            // console.log(e);
+            if (e.id == gestureMatches.last.g.id) {
+              // console.log("recognized");
+              // console.log(e);
+              if (!e.recognized) {
+                changed = true;
+              }
+              e.recognized = true;
+            } else {
+              if (e.recognized) {
+                changed = true;
+              }
+              e.recognized = false;
+            }
+            return e;
+          });
+          if (changed) {
+            console.log($scope.gestures);
+            $scope.$apply();
+          }
+        } else if (msg.includes(startActionStr.replace(/\s/g, ''))) {
           // ACK ..
           WSTools.setState(WSTools.reqStates.RECOGNIZE);
+          // console.log(WSTools.state);
+          // console.log($scope.isRecognizing());
+
+          // $scope.$apply();
         }
-      }
+      };
 
     }]);
