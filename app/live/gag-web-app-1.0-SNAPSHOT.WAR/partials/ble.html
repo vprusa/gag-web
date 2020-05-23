@@ -6,10 +6,10 @@
 			<button class="btn btn-info desc" type="submit">Connect to</button><br>
 			<button style="display: inline-block; " class="btn btn-info desc" type="button" data-slide-toggle="#connectBLEForm" data-slide-toggle-duration="100">Details</button>
 		</div>-->
-
-		<table>
+	<table>
 			<tbody>
-			<tr><td><h4 class="card-title " style="display: inline-block; padding-right: 10px;"><i class="material-icons" style="color: white; font-size: 2.4em;">bluetooth</i></h4></td><td>
+			<tr><td>
+				<h4 class="card-title " style="display: inline-block; padding-right: 10px;"><i class="material-icons" style="color: white; font-size: 2.4em;">bluetooth</i></h4></td><td>
 				<button ng-if="!ble.isConnected" class="btn btn-info desc" type="submit">Connect</button>
 				<button ng-if="ble.isConnected" class="btn btn-info desc" type="submit">Disconnect</button>
 				<br></td></tr>

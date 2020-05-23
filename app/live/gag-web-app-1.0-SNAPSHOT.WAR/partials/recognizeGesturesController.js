@@ -182,9 +182,18 @@ angular.module('app').controller(
           WSTools.setState(WSTools.reqStates.RECOGNIZE);
           // console.log(WSTools.state);
           // console.log($scope.isRecognizing());
-
           // $scope.$apply();
         }
+      };
+
+      // faking BLE data with re-player data
+      $scope.isRecognizing = function () {
+        return WSTools.checkStates.isRecognizing();
+      };
+
+      $scope.stopRecognizing = function () {
+        console.log("stopRecognizing");
+        WSTools.setState(WSTools.reqStates.STOP);
       };
 
     }]);
