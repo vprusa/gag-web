@@ -42,7 +42,7 @@
                         <i class="material-icons">stop</i></button>
 
                     <span style='margin-left: 15px;'>
-                      <select name="fakeGestureId" class="btn btn-info">
+                      <select name="fakeGestureId" ng-model="fakeSelectedGestureId" ng-change="onFakeSelectChange()" class="btn btn-info">
 <!--                        <option value="__fake__">Fake</option>-->
                         <option ng-repeat="item in gestures | orderBy:'id':true" value="{{item.id}}">{{item.userAlias}}</option>
                       </select>

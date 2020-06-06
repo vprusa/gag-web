@@ -2,11 +2,19 @@
 
 angular.module('app').factory('WSTools', function (/*$rootScope*/) {
   var ws = {};
+  ws.endpoint = '/gagweb/ws/';
+  ws.endpointRecorder = ws.endpoint + 'recorder';
+  ws.endpointReplayer = ws.endpoint + 'replayer';
+  ws.endpointRecognizer = ws.endpoint + 'recognizer';
+
+  ws.selectedEndpoint = ws.endpointRecorder;
+
   //ws.dataLines = [];
   // TODO add state automate, encapsulate variables, create access methods, etc.
   // state automate would have states:
   // waiting for input from WS or app
   ws.state = "IDLE";
+
 
   // when waiting for replaying preparations to complete
   //ws.state = "PREPARE_REPLAYING";
@@ -124,7 +132,7 @@ angular.module('app').factory('WSTools', function (/*$rootScope*/) {
       console.log("init");
       let wsProtocol = window.location.protocol == "https:" ? "wss" : "ws";
       ws.websocketSession = new WebSocket(wsProtocol + '://'
-        + document.location.host + '/gagweb/datalinews');
+        + document.location.host + ws.selectedEndpoint);
       // ws.websocketSession = $rootScope.websocketSession;
       // $rootScope.websocketSession.onmessage = ws.onMessage;
       ws.websocketSession.onmessage = ws.onMessage;

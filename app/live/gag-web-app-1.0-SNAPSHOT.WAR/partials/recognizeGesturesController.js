@@ -120,6 +120,44 @@ angular.module('app').controller(
         // '{type:1,action:0}'
         // '{type:1}'
       };
+      // ----------------------------------------------------------------------------
+      // Faking
+      // ----------------------------------------------------------------------------
+
+      $scope.fakeSelectedGestureId = -1;
+      $scope.fakeSelectedGestureIndex = -1;
+
+      $scope.onFakeSelectChange = function () {
+        // $scope.data.selectedGesture = $("#toSelectGesture option:selected").value();
+        // $scope.fakeSelectedGestureIndex = $scope.gestures.findIndex(g => g.id == $scope.fakeSelectedGestureId);
+        // $scope.fakeSelectedGesture = $scope.gestures[$scope.fakeSelectedGestureIndex];
+        // console.log($scope.fakeSelectedGestureIndex);
+        console.log($scope.fakeSelectedGestureId);
+        // console.log($scope.gestures);
+      };
+
+      var fakingStates = {
+        IDLE: 'idle',
+        FAKING: 'faking'
+      };
+
+      $scope.fakingState = fakingStates.IDLE;
+      $scope.fakeData = {};
+
+      $scope.startFakingBLE = function () {
+        commonTools.getGestureDetailData($scope.fakeSelectedGestureId)
+          .then(function (resp) {
+            $scope.fakeData = resp;
+          });
+        $scope.fakingState = fakingStates.FAKING;
+      };
+
+      $scope.stopFakingBLE = function () {
+        $scope.fakingState = fakingStates.IDLE;
+      };
+
+
+      // ----------------------------------------------------------------------------
 
       $scope.isRecognizing = function () {
         return WSTools.checkStates.isRecognizing();
@@ -149,7 +187,7 @@ angular.module('app').controller(
             e.recognized = false;
             changed = true;
           }
-         return e;
+          return e;
         });
         // console.log(msg);
         var msgObj = JSON.parse(msg);

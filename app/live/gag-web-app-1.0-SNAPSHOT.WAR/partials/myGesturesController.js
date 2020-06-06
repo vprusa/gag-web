@@ -36,7 +36,7 @@ angular
         };
 
         this.$onInit = function () {
-          WSTools.init();
+          // WSTools.init();
         };
 
         this.$onDestroy = function () {
@@ -133,8 +133,9 @@ angular
             }, function (response) {
               $scope.alerts.push({type: 'danger', title: 'Error ' + response.status, msg: response.statusText});
             });
+            $scope.ws.selectedEndpoint = $scope.ws.endpointReplayer;
             $scope.ws.init();
-          };
+          }
 
           $scope.ws.setOnMessage($scope.onMessage);
           console.log($scope.selectedGestureDetail.selectedGesture);

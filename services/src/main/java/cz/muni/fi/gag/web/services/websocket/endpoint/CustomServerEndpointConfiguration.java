@@ -22,7 +22,7 @@ public class CustomServerEndpointConfiguration extends ServerEndpointConfig.Conf
     }
 
     public Class<?> getEndpointClass() {
-        return DataLineWsEndpoint.class;
+        return DataLineWSEndpoint.class;
     }
 
     public ServerEndpointConfig.Configurator getConfigurator() {
