@@ -9,7 +9,6 @@ import cz.muni.fi.gag.web.services.recognition.GestureCollector;
 import cz.muni.fi.gag.web.services.recognition.matchers.MultiSensorGestureMatcher;
 import cz.muni.fi.gag.web.services.recognition.matchers.SingleSensorGestureMatcher;
 
-import java.util.Collections;
 import java.util.List;
 
 //import cz.muni.fi.gag.web.services.recognition.matchers.SingleGestureMatcher;
@@ -53,9 +52,11 @@ public class HandComparator {
     }
 
     //    public List<GestureMatcher> compare(FingerDataLine fdl) {
-    public List<MultiSensorGestureMatcher> compare(FingerDataLine fdl) {
+    public MultiSensorGestureMatcher compare(FingerDataLine fdl) {
         if (!gmlRet.doesGestureContainsSensor(fdl.getPosition())) {
-            return Collections.emptyList();
+//            return Collections.emptyList();
+//            return Collections.emptyMap();
+            return null;
         }
 
         Sensor pos = fdl.getPosition();
@@ -63,6 +64,7 @@ public class HandComparator {
         log.info("HandComparator.compare: comparing " + gmlPos.toString());
 
 //        return Collections.list(gmlRet.collect(gmlPos));
+//        return gmlRet.collect(gmlPos);
         return gmlRet.collect(gmlPos);
         // TODO .. remove?
 //        return gmlPos;

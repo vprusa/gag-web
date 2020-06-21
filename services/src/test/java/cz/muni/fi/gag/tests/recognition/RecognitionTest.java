@@ -127,7 +127,7 @@ public class RecognitionTest extends TestServiceBase {
             dlgsIters[i] = dlgsIter;
         }
         HandComparator hgi = new HandComparator(gRef, dlgsIters);
-        List<MultiSensorGestureMatcher> matches = null;
+        MultiSensorGestureMatcher matches = null;
 //        List<GestureMatcher[]> handMatches = new GestureMatcher[Sensor.values().length]
         List<MultiSensorGestureMatcher[]> handMatches = new ArrayList<MultiSensorGestureMatcher[]>();
 
@@ -142,16 +142,16 @@ public class RecognitionTest extends TestServiceBase {
 //                handMatches[matches.getAtDataLine().getPosition().ordinal()] = matches;
 //                handMatches[matches.get(0).getAtDataLine().getPosition().ordinal()] = matches.get(0);
                 try {
-                    log.info("Found gesture match at: " + matches.stream().map(MultiSensorGestureMatcher::toString)
-                            .collect(Collectors.joining(";;;")));
+//                    log.info("Found gesture match at: " + matches.stream().map(MultiSensorGestureMatcher::toString)
+//                            .collect(Collectors.joining(";;;")));
+//
+//                    log.info("Found gesture match at groupingBy: " + matches.stream().map(MultiSensorGestureMatcher::getG)
+//                            .collect(Collectors.groupingBy(Gesture::getId)).toString());
 
-                    log.info("Found gesture match at groupingBy: " + matches.stream().map(MultiSensorGestureMatcher::getG)
-                            .collect(Collectors.groupingBy(Gesture::getId)).toString());
+//                    log.info("Found gesture match at groupingBy2: " + matches.stream().map(MultiSensorGestureMatcher::getG)
+//                            .collect(Collectors.groupingBy(Gesture::getId)));
 
-                    log.info("Found gesture match at groupingBy2: " + matches.stream().map(MultiSensorGestureMatcher::getG)
-                            .collect(Collectors.groupingBy(Gesture::getId)));
-
-                    log.info("Found gesture match at groupingBy3: " + matches.stream().collect(Collectors.groupingBy(MultiSensorGestureMatcher::getG)));
+//                    log.info("Found gesture match at groupingBy3: " + matches.stream().collect(Collectors.groupingBy(MultiSensorGestureMatcher::getG)));
 
 //                    map(GestureMatcher::getG::).collect(Collectors.groupingBy(Gesture::getId)).entrySet().stream().map(Gesture::toString).collect(Collectors.joining(";;;").toString()));
 
@@ -159,6 +159,7 @@ public class RecognitionTest extends TestServiceBase {
 //                            log.info(e.stac);
                     e.printStackTrace();
                 }
+/*
                 Iterator<MultiSensorGestureMatcher> mi = matches.iterator();
                 while (mi.hasNext()) {
                     MultiSensorGestureMatcher gm = mi.next();
@@ -172,6 +173,7 @@ public class RecognitionTest extends TestServiceBase {
                     }
 
                 }
+ */
 //                break;
             }
         }

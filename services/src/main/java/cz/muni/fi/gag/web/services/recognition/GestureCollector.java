@@ -4,11 +4,11 @@ import cz.muni.fi.gag.web.persistence.entity.DataLine;
 import cz.muni.fi.gag.web.persistence.entity.Gesture;
 import cz.muni.fi.gag.web.persistence.entity.Sensor;
 import cz.muni.fi.gag.web.services.logging.Log;
-import cz.muni.fi.gag.web.services.recognition.matchers.GestureMatcher;
 import cz.muni.fi.gag.web.services.recognition.matchers.MultiSensorGestureMatcher;
 import cz.muni.fi.gag.web.services.recognition.matchers.SingleSensorGestureMatcher;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author Vojtech Prusa
@@ -47,10 +47,11 @@ public class GestureCollector {
     }
 
     public boolean doesGestureContainsSensor(Sensor s) {
-        return ((this.gestureContainsSensors >> s.ordinal()) & 0x01) == 0x01;
+        return ((this.gestureContainsSensors >> s.ordinal()) & one) == one;
     }
 
-    public List<MultiSensorGestureMatcher> collect(List<SingleSensorGestureMatcher> gmlPos) {
+//    public Map<Sensor, SingleSensorGestureMatcher> collect(List<SingleSensorGestureMatcher> gmlPos) {
+    public MultiSensorGestureMatcher collect(List<SingleSensorGestureMatcher> gmlPos) {
         // TODO rework and reconsider the data loss that may occur here
         // - List<GestureMatcher> is converted to GestureMatcher
         // -- sometimes it return List<GestureMatcher> of sensor data
@@ -60,6 +61,13 @@ public class GestureCollector {
         // - return List<GestureMatcher>
         // - gm.setSingle(true);
         // -- because of distinguishing between single sensor, multiple sensor or whole hand gesture
+
+        if(gestureContainsSensorsRet == 0x00 && !mgm.isEmpty()) {
+//            log.info("HandComparator.collect.mgm.clear()");
+//            log.info("mgm 1. " + mgm.toString());
+//            mgm.clear();
+//            log.info("mgm 2. " + mgm.toString());
+        }
         for (Iterator<SingleSensorGestureMatcher> gmi = gmlPos.iterator(); gmi.hasNext(); ) {
             SingleSensorGestureMatcher gm = gmi.next();
             Sensor posP = gm.getAtDataLine().getPosition();
@@ -74,14 +82,17 @@ public class GestureCollector {
             if(gestureContainsSensors == gestureContainsSensorsRet) {
                 gestureContainsSensorsRet = 0x00;
 //                return Arrays.asList(mgm);
-                List ar = new ArrayList<GestureMatcher>();
-                ar.add(mgm);
-                return ar;
+//                List ar = new ArrayList<GestureMatcher>();
+//                ar.add(mgm);
+                return mgm;
 //                return Arrays.asList();
             }
         }
 
-        return Collections.emptyList();
+//        return Collections.emptyList();
+//        return Collections.emptyMap<Sensor,SingleSensorGestureMatcher>();
+        return null;
+//        return Collections.emptyMap();
     }
 
 }
