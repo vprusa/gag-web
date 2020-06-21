@@ -1,5 +1,6 @@
-package cz.muni.fi.gag.web.services.websocket.endpoint;
+package cz.muni.fi.gag.web.services.websocket.endpoint.config;
 
+import cz.muni.fi.gag.web.services.websocket.endpoint.BaseWSEndpoint;
 import org.jboss.logging.Logger;
 
 import javax.websocket.HandshakeResponse;
@@ -21,8 +22,11 @@ public class CustomServerEndpointConfiguration extends ServerEndpointConfig.Conf
 //        config.getUserProperties().put("userInRole", request.isUserInRole(""));
     }
 
+//    public Class<?> getEndpointClass() {
+//        return DataLineWsEndpoint.class;
+//    }
     public Class<?> getEndpointClass() {
-        return DataLineWSEndpoint.class;
+        return BaseWSEndpoint.class;
     }
 
     public ServerEndpointConfig.Configurator getConfigurator() {

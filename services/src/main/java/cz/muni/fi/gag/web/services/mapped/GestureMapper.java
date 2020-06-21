@@ -24,6 +24,11 @@ public interface GestureMapper<DataLineEx extends DataLine> extends WSMsgBase {
         return gservice.findById(getGestureID()).orElseGet(null);
     }
 
+    /**
+     * I quite do not like this mapping, idk how does compiler deals with this
+     * and init of "T extends DataLine" prece it which is even worse..
+     * */
+
     static DataLine mapDataLine(GestureService gservice, MDataLine mdl, DataLine dl){
         dl.setTimestamp(mdl.getTimestamp());
         dl.setGesture(gservice.findById(mdl.getGestureID()).orElseGet(null));

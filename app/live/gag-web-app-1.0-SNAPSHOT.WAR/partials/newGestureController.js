@@ -25,9 +25,22 @@ angular
 
         $scope.ble = BLETools;
         $scope.ws = WSTools;
+
         $scope.vis = VisTools;
 
         $scope.vis.numberOfHandsPairs = 1;
+
+        // WSTools.setEndpoint(WSTools.endpointSpecifications.RECORDER);
+        // WSTools.init();
+
+        this.$onInit = function () {
+          WSTools.selectedEndpoint = WSTools.endpointRecorder;
+          WSTools.init();
+        };
+
+        this.$onDestroy = function () {
+          WSTools.destroy();
+        };
 
         $scope.alerts = angular.copy(createUpdateTools.getAlerts());
         createUpdateTools.deleteAlerts();

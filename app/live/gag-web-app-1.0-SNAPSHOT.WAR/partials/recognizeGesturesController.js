@@ -9,9 +9,13 @@ angular.module('app').controller(
     'commonTools',
     'createUpdateTools',
     'WSTools',
+    // 'WSTools',
     'VisTools',
-    function ($scope, $location, $route, $timeout, commonTools, createUpdateTools, WSTools, VisTools) {
+    function ($scope, $location, $route, $timeout, commonTools, createUpdateTools, WSTools, /*WSToolsFake,*/ VisTools) {
       commonTools.getGestures().then(function (response) {
+        // Why WSToolsFake ? I was thinking why not to have fake over WSTools , but no..
+        // for testing purposes its easier to just load whole gesture with its data
+
         // $scope.gestures = response;
         // console.log("response");
         // console.log(response);
@@ -32,8 +36,10 @@ angular.module('app').controller(
       });
 
       $scope.ws = WSTools;
+      // $scope.wsFake = WSToolsFake;
       $scope.vis = VisTools;
-
+      // WSTools.setEndpoint(WSTools.endpointSpecifications.RECOGNIZER);
+      // WSTools.init();
       $scope.vis.numberOfHandsPairs = 1;
 
       $scope.alerts = angular.copy(createUpdateTools.getAlerts());
@@ -44,12 +50,25 @@ angular.module('app').controller(
       };
 
       this.$onInit = function () {
+        WSTools.selectedEndpoint = WSTools.endpointRecognizer;
         WSTools.init();
+
+        // WSToolsFake.selectedEndpoint = WSToolsFake.endpointReplayer;
+        // WSToolsFake.init();
       };
 
       this.$onDestroy = function () {
         WSTools.destroy();
       };
+
+      // this.$onInit = function () {
+      //   WSTools.setEndpoint(WSTools.endpointSpecifications.RECOGNIZER);
+      //   WSTools.init();
+      // };
+
+      // this.$onDestroy = function () {
+      // WSTools.destroy();
+      // };
 
       $scope.selectedGestureDetail = {
         info: "Watch 3D model of hands",
@@ -101,9 +120,9 @@ angular.module('app').controller(
         var dataLine = JSON.parse(data);
         // console.log(dataLine);
         $scope.vis.updateVisFromDataLine(dataLine);
-        // if (!$scope.$$phase) {
-        $scope.$apply();
-        // }
+        if (!$scope.$$phase) {
+          $scope.$apply();
+        }
       };
 
       WSTools.onSendMessage = $scope.onSendMessage;
@@ -144,16 +163,37 @@ angular.module('app').controller(
       $scope.fakingState = fakingStates.IDLE;
       $scope.fakeData = {};
 
+      $scope.fakingLoop = function (curIndex) {
+        if (!$scope.isFakingBLE()) {
+          return;
+        }
+        var first = $scope.fakeData[curIndex];
+        // console.log(first);
+        if (typeof $scope.fakeData[curIndex + 1] !== "undefined") {
+          var second = $scope.fakeData[curIndex + 1];
+          var delay = second.t - first.t;
+          var res = setTimeout($scope.fakingLoop, delay, curIndex + 1);
+        }
+        $scope.vis.updateVisFromDataLine(first);
+        $scope.ws.sendMessage(JSON.stringify(first));
+      };
+
       $scope.startFakingBLE = function () {
         commonTools.getGestureDetailData($scope.fakeSelectedGestureId)
           .then(function (resp) {
             $scope.fakeData = resp;
+            $scope.fakingLoop(0);
+            // console.log($scope.fakeData);
           });
         $scope.fakingState = fakingStates.FAKING;
       };
 
       $scope.stopFakingBLE = function () {
         $scope.fakingState = fakingStates.IDLE;
+      };
+
+      $scope.isFakingBLE = function () {
+        return $scope.fakingState == fakingStates.FAKING;
       };
 
 
@@ -189,39 +229,51 @@ angular.module('app').controller(
           }
           return e;
         });
+        var msgObjs = JSON.parse(msg);
         // console.log(msg);
-        var msgObj = JSON.parse(msg);
-        if (typeof msgObj[0] !== 'undefined' && typeof msgObj[0].index !== 'undefined') {
-          // console.log(msgObj);
-          gestureMatches.last = msgObj[0];
-          $scope.gestures = $scope.gestures.map(function (e) {
-            // console.log(e);
-            if (e.id == gestureMatches.last.g.id) {
-              // console.log("recognized");
+        console.log(msgObjs);
+        for (var msgObj in msgObjs) {
+          // console.log(k, result[k]);
+          if (typeof msgObj[0] !== 'undefined' && typeof msgObj[0].index !== 'undefined') {
+            // console.log(msgObj);
+            gestureMatches.last = msgObj[0];
+            $scope.gestures = $scope.gestures.map(function (e) {
               // console.log(e);
-              if (!e.recognized) {
-                changed = true;
+              if (e.id == gestureMatches.last.g.id) {
+                // console.log("recognized");
+                // console.log(e);
+                if (!e.recognized) {
+                  changed = true;
+                }
+                e.recognized = true;
+              } else {
+                if (e.recognized) {
+                  changed = true;
+                }
+                e.recognized = false;
               }
-              e.recognized = true;
-            } else {
-              if (e.recognized) {
-                changed = true;
-              }
-              e.recognized = false;
+              return e;
+            });
+            if (changed) {
+              // TODO why is the program get here when  recognition is running && startFaking is clicked?
+              // I have some idea and the problem may have to be solved for visualization of recognized sensor
+              // console.log("");
+              // console.log($scope.gestures);
+              $scope.$apply();
             }
-            return e;
-          });
-          if (changed) {
-            console.log($scope.gestures);
-            $scope.$apply();
+          } else if (msg.includes(startActionStr.replace(/\s/g, ''))) {
+            // ACK ..
+            console.log("setState(WSTools.reqStates.RECOGNIZE)");
+            WSTools.setState(WSTools.reqStates.RECOGNIZE);
+            // console.log(WSTools.state);
+            // console.log($scope.isRecognizing());
+            // $scope.$apply();
+          } else {
+            // console.log("else");
+            // console.log()
           }
-        } else if (msg.includes(startActionStr.replace(/\s/g, ''))) {
-          // ACK ..
-          WSTools.setState(WSTools.reqStates.RECOGNIZE);
-          // console.log(WSTools.state);
-          // console.log($scope.isRecognizing());
-          // $scope.$apply();
         }
+
       };
 
       // faking BLE data with re-player data

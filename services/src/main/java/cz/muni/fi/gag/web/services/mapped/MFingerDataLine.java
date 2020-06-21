@@ -25,6 +25,8 @@ public class MFingerDataLine extends FingerDataLine implements GestureMapper<Fin
     }
 
     public FingerDataLine getEntity(GestureService gservice) {
+        // TODO dela with destruction or avoid init at all?
+        // change DB
         FingerDataLine fdl = new FingerDataLine();
         return GestureMapper.mapFingerDataLine(gservice, this, fdl);
 

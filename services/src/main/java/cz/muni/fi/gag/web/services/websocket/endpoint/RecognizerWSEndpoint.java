@@ -4,11 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.muni.fi.gag.web.persistence.entity.DataLine;
 import cz.muni.fi.gag.web.persistence.entity.User;
 import cz.muni.fi.gag.web.services.logging.Log;
-import cz.muni.fi.gag.web.services.recognition.GestureMatcher;
+import cz.muni.fi.gag.web.services.recognition.matchers.MultiSensorGestureMatcher;
 import cz.muni.fi.gag.web.services.rest.endpoint.BaseEndpoint;
 import cz.muni.fi.gag.web.services.service.DataLineService;
 import cz.muni.fi.gag.web.services.service.GestureService;
 import cz.muni.fi.gag.web.services.service.UserService;
+import cz.muni.fi.gag.web.services.websocket.endpoint.config.CustomServerEndpointConfiguration;
 import cz.muni.fi.gag.web.services.websocket.endpoint.packet.actions.Action;
 import cz.muni.fi.gag.web.services.websocket.endpoint.packet.actions.ActionDecoder;
 import cz.muni.fi.gag.web.services.websocket.endpoint.packet.actions.PlayerActions;
@@ -16,7 +17,6 @@ import cz.muni.fi.gag.web.services.websocket.endpoint.packet.actions.Recognition
 import cz.muni.fi.gag.web.services.websocket.endpoint.packet.datalines.*;
 import cz.muni.fi.gag.web.services.websocket.service.DataLineRePlayer;
 import cz.muni.fi.gag.web.services.websocket.service.GestureRecognizer;
-import org.jboss.logging.Logger;
 
 import javax.faces.bean.SessionScoped;
 import javax.inject.Inject;
@@ -28,13 +28,6 @@ import java.util.List;
 
 /**
  * @author Vojtech Prusa
- * <p>
- * TODO
- * split this to 3 endpoints
- * 1. record
- * 2. replay
- * 3. recognize
- * also consider how to make it possible to combine 1. & 3.
  */
 @SessionScoped
 @ServerEndpoint(value = "/ws/recognizer",
@@ -46,10 +39,9 @@ import java.util.List;
 )
 public class RecognizerWSEndpoint extends BaseWSEndpoint {
 
-    public static final Logger log = Logger.getLogger(RecognizerWSEndpoint.class.getSimpleName());
+    public static final Log.TypedLogger log = new Log.TypedLogger<Log.LoggerTypeWSRecognizer>(Log.LoggerTypeWSRecognizer.class);
 
     private static final String REPLAYER_KEY = "replayer";
-//    private static final String RECOGNITION_KEY = "recognition";
 
     @Inject
     private DataLineService dataLineService;
@@ -114,7 +106,7 @@ public class RecognizerWSEndpoint extends BaseWSEndpoint {
 
         if (dl != null && rec.isRecognizing()) {
             log.info("isRecognizing");
-            List<GestureMatcher> lgm = rec.recognize(dl);
+            List<MultiSensorGestureMatcher> lgm = rec.recognize(dl);
             if (!lgm.isEmpty()) {
                 log.info("sendObject(lgm)");
                 log.info(lgm);

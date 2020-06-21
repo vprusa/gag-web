@@ -6,11 +6,12 @@ import cz.muni.fi.gag.web.services.logging.Log;
 import cz.muni.fi.gag.web.services.mapped.MDataLine;
 import cz.muni.fi.gag.web.services.mapped.MFingerDataLine;
 import cz.muni.fi.gag.web.services.mapped.MWristDataLine;
-import cz.muni.fi.gag.web.services.recognition.GestureMatcher;
+import cz.muni.fi.gag.web.services.recognition.matchers.MultiSensorGestureMatcher;
 import cz.muni.fi.gag.web.services.rest.endpoint.BaseEndpoint;
 import cz.muni.fi.gag.web.services.service.DataLineService;
 import cz.muni.fi.gag.web.services.service.GestureService;
 import cz.muni.fi.gag.web.services.service.UserService;
+import cz.muni.fi.gag.web.services.websocket.endpoint.config.CustomServerEndpointConfiguration;
 import cz.muni.fi.gag.web.services.websocket.endpoint.packet.actions.Action;
 import cz.muni.fi.gag.web.services.websocket.endpoint.packet.actions.ActionDecoder;
 import cz.muni.fi.gag.web.services.websocket.endpoint.packet.actions.PlayerActions;
@@ -31,7 +32,7 @@ import java.util.List;
 /**
  * @author Vojtech Prusa
  * <p>
- * TODO
+ * TODO (in progress) -> when done remove this class
  * split this to 3 endpoints
  * 1. record
  * 2. replay
@@ -49,6 +50,7 @@ import java.util.List;
 public class DataLineWsEndpoint { // extends BaseEndpoint {
 
     public static final Logger log = Logger.getLogger(DataLineWsEndpoint.class.getSimpleName());
+
 
     private static final String REPLAYER_KEY = "replayer";
     private static final String RECOGNITION_KEY = "recognition";
@@ -117,7 +119,7 @@ public class DataLineWsEndpoint { // extends BaseEndpoint {
         DataLine dl = null;
 
         if (!rec.isRecognizing()) {
-        // This was an ugly way to duplicate real data but it was at hand ... TODO move this to test as automation
+            // This was an ugly way to duplicate real data but it was at hand ... TODO move this to test as automation
 //        if (limit <= 12) {
 //            limit++;
 //            long gid = 79l;
@@ -154,7 +156,7 @@ public class DataLineWsEndpoint { // extends BaseEndpoint {
 
         if (dl != null && rec.isRecognizing()) {
             log.info("isRecognizing");
-            List<GestureMatcher> lgm = rec.recognize(dl);
+            List<MultiSensorGestureMatcher> lgm = rec.recognize(dl);
             if (!lgm.isEmpty()) {
                 log.info("sendObject(lgm)");
                 log.info(lgm);

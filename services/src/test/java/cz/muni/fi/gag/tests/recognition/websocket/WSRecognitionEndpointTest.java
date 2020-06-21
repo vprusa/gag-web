@@ -12,7 +12,7 @@ import cz.muni.fi.gag.web.persistence.entity.Gesture;
 import cz.muni.fi.gag.web.persistence.entity.WristDataLine;
 import cz.muni.fi.gag.web.services.filters.RecordedDataFilter;
 import cz.muni.fi.gag.web.services.filters.RecordedDataFilterImpl;
-import cz.muni.fi.gag.web.services.recognition.GestureMatcher;
+import cz.muni.fi.gag.web.services.recognition.matchers.SingleSensorGestureMatcher;
 import cz.muni.fi.gag.web.services.websocket.endpoint.packet.actions.Action;
 import cz.muni.fi.gag.web.services.websocket.endpoint.packet.actions.ActionDecoder;
 import cz.muni.fi.gag.web.services.websocket.endpoint.packet.actions.ActionEncoderBase;
@@ -199,7 +199,7 @@ public class WSRecognitionEndpointTest extends WSEndpointTestBase {
                     }
                 } else {
                     // lets consider everything else of type List<GestureMatcher>
-                    List<GestureMatcher> lgm = null;
+                    List<SingleSensorGestureMatcher> lgm = null;
                     try {
                         lgm = mapper.reader().forType(List.class).readValue(msg);
                     } catch (IOException e) {

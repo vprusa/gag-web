@@ -157,7 +157,7 @@ angular.module('app').factory('BLETools', ['WSTools', function (WSTools) {
 
     // if isWrist?
     if ( finger == "WRIST" ){
-      var jsonMessage = {
+      var json_Message = {
         // "id": null,
         "t": $.now(),
         "gid": gestureId,
@@ -174,9 +174,9 @@ angular.module('app').factory('BLETools', ['WSTools', function (WSTools) {
         "mY": 1,
         "mZ": 1
       };
-      return jsonMessage;
+      return json_Message;
     }else{
-      var jsonMessage = {
+      var json_Message = {
         // "id": null,
         "t": $.now(),
         // TODO dynamic
@@ -194,7 +194,7 @@ angular.module('app').factory('BLETools', ['WSTools', function (WSTools) {
         //"mY": 1,
         //"mZ": 1
       };
-      return jsonMessage;
+      return json_Message;
     }
   };
   ble.reconnectCounter = 0;

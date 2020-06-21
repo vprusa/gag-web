@@ -29,9 +29,9 @@ select * from DataLine as dl where dl.gesture_id = 27 and dl.timestamp in (selec
 
 ## Upgrade
 
-1. 
+1.
 ```
-select fdl.id, fdl.position, dl.position, dl.hand, fdl.hand, fdl.side from FingerDataLine as fdl join DataLine as dl on dl.id = fdl.id where gesture_id = 21; 
+select fdl.id, fdl.position, dl.position, dl.hand, fdl.hand, fdl.side from FingerDataLine as fdl join DataLine as dl on dl.id = fdl.id where gesture_id = 21;
 
 update DataLine as dl set dl.position = 5 where dl.position = null and dl.gesture_id = 21;
 update DataLine as dl set dl.hand = 1 where dl.hand is null and dl.gesture_id = 21;
@@ -43,4 +43,12 @@ alter table FingerDataLine drop column side;
 2.
 ```
 TODO
+```
+
+## Filters
+
+### Get N Datalines
+
+```
+
 ```

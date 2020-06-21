@@ -1,22 +1,22 @@
 package cz.muni.fi.gag.scala.web.visualization
 
-import cz.muni.fi.gag.web.scala.shared.visualization.{HandVisualization, VisualizationBase}
 import cz.muni.fi.gag.scala.web.shared.Log
 import cz.muni.fi.gag.web.scala.shared.Hand
 import cz.muni.fi.gag.web.scala.shared.common.VisualizationContextT
 import cz.muni.fi.gag.web.scala.shared.recognition.Sensor
 import cz.muni.fi.gag.web.scala.shared.recognition.Sensor.Sensor
-import org.denigma.threejs.{Color, Object3D, PerspectiveCamera, _}
+import cz.muni.fi.gag.web.scala.shared.visualization.HandVisualization
 import org.denigma.threejs.extensions.Container3D
 import org.denigma.threejs.extensions.controls.{CameraControls, JumpCameraControls}
 import org.denigma.threejs.extras.HtmlSprite
+import org.denigma.threejs.{Color, Object3D, PerspectiveCamera, _}
 import org.scalajs.dom.MouseEvent
 import org.scalajs.dom.raw.HTMLElement
 import scalatags.JsDom.all._
 
 import scala.collection.mutable.ArrayBuffer
 import scala.scalajs.js
-import scala.scalajs.js.annotation.{JSExport, JSName, ScalaJSDefined}
+import scala.scalajs.js.annotation.JSExport
 import scala.util.Random
 
 class VisualizationScene[GeomType <: Object3DWithProps, QuaternionType <: Quaternion]
@@ -39,10 +39,12 @@ class VisualizationScene[GeomType <: Object3DWithProps, QuaternionType <: Quater
     cssRenderer.render(cssScene, camera)
   }
 
+  // css
   override protected def initRenderer() = {
     val vr = super.initRenderer()
     vr.domElement.style.position = "relative"
     vr.domElement.style.display = "inline-block"
+    vr.domElement.style.maxWidth = "100%"
     vr
   }
 

@@ -7,12 +7,14 @@ import cz.muni.fi.gag.web.services.rest.endpoint.BaseEndpoint;
 import cz.muni.fi.gag.web.services.service.DataLineService;
 import cz.muni.fi.gag.web.services.service.GestureService;
 import cz.muni.fi.gag.web.services.service.UserService;
+import cz.muni.fi.gag.web.services.websocket.endpoint.config.CustomServerEndpointConfiguration;
 import cz.muni.fi.gag.web.services.websocket.endpoint.packet.actions.Action;
 import cz.muni.fi.gag.web.services.websocket.endpoint.packet.actions.ActionDecoder;
 import cz.muni.fi.gag.web.services.websocket.endpoint.packet.actions.PlayerActions;
-import cz.muni.fi.gag.web.services.websocket.endpoint.packet.datalines.*;
+import cz.muni.fi.gag.web.services.websocket.endpoint.packet.datalines.DataLineEncoder;
+import cz.muni.fi.gag.web.services.websocket.endpoint.packet.datalines.FingerDataLineEncoder;
+import cz.muni.fi.gag.web.services.websocket.endpoint.packet.datalines.WristDataLineEncoder;
 import cz.muni.fi.gag.web.services.websocket.service.DataLineRePlayer;
-import org.jboss.logging.Logger;
 
 import javax.faces.bean.SessionScoped;
 import javax.inject.Inject;
@@ -22,12 +24,6 @@ import java.security.Principal;
 
 /**
  * @author Vojtech Prusa
- * <p>
- * TODO
- * split this to 3 endpoints
- * 2. replay
- * 3. recognize
- * also consider how to make it possible to combine 1. & 3.
  */
 @SessionScoped
 @ServerEndpoint(value = "/ws/replayer",
@@ -37,9 +33,9 @@ import java.security.Principal;
         decoders = {},
         configurator = CustomServerEndpointConfiguration.class
 )
-public class ReplayerWSEndpoint extends BaseWSEndpoint { // extends BaseEndpoint {
+public class ReplayerWSEndpoint extends BaseWSEndpoint {
 
-    public static final Logger log = Logger.getLogger(ReplayerWSEndpoint.class.getSimpleName());
+    public static final Log.TypedLogger log = new Log.TypedLogger<Log.LoggerTypeWSReplayer>(Log.LoggerTypeWSReplayer.class);
 
     private static final String REPLAYER_KEY = "replayer";
 
@@ -74,7 +70,6 @@ public class ReplayerWSEndpoint extends BaseWSEndpoint { // extends BaseEndpoint
     // TODO add decoders as custom bean injections?
     private ActionDecoder<Action> ad = new ActionDecoder(Action.class);
     private ActionDecoder<PlayerActions> pad = new ActionDecoder(PlayerActions.class, Action.ActionsTypesEnum.PLAYER);
-//    private ActionDecoder<RecognitionActions> rad = new ActionDecoder(RecognitionActions.class, Action.ActionsTypesEnum.RECOGNITION);
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -90,8 +85,6 @@ public class ReplayerWSEndpoint extends BaseWSEndpoint { // extends BaseEndpoint
             log.info(msg);
             if (pad.willDecode(msg)) {
                 log.info("pad");
-//                }
-//                case PLAYER: {
                 PlayerActions pa = (PlayerActions) pad.decode(msg);
                 switch (pa.getAction()) {
                     case PLAY: {

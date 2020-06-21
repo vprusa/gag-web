@@ -35,8 +35,11 @@ angular
           $scope.alerts.splice(index, 1);
         };
 
+
+
         this.$onInit = function () {
-          // WSTools.init();
+          WSTools.selectedEndpoint = WSTools.endpointReplayer;
+          WSTools.init();
         };
 
         this.$onDestroy = function () {

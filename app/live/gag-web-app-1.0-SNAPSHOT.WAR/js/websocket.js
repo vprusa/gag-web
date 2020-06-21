@@ -84,6 +84,7 @@ angular.module('app').factory('WSTools', function (/*$rootScope*/) {
    */
   ws.onSendMessage = function (data) {
     // override
+    console.log("TODO ws.onSendMessage:override")
   };
 
   ws.sendMessage = function (msg) {
@@ -122,7 +123,9 @@ angular.module('app').factory('WSTools', function (/*$rootScope*/) {
   ws.setOnMessage = function (f) {
     ws.websocketSession.onmessage = f;
   };
+
   ws.onMessage = function (evt) {
+    console.log("TODO ws.onMessage.override")
     //console.log(evt);
     //var data = JSON.parse(evt.data);
   };

@@ -9,8 +9,8 @@ import cz.muni.fi.gag.web.services.rest.endpoint.BaseEndpoint;
 import cz.muni.fi.gag.web.services.service.DataLineService;
 import cz.muni.fi.gag.web.services.service.GestureService;
 import cz.muni.fi.gag.web.services.service.UserService;
+import cz.muni.fi.gag.web.services.websocket.endpoint.config.CustomServerEndpointConfiguration;
 import cz.muni.fi.gag.web.services.websocket.endpoint.packet.datalines.*;
-import org.jboss.logging.Logger;
 
 import javax.faces.bean.SessionScoped;
 import javax.inject.Inject;
@@ -20,13 +20,6 @@ import java.security.Principal;
 
 /**
  * @author Vojtech Prusa
- * <p>
- * TODO
- * split this to 3 endpoints
- * 1. record
- * 2. replay
- * 3. recognize
- * also consider how to make it possible to combine 1. & 3.
  */
 @SessionScoped
 @ServerEndpoint(value = "/ws/recorder",
@@ -36,9 +29,9 @@ import java.security.Principal;
         decoders = {},
         configurator = CustomServerEndpointConfiguration.class
 )
-public class RecorderWSEndpoint  extends BaseWSEndpoint { // extends BaseEndpoint {
+public class RecorderWSEndpoint  extends BaseWSEndpoint {
 
-    public static final Logger log = Logger.getLogger(RecorderWSEndpoint.class.getSimpleName());
+    public static final Log.TypedLogger log = new Log.TypedLogger<Log.LoggerTypeWSRecorder>(Log.LoggerTypeWSRecorder.class);
 
     private static final String REPLAYER_KEY = "replayer";
 
@@ -53,7 +46,6 @@ public class RecorderWSEndpoint  extends BaseWSEndpoint { // extends BaseEndpoin
 
     @OnOpen
     public void onOpen(Session session, EndpointConfig config) {
-        //sessionService.addSession(session);
         Principal userPrincipal = (Principal) config.getUserProperties().get("UserPrincipal");
         User current = BaseEndpoint.current(userPrincipal, userService);
         // TODO if user not in role stop! (with sufficient error message)
@@ -71,8 +63,6 @@ public class RecorderWSEndpoint  extends BaseWSEndpoint { // extends BaseEndpoin
     private DataLineDecoder dld = new DataLineDecoder();
     private FingerDataLineDecoder fdld = new FingerDataLineDecoder();
     private WristDataLineDecoder wdld = new WristDataLineDecoder();
-//    private ActionDecoder<Action> ad = new ActionDecoder(Action.class);
-//    private RecorderActionDecoder<Action> rad = new RecorderActionDecoder(Action.class);
 
     @OnMessage
     public void onMessage(String msg, Session session) {
@@ -82,20 +72,16 @@ public class RecorderWSEndpoint  extends BaseWSEndpoint { // extends BaseEndpoin
 
         if (fdld.willDecode(msg)) {
             MFingerDataLine mfdl = fdld.decode(msg);
-//                mfdl.setGestureID(gid);
             FingerDataLine fdl = mfdl.getEntity(gestureService);
-//                fdl.setGestureID(gid);
             dl = dataLineService.create(fdl);
         } else if (wdld.willDecode(msg)) {
             MWristDataLine mwdl = wdld.decode(msg);
-//                mwdl.setGestureID(gid);
             mwdl.setPosition(Sensor.WRIST); // TODO move this somewhere else...
             WristDataLine wdl = mwdl.getEntity(gestureService);
             wdl.setPosition(Sensor.WRIST);
             dl = dataLineService.create(wdl);
         } else if (dld.willDecode(msg)) {
             MDataLine mdl = dld.decode(msg);
-//                mdl.setGestureID(gid);
             dl = dataLineService.create(mdl.getEntity(gestureService));
         }
     }

@@ -12,5 +12,18 @@ public class WristComparator extends SensorComparator<WristDataLine> {
     public WristComparator(Sensor s, Gesture gRef, DataLineGestureIterator dlgIter) {
         super(s, gRef, dlgIter);
     }
+
+    // in case of WristComparator this should be overriden
+    @Override
+    protected boolean doesMatch(final WristDataLine fdlRef, WristDataLine fdl) {
+//        double dist = quatsAbsDist(qRef, q);
+        return super.doesMatch(fdlRef,fdl) && doesMagMatch(fdlRef,fdl);
+    }
+
+    protected boolean doesMagMatch(final WristDataLine fdlRef, WristDataLine fdl) {
+        // TODO
+        return true;
+    }
+
 }
     
