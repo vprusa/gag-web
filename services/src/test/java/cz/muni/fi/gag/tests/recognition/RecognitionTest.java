@@ -260,11 +260,9 @@ public class RecognitionTest extends TestServiceBase {
 
     @Test
     public void gestureRecognizerTest() {
-        long gId = 72;
-        long gIdRef = 72;
+
 
         // TODO get user via service
-
 //        +----+------+-----------------------+
 //        | id | role | thirdPartyId          |
 //        +----+------+-----------------------+
@@ -276,6 +274,11 @@ public class RecognitionTest extends TestServiceBase {
         User u = userService.findById(userId).get();
 //        u.setRole(UserRole.ADMIN);
 //        u.setThirdPartyId("email:admin2@test.com");
+
+        long gId = 79;
+        long gIdRef = 79;
+//        long gId = 72;
+//        long gIdRef = 72;
 
         Optional<Gesture> gOpt = gestureService.findById(gId);
         Optional<Gesture> gRefOpt = gestureService.findById(gIdRef);
@@ -295,9 +298,9 @@ public class RecognitionTest extends TestServiceBase {
                         Sensor.values()[i]);
                 dlgsIters[i] = dlgsIter;
             }
-            HandComparator hgi = new HandComparator(gRef, dlgsIters);
-            List<MultiSensorGestureMatcher> matches = null;
-            List<MultiSensorGestureMatcher[]> handMatches = new ArrayList<MultiSensorGestureMatcher[]>();
+//            HandComparator hgi = new HandComparator(gRef, dlgsIters);
+//            List<MultiSensorGestureMatcher> matches = null;
+//            List<MultiSensorGestureMatcher[]> handMatches = new ArrayList<MultiSensorGestureMatcher[]>();
             gr.start(u);
             for (Iterator<FingerDataLine> gDataIter = gData.iterator(); gDataIter.hasNext(); ) {
                 DataLine dl = gDataIter.next();

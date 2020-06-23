@@ -102,6 +102,30 @@ public abstract class BaseComparator<T extends FingerDataLine> implements Gestur
         int matcherIndex = 0; // this variable is here is for debug purposes
         for (Iterator<SingleSensorGestureMatcher> matchesIt = matchers.iterator(); matchesIt.hasNext(); ) {
             SingleSensorGestureMatcher matcher = matchesIt.next();
+
+            int newPossibleMatchersIndex = matcher.getIndex();
+//            if(ref.size() >= newPossibleMatchersIndex){
+
+//            T fdlRef1 = refList.get(newPossibleMatchersIndex);
+            T fdlRef1 = getDL(newPossibleMatchersIndex);
+            if (fdlRef1 == null) {
+                continue;
+            }
+
+            if (doesMatch(fdlRef1, fdl)) {
+                // Wee match, lets continue
+                matcher.incIndex();
+                log.info("BaseComparator.compare.matcher inc-index " + matcher.toString());
+            } else {
+                // TODO allow 10% data mismatch?
+                // if 9 out of 10 match in then ignore next wrong and continue recognizing one more time
+                //matchesIt.remove();
+            }
+            // Boundary for memory usage..
+            if (matcher.getIndex() > BUFFER_SIZE) {
+//                matchesIt.remove();
+            }
+
             if (matcher.getIndex() >= getRefTotalSize()) {
                 // Matched!
 //                matcher.setG(gRef);
@@ -115,16 +139,9 @@ public abstract class BaseComparator<T extends FingerDataLine> implements Gestur
                 matchesIt.remove();
                 // uncomment if only single recognition can occur per gesture
 //                matches.clear();
-                break;
+                //break;
             }
-            int newPossibleMatchersIndex = matcher.getIndex();
-//            if(ref.size() >= newPossibleMatchersIndex){
 
-//            T fdlRef1 = refList.get(newPossibleMatchersIndex);
-            T fdlRef1 = getDL(newPossibleMatchersIndex);
-            if (fdlRef1 == null) {
-                break;
-            }
 //            T fdlRef1 = null;
             // TODO brainstorm:
             //  fdlRef1 cannot be null and has to be refList.get(newPossibleMatchersIndex);
@@ -136,26 +153,7 @@ public abstract class BaseComparator<T extends FingerDataLine> implements Gestur
             //  - it should work by loading data into memory and then adding it to list
             //  -- fortunately i have
 
-            // if(ref.size() > matcher.getIndex()+1) {
-            //     T fdlRef2 = ref.get(matcher.getIndex()+1);
-            // }
 
-            if (doesMatch(fdlRef1, fdl)) {
-                // Wee match, lets continue
-                matcher.incIndex();
-                log.info("BaseComparator.compare.matcher inc-index " + matcher.toString());
-            } else {
-                // TODO allow 10% data mismatch?
-                // if 9 out of 10 match in then ignore next wrong and continue recognizing one more time
-                //matchesIt.remove();
-            }
-//            }
-
-//            if (matcher.getIndex() >= ref.size() && matcher.getIndex() > BUFFER_SIZE) { }
-            // Boundary for memory usage..
-            if (matcher.getIndex() > BUFFER_SIZE) {
-//                matchesIt.remove();
-            }
 
             matcherIndex++;
         }
@@ -170,14 +168,15 @@ public abstract class BaseComparator<T extends FingerDataLine> implements Gestur
 //        }
 //        log.info("BaseComparator.compare.doesMatch (fdl) " + fdl.toString());
 
-        if (matched.isEmpty() && first != null && doesMatch(first, fdl)) {
+//        if (matched.isEmpty() && first != null && doesMatch(first, fdl)) {
+        if (first != null && doesMatch(first, fdl)) {
             SingleSensorGestureMatcher matcher = new SingleSensorGestureMatcher(1, gRef);
-            matchers.add(matcher);
             if (matcher.getIndex() >= getRefTotalSize()) {
                 // Matched!
 //                matcher.setG(gRef);
                 matcher.setAtDataLine(fdl);
                 matched.add(matcher);
+
 //                log.info("BaseComparator.compare.matcher (nth) " + matcher.toString());
                 // also this will be overwritten by reverse-chronologically previous match
                 // or not? break;
@@ -186,6 +185,8 @@ public abstract class BaseComparator<T extends FingerDataLine> implements Gestur
                 // by some lower boundary (3?)
 //                matchesIt.remove();
 //                matches.clear();
+            }else{
+                matchers.add(matcher);
             }
         }
         log.info("BaseComparator.compare.matched " + matched.toString());

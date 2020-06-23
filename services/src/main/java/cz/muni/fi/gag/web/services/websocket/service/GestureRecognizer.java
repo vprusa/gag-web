@@ -48,8 +48,10 @@ public class GestureRecognizer implements Serializable {
 //    private AuthenticationService authService;
 
     // TODO fix re-init with start()
-    protected List<MultiSensorGestureMatcher> recognizedGestures = new ArrayList<MultiSensorGestureMatcher>();
-    protected Map<Gesture, DataLineGestureSensorIterator[]> gesturesIters = new HashMap<Gesture, DataLineGestureSensorIterator[]>();
+//    protected List<MultiSensorGestureMatcher> recognizedGestures = new ArrayList<MultiSensorGestureMatcher>();
+    protected List<MultiSensorGestureMatcher> recognizedGestures;
+    //    protected Map<Gesture, DataLineGestureSensorIterator[]> gesturesIters = new HashMap<Gesture, DataLineGestureSensorIterator[]>();
+//    protected Map<Gesture, DataLineGestureSensorIterator[]> gesturesIters;
 //    protected List<HandComparator> handComparators = new ArrayList<HandComparator>();
     protected List<HandComparator> handComparators;
 
@@ -73,10 +75,12 @@ public class GestureRecognizer implements Serializable {
             // TODO check if this is necessary
             // TODO store results
             // TODO log metrics
+            handComparators = new ArrayList<HandComparator>();
+
             recognizedGestures = new ArrayList<MultiSensorGestureMatcher>();
             log.info("for current: " + current.toString());
             List<Gesture> lGOpts = gestureService.findActive(current);
-            gesturesIters = new HashMap<Gesture, DataLineGestureSensorIterator[]>();
+//            gesturesIters = new HashMap<Gesture, DataLineGestureSensorIterator[]>();
             log.info("for lGOpts: " + lGOpts.toString());
 
             for (Iterator<Gesture> git = lGOpts.iterator(); git.hasNext(); ) {
@@ -88,10 +92,11 @@ public class GestureRecognizer implements Serializable {
                     DataLineGestureSensorIterator dlgsIter = dataLineService.buildIterator(g.getId(), Sensor.values()[i]);
                     dlgsIters[i] = dlgsIter;
                 }
+                handComparators.add(new HandComparator(g, dlgsIters));
                 // TODO add
-                gesturesIters.put(g, dlgsIters);
+//                gesturesIters.put(g, dlgsIters);
             }
-            log.info("gesturesIters: " + gesturesIters.toString());
+            log.info("handComparators: " + handComparators.toString());
         }
     }
 
@@ -104,7 +109,8 @@ public class GestureRecognizer implements Serializable {
     public List<MultiSensorGestureMatcher> recognize(DataLine dl) {
         Log.info("Recognize: " + dl.toString());
         switch (getState()) {
-            case IDLE: {}
+            case IDLE: {
+            }
             break;
             case RECOGNIZING: {
                 log.info("case: RECOGNIZING");
@@ -114,52 +120,33 @@ public class GestureRecognizer implements Serializable {
                 // -- same goes for GestureCollector.collect.{mgm.clear() ... return mgm; }
                 recognizedGestures.clear();
 
-                for (Iterator<Gesture> git = gesturesIters.keySet().iterator(); git.hasNext(); ) {
-                    Gesture gRef = git.next();
-                    log.info("recognizing for gesture: " + gRef.toString());
-                    DataLineGestureSensorIterator[] dlgIter = gesturesIters.get(gRef);
-                    // for any sensor it should behave as  SensorComparator<FingerDataLine>
-//                    SensorComparator sgi = new SensorComparator<FingerDataLine>(Sensor.INDEX, gRef, dlgIter);
-                    // why is here new variable?
-
-                    if(handComparators == null){
-                        handComparators = new ArrayList<HandComparator>();
-//                        HandComparator hc = new HandComparator(gRef, dlgIter);
-                        // TODO inject bean on new session ?
-//                        hc = new HandComparator(gRef, dlgIter);
-                        HandComparator hc = new HandComparator(gRef, dlgIter);
-                        handComparators.add(hc);
-                    }
-
+                FingerDataLine fdl = (FingerDataLine) dl;
 //                        if (dl instanceof FingerDataLine) {
-                    FingerDataLine fdl = (FingerDataLine) dl;
-                    for(Iterator<HandComparator> hci = handComparators.iterator(); hci.hasNext();){
-                        HandComparator hc = hci.next();
-                        MultiSensorGestureMatcher matches = hc.compare(fdl);
-                        if (matches != null && !matches.isEmpty()) {
-                            log.info("Found gesture match1 at: " + matches.toString());
-    //                        log.info("Found gesture match at: " + matches);
+//                        } else if (dl instanceof WristDataLine) {
+//                        }
+                log.info("handComparators: " + handComparators.toString());
+                for (Iterator<HandComparator> hci = handComparators.iterator(); hci.hasNext(); ) {
+                    HandComparator hc = hci.next();
+                    MultiSensorGestureMatcher matches = hc.compare(fdl);
+                    if (matches != null && !matches.isEmpty()) {
+                        log.info("Found gesture match1 at: " + matches.toString());
+                        //                        log.info("Found gesture match at: " + matches);
 
-                            try {
+                        try {
 //                                log.info("Found gesture match2 at: " + matches.stream().map(GestureMatcher::toString)
 //                                        .collect(Collectors.joining(";;;")));
 //                                log.info("Found gesture match3 at groupingBy: " + matches.stream().map(GestureMatcher::getG)
 //                                        .collect(Collectors.groupingBy(Gesture::getId)).toString());
-                            } catch (Exception e) {
-    //                            log.info(e.stac);
-                                e.printStackTrace();
-                            }
-
-                            recognizedGestures.add(matches);
-    //                         if it is needed to find shortest gesture match then: break; else keep running
-    //                        break;
+                        } catch (Exception e) {
+                            //                            log.info(e.stac);
+                            e.printStackTrace();
                         }
-                    }
 
-//                    hcl.add(hc);
-//                        } else if (dl instanceof WristDataLine) {
-//                        }
+                        recognizedGestures.add(matches);
+                    }
                 }
+
+//                }
                 log.info("RecognizedGestures: " + recognizedGestures.toString());
 
                 return recognizedGestures;

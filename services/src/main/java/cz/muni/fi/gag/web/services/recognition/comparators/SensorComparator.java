@@ -50,7 +50,8 @@ public class SensorComparator<T extends FingerDataLine> extends BaseComparator<T
                         ret = dl;
                     }
                 } else {
-                    log.info("SensorComparator.getDL break; should not happen!");
+                    log.info("SensorComparator.getDL break; should not happen! index: " + index + " getRefSize: " + getRefSize());
+                    log.info(this.refList.toString());
                     // TODO return null;
                     // not found
                     break;
