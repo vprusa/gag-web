@@ -63,11 +63,22 @@ angular.module('app').factory('VisTools', function () {
       case "MIDDLE":{
         let ar = new THREE.Quaternion(parseFloat(dl.qX), parseFloat(dl.qY), parseFloat(dl.qZ), parseFloat(dl.qA));
         vis.currentGesture.data.rqm = ar;
+        // console.log("MIDDLE: data.rql");
+        // console.log(vis.currentGesture.data.rql);
+
+        // console.log("data.rqr");
+        // console.log(vis.currentGesture.data.rqr);
         vis.updateVisualization();
       }break;
       case "RING":{
         let ar = new THREE.Quaternion(parseFloat(dl.qX), parseFloat(dl.qY), parseFloat(dl.qZ), parseFloat(dl.qA));
+
         vis.currentGesture.data.rqr = ar;
+        // console.log("RING: data.rql");
+        // console.log(vis.currentGesture.data.rql);
+
+        // console.log("data.rqr");
+        // console.log(vis.currentGesture.data.rqr);
         vis.updateVisualization();
       }break;
       case "LITTLE":{
@@ -113,6 +124,11 @@ angular.module('app').factory('VisTools', function () {
     //data.rq._z *= 10.0;
     //data.rq._w *= 10.0;
     //console.log(data.rqm);
+    // console.log("data.rql");
+    // console.log(data.rql);
+
+    // console.log("data.rqr");
+    // console.log(data.rqr);
     handVisualization.scene.updateAngles(0,
       // TODO make wrist work
       //data.rq._y, -data.rq._x, data.rq._z, data.rq._w,

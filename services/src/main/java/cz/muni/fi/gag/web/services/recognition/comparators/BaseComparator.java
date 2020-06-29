@@ -32,7 +32,7 @@ public abstract class BaseComparator<T extends FingerDataLine> implements Gestur
     protected final Gesture gRef;
     protected List<T> refList;
 
-    static final float matchDistanceThreshold = 0.5f;
+//    static final float matchDistanceThreshold = 0.5f;
     final protected List<SingleSensorGestureMatcher> matchers = new ArrayList<SingleSensorGestureMatcher>();
     protected DataLineGestureIterator dlgIter = null;
 
@@ -85,7 +85,8 @@ public abstract class BaseComparator<T extends FingerDataLine> implements Gestur
 //        RecognitionTest.log.info(q.toString());
         double dist = quatsAbsDist(qRef, q);
 //        RecognitionTest.log.info("dist: " + dist + "( dist < matchThreshold)" + (dist < matchDistanceThreshold));
-        return (dist < matchDistanceThreshold);
+//        return (dist < matchDistanceThreshold);
+        return (dist < gRef.getShouldMatch());
     }
 
     public List<SingleSensorGestureMatcher> compare(T fdl) {

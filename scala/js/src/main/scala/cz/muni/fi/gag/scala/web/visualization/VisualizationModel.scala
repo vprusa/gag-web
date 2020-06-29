@@ -85,6 +85,7 @@ class VisualizationScene[GeomType <: Object3DWithProps, QuaternionType <: Quater
     var lqr = new Quaternion(lrx, lry, lrz, lrw)
     var lql = new Quaternion(llx, lly, llz, llw)
 
+    // TODO TODO i always forget to write TODO here for quaternion rotation and not use '-rx'
     var rq = new Quaternion(ry, -rx, rz, rw)
     var rqt = new Quaternion(rtx, rty, rtz, rtw)
     var rqi = new Quaternion(rix, riy, riz, riw)

@@ -7,13 +7,12 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
 import java.util.*;
-import java.util.stream.Stream;
 
 /**
  * @author Vojtech Prusa
  */
 @Entity
-@Table(name = "gesture")
+@Table(name = "Gesture")
 public class Gesture extends GenericEntity {
 
     @NotNull
@@ -33,13 +32,23 @@ public class Gesture extends GenericEntity {
     @Column(columnDefinition = "tinyint(1) default 0")
     private Boolean isActive;
 
+    @Column(columnDefinition = "float(5) not null default 0.95")
+    private float shouldMatch;
+
+    @Column(columnDefinition = "TEXT")
+    private String exec;
+
     @OneToMany(mappedBy = "gesture", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE/*, orphanRemoval = true*/)
     @JsonIgnoreProperties({"gesture"})
     private List<DataLine> data = new ArrayList<>();
 
-    public Boolean getActive() { return isActive; }
+    public Boolean getActive() {
+        return isActive;
+    }
 
-    public void setActive(Boolean active) { isActive = active; }
+    public void setActive(Boolean active) {
+        isActive = active;
+    }
 
     public Boolean getFiltered() {
         return isFiltered;
@@ -79,6 +88,22 @@ public class Gesture extends GenericEntity {
 
     public void setData(List data) {
         this.data = data;
+    }
+
+    public float getShouldMatch() {
+        return shouldMatch;
+    }
+
+    public void setShouldMatch(float shouldMatch) {
+        this.shouldMatch = shouldMatch;
+    }
+
+    public String getExec() {
+        return exec;
+    }
+
+    public void setExec(String exec) {
+        this.exec = exec;
     }
 
     @Override

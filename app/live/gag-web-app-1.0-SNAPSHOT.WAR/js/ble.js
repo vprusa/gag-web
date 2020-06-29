@@ -218,7 +218,7 @@ angular.module('app').factory('BLETools', ['WSTools', function (WSTools) {
         var cmdToSend = cmd;
         if(/*cmd.length >= 4 && */ cmd.charAt(0) === 'O' || cmd.charAt(0) === 'a') {
             var nmb = parseInt(cmd.substr(4));
-            console.log("nmb");a
+            console.log("nmb");
             console.log(nmb);
             var byte1 = (nmb & (255));
             var byte2 = nmb;

@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
  *
  */
 @Entity
-@Table(name = "Users")
+@Table(name = "User")
 public class User extends GenericEntity {
 
     public static final String THIRD_PARTY_ID_EMAIL_PREFIX = "email:";

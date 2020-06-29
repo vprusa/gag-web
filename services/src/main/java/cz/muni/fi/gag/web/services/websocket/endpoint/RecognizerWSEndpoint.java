@@ -127,7 +127,7 @@ public class RecognizerWSEndpoint extends BaseWSEndpoint {
                     case START: {
                         log.info("RECOGNITION - START");
                         Principal userPrincipal = (Principal) session.getUserProperties().get("UserPrincipal");
-                        log.info("userPrincipal");
+                        log.info("userPrincipal: ");
                         log.info(userPrincipal);
                         User current = BaseEndpoint.current(userPrincipal, userService);
                         log.info("current");

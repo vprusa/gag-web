@@ -3,17 +3,19 @@ package cz.muni.fi.gag.web.services.websocket.endpoint.packet.datalines;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import cz.muni.fi.gag.web.persistence.entity.DataLine;
-import java.io.IOException;
+import cz.muni.fi.gag.web.services.logging.Log;
+
 import javax.websocket.Decoder;
 import javax.websocket.EndpointConfig;
-import org.jboss.logging.Logger;
+import java.io.IOException;
 
 /**
  * @author Vojtech Prusa
  */
 public class DataLineDecoders<DataLineEx extends DataLine> implements Decoder.Text<DataLineEx> {
 
-    public static final Logger log = Logger.getLogger(DataLineDecoders.class.getSimpleName());
+//    public static final Logger log = Logger.getLogger(DataLineDecoders.class.getSimpleName());
+    public static final Log.TypedLogger log = new Log.TypedLogger<Log.LoggerTypeDLDecoder>(Log.LoggerTypeDLDecoder.class);
 
     private final Class type;
 

@@ -14,7 +14,7 @@ import java.util.Arrays;
  * <p>
  * Also do it in performance firendy manner... do not instantiate anything unnecessary depending on log severity
  */
-public class Log {
+public final class Log {
 
     // TODO load from env variable, config file, option -D
     public static Class[] enabledLogTypes = {
@@ -33,6 +33,8 @@ public class Log {
     public static class LoggerTypeWSRecognizer extends LoggerType {}
 
     public static class LoggerTypeWSRecognizerComparator extends LoggerType {}
+
+    public static class LoggerTypeDLDecoder extends LoggerType {}
 
     public static final Logger logger = Logger.getLogger(Log.class.getSimpleName());
 
@@ -65,7 +67,7 @@ public class Log {
     }
 
     /**
-     * I may not be the best solution, but this should result in multiple classes so the goal to have static logger is
+     * It may not be the best solution, but this should result in multiple classes so the goal to have static logger is
      * done and the Sheep is not eaten because Wolf (~ Logger ) is static across whole app.. ?
      * Or is there an issue with the resource lock for logger and this whole idea will not work for multiple
      * simultaneous loggers (multiple users or apps running)?

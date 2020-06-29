@@ -15,7 +15,7 @@ import java.util.List;
  *
  */
 @Entity
-@Table(name = "handDevice")
+@Table(name = "HandDevice")
 public class HandDevice extends GenericEntity {
 
     @NotBlank
