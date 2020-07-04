@@ -19,5 +19,5 @@ public interface GestureDao extends GenericDao<Gesture> {
 
     Gesture findRefById(Long u);
 
-    List<Gesture> findUsersActive(User u);
+    List<Gesture> findActive(User u);
 }

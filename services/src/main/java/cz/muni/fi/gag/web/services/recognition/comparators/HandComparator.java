@@ -11,8 +11,6 @@ import cz.muni.fi.gag.web.services.recognition.matchers.SingleSensorGestureMatch
 
 import java.util.List;
 
-//import cz.muni.fi.gag.web.services.recognition.matchers.SingleGestureMatcher;
-
 /**
  * @author Vojtech Prusa
  */
@@ -30,14 +28,11 @@ public class HandComparator {
     // a) byte -> short|int|... or byte -> bytes
     // b) split this class
 
-    //    public GestureMatcher[] gmlRet;
     public GestureCollector gmlRet;
 
     // TODO refactor this data bottleneck for 'DataLineGestureSensorIterator[] dlgsIters' is ugly
     // TODO rename Comparator to GestureCollector or HandGestureCollector or AllSensorRecognizedGestureCollector?
     public HandComparator(Gesture gRef, DataLineGestureSensorIterator[] dlgsIters) {
-
-//        gmlRet = new GestureMatcher[fingers.length];
         gmlRet = new GestureCollector(gRef);
 
         for (Sensor s : Sensor.values()) {
@@ -51,11 +46,9 @@ public class HandComparator {
         }
     }
 
-    //    public List<GestureMatcher> compare(FingerDataLine fdl) {
     public MultiSensorGestureMatcher compare(FingerDataLine fdl) {
         if (!gmlRet.doesGestureContainsSensor(fdl.getPosition())) {
 //            return Collections.emptyList();
-//            return Collections.emptyMap();
             return null;
         }
 
@@ -63,16 +56,10 @@ public class HandComparator {
         List<SingleSensorGestureMatcher> gmlPos = fingers[pos.ordinal()].compare(fdl);
         log.info("HandComparator.compare: comparing " + gmlPos.toString());
 
-//        return Collections.list(gmlRet.collect(gmlPos));
-//        return gmlRet.collect(gmlPos);
         return gmlRet.collect(gmlPos);
         // TODO .. remove?
 //        return gmlPos;
     }
 
-    // TODO
-//    public List<GestureMatcher> collectGestures() {
-//        return null;
-//    }
 }
     

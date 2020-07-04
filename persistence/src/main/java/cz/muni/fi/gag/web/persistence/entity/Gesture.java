@@ -38,7 +38,8 @@ public class Gesture extends GenericEntity {
     @Column(columnDefinition = "TEXT")
     private String exec;
 
-    @OneToMany(mappedBy = "gesture", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE/*, orphanRemoval = true*/)
+//    @JsonIgnore
+    @OneToMany(mappedBy = "gesture", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE/*, orphanRemoval = true*/)
     @JsonIgnoreProperties({"gesture"})
     private List<DataLine> data = new ArrayList<>();
 

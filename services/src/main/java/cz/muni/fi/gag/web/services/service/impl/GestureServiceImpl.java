@@ -50,7 +50,7 @@ public class GestureServiceImpl extends GenericCRUDServiceImpl<Gesture, GestureD
 
     @Override
     public List<Gesture> findActive(User u) {
-        return getDao().findUsersActive(u);
+        return getDao().findActive(u);
     }
 
 }

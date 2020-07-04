@@ -12,6 +12,9 @@ import java.util.List;
 
 /**
  * @author Vojtech Prusa
+ *
+ * This class collects gestures from sliding window across time
+ *
  */
 public class GestureCollector {
 
@@ -25,13 +28,17 @@ public class GestureCollector {
     private MultiSensorGestureMatcher mgm;
 
     public GestureCollector(Gesture gRef){
-//        gmhm = new HashMap<Sensor, SingleGestureMatcher>();
         mgm = new MultiSensorGestureMatcher(gRef);
         byte gestureContainsSensorsTmp = 0;
         {
             byte i = 0;
+            // TODO !!! Load data using custom iterator!
+            // TODO improve `if(i >= Sensor.values().length)` its not sufficient and may some day broke..
+            // TODO fix lazy loading
+            //  (its not lazy and fetch left solutions results in
+            //  https://issues.redhat.com/browse/WFLY-6696 )
+
             for (Iterator<DataLine> dli = gRef.getData().iterator(); dli.hasNext(); i++) {
-//            gestureContainsSensors[dli.next().getPosition().ordinal()] = true;
                 Sensor s = dli.next().getPosition();
                 gestureContainsSensorsTmp = (byte) (gestureContainsSensorsTmp | (one << s.ordinal()));
                 if (i >= Sensor.values().length) {
@@ -50,7 +57,6 @@ public class GestureCollector {
         return ((this.gestureContainsSensors >> s.ordinal()) & one) == one;
     }
 
-//    public Map<Sensor, SingleSensorGestureMatcher> collect(List<SingleSensorGestureMatcher> gmlPos) {
     public MultiSensorGestureMatcher collect(List<SingleSensorGestureMatcher> gmlPos) {
         // TODO rework and reconsider the data loss that may occur here
         // - List<GestureMatcher> is converted to GestureMatcher
@@ -66,31 +72,21 @@ public class GestureCollector {
 //            log.info("HandComparator.collect.mgm.clear()");
 //            log.info("mgm 1. " + mgm.toString());
 //            mgm.clear();
-//            log.info("mgm 2. " + mgm.toString());
         }
         for (Iterator<SingleSensorGestureMatcher> gmi = gmlPos.iterator(); gmi.hasNext(); ) {
             SingleSensorGestureMatcher gm = gmi.next();
             Sensor posP = gm.getAtDataLine().getPosition();
-//            if (gmhm.containsValue(posP)) {
             if(!mgm.containsValue(posP)) {
                 gestureContainsSensorsRet = (byte) (gestureContainsSensorsRet | (one << gm.getAtDataLine().getPosition().ordinal()));
-//                gmhm.put(posP,gm);
                 mgm.put(posP,gm);
             }
             log.info("HandComparator.gmlRet");
             log.info(toString());
             if(gestureContainsSensors == gestureContainsSensorsRet) {
                 gestureContainsSensorsRet = 0x00;
-//                return Arrays.asList(mgm);
-//                List ar = new ArrayList<GestureMatcher>();
-//                ar.add(mgm);
                 return mgm;
-//                return Arrays.asList();
             }
         }
-
-//        return Collections.emptyList();
-//        return Collections.emptyMap<Sensor,SingleSensorGestureMatcher>();
         return null;
 //        return Collections.emptyMap();
     }

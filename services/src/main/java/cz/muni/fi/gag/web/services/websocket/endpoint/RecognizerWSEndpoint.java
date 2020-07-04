@@ -1,5 +1,6 @@
 package cz.muni.fi.gag.web.services.websocket.endpoint;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.muni.fi.gag.web.persistence.entity.DataLine;
 import cz.muni.fi.gag.web.persistence.entity.User;
@@ -60,9 +61,10 @@ public class RecognizerWSEndpoint extends BaseWSEndpoint {
 
     @OnOpen
     public void onOpen(Session session, EndpointConfig config) {
-        //sessionService.addSession(session);
+        // sessionService.addSession(session);
         Principal userPrincipal = (Principal) config.getUserProperties().get("UserPrincipal");
         User current = BaseEndpoint.current(userPrincipal, userService);
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         // TODO if user not in role stop! (with sufficient error message)
     }
 
@@ -80,7 +82,9 @@ public class RecognizerWSEndpoint extends BaseWSEndpoint {
     private WristDataLineDecoder wdld = new WristDataLineDecoder();
     private ActionDecoder<Action> ad = new ActionDecoder(Action.class);
     private ActionDecoder<PlayerActions> pad = new ActionDecoder(PlayerActions.class, Action.ActionsTypesEnum.PLAYER);
-    private ActionDecoder<RecognitionActions> rad = new ActionDecoder(RecognitionActions.class, Action.ActionsTypesEnum.RECOGNITION);
+    private ActionDecoder<RecognitionActions> rad =
+            new ActionDecoder(RecognitionActions.class, Action.ActionsTypesEnum.RECOGNITION);
+//    private RecognizedGestureEncoder rge = new RecognizedGestureEncoder();
 
     private ObjectMapper objectMapper = new ObjectMapper();
 

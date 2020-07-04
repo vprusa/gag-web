@@ -11,7 +11,6 @@ import cz.muni.fi.gag.web.persistence.entity.Sensor;
  * {@link HandComparator}
  */
 public class FingerComparator extends SensorComparator<FingerDataLine> {
-//    public FingerComparator(Sensor s, Gesture gRef, SensorDataLineGestureIterator dlgIter) {
     public FingerComparator(Sensor s, Gesture gRef, DataLineGestureIterator dlgIter) {
         super(s, gRef, dlgIter);
     }

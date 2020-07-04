@@ -44,6 +44,7 @@ Idk..
 ### TODOs
 
 - Brainstorm if separation "exec" column to table Commands is desirable
+- Brainstorm custom macro language? Or smth.. most likely in scala so it would be portable across backend, frontend (and MC? TODO transpiler).  
 
 # Add other stuff
 

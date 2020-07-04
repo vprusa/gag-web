@@ -6,7 +6,6 @@ import cz.muni.fi.gag.web.persistence.entity.User;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.TypedQuery;
-import javax.transaction.Transactional;
 import java.io.Serializable;
 import java.util.List;
 
@@ -21,9 +20,10 @@ public class GestureDaoImpl extends AbstractGenericDao<Gesture> implements Gestu
         super(Gesture.class);
     }
 
-    @Transactional
+//    @Transactional
     @Override
     public List<Gesture> findByUser(User u) {
+//        TypedQuery<Gesture> q = em.createQuery("SELECT g FROM Gesture g JOIN FETCH g.data WHERE user_id = :userId", Gesture.class)
         TypedQuery<Gesture> q = em.createQuery("SELECT g FROM Gesture g WHERE user_id = :userId", Gesture.class)
                 .setParameter("userId", u.getId());
         List<Gesture> results = q.getResultList();
@@ -32,11 +32,16 @@ public class GestureDaoImpl extends AbstractGenericDao<Gesture> implements Gestu
 
     @Override
     public Gesture findRefById(Long u) {
-        return em.getReference(Gesture.class, u);
+//        TypedQuery<Gesture> q = em.createQuery("SELECT g FROM Gesture g LEFT JOIN FETCH g.data WHERE g.id = :id", Gesture.class)
+        TypedQuery<Gesture> q = em.createQuery("SELECT g FROM Gesture g WHERE g.id = :id", Gesture.class)
+                .setParameter("id", u);
+        Gesture result = q.getSingleResult();
+        return result;
+//        return em.getReference(Gesture.class, u);
     }
 
     @Override
-    public List<Gesture> findUsersActive(User u) {
+    public List<Gesture> findActive(User u) {
 //        return getDao().findActive();
         TypedQuery<Gesture> q = em.createQuery("SELECT g FROM Gesture g WHERE user_id = :userId AND isActive = 1", Gesture.class)
                 .setParameter("userId", u.getId());

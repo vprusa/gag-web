@@ -5,6 +5,7 @@ import cz.muni.fi.gag.web.persistence.entity.*;
 import cz.muni.fi.gag.web.services.logging.Log;
 import cz.muni.fi.gag.web.services.recognition.comparators.HandComparator;
 import cz.muni.fi.gag.web.services.recognition.matchers.MultiSensorGestureMatcher;
+import cz.muni.fi.gag.web.services.recognition.matchers.SingleSensorGestureMatcher;
 import cz.muni.fi.gag.web.services.service.DataLineService;
 import cz.muni.fi.gag.web.services.service.GestureService;
 
@@ -132,16 +133,22 @@ public class GestureRecognizer implements Serializable {
                         log.info("Found gesture match1 at: " + matches.toString());
                         //                        log.info("Found gesture match at: " + matches);
 
-                        try {
+//                        try {
 //                                log.info("Found gesture match2 at: " + matches.stream().map(GestureMatcher::toString)
 //                                        .collect(Collectors.joining(";;;")));
 //                                log.info("Found gesture match3 at groupingBy: " + matches.stream().map(GestureMatcher::getG)
 //                                        .collect(Collectors.groupingBy(Gesture::getId)).toString());
-                        } catch (Exception e) {
+//                        } catch (Exception e) {
                             //                            log.info(e.stac);
-                            e.printStackTrace();
-                        }
+//                            e.printStackTrace();
+//                        }
 
+                        // lets remove unnecessary data (quickfix for GestureCollectors TODO )
+                        // Relies on RecognizerWSEndpoint:".*JsonInclude.Include.NON_NULL.*"
+                        for(Map.Entry<Sensor, SingleSensorGestureMatcher> entry : matches.getSssgmm().entrySet()) {
+                            entry.getValue().clearG();
+                        }
+                        matches.getG().setData(Collections.emptyList());
                         recognizedGestures.add(matches);
                     }
                 }

@@ -9,10 +9,10 @@ import cz.muni.fi.gag.web.persistence.entity.Gesture;
 final public class SingleSensorGestureMatcher implements GestureMatcher {
 
     private Integer index;
-    private final Gesture g;
+    private Gesture g;
     private DataLine atDataLine;
 
-    public SingleSensorGestureMatcher(Integer index, final Gesture g) {
+    public SingleSensorGestureMatcher(Integer index, Gesture g) {
         this.index = index;
         this.g = g;
     }
@@ -27,6 +27,14 @@ final public class SingleSensorGestureMatcher implements GestureMatcher {
 
     public Gesture getG() {
         return g;
+    }
+
+    /**
+     * To remove gesture from recognized data, used last
+     * TODO IDK, brainstorm?
+     */
+    public void clearG() {
+        this.g = null;
     }
 
     public void incIndex() {
@@ -45,8 +53,10 @@ final public class SingleSensorGestureMatcher implements GestureMatcher {
     public String toString() {
         return "GestureMatcher{" +
                 "index=" + index +
-                ", g.id=" + g.getId() +
-                ", g.userAlias=" + g.getUserAlias() +
+                (g != null ?
+                        ", g.id=" + g.getId() +
+                                ", g.userAlias=" + g.getUserAlias()
+                        : "") +
                 ", atDataLine=" + atDataLine +
                 '}';
     }
