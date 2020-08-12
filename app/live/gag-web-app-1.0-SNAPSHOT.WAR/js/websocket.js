@@ -1,5 +1,8 @@
 'use strict';
 
+/**
+ * @author Vojtěch Průša (prusa.vojtech@gmail.com)
+ */
 angular.module('app').factory('WSTools', function (/*$rootScope*/) {
   var ws = {};
   ws.endpoint = '/gagweb/ws/';

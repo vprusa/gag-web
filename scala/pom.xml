@@ -59,6 +59,9 @@
             </build>
         </profile>
     </profiles>
+    <modules>
+        <module>shared</module>
+    </modules>
 
     <repositories>
         <repository>

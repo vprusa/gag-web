@@ -2,7 +2,7 @@ package cz.muni.fi.gag.scala.web.visualization
 
 import cz.muni.fi.gag.scala.web.shared.Log
 import cz.muni.fi.gag.web.scala.shared.Hand
-import cz.muni.fi.gag.web.scala.shared.common.VisualizationContextT
+import cz.muni.fi.gag.web.scala.shared.common.VisualizationContextAbsImpl
 import cz.muni.fi.gag.web.scala.shared.recognition.Sensor
 import cz.muni.fi.gag.web.scala.shared.recognition.Sensor.Sensor
 import cz.muni.fi.gag.web.scala.shared.visualization.HandVisualization
@@ -21,7 +21,7 @@ import scala.util.Random
 
 class VisualizationScene[GeomType <: Object3DWithProps, QuaternionType <: Quaternion]
 (val container: HTMLElement, val width: Double, val height: Double, var numberOfHandsPairs: Int = 1)
-  extends Container3D with VisualizationContextT[GeomType, QuaternionType] {
+  extends Container3D {
 
   /*
   * To avoid exception
@@ -153,14 +153,230 @@ class VisualizationScene[GeomType <: Object3DWithProps, QuaternionType <: Quater
     // TODO redraw hands (only new?) , if -lt prev then remove from the newest/lowest
   }
 
+  // TODO move this outside of this class?
+  val vcai = new VisualizationContextAbsImpl[GeomType, QuaternionType]() {
+//    override def _rotateGeoms(angle: Float, pivot: Option[GeomType], axis: Axis.Axis): Unit = ???
+//    override def _add(geom: GeomType, x: Float, y: Float, z: Float): Option[GeomType] = ???
+//    override def _point(fl: Float, fl1: Float, fl2: Float, geomHolder: Option[GeomType]): GeomType = ???
+//    override def _line(sx: Float, sy: Float, sz: Float, ex: Float, ey: Float, ez: Float, geomHolder: Option[GeomType]): GeomType = ???
+//    override def _rotateGeoms(q: QuaternionType, pivot: Option[GeomType]): Unit = ???
+
+    // TODO refactor
+    override def _point(x: Float, y: Float, z: Float, geomHolderOpt: Option[GeomType]): GeomType = {
+      def calcRadius(_geomHolderOpt: Option[GeomType]): Double = {
+        val radius = 5
+        if (_geomHolderOpt.nonEmpty) {
+          val _geomHolder = _geomHolderOpt.get
+          if (_geomHolder.isInstanceOf[MeshWithProps]) {
+            val visSize = _geomHolder.asInstanceOf[MeshWithProps].props.visualizationSize
+            return visSize.asInstanceOf[Double] * radius / 2
+          } else if (_geomHolder.isInstanceOf[Object3DWithProps]) {
+            val visSize = _geomHolder.asInstanceOf[Object3DWithProps].props.visualizationSize
+            return visSize.asInstanceOf[Double] * radius / 2
+            //        } else if (_geomHolder.isInstanceOf[Object3D]) {
+            //          posObj.asInstanceOf[Object3D]
+          }
+        }
+        radius
+      }
+
+      val radius = calcRadius(geomHolderOpt)
+      val geometry = new SphereGeometry(radius, 32, 32)
+      Log.dump("geometry", Log.Level.VIS_CONTEXT)
+      Log.dump(geometry, Log.Level.VIS_CONTEXT)
+      Log.dump("radius: " + radius, Log.Level.VIS_CONTEXT)
+
+      geometry.applyMatrix(new Matrix4().makeTranslation(x, y, z))
+      //    val material = new MeshBasicMaterial(dotMatParams) //color = 0xffff00
+      val mat = new MeshBasicMaterial()
+      if (geomHolderOpt.nonEmpty) {
+        val geomHandler = geomHolderOpt.get
+        mat.color = geomHandler.color
+        mat.opacity = geomHandler.opacity.asInstanceOf[Double]
+        mat.transparent = true
+      }
+
+      val sphere = new MeshWithProps(geometry, mat, (if (geomHolderOpt.isEmpty) handsPropsDefault else geomHolderOpt.get.props))
+
+      if (geomHolderOpt.nonEmpty) {
+        val posObj = geomHolderOpt.get
+        Log.dump("posObj", Log.Level.VIS_CONTEXT)
+        Log.dump(posObj, Log.Level.VIS_CONTEXT)
+
+        val geomHolder = geomHolderOpt.get
+        sphere.setProps(geomHolder.props)
+
+        Log.dump("beforeAdd", Log.Level.VIS_CONTEXT)
+        if (posObj.isInstanceOf[MeshWithProps]) {
+          posObj.asInstanceOf[MeshWithProps].add(sphere)
+        } else if (posObj.isInstanceOf[LineWithProps]) {
+          posObj.asInstanceOf[LineWithProps].add(sphere)
+        } else if (posObj.isInstanceOf[Object3DWithProps]) {
+          posObj.asInstanceOf[Object3DWithProps].add(sphere)
+        } else if (posObj.isInstanceOf[Object3D]) {
+          posObj.asInstanceOf[Object3D].add(sphere)
+        }
+        Log.dump("afterAdd", Log.Level.VIS_CONTEXT)
+      }
+
+      Log.dump("sphere", Log.Level.VIS_CONTEXT)
+      Log.dump(sphere, Log.Level.VIS_CONTEXT)
+
+      sphere.asInstanceOf[GeomType]
+    }
+
+    // TODO refactor
+    override def _line(sx: Float, sy: Float, sz: Float, ex: Float, ey: Float, ez: Float,
+                       geomHolderOpt: Option[GeomType]): GeomType = {
+      val mat = new LineBasicMaterial()
+      if (geomHolderOpt.nonEmpty) {
+        val geomHolder = geomHolderOpt.get
+        mat.color = geomHolder.color
+        mat.opacity = geomHolder.opacity.asInstanceOf[Double]
+        mat.transparent = true
+        mat.linewidth = geomHolder.visualizationSize.asInstanceOf[Double]
+      }
+
+      val geo = new Geometry()
+
+      geo.vertices.push(new Vector3(sx, sy, sz))
+      geo.vertices.push(new Vector3(ex, ey, ez))
+      val line = new LineWithProps(geo, mat, (if (geomHolderOpt.isEmpty) handsPropsDefault else geomHolderOpt.get.props))
+      //    geomHolderOpt.get.add(line.asInstanceOf[Line])
+      if (geomHolderOpt.nonEmpty) {
+        val geomHolder = geomHolderOpt.get
+        if (geomHolder.isInstanceOf[MeshWithProps]) {
+          geomHolder.asInstanceOf[MeshWithProps].add(line)
+        } else if (geomHolder.isInstanceOf[LineWithProps]) {
+          geomHolder.asInstanceOf[LineWithProps].add(line)
+        } else if (geomHolder.isInstanceOf[Object3DWithProps]) {
+          geomHolder.asInstanceOf[Object3DWithProps].add(line)
+        } else if (geomHolder.isInstanceOf[Object3D]) {
+          geomHolder.asInstanceOf[Object3D].add(line)
+        }
+      }
+      Log.dump("line", Log.Level.VIS_CONTEXT)
+      Log.dump(line, Log.Level.VIS_CONTEXT)
+
+      line.asInstanceOf[GeomType]
+    }
+
+    // TODO refactor
+    override def _add(geom: GeomType, x: Float, y: Float, z: Float): Option[GeomType] = {
+      //    val p = new Object3DWithProps(geom)
+      val p = new Object3DWithProps(geom)
+      Log.dump("_add", Log.Level.VIS_CONTEXT)
+      Log.dump(p, Log.Level.VIS_CONTEXT)
+      Log.dump("_add-geom", Log.Level.VIS_CONTEXT)
+      Log.dump(geom, Log.Level.VIS_CONTEXT)
+
+      p.asInstanceOf[Object3DWithProps].position.set(x, y, z)
+
+      p.setProps(geom.props)
+
+      if (geom.isInstanceOf[MeshWithProps]) {
+        geom.asInstanceOf[MeshWithProps].add(p)
+      } else if (geom.isInstanceOf[LineWithProps]) {
+        geom.asInstanceOf[LineWithProps].add(p)
+      } else if (geom.isInstanceOf[Object3DWithProps]) {
+        geom.asInstanceOf[Object3DWithProps].add(p)
+      } else if (geom.isInstanceOf[Object3D]) {
+        geom.asInstanceOf[Object3D].add(p)
+      }
+
+      val opt = Option(p.asInstanceOf[GeomType])
+      opt
+    }
+
+    // TODO use case class
+    object AxisVector {
+      type AxisVector = Vector3
+      val X = new Vector3(1, 0, 0)
+      val Y = new Vector3(0, 1, 0)
+      val Z = new Vector3(0, 0, 1)
+    }
+
+    // https://discourse.threejs.org/t/how-do-you-rotate-a-group-of-objects-around-an-arbitrary-axis/3433/10
+    // https://stackoverflow.com/questions/44287255/whats-the-right-way-to-rotate-an-object-around-a-point-in-three-js
+    // TODO fix rotateOnAxis -> rotate as set not add
+    // TODO refactor
+    override def _rotateGeoms(angle: Float, pivotOpt: Option[GeomType], axis: Axisable): Unit = {
+      if (!pivotOpt.isEmpty) {
+        val pivotP = pivotOpt.get
+
+        def getPivotVal(_pivot: GeomType, _axis: Axis.Value): Double = {
+          if (_pivot.isInstanceOf[MeshWithProps]) {
+            val p = _pivot.asInstanceOf[MeshWithProps]
+            _axis match {
+              case Axis.X => {
+                return p.rotation.x
+              }
+              case Axis.Y => {
+                return p.rotation.y
+              }
+              case Axis.Z => {
+                return p.rotation.z
+              }
+              case _ => {
+                return 0
+              }
+            }
+          } else if (_pivot.isInstanceOf[Object3DWithProps]) {
+            val p = _pivot.asInstanceOf[Object3DWithProps]
+            _axis match {
+              case Axis.X => {
+                return p.rotation.x
+              }
+              case Axis.Y => {
+                return p.rotation.y
+              }
+              case Axis.Z => {
+                return p.rotation.z
+              }
+              case _ => {
+                return 0
+              }
+            }
+          } else if (_pivot.isInstanceOf[Object3D]) {
+            //          pivot = pivot.asInstanceOf[Object3D]
+          }
+          return 0
+        }
+
+        axis match {
+          case Axis.X => {
+            pivotP.rotateOnAxis(AxisVector.X, angle - getPivotVal(pivotP, Axis.X))
+          }
+          case Axis.Y => {
+            pivotP.rotateOnAxis(AxisVector.Y, angle - getPivotVal(pivotP, Axis.Y))
+          }
+          case Axis.Z => {
+            pivotP.rotateOnAxis(AxisVector.Z, angle - getPivotVal(pivotP, Axis.Z))
+          }
+          case _ => {
+            // Log.error("_rotateGeoms")
+          }
+        }
+      }
+    }
+
+    override def _rotateGeoms(q: QuaternionType, pivot: Option[GeomType]): Unit = {
+      if (!pivot.isEmpty) {
+        val piv = pivot.get
+        piv.setRotationFromQuaternion(q)
+      }
+    }
+  }
+
+
   // TODO refactor not to use tight-coupling
   // consider that 1. pair is the default one and second is referential
   var hands: ArrayBuffer[Array[HandVisualization[GeomType, QuaternionType]]] = ArrayBuffer[Array[HandVisualization[GeomType, QuaternionType]]]()
 
   for (i <- 1 to numberOfHandsPairs) {
     hands += Array[HandVisualization[GeomType, QuaternionType]](
-      new HandVisualization[GeomType, QuaternionType](Hand.LEFT, this),
-      new HandVisualization[GeomType, QuaternionType](Hand.RIGHT, this)
+      new HandVisualization[GeomType, QuaternionType](Hand.LEFT, vcai),
+      new HandVisualization[GeomType, QuaternionType](Hand.RIGHT, vcai)
     )
   }
 
@@ -284,211 +500,6 @@ class VisualizationScene[GeomType <: Object3DWithProps, QuaternionType <: Quater
 
   val lineMatParamColor = new Color(0xFFFF00)
 
-  // TODO refactor
-  override def _point(x: Float, y: Float, z: Float, geomHolderOpt: Option[GeomType]): GeomType = {
-    def calcRadius(_geomHolderOpt: Option[GeomType]): Double = {
-      val radius = 5
-      if (_geomHolderOpt.nonEmpty) {
-        val _geomHolder = _geomHolderOpt.get
-        if (_geomHolder.isInstanceOf[MeshWithProps]) {
-          val visSize = _geomHolder.asInstanceOf[MeshWithProps].props.visualizationSize
-          return visSize.asInstanceOf[Double] * radius / 2
-        } else if (_geomHolder.isInstanceOf[Object3DWithProps]) {
-          val visSize = _geomHolder.asInstanceOf[Object3DWithProps].props.visualizationSize
-          return visSize.asInstanceOf[Double] * radius / 2
-          //        } else if (_geomHolder.isInstanceOf[Object3D]) {
-          //          posObj.asInstanceOf[Object3D]
-        }
-      }
-      radius
-    }
-
-    val radius = calcRadius(geomHolderOpt)
-    val geometry = new SphereGeometry(radius, 32, 32)
-    Log.dump("geometry", Log.Level.VIS_CONTEXT)
-    Log.dump(geometry, Log.Level.VIS_CONTEXT)
-    Log.dump("radius: " + radius, Log.Level.VIS_CONTEXT)
-
-    geometry.applyMatrix(new Matrix4().makeTranslation(x, y, z))
-    //    val material = new MeshBasicMaterial(dotMatParams) //color = 0xffff00
-    val mat = new MeshBasicMaterial()
-    if (geomHolderOpt.nonEmpty) {
-      val geomHandler = geomHolderOpt.get
-      mat.color = geomHandler.color
-      mat.opacity = geomHandler.opacity.asInstanceOf[Double]
-      mat.transparent = true
-    }
-
-    val sphere = new MeshWithProps(geometry, mat, (if (geomHolderOpt.isEmpty) handsPropsDefault else geomHolderOpt.get.props))
-
-    if (geomHolderOpt.nonEmpty) {
-      val posObj = geomHolderOpt.get
-      Log.dump("posObj", Log.Level.VIS_CONTEXT)
-      Log.dump(posObj, Log.Level.VIS_CONTEXT)
-
-      val geomHolder = geomHolderOpt.get
-      sphere.setProps(geomHolder.props)
-
-      Log.dump("beforeAdd", Log.Level.VIS_CONTEXT)
-      if (posObj.isInstanceOf[MeshWithProps]) {
-        posObj.asInstanceOf[MeshWithProps].add(sphere)
-      } else if (posObj.isInstanceOf[LineWithProps]) {
-        posObj.asInstanceOf[LineWithProps].add(sphere)
-      } else if (posObj.isInstanceOf[Object3DWithProps]) {
-        posObj.asInstanceOf[Object3DWithProps].add(sphere)
-      } else if (posObj.isInstanceOf[Object3D]) {
-        posObj.asInstanceOf[Object3D].add(sphere)
-      }
-      Log.dump("afterAdd", Log.Level.VIS_CONTEXT)
-    }
-
-    Log.dump("sphere", Log.Level.VIS_CONTEXT)
-    Log.dump(sphere, Log.Level.VIS_CONTEXT)
-
-    sphere.asInstanceOf[GeomType]
-  }
-
-  // TODO refactor
-  override def _line(sx: Float, sy: Float, sz: Float, ex: Float, ey: Float, ez: Float,
-                     geomHolderOpt: Option[GeomType]): GeomType = {
-    val mat = new LineBasicMaterial()
-    if (geomHolderOpt.nonEmpty) {
-      val geomHolder = geomHolderOpt.get
-      mat.color = geomHolder.color
-      mat.opacity = geomHolder.opacity.asInstanceOf[Double]
-      mat.transparent = true
-      mat.linewidth = geomHolder.visualizationSize.asInstanceOf[Double]
-    }
-
-    val geo = new Geometry()
-
-    geo.vertices.push(new Vector3(sx, sy, sz))
-    geo.vertices.push(new Vector3(ex, ey, ez))
-    val line = new LineWithProps(geo, mat, (if (geomHolderOpt.isEmpty) handsPropsDefault else geomHolderOpt.get.props))
-    //    geomHolderOpt.get.add(line.asInstanceOf[Line])
-    if (geomHolderOpt.nonEmpty) {
-      val geomHolder = geomHolderOpt.get
-      if (geomHolder.isInstanceOf[MeshWithProps]) {
-        geomHolder.asInstanceOf[MeshWithProps].add(line)
-      } else if (geomHolder.isInstanceOf[LineWithProps]) {
-        geomHolder.asInstanceOf[LineWithProps].add(line)
-      } else if (geomHolder.isInstanceOf[Object3DWithProps]) {
-        geomHolder.asInstanceOf[Object3DWithProps].add(line)
-      } else if (geomHolder.isInstanceOf[Object3D]) {
-        geomHolder.asInstanceOf[Object3D].add(line)
-      }
-    }
-    Log.dump("line", Log.Level.VIS_CONTEXT)
-    Log.dump(line, Log.Level.VIS_CONTEXT)
-
-    line.asInstanceOf[GeomType]
-  }
-
-  // TODO refactor
-  override def _add(geom: GeomType, x: Float, y: Float, z: Float): Option[GeomType] = {
-    //    val p = new Object3DWithProps(geom)
-    val p = new Object3DWithProps(geom)
-    Log.dump("_add", Log.Level.VIS_CONTEXT)
-    Log.dump(p, Log.Level.VIS_CONTEXT)
-    Log.dump("_add-geom", Log.Level.VIS_CONTEXT)
-    Log.dump(geom, Log.Level.VIS_CONTEXT)
-
-    p.asInstanceOf[Object3DWithProps].position.set(x, y, z)
-
-    p.setProps(geom.props)
-
-    if (geom.isInstanceOf[MeshWithProps]) {
-      geom.asInstanceOf[MeshWithProps].add(p)
-    } else if (geom.isInstanceOf[LineWithProps]) {
-      geom.asInstanceOf[LineWithProps].add(p)
-    } else if (geom.isInstanceOf[Object3DWithProps]) {
-      geom.asInstanceOf[Object3DWithProps].add(p)
-    } else if (geom.isInstanceOf[Object3D]) {
-      geom.asInstanceOf[Object3D].add(p)
-    }
-
-    val opt = Option(p.asInstanceOf[GeomType])
-    opt
-  }
-
-  // TODO use case class
-  object AxisVector {
-    type AxisVector = Vector3
-    val X = new Vector3(1, 0, 0)
-    val Y = new Vector3(0, 1, 0)
-    val Z = new Vector3(0, 0, 1)
-  }
-
-  // https://discourse.threejs.org/t/how-do-you-rotate-a-group-of-objects-around-an-arbitrary-axis/3433/10
-  // https://stackoverflow.com/questions/44287255/whats-the-right-way-to-rotate-an-object-around-a-point-in-three-js
-  // TODO fix rotateOnAxis -> rotate as set not add
-  // TODO refactor
-  override def _rotateGeoms(angle: Float, pivotOpt: Option[GeomType], axis: Axis.Axis): Unit = {
-    if (!pivotOpt.isEmpty) {
-      val pivotP = pivotOpt.get
-
-      def getPivotVal(_pivot: GeomType, _axis: Axis.Value): Double = {
-        if (_pivot.isInstanceOf[MeshWithProps]) {
-          val p = _pivot.asInstanceOf[MeshWithProps]
-          _axis match {
-            case Axis.X => {
-              return p.rotation.x
-            }
-            case Axis.Y => {
-              return p.rotation.y
-            }
-            case Axis.Z => {
-              return p.rotation.z
-            }
-            case _ => {
-              return 0
-            }
-          }
-        } else if (_pivot.isInstanceOf[Object3DWithProps]) {
-          val p = _pivot.asInstanceOf[Object3DWithProps]
-          _axis match {
-            case Axis.X => {
-              return p.rotation.x
-            }
-            case Axis.Y => {
-              return p.rotation.y
-            }
-            case Axis.Z => {
-              return p.rotation.z
-            }
-            case _ => {
-              return 0
-            }
-          }
-        } else if (_pivot.isInstanceOf[Object3D]) {
-          //          pivot = pivot.asInstanceOf[Object3D]
-        }
-        return 0
-      }
-
-      axis match {
-        case Axis.X => {
-          pivotP.rotateOnAxis(AxisVector.X, angle - getPivotVal(pivotP, Axis.X))
-        }
-        case Axis.Y => {
-          pivotP.rotateOnAxis(AxisVector.Y, angle - getPivotVal(pivotP, Axis.Y))
-        }
-        case Axis.Z => {
-          pivotP.rotateOnAxis(AxisVector.Z, angle - getPivotVal(pivotP, Axis.Z))
-        }
-        case _ => {
-          // Log.error("_rotateGeoms")
-        }
-      }
-    }
-  }
-
-  override def _rotateGeoms(q: QuaternionType, pivot: Option[GeomType]): Unit = {
-    if (!pivot.isEmpty) {
-      val piv = pivot.get
-      piv.setRotationFromQuaternion(q)
-    }
-  }
 }
 
 // scalastyle: on

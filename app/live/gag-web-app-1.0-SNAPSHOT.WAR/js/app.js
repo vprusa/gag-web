@@ -1,5 +1,8 @@
 'use strict';
 
+/**
+ * @author Vojtěch Průša (prusa.vojtech@gmail.com)
+ */
 angular.module('app', [
   'ngRoute', 'ngFileUpload', 'ngSanitize', 'chart.js'
 ]).factory('commonTools', ['$http', function ($http) {

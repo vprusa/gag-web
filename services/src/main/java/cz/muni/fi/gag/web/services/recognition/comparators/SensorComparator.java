@@ -8,6 +8,7 @@ import cz.muni.fi.gag.web.services.logging.Log;
 
 /**
  * @author Vojtech Prusa
+ *
  * {@link HandComparator}
  * {@link FingerComparator}
  * {@link WristComparator}

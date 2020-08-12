@@ -1,8 +1,8 @@
-/**
- * @author vprusa
- */
 'use strict';
 
+/**
+ * @author Vojtěch Průša (prusa.vojtech@gmail.com)
+ */
 angular.module('app').factory('BLETools', ['WSTools', function (WSTools) {
   let ble = {
     device: {

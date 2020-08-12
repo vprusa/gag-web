@@ -1,14 +1,14 @@
 package cz.muni.fi.gag.web.scala.shared.visualization
 
 import cz.muni.fi.gag.web.scala.shared.Hand
-import cz.muni.fi.gag.web.scala.shared.common.{LogT, VisualizationContextT}
+import cz.muni.fi.gag.web.scala.shared.common.{LogT, VisualizationContextAbsImpl}
 
 /**
  * Vis base
  *
  * @see cz.muni.fi.gag.web.scala.shared.visualization.HandVisualization
  **/
-class VisualizationBase[GeomType, QuaternionType](val hi: Hand.Hand, val app: VisualizationContextT[GeomType, QuaternionType]) {
+class VisualizationBase[GeomType, QuaternionType](val hi: Hand.Hand, val app: VisualizationContextAbsImpl[GeomType, QuaternionType]) {
 
   var pivot: Option[GeomType] = Option.empty[GeomType]
 

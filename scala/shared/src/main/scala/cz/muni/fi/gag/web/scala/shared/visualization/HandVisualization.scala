@@ -2,12 +2,12 @@ package cz.muni.fi.gag.web.scala.shared.visualization
 
 import cz.muni.fi.gag.web.scala.shared.Hand
 import cz.muni.fi.gag.web.scala.shared.recognition.Sensor
-import cz.muni.fi.gag.web.scala.shared.common.VisualizationContextT
+import cz.muni.fi.gag.web.scala.shared.common.VisualizationContextAbsImpl
 
 /**
  * Contains Hand visualization data wrapper
  * */
-class HandVisualization[GeomType, QuaternionType](override val hi: Hand.Hand, override val app: VisualizationContextT[GeomType, QuaternionType])
+class HandVisualization[GeomType, QuaternionType](override val hi: Hand.Hand, override val app: VisualizationContextAbsImpl[GeomType, QuaternionType])
   extends VisualizationBase(hi, app) {
 
   var thumbVis = new FingerVisualization[GeomType, QuaternionType](hi, this, app, 50, 50, 50, 50)
@@ -58,7 +58,7 @@ class HandVisualization[GeomType, QuaternionType](override val hi: Hand.Hand, ov
     }
   }
 
-  // has to be defined otherwise not inherited via ScalaJS to JS ..
+  // has to be re-defined otherwise not inherited via ScalaJS to JS ..
   override def rotateX(angle: Float) = {
     super.rotateX(angle)
   }

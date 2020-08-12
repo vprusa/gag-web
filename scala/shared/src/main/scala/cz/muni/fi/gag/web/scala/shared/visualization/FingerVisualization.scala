@@ -1,15 +1,15 @@
 package cz.muni.fi.gag.web.scala.shared.visualization
 
 import cz.muni.fi.gag.web.scala.shared.Hand
-import cz.muni.fi.gag.web.scala.shared.common.VisualizationContextT
+import cz.muni.fi.gag.web.scala.shared.common.VisualizationContextAbsImpl
 
 /**
  * Contains Finger visualization data wrapper
  * */
 class FingerVisualization[GeomType, QuaternionType](override val hi: Hand.Hand, val hand: VisualizationBase[GeomType, QuaternionType],
-                                    override val app: VisualizationContextT[GeomType, QuaternionType],
-                                    var sideOffsetIn: Int, var length1: Int, var length2offset: Int, var length3offset: Int,
-                                    var length4offset: Int) extends VisualizationBase[GeomType, QuaternionType](hi, app) {
+                                                    override val app: VisualizationContextAbsImpl[GeomType, QuaternionType],
+                                                    var sideOffsetIn: Int, var length1: Int, var length2offset: Int, var length3offset: Int,
+                                                    var length4offset: Int) extends VisualizationBase[GeomType, QuaternionType](hi, app) {
   var length2 = 0
   var length3 = 0
   var length4 = 0
@@ -17,7 +17,7 @@ class FingerVisualization[GeomType, QuaternionType](override val hi: Hand.Hand, 
   var sideOffset = 0
 
   // for thumb
-  def this(hi: Hand.Hand, hand:VisualizationBase[GeomType, QuaternionType], app: VisualizationContextT[GeomType, QuaternionType],
+  def this(hi: Hand.Hand, hand:VisualizationBase[GeomType, QuaternionType], app: VisualizationContextAbsImpl[GeomType, QuaternionType],
            sideOffset: Int, length1: Int, length2offset: Int, length3offset: Int) {
     this(hi,hand,app, sideOffset, length1, length2offset, length3offset, -1)
     recalcLenghts(length1, length2offset, length3offset, length4offset)
@@ -55,7 +55,7 @@ class FingerVisualization[GeomType, QuaternionType](override val hi: Hand.Hand, 
     drawParts()
   }
 
-  // has to be defined otherwise not inherited via ScalaJS to JS ..
+  // has to be re-defined otherwise not inherited via ScalaJS to JS ..
   override def rotateX(angle: Float) = {
     if(hi == Hand.LEFT){
       super.rotateX(angle-Math.PI.toFloat)

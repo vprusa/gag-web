@@ -1,5 +1,8 @@
 'use strict';
 
+/**
+ * @author Vojtěch Průša (prusa.vojtech@gmail.com)
+ */
 angular.module('app').controller(
   'RecognizeGesturesController', [
     '$scope',
@@ -101,7 +104,9 @@ angular.module('app').controller(
         console.log("selectGesture: " + id);
         $scope.selectedGestureDetail.play = !$scope.selectedGestureDetail.play;
         $scope.selectedGestureDetail.selectedGesture = id;
-      };
+      };/**
+       * @author Vojtěch Průša (prusa.vojtech@gmail.com)
+       */
 
       $scope.clearGesture = function (id) {
         console.log("clearGesture: " + id);
@@ -215,9 +220,6 @@ angular.module('app').controller(
       };
 
       WSTools.onMessage = function (evt) {
-        // console.log("onMessage");
-        // console.log(evt);
-        // var msg = JSON.stringify(JSON.parse(evt.data));
         var msg = evt.data;
         gestureMatches.last = null;
 
@@ -230,50 +232,57 @@ angular.module('app').controller(
           return e;
         });
         var msgObjs = JSON.parse(msg);
-        // console.log(msg);
-        console.log(msgObjs);
-        for (var msgObj in msgObjs) {
-          // console.log(k, result[k]);
-          if (typeof msgObj[0] !== 'undefined' && typeof msgObj[0].index !== 'undefined') {
-            // console.log(msgObj);
-            gestureMatches.last = msgObj[0];
-            $scope.gestures = $scope.gestures.map(function (e) {
-              // console.log(e);
-              if (e.id == gestureMatches.last.g.id) {
-                // console.log("recognized");
-                // console.log(e);
+        // console.log(msgObjs);
+
+        if (msg.includes(startActionStr.replace(/\s/g, ''))) {
+          // ACK ..
+          console.log("setState(WSTools.reqStates.RECOGNIZE)");
+          WSTools.setState(WSTools.reqStates.RECOGNIZE);
+          // console.log(WSTools.state);
+          // console.log($scope.isRecognizing());
+          // $scope.$apply();
+        } else if (Array.isArray(msgObjs) && msgObjs.length > 0 && 'data' in msgObjs[0] && 'gest' in msgObjs[0]) {
+          // if at least 1 item exists
+          var recognizedGestures = msgObjs;
+          console.log('recognized!');
+
+          // TODO improve (iterate over all gestures*matches is terrible)
+          // TODO also consider disabling this shady state variable called 'changed'
+          $scope.gestures = $scope.gestures.map(function (e) {
+            // console.log(e);
+            e.recognized = false;
+            for (let [key, value] of Object.entries(recognizedGestures)) {
+              let recognizedGesture = value;
+              if (e.id == recognizedGesture.gest.id) {
+                console.log("recognizedGesture");
+                console.log(recognizedGesture);
                 if (!e.recognized) {
                   changed = true;
                 }
+                // e.recognized = new Date().getTime();
                 e.recognized = true;
+                // TODO will this (setTimeout{$scope.$apply();}) not make a double trouble later?
+                setTimeout(function(){
+                  e.recognized = false;
+                  $scope.$apply();
+                }, 1000);
               } else {
                 if (e.recognized) {
                   changed = true;
                 }
-                e.recognized = false;
               }
-              return e;
-            });
-            if (changed) {
-              // TODO why is the program get here when  recognition is running && startFaking is clicked?
-              // I have some idea and the problem may have to be solved for visualization of recognized sensor
-              // console.log("");
-              // console.log($scope.gestures);
-              $scope.$apply();
             }
-          } else if (msg.includes(startActionStr.replace(/\s/g, ''))) {
-            // ACK ..
-            console.log("setState(WSTools.reqStates.RECOGNIZE)");
-            WSTools.setState(WSTools.reqStates.RECOGNIZE);
-            // console.log(WSTools.state);
-            // console.log($scope.isRecognizing());
-            // $scope.$apply();
-          } else {
-            // console.log("else");
-            // console.log()
+            return e;
+          });
+          if (changed) {
+            // TODO why is the program get here when  recognition is running && startFaking is clicked?
+            // I have some idea and the problem may have to be solved for visualization of recognized sensor
+            // console.log("");
+            // console.log($scope.gestures);
+            $scope.$apply();
           }
+          // }
         }
-
       };
 
       // faking BLE data with re-player data

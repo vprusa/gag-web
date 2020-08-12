@@ -1,5 +1,9 @@
 'use strict';
 
+/**
+ * @author Vojtěch Průša (prusa.vojtech@gmail.com)
+ */
+
 angular.module('app')
   .controller('logoutCtrl', ['$scope', '$location', '$rootScope', 'commonTools', function ($scope, $location, $rootScope, commonTools) {
     $scope.alerts = [];

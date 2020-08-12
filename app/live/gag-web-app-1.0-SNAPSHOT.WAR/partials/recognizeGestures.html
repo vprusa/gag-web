@@ -63,7 +63,7 @@
                     <table class="table table-hover">
                         <thead class="text-warning">
                         <th>ID</th>
-                        <th>Alias</th>
+                        <th>Alias | Delay [| Exec]</th>
                         <!--							<th>Date created</th>-->
                         <th>Operations</th>
                         </thead>
@@ -77,6 +77,14 @@
                                         ng-disabled="player.state != player.states.STOPPED && player.state != player.states.IDLE"
                                         ng-click='selectGesture(item.id)'>{{item.userAlias}}
                                 </button>
+                                <br>
+                                <!-- TODO -->
+                                <span class="">
+                                    {{item.delay}}s
+                                </span>
+                                <span ng-if="item.exec" class="">
+                                    | {{item.exec}}
+                                </span>
                             </td>
                             <!--<td>{{item.dateCreated | date: 'yyyy-MM-dd HH:MM'}}</td>-->
                             <td>

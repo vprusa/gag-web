@@ -1,5 +1,8 @@
 'use strict';
 
+/**
+ * @author Vojtěch Průša (prusa.vojtech@gmail.com)
+ */
 angular.module('app').factory('VisTools', function () {
   // visualization
   let vis = {

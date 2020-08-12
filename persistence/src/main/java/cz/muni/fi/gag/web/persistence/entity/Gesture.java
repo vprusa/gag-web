@@ -32,16 +32,30 @@ public class Gesture extends GenericEntity {
     @Column(columnDefinition = "tinyint(1) default 0")
     private Boolean isActive;
 
-    @Column(columnDefinition = "float(5) not null default 0.95")
+    // TODO ...
+    // Do not forget that this is a threshold for absolute distance of 2 quaternions
+    @Column(columnDefinition = "float(5) not null default 0.2")
     private float shouldMatch;
 
     @Column(columnDefinition = "TEXT")
     private String exec;
 
-//    @JsonIgnore
+
+    @Column(columnDefinition = "float(2) not null default 1.0")
+    private float delay;
+
+    //    @JsonIgnore
     @OneToMany(mappedBy = "gesture", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE/*, orphanRemoval = true*/)
     @JsonIgnoreProperties({"gesture"})
     private List<DataLine> data = new ArrayList<>();
+
+    public float getDelay() {
+        return delay;
+    }
+
+    public void setDelay(float delay) {
+        this.delay = delay;
+    }
 
     public Boolean getActive() {
         return isActive;
