@@ -15,9 +15,7 @@
  * limitations under the License.
  */
 
-package cz.muni.fi.gag.web.services.recognition;
-
-import org.h2.util.Utils;
+package cz.muni.fi.gag.web.scala.shared.common;
 
 import java.io.Serializable;
 
@@ -72,6 +70,7 @@ public final class Quaternion implements Serializable {
         this.q1 = b;
         this.q2 = c;
         this.q3 = d;
+        toEuler();
     }
 
     /**
@@ -94,6 +93,7 @@ public final class Quaternion implements Serializable {
         this.q1 = v[0];
         this.q2 = v[1];
         this.q3 = v[2];
+        toEuler();
     }
 
     /**
@@ -105,6 +105,48 @@ public final class Quaternion implements Serializable {
     public Quaternion(final float[] v) throws Exception {
         this(0.f, v);
     }
+
+    private float yaw;
+    private float pitch;
+    private float roll;
+
+    public float getRoll() {
+        return roll;
+    }
+
+    public float getPitch() {
+        return pitch;
+    }
+
+    public float getYaw() {
+        return yaw;
+    }
+
+    // TODO deal with double to float cast
+    // https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
+    void toEuler() {
+        // roll (x-axis rotation)
+        float sinr_cosp = 2 * (getQ0() * getQ1() + getQ2() * getQ3());
+        float cosr_cosp = 1 - 2 * (getQ1() * getQ1() + getQ2() * getQ2());
+        this.roll = (float) Math.atan2(sinr_cosp, cosr_cosp);
+        this.roll *= 360;
+
+        // pitch (y-axis rotation)
+        float sinp = 2 * (getQ0() * getQ2() - getQ3() * getQ1());
+        if (Math.abs(sinp) >= 1){
+            this.pitch = (float) Math.copySign(Math.PI / 2.0f, sinp); // use 90 degrees if out of range
+        } else {
+            this.pitch = (float) Math.asin(sinp);
+        }
+        this.pitch *= 360;
+
+        // yaw (z-axis rotation)
+        float siny_cosp = 2 * (getQ0() * getQ3() + getQ1() * getQ2());
+        float cosy_cosp = 1 - 2 * (getQ2() * getQ2() + getQ3() * getQ3());
+        this.yaw = (float) Math.atan2(siny_cosp, cosy_cosp);
+        this.yaw *= 360;
+    }
+
 
     /**
      * Returns the conjugate quaternion of the instance.
@@ -291,7 +333,9 @@ public final class Quaternion implements Serializable {
         int result = 17;
         for (float comp : new float[] { q0, q1, q2, q3 }) {
 //            final int c = MathUtils.hash(comp);
-            final int c = Utils.hashCode(comp);
+//            final int c = Arrays.hashCode(comp);
+//            final int c = Utils.hashCode(comp);
+            final int c = ((Object)comp).hashCode();
             result = 31 * result + c;
         }
         return result;

@@ -14,7 +14,7 @@ trait VisualizationContextT[GeomType, QuaternionType] {
 
   def _rotateGeoms(q: QuaternionType, pivot: Option[GeomType]): Unit
 
-  def _rotateGeoms(angle: Float, pivot: Option[GeomType], axis: Axisable): Unit
+  def _rotateGeoms(angle: Float, pivot: Option[GeomType], axis: Axis.AxisableVal): Unit
 
 }
 

@@ -2,7 +2,7 @@ package cz.muni.fi.gag.scala.web.visualization
 
 import cz.muni.fi.gag.scala.web.shared.Log
 import cz.muni.fi.gag.web.scala.shared.Hand
-import cz.muni.fi.gag.web.scala.shared.common.VisualizationContextAbsImpl
+import cz.muni.fi.gag.web.scala.shared.common.{Axis, Axisable, VisualizationContextAbsImpl}
 import cz.muni.fi.gag.web.scala.shared.recognition.Sensor
 import cz.muni.fi.gag.web.scala.shared.recognition.Sensor.Sensor
 import cz.muni.fi.gag.web.scala.shared.visualization.HandVisualization
@@ -61,6 +61,23 @@ class VisualizationScene[GeomType <: Object3DWithProps, QuaternionType <: Quater
     renderer.render(scene, camera)
   }
 
+  var lq = new Quaternion(0.0f,0.0f,0.0f,0.0f)
+  var lqt = new Quaternion(0.0f,0.0f,0.0f,0.0f)
+  var lqi = new Quaternion(0.0f,0.0f,0.0f,0.0f)
+  var lqm = new Quaternion(0.0f,0.0f,0.0f,0.0f)
+  var lqr = new Quaternion(0.0f,0.0f,0.0f,0.0f)
+  var lql = new Quaternion(0.0f,0.0f,0.0f,0.0f)
+
+  // TODO TODO i always forget to write TODO here for quaternion rotation and not use '-rx'
+  var rq = new Quaternion(0.0f,0.0f,0.0f,0.0f)
+  var rqt = new Quaternion(0.0f,0.0f,0.0f,0.0f)
+  var rqi = new Quaternion(0.0f,0.0f,0.0f,0.0f)
+  var rqm = new Quaternion(0.0f,0.0f,0.0f,0.0f)
+  var rqr = new Quaternion(0.0f,0.0f,0.0f,0.0f)
+  var rql = new Quaternion(0.0f,0.0f,0.0f,0.0f)
+  var rqC = new Quaternion(0.0f,0.0f,0.0f,0.0f)
+  //  var rqC = new Quaternion(-rq.x, rq.y, -rq.z, rq.w).normalize() //rq.normalize() //.conjugate() //.inverse()
+
   @JSExport("updateAngles")
   def updateAngles(handsPairIndex: Int,
                    rx: Float, ry: Float, rz: Float, rw: Float,
@@ -78,6 +95,8 @@ class VisualizationScene[GeomType <: Object3DWithProps, QuaternionType <: Quater
                    llx: Float, lly: Float, llz: Float, llw: Float
                   ): Any = {
     Log.dump("updateAngles", Log.Level.VIS_MODEL)
+    /*
+    Log.dump("updateAngles", Log.Level.VIS_MODEL)
     var lq = new Quaternion(lx, ly, lz, lw)
     var lqt = new Quaternion(ltx, lty, ltz, ltw)
     var lqi = new Quaternion(lix, liy, liz, liw)
@@ -92,7 +111,21 @@ class VisualizationScene[GeomType <: Object3DWithProps, QuaternionType <: Quater
     var rqm = new Quaternion(rmx, rmy, rmz, rmw)
     var rqr = new Quaternion(rrx, rry, rrz, rrw)
     var rql = new Quaternion(rlx, rly, rlz, rlw)
+     */
+    lq.set(lx, ly, lz, lw)
+    lqt.set(ltx, lty, ltz, ltw)
+    lqi.set(lix, liy, liz, liw)
+    lqm.set(lmx, lmy, lmz, lmw)
+    lqr.set(lrx, lry, lrz, lrw)
+    lql.set(llx, lly, llz, llw)
 
+    // TODO TODO i always forget to write TODO here for quaternion rotation and not use '-rx'
+    rq.set(ry, -rx, rz, rw)
+    rqt.set(rtx, rty, rtz, rtw)
+    rqi.set(rix, riy, riz, riw)
+    rqm.set(rmx, rmy, rmz, rmw)
+    rqr.set(rrx, rry, rrz, rrw)
+    rql.set(rlx, rly, rlz, rlw)
     rqt = rqt.normalize()
     rqi = rqi.normalize()
     rqm = rqm.normalize()
@@ -103,7 +136,9 @@ class VisualizationScene[GeomType <: Object3DWithProps, QuaternionType <: Quater
     //val rqC = rq.clone()
     rq = rq.normalize()
     //    var rqC = new Quaternion(-rq.x,-rq.y,-rq.z,rq.w).normalize() //rq.normalize() //.conjugate() //.inverse()
-    var rqC = new Quaternion(-rq.x, rq.y, -rq.z, rq.w).normalize() //rq.normalize() //.conjugate() //.inverse()
+    rqC = rqC.set(-rq.x,-rq.y,-rq.z,rq.w).normalize()
+    rql.set(rlx, rly, rlz, rlw)
+
     rqt = rqt.multiply(rqC)
     rqi = rqi.multiply(rqC)
     rqm = rqm.multiply(rqC)
@@ -299,7 +334,14 @@ class VisualizationScene[GeomType <: Object3DWithProps, QuaternionType <: Quater
     // https://discourse.threejs.org/t/how-do-you-rotate-a-group-of-objects-around-an-arbitrary-axis/3433/10
     // https://stackoverflow.com/questions/44287255/whats-the-right-way-to-rotate-an-object-around-a-point-in-three-js
     // TODO fix rotateOnAxis -> rotate as set not add
-    // TODO refactor
+    // TODO refactor these terrible matches with values.. the actual problem is [GeomType <: Object3DWithProps]
+    // with too many second-hand extensions such as MeshWithProps
+    // the same goes for _add, _line and everywhere where there is code containing
+    //  "geom.isInstanceOf\[[MeshWithProps|LineWithProps|Object3DWithProps|Objecdt3D]\]"
+    // as far as i know there is a limit to what can scala(js) do behind this (smth to do with being unable to extend
+    // from one of the parent classes of js.Object)
+    // solution to that might be a wrapper class but idk if that would not break on getting variables from its instances
+    // when using threejs library
     override def _rotateGeoms(angle: Float, pivotOpt: Option[GeomType], axis: Axisable): Unit = {
       if (!pivotOpt.isEmpty) {
         val pivotP = pivotOpt.get
@@ -340,6 +382,43 @@ class VisualizationScene[GeomType <: Object3DWithProps, QuaternionType <: Quater
           } else if (_pivot.isInstanceOf[Object3D]) {
             //          pivot = pivot.asInstanceOf[Object3D]
           }
+          /*
+          if (_pivot.isInstanceOf[MeshWithProps]) {
+            val p = _pivot.asInstanceOf[MeshWithProps]
+            _axis match {
+              case Axis.X => {
+                return p.rotation.x
+              }
+              case Axis.Y => {
+                return p.rotation.y
+              }
+              case Axis.Z => {
+                return p.rotation.z
+              }
+              case _ => {
+                return 0
+              }
+            }
+          } else if (_pivot.isInstanceOf[Object3DWithProps]) {
+            val p = _pivot.asInstanceOf[Object3DWithProps]
+            _axis match {
+              case Axis.X => {
+                return p.rotation.x
+              }
+              case Axis.Y => {
+                return p.rotation.y
+              }
+              case Axis.Z => {
+                return p.rotation.z
+              }
+              case _ => {
+                return 0
+              }
+            }
+          } else if (_pivot.isInstanceOf[Object3D]) {
+            //          pivot = pivot.asInstanceOf[Object3D]
+          }
+           */
           return 0
         }
 
