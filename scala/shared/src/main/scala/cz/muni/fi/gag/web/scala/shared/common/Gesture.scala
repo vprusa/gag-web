@@ -1,7 +1,7 @@
 /*
 Copyright (c) 2018 Vojtěch Průša
 */
-package cz.muni.fi.gag.web.scala.shared.recognition
+package cz.muni.fi.gag.web.scala.shared.common
 
 object Gesture {
   val allowedMatch = 0.9f

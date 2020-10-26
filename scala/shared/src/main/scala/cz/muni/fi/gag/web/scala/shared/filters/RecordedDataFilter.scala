@@ -7,9 +7,9 @@ import java.util.Date
 import java.util.logging.Logger
 
 import cz.muni.fi.gag.web.scala.shared.Hand.Hand
-import cz.muni.fi.gag.web.scala.shared.recognition.Sensor.Sensor
+import cz.muni.fi.gag.web.scala.shared.common.Sensor.Sensor
 import cz.muni.fi.gag.web.scala.shared.Hand
-import cz.muni.fi.gag.web.scala.shared.recognition.Sensor
+import cz.muni.fi.gag.web.scala.shared.common.Sensor
 
 import scala.collection.immutable.HashMap
 import scala.collection.mutable.ArrayBuffer

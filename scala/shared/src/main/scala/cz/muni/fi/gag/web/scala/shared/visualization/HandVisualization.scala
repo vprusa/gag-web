@@ -1,8 +1,7 @@
 package cz.muni.fi.gag.web.scala.shared.visualization
 
 import cz.muni.fi.gag.web.scala.shared.Hand
-import cz.muni.fi.gag.web.scala.shared.recognition.Sensor
-import cz.muni.fi.gag.web.scala.shared.common.VisualizationContextAbsImpl
+import cz.muni.fi.gag.web.scala.shared.common.{Sensor, VisualizationContextAbsImpl}
 
 /**
  * Contains Hand visualization data wrapper

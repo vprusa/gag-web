@@ -124,6 +124,7 @@ angular.module('app').factory('BLETools', ['WSTools', function (WSTools) {
   };
 
   ble.bytesToInt = function (byte1, byte2) {
+    // TODO
     var number = ((byte1 << 8) | byte2);
     var buffer = new ArrayBuffer(4);
     var view = new DataView(buffer);

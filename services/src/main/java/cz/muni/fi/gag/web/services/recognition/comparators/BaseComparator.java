@@ -3,10 +3,10 @@ package cz.muni.fi.gag.web.services.recognition.comparators;
 import cz.muni.fi.gag.web.persistence.dao.impl.DataLineGestureIterator;
 import cz.muni.fi.gag.web.persistence.entity.FingerDataLine;
 import cz.muni.fi.gag.web.persistence.entity.Gesture;
+import cz.muni.fi.gag.web.scala.shared.common.Quaternion;
 import cz.muni.fi.gag.web.services.logging.Log;
 import cz.muni.fi.gag.web.services.recognition.GestureMatchComparator;
 import cz.muni.fi.gag.web.services.recognition.matchers.SingleSensorGestureMatcher;
-import cz.muni.fi.gag.web.services.recognition.Quaternion;
 
 import java.util.ArrayList;
 import java.util.Iterator;

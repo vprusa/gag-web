@@ -2,9 +2,9 @@ package cz.muni.fi.gag.scala.web.visualization
 
 import cz.muni.fi.gag.scala.web.shared.Log
 import cz.muni.fi.gag.web.scala.shared.Hand
-import cz.muni.fi.gag.web.scala.shared.common.{Axis, Axisable, VisualizationContextAbsImpl}
-import cz.muni.fi.gag.web.scala.shared.recognition.Sensor
-import cz.muni.fi.gag.web.scala.shared.recognition.Sensor.Sensor
+import cz.muni.fi.gag.web.scala.shared.common.Sensor.Sensor
+import cz.muni.fi.gag.web.scala.shared.common.{Axis, Sensor, VisualizationContextAbsImpl}
+//import cz.muni.fi.gag.web.scala.shared.recognition.Sensor.Sensor
 import cz.muni.fi.gag.web.scala.shared.visualization.HandVisualization
 import org.denigma.threejs.extensions.Container3D
 import org.denigma.threejs.extensions.controls.{CameraControls, JumpCameraControls}
@@ -342,11 +342,13 @@ class VisualizationScene[GeomType <: Object3DWithProps, QuaternionType <: Quater
     // from one of the parent classes of js.Object)
     // solution to that might be a wrapper class but idk if that would not break on getting variables from its instances
     // when using threejs library
-    override def _rotateGeoms(angle: Float, pivotOpt: Option[GeomType], axis: Axisable): Unit = {
+//    def _rotateGeoms(angle: Float, pivot: Option[GeomType], axis: Axis.AxisableVal): Unit
+    override def _rotateGeoms(angle: Float, pivotOpt: Option[GeomType], axis: Axis.AxisableVal): Unit = {
+    //    override def _rotateGeoms(angle: Float, pivotOpt: Option[GeomType], axis: Axisable): Unit = {
       if (!pivotOpt.isEmpty) {
         val pivotP = pivotOpt.get
 
-        def getPivotVal(_pivot: GeomType, _axis: Axis.Value): Double = {
+        def getPivotVal(_pivot: GeomType, _axis: Axis.AxisableVal): Double = {
           if (_pivot.isInstanceOf[MeshWithProps]) {
             val p = _pivot.asInstanceOf[MeshWithProps]
             _axis match {
@@ -379,46 +381,9 @@ class VisualizationScene[GeomType <: Object3DWithProps, QuaternionType <: Quater
                 return 0
               }
             }
-          } else if (_pivot.isInstanceOf[Object3D]) {
-            //          pivot = pivot.asInstanceOf[Object3D]
+//          } else if (_pivot.isInstanceOf[Object3D]) {
+//              pivot = pivot.asInstanceOf[Object3D]
           }
-          /*
-          if (_pivot.isInstanceOf[MeshWithProps]) {
-            val p = _pivot.asInstanceOf[MeshWithProps]
-            _axis match {
-              case Axis.X => {
-                return p.rotation.x
-              }
-              case Axis.Y => {
-                return p.rotation.y
-              }
-              case Axis.Z => {
-                return p.rotation.z
-              }
-              case _ => {
-                return 0
-              }
-            }
-          } else if (_pivot.isInstanceOf[Object3DWithProps]) {
-            val p = _pivot.asInstanceOf[Object3DWithProps]
-            _axis match {
-              case Axis.X => {
-                return p.rotation.x
-              }
-              case Axis.Y => {
-                return p.rotation.y
-              }
-              case Axis.Z => {
-                return p.rotation.z
-              }
-              case _ => {
-                return 0
-              }
-            }
-          } else if (_pivot.isInstanceOf[Object3D]) {
-            //          pivot = pivot.asInstanceOf[Object3D]
-          }
-           */
           return 0
         }
 

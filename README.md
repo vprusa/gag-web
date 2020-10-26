@@ -3,19 +3,19 @@
 ### Building/Running/Deploying
 
 ```
-mvn  wildfly:start wildfly:undeploy install wildfly:deploy
+mvn wildfly:start wildfly:undeploy install wildfly:deploy
 ```
 
 or
 
 ```
-mvn  wildfly:start wildfly:undeploy install wildfly:deploy -DskipTests=true -Dcheckstyle.skip | tee app.log
+mvn wildfly:start wildfly:undeploy install wildfly:deploy -DskipTests=true -Dcheckstyle.skip | tee app.log
 ```
 
 or to re-deploy on running server:
 
 ```
-mvn  wildfly:undeploy install wildfly:deploy -DskipTests=true -Dcheckstyle.skip 
+mvn wildfly:undeploy install wildfly:deploy -DskipTests=true -Dcheckstyle.skip 
 ```
 
 #### Frontend 
@@ -45,3 +45,15 @@ zip gag-web.zip -r ./pom.xml  ./config presentation.odp ./persistence/pom.xml ./
 ```
 cd ./persistence && mvn clean install -Dcheckstyle.skip -DskipTests=true && cd ../services && mvn clean install -Dcheckstyle.skip -DskipTests=true && cd ../app && mvn clean install -Dcheckstyle.skip -DskipTests=true && cd .. && mvn wildfly:undeploy install wildfly:deploy -Dcheckstyle.skip -DskipTests=true && mvn test -Dtest=WSDataLineEndpointTest -DfailIfNoTests=false 
 ```
+
+### FAQ
+
+Q: What?
+
+A: This is not a web app, this is a monolithic desktop app that runs locally on Wildfly and scala's code could be used as library for other stuff (like VR on Android).
+
+-------------------
+
+Q: Why?
+
+A: This began as web app so I would have another demo app and pass university's course and had backend for data.
