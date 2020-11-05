@@ -206,7 +206,7 @@ angular.module('app').factory('BLETools', ['WSTools', function (WSTools) {
     let cmdPromise = new Promise((resolve, reject) => {
       /* stuff using cmd */
       let reply;
-      // TODO propper check?
+      // TODO proper check?
       if(typeof ble.bluetoothDeviceWriteChar != 'undefined'){
 //        ble.bluetoothDeviceWriteChar.writeValue("c00\r\n");
         /*
