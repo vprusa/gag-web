@@ -5,6 +5,7 @@
   "authors": [
     "Vojtech Prusa"
   ],
+  "--directory": "./live/gag-web-app-1.0-SNAPSHOT.WAR/vendor",
   "license": "Apache-2.0",
   "keywords": [
     "java",

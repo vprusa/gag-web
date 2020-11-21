@@ -40,18 +40,16 @@
 		<version.org.wildfly.server>10.1.0.Final</version.org.wildfly.server>
 		<version.wildfly.checkstyle.config>1.0.5.Final</version.wildfly.checkstyle.config>
 		<version.wildfly.maven.plugin>1.1.0.Final</version.wildfly.maven.plugin>
-        <version.server.bom>16.0.0.Final</version.server.bom>
-
+		<version.server.bom>18.0.0.Final</version.server.bom>
 		<version.keycloak>6.0.1</version.keycloak>
-
 	</properties>
 
 	<parent>
 		<groupId>org.jboss</groupId>
 		<artifactId>jboss-parent</artifactId>
-		<version>16</version>
+		<version>18</version>
 	</parent>
-	
+
 	<dependencyManagement>
 		<dependencies>
 		 <!-- JBoss distributes a complete set of Java EE APIs including a Bill
@@ -59,7 +57,7 @@
                 of artifacts. We use this here so that we always get the correct versions
                 of artifacts. Here we use the jboss-eap-javaee8-with-tools stack (you can
                 read this as the JBoss stack of the Java EE APIs, with some extras tools
-                for your project, such as Arquillian for testing) 
+                for your project, such as Arquillian for testing)
             <dependency>
                 <groupId>org.wildfly.bom</groupId>
                 <artifactId>wildfly-javaee8-with-tools</artifactId>
@@ -155,7 +153,7 @@
 			<version>${version.org.wildfly.arquillian}</version>
 			<scope>test</scope>
 		</dependency>
-		<!-- <dependency> <groupId>org.eu.ingwar.tools</groupId> <artifactId>arquillian-suite-extension</artifactId> 
+		<!-- <dependency> <groupId>org.eu.ingwar.tools</groupId> <artifactId>arquillian-suite-extension</artifactId>
 			<version>1.2.0</version> <scope>test</scope> </dependency> -->
 		<dependency>
 			<groupId>org.jboss.logging</groupId>
@@ -223,49 +221,8 @@
 
 	<profiles>
 		<profile>
-			<id>default</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
+			<id>prepare</id>
 			<build>
-				<!-- <defaultGoal>clean install wildfly:start wildfly:execute-commands 
-					wildfly:deploy</defaultGoal> -->
-				<pluginManagement>
-					<plugins>
-						<plugin>
-							<groupId>org.apache.maven.plugins</groupId>
-							<artifactId>maven-checkstyle-plugin</artifactId>
-							<version>${version.plugin.checkstyle}</version>
-							<executions>
-								<execution>
-									<id>validate</id>
-									<phase>validate</phase>
-									<configuration>
-										<configLocation>pb162_codestyle.xml</configLocation>
-										<encoding>UTF-8</encoding>
-										<consoleOutput>true</consoleOutput>
-										<failOnViolation>${checkstyle.failOnViolation}</failOnViolation>
-										<violationSeverity>warning</violationSeverity>
-										<includeTestSourceDirectory>false</includeTestSourceDirectory>
-									</configuration>
-									<goals>
-										<goal>check</goal>
-									</goals>
-								</execution>
-							</executions>
-						</plugin>
-
-						<plugin>
-							<groupId>org.apache.maven.plugins</groupId>
-							<artifactId>maven-compiler-plugin</artifactId>
-							<version>${version.maven.compiler.plugin}</version>
-						</plugin>
-						<plugin>
-							<artifactId>maven-war-plugin</artifactId>
-							<version>${version.maven.war.plugin}</version>
-						</plugin>
-					</plugins>
-				</pluginManagement>
 				<plugins>
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
@@ -304,7 +261,7 @@
 									<goal>wget</goal>
 								</goals>
 								<configuration>
-									<url>https://download.jboss.org/wildfly/16.0.0.Final/wildfly-16.0.0.Final.zip</url>
+									<url>https://download.jboss.org/wildfly/18.0.0.Final/wildfly-18.0.0.Final.zip</url>
 									<unpack>true</unpack>
 									<outputDirectory>${project.basedir}/</outputDirectory>
 								</configuration>
@@ -337,6 +294,196 @@
 							</execution>
 						</executions>
 					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>default</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+				<!-- <defaultGoal>clean install wildfly:start wildfly:execute-commands
+					wildfly:deploy</defaultGoal> -->
+				<pluginManagement>
+					<plugins>
+						<plugin>
+							<groupId>org.codehaus.mojo</groupId>
+							<artifactId>exec-maven-plugin</artifactId>
+							<inherited>false</inherited>
+							<executions>
+								<execution>
+									<inherited>false</inherited>
+									<phase>package</phase>
+									<goals>
+										<goal>exec</goal>
+									</goals>
+								</execution>
+							</executions>
+							<configuration>
+								<skip>false</skip>
+								<executable>${project.basedir}/config/prepareWF2UseKC.sh</executable>
+								<workingDirectory>${project.basedir}</workingDirectory>
+								<successCodes>
+									<successCode>0</successCode>
+									<successCode>1</successCode>
+								</successCodes>
+							</configuration>
+						</plugin>
+						<plugin>
+							<groupId>com.googlecode.maven-download-plugin</groupId>
+							<artifactId>download-maven-plugin</artifactId>
+							<version>1.4.1</version>
+							<inherited>false</inherited>
+							<executions>
+								<execution>
+									<id>install-wildfly</id>
+									<!-- maven.apache.org/ref/3.6.1/maven-core/lifecycles.html pre-integration-test -->
+									<phase>prepare-package</phase>
+									<goals>
+										<goal>wget</goal>
+									</goals>
+									<configuration>
+										<url>https://download.jboss.org/wildfly/18.0.0.Final/wildfly-18.0.0.Final.zip</url>
+										<unpack>true</unpack>
+										<outputDirectory>${project.basedir}/</outputDirectory>
+									</configuration>
+								</execution>
+								<execution>
+									<id>install-keycloak-adapter</id>
+									<phase>prepare-package</phase>
+									<goals>
+										<goal>wget</goal>
+									</goals>
+									<configuration>
+										<!-- TODO versions to properties -->
+										<url>https://downloads.jboss.org/keycloak/6.0.1/adapters/keycloak-oidc/keycloak-wildfly-adapter-dist-6.0.1.zip</url>
+										<unpack>true</unpack>
+										<outputDirectory>${project.basedir}/keycloak-wildfly-adapter/</outputDirectory>
+									</configuration>
+								</execution>
+								<execution>
+									<id>install-keycloak-server</id>
+									<phase>prepare-package</phase>
+									<goals>
+										<goal>wget</goal>
+									</goals>
+									<configuration>
+										<!-- TODO versions to properties -->
+										<url>https://downloads.jboss.org/keycloak/6.0.1/keycloak-6.0.1.zip</url>
+										<unpack>true</unpack>
+										<outputDirectory>${project.basedir}/</outputDirectory>
+									</configuration>
+								</execution>
+							</executions>
+						</plugin>
+
+						<plugin>
+							<groupId>org.codehaus.mojo</groupId>
+							<artifactId>exec-maven-plugin</artifactId>
+							<inherited>false</inherited>
+							<executions>
+								<execution>
+									<inherited>false</inherited>
+									<phase>package</phase>
+									<goals>
+										<goal>exec</goal>
+									</goals>
+								</execution>
+							</executions>
+							<configuration>
+								<skip>false</skip>
+								<executable>${project.basedir}/config/prepareWF2UseKC.sh</executable>
+								<workingDirectory>${project.basedir}</workingDirectory>
+								<successCodes>
+									<successCode>0</successCode>
+									<successCode>1</successCode>
+								</successCodes>
+							</configuration>
+						</plugin>
+						<plugin>
+							<groupId>com.googlecode.maven-download-plugin</groupId>
+							<artifactId>download-maven-plugin</artifactId>
+							<version>1.4.1</version>
+							<inherited>false</inherited>
+							<executions>
+								<execution>
+									<id>install-wildfly</id>
+									<!-- maven.apache.org/ref/3.6.1/maven-core/lifecycles.html pre-integration-test -->
+									<phase>prepare-package</phase>
+									<goals>
+										<goal>wget</goal>
+									</goals>
+									<configuration>
+										<url>https://download.jboss.org/wildfly/18.0.0.Final/wildfly-18.0.0.Final.zip</url>
+										<unpack>true</unpack>
+										<outputDirectory>${project.basedir}/</outputDirectory>
+									</configuration>
+								</execution>
+								<execution>
+									<id>install-keycloak-adapter</id>
+									<phase>prepare-package</phase>
+									<goals>
+										<goal>wget</goal>
+									</goals>
+									<configuration>
+										<!-- TODO versions to properties -->
+										<url>https://downloads.jboss.org/keycloak/6.0.1/adapters/keycloak-oidc/keycloak-wildfly-adapter-dist-6.0.1.zip</url>
+										<unpack>true</unpack>
+										<outputDirectory>${project.basedir}/keycloak-wildfly-adapter/</outputDirectory>
+									</configuration>
+								</execution>
+								<execution>
+									<id>install-keycloak-server</id>
+									<phase>prepare-package</phase>
+									<goals>
+										<goal>wget</goal>
+									</goals>
+									<configuration>
+										<!-- TODO versions to properties -->
+										<url>https://downloads.jboss.org/keycloak/6.0.1/keycloak-6.0.1.zip</url>
+										<unpack>true</unpack>
+										<outputDirectory>${project.basedir}/</outputDirectory>
+									</configuration>
+								</execution>
+							</executions>
+						</plugin>
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-checkstyle-plugin</artifactId>
+							<version>${version.plugin.checkstyle}</version>
+							<executions>
+								<execution>
+									<id>validate</id>
+									<phase>validate</phase>
+									<configuration>
+										<configLocation>pb162_codestyle.xml</configLocation>
+										<encoding>UTF-8</encoding>
+										<consoleOutput>true</consoleOutput>
+										<failOnViolation>${checkstyle.failOnViolation}</failOnViolation>
+										<violationSeverity>warning</violationSeverity>
+										<includeTestSourceDirectory>false</includeTestSourceDirectory>
+									</configuration>
+									<goals>
+										<goal>check</goal>
+									</goals>
+								</execution>
+							</executions>
+						</plugin>
+
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-compiler-plugin</artifactId>
+							<version>${version.maven.compiler.plugin}</version>
+						</plugin>
+						<plugin>
+							<artifactId>maven-war-plugin</artifactId>
+							<version>${version.maven.war.plugin}</version>
+						</plugin>
+					</plugins>
+				</pluginManagement>
+				<plugins>
+
 					<plugin>
 						<groupId>org.wildfly.plugins</groupId>
 						<artifactId>wildfly-maven-plugin</artifactId>
@@ -387,6 +534,7 @@
 	</profiles>
 
 	<modules>
+		<module>scala</module>
 		<module>persistence</module>
 		<module>services</module>
 		<module>app</module>

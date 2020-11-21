@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -44,10 +43,29 @@
 			<artifactId>gag-web-services</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
+
+
+		<dependency>
+			<groupId>org.mariadb.jdbc</groupId>
+			<artifactId>mariadb-java-client</artifactId>
+			<version>2.4.3</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>8.0.17</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>5.3.9.Final</version>
+			<scope>compile</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
-		<!-- <defaultGoal>wildfly:start wildfly:undeploy install wildfly:deploy 
+		<!-- <defaultGoal>wildfly:start wildfly:undeploy install wildfly:deploy
 			-DskipTests=true -Dcheckstyle.skip </defaultGoal> -->
 		<!-- <finalName>gag-web-app-1.0-SNAPSHOT.WAR</finalName> -->
 		<plugins>
@@ -57,11 +75,11 @@
 				<configuration>
 					<failOnMissingWebXml>true</failOnMissingWebXml>
 					<!--<warSourceDirectory>${basedir}/src/main/webapp</warSourceDirectory> -->
-					<!--<warSourceDirectory>src/main/webapp</warSourceDirectory> <webappDirectory>src/main/webapp</webappDirectory> 
+					<!--<warSourceDirectory>src/main/webapp</warSourceDirectory> <webappDirectory>src/main/webapp</webappDirectory>
 						<warSourceDirectory>src/main/webapp</warSourceDirectory> -->
-					<!--<webappDirectory>${basedir}/src/main/webapp</webappDirectory> <warSourceDirectory>${basedir}/src/main/webapp</warSourceDirectory> 
-						<webResources> <resource> <directory>${basedir}/src/main/webapp</directory> 
-						<filtering>true</filtering> <includes> <include>**/*</include> </includes> 
+					<!--<webappDirectory>${basedir}/src/main/webapp</webappDirectory> <warSourceDirectory>${basedir}/src/main/webapp</warSourceDirectory>
+						<webResources> <resource> <directory>${basedir}/src/main/webapp</directory>
+						<filtering>true</filtering> <includes> <include>**/*</include> </includes>
 						</resource> </webResources> -->
 				</configuration>
 			</plugin>
@@ -77,87 +95,188 @@
 				<artifactId>wildfly-maven-plugin</artifactId>
 				<version>${version.wildfly.maven.plugin}</version>
 				<configuration>
-					<jboss-home>${project.parent.basedir}/wildfly-16.0.0.Final/</jboss-home>
+					<java-opts>
+						<java-opt>-Xmx5G</java-opt>
+<!--						<java-opt>-agentlib:jdwp=transport=dt_socket,address=8787,server=y,suspend=y</java-opt>-->
+					</java-opts>
+					<jboss-home>${project.parent.basedir}/wildfly-18.0.0.Final/</jboss-home>
 					<skip>false</skip>
 					<targetDir>
 						${project.basedir}/live
 					</targetDir>
-					<!-- because wildfly is stupid an can upload as exploded only if it 
+					<!-- because wildfly is stupid an can upload as exploded only if it
 						ends with .war -->
 					<filename>
 						gag-web-app-1.0-SNAPSHOT.WAR
 					</filename>
-					<add-user>
+					<addUser>
 						<users>
 							<user>
 								<username>admin</username>
 								<password>admin</password>
 							</user>
-							<!-- <user> <username>admin-user</username> <password>user.1234</password> 
-								<groups> <group>admin</group> <group>user</group> </groups> <application-user>true</application-user> 
-								</user> <user> <username>default-user</username> <password>user.1234</password> 
-								<groups> <group>user</group> </groups> <application-user>true</application-user> 
+							<!-- <user> <username>admin-user</username> <password>user.1234</password>
+								<groups> <group>admin</group> <group>user</group> </groups> <application-user>true</application-user>
+								</user> <user> <username>default-user</username> <password>user.1234</password>
+								<groups> <group>user</group> </groups> <application-user>true</application-user>
 								</user> -->
 						</users>
-					</add-user>
-				</configuration>
-				<executions>
-					<execution>
-						<id>keycloak</id>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<phase>prepare-package</phase>
-						<configuration>
-							<skip>true</skip>
-							<jbossHome>${project.parent.basedir}/keycloak-6.0.1</jbossHome>
-							<hostname>localhost</hostname>
-							<port>10090</port>
-							<serverArgs>
-								<serverArg>-Djboss.socket.binding.port-offset=100</serverArg>
-							</serverArgs>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+					</addUser>
+					<serverConfig>../../../config/standalone.xml</serverConfig>
+					<!--<beforeDeployment>
+                       <commands>
+                          <command>
+                               module add - -name=com.mysql - -resources=../mysql-connector-java-8.0.17.jar - -dependencies=javax.api,javax.transaction.api
+                           </command>
+                    <command>
+                        /subsystem=datasources/jdbc-driver=MySqlDS:add(driver-name="com.mysql",driver-module-name="com.mysql",driver-class-name=com.mysql.cj.jdbc.Driver)
+                    </command>
+                </commands>
+            </beforeDeployment>-->
+        </configuration>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.3</version>
-				<executions>
-					<execution>
-						<phase>generate-sources</phase>
-						<configuration>
-							<tasks>
-								<exec dir="${project.parent.basedir}/keycloak-6.0.1/bin/"
-									spawn="true" executable="bash">
-									<arg value="standalone.sh" />
-									<arg value="-Djboss.socket.binding.port-offset=100" />
-									<arg value="-Dkeycloak.migration.action=import" />
-									<arg value="-Dkeycloak.migration.provider=singleFile" />
-									<arg
-										value="-Dkeycloak.migration.file=${project.parent.basedir}/config/google-identity-provider-realm.json" />
-									<arg
-										value="-Dkeycloak.migration.strategy=OVERWRITE_EXISTING" />
-								</exec>
-							</tasks>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<!-- https://mvnrepository.com/artifact/org.keycloak/keycloak-jaxrs-oauth-client -->
+        <executions>
+			<!-- <execution>
+             <id>deploy-postgresql</id>
+             <phase>package</phase>
+             <goals>
+                 <goal>deploy-artifact</goal>
+             </goals>
+             <configuration>
+                 <force>true</force>
+                 <groupId>mysql</groupId>
+                 <artifactId>mysql-connector-java</artifactId>
+                 <name>mysql-connector-java-8.0.17.jar</name>
+             </configuration>
+         </execution>-->
+         <!--<execution>
+             <id>add-datasource</id>
+             <phase>install</phase>
+             <goals>
+                 <goal>add-resource</goal>
+             </goals>
+             <configuration>
+                 <skip>true</skip>
+                 <force>false</force>
+                 <address>subsystem=datasources</address>
+                 <resources>
+                     <resource>
+                         <address>xa-data-source=java:/MySqlDS</address>
+                         <properties>
+                             <xa-datasource-class>com.mysql.cj.jdbc.Driver</xa-datasource-class>
+                             <jndi-name>java:/MySqlDS</jndi-name>
+                             <enabled>true</enabled>
+                             <driver-name>mysql-connector-java-8.0.17.jar</driver-name>
+                         </properties>
+                         <resources>
+                             <resource>
+                                 <address>xa-datasource-properties=DatabaseName</address>
+                                 <properties>
+                                     <value>gagweb</value>
+                                 </properties>
+                             </resource>
+                             <resource>
+                                 <address>xa-datasource-properties=ServerName</address>
+                                 <properties>
+                                     <value>localhost</value>
+                                 </properties>
+                             </resource>
+                             <resource>
+                                 <address>xa-datasource-properties=User</address>
+                                 <properties>
+                                     <value>gagweb</value>
+                                 </properties>
+                             </resource>
+                             <resource>
+                                 <address>xa-datasource-properties=Password</address>
+                                 <properties>
+                                     <value>password</value>
+                                 </properties>
+                             </resource>
+                         </resources>
+                     </resource>
+                 </resources>
+             </configuration>
+         </execution>-->
+
+			<!--
+		   	<execution>
+                <id>add-datasource</id>
+                <phase>site-deploy</phase>
+                <goals>
+                    <goal>add-resource</goal>
+                </goals>
+                <configuration>
+                    <address>subsystem=datasources,data-source=java:jboss/MySqlDS</address>
+                    <resources>
+                        <resource>
+                            <properties>
+                                <jndi-name>java:/MySqlDS</jndi-name>
+                                <enabled>true</enabled>
+                                <connection-url>jdbc:mysql://localhost:3306/gagweb</connection-url>
+                                <driver-class>com.mysql.cj.jdbc.Driver</driver-class>
+                                <driver-name>gag-web-app-1.0-SNAPSHOT.WAR_com.mysql.cj.jdbc.Driver_8_0</driver-name>
+                                <user-name>gagweb</user-name>
+                                <password>password</password>
+                            </properties>
+                        </resource>
+                    </resources>
+                </configuration>
+            </execution>
+			-->
+        <execution>
+            <id>keycloak</id>
+            <goals>
+                <goal>run</goal>
+            </goals>
+            <phase>prepare-package</phase>
+            <configuration>
+                <skip>true</skip>
+                <jbossHome>${project.parent.basedir}/keycloak-6.0.1</jbossHome>
+                <hostname>localhost</hostname>
+                <port>10090</port>
+                <serverArgs>
+                    <serverArg>-Djboss.socket.binding.port-offset=100</serverArg>
+                </serverArgs>
+            </configuration>
+        </execution>
+    </executions>
+    </plugin>
+    <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.3</version>
+        <executions>
+            <execution>
+                <phase>generate-sources</phase>
+                <configuration>
+                    <tasks>
+                        <exec dir="${project.parent.basedir}/keycloak-6.0.1/bin/"
+                            spawn="true" executable="bash">
+                            <arg value="standalone.sh" />
+                            <arg value="-Djboss.socket.binding.port-offset=100" />
+                            <arg value="-Dkeycloak.migration.action=import" />
+                            <arg value="-Dkeycloak.migration.provider=singleFile" />
+                            <arg
+                                value="-Dkeycloak.migration.file=${project.parent.basedir}/config/google-identity-provider-realm.json" />
+                            <arg
+                                value="-Dkeycloak.migration.strategy=OVERWRITE_EXISTING" />
+                        </exec>
+                    </tasks>
+                </configuration>
+                <goals>
+                    <goal>run</goal>
+                </goals>
+            </execution>
+        </executions>
+    </plugin>
+    <!-- https://mvnrepository.com/artifact/org.keycloak/keycloak-jaxrs-oauth-client -->
 		</plugins>
-
-
 	</build>
 
 	<profiles>
 		<profile>
-			<id>copyJsps</id>
+			<id>copyJS</id>
 			<build>
 				<plugins>
 					<plugin>
@@ -178,6 +297,11 @@
 		</profile>
 		<profile>
 			<id>npm</id>
+			<activation>
+				<property>
+					<name>prepareAll</name>
+				</property>
+			</activation>
 			<build>
 				<plugins>
 					<plugin>
@@ -200,12 +324,30 @@
 							</execution>
 						</executions>
 					</plugin>
+					<plugin>
+						<artifactId>maven-resources-plugin</artifactId>
+						<version>2.5</version>
+						<configuration>
+							<outputDirectory>${basedir}/live/gag-web-app-1.0-SNAPSHOT.WAR/vendor</outputDirectory>
+							<resources>
+								<resource>
+									<directory>bower_components</directory>
+									<filtering>true</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</plugin>
 				</plugins>
 			</build>
 		</profile>
 		<profile>
 			<!-- TODO this should be handled by npm -->
 			<id>install-material-dashboard</id>
+			<activation>
+				<property>
+					<name>prepareAll</name>
+				</property>
+			</activation>
 			<build>
 				<plugins>
 					<plugin>
@@ -255,5 +397,4 @@
 			</build>
 		</profile>
 	</profiles>
-
 </project>

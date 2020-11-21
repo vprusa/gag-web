@@ -1,4 +1,5 @@
 image: maven:3-jdk-8
 
 build:
-  script: "mvn wildfly:start wildfly:undeploy install wildfly:deploy -Pnpm -Pinstall-material-dashboard -B -X -e"
+  script: "mvn dependency:get -Ddest=./ -Dartifact=mysql:mysql-connector-java:8.0.17
+ && mvn wildfly:start wildfly:undeploy install wildfly:deploy -Pnpm -Pinstall-material-dashboard -B -X -e"
