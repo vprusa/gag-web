@@ -2,9 +2,14 @@
 
 ### APP
 
-![gag_recognition_demo_video.low.cut.gif](./docu/gag_recognition_demo_video.low.cut.gif)
-![GAG_vis_2020-06-01_00-01.gif](./docu/GAG_vis_2020-06-01_00-01.gif)
-![gag_visualization_2020-03-06_18-54.gif](./docu/gag_visualization_2020-03-06_18-54.gif)
+Recognition test
+[gag_recognition_demo_video.low.cut.gif](./docu/gag_recognition_demo_video.low.cut.gif)
+
+App example #1
+[GAG_vis_2020-06-01_00-01.gif](./docu/GAG_vis_2020-06-01_00-01.gif)
+
+App example #2
+[gag_visualization_2020-03-06_18-54.gif](./docu/gag_visualization_2020-03-06_18-54.gif)
 
 
 ### Building/Running/Deploying
