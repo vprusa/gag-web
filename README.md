@@ -1,5 +1,12 @@
 # Web app for (Gyro-Accelerometric|Gestures Automation) Glove
 
+### APP
+
+![gag_recognition_demo_video.low.cut.gif](./docu/gag_recognition_demo_video.low.cut.gif)
+![GAG_vis_2020-06-01_00-01.gif](./docu/GAG_vis_2020-06-01_00-01.gif)
+![gag_visualization_2020-03-06_18-54.gif](./docu/gag_visualization_2020-03-06_18-54.gif)
+
+
 ### Building/Running/Deploying
 
 ```
