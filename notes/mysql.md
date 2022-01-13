@@ -1,5 +1,28 @@
 # Mysql notes
 
+## install
+
+TODO ... not necessary for now
+
+## prepare
+
+```
+systemctl start mariadb
+```
+
+Fortunatelly this time I do not need to deal with restating db service in insecure mode
+https://phoenixnap.com/kb/how-to-create-mariadb-user-grant-privileges
+
+
+```sql
+CREATE DATABASE 'gagweb';
+SHOW DATABASES;
+CREATE USER 'gagweb'@localhost IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON gagweb.* TO 'gagweb'@localhost;
+FLUSH PRIVILEGES;
+SHOW GRANTS FOR 'gagweb'@localhost;
+```
+
 ## Export
 
 ```

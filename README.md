@@ -1,5 +1,9 @@
 # Web app for (Gyro-Accelerometric|Gestures Automation) Glove
 
+## HW
+
+[https://github.com/vprusa/gag]( https://github.com/vprusa/gag )
+
 ### Building/Running/Deploying
 
 ```
@@ -57,3 +61,11 @@ A: This is not a web app, this is a monolithic desktop app that runs locally on 
 Q: Why?
 
 A: This began as web app so I would have another demo app and pass university's course and had backend for data.
+
+### BUGS
+
+#### missing jconsole.jar quickfix, most likely terrible idea
+
+sudo cp /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.312.b07-2.fc33.x86_64/lib/jconsole.jar /usr/lib/jvm/java-11-openjdk-11.0.13.0.8-2.fc33.x86_64/../lib/
+
+

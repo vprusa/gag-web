@@ -92,4 +92,29 @@
 		</testResources>
 	</build>
 
+	<profiles>
+		<profile>
+			<id>flywaydb</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.flywaydb</groupId>
+						<artifactId>flyway-maven-plugin</artifactId>
+						<version>8.0.0</version>
+						<configuration>
+							<user>gagweb</user>
+							<password>password</password>
+							<schemas>
+								<schema>gagweb</schema>
+							</schemas>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 </project>
