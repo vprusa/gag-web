@@ -538,6 +538,7 @@
 		<module>persistence</module>
 		<module>services</module>
 		<module>app</module>
+                <module>spock-example</module>
 	</modules>
 
 </project>
