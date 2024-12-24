@@ -17,12 +17,13 @@ val sharedSettings = Seq(
 
 lazy val modules =
   // select supported platforms
-  crossProject(JSPlatform, JVMPlatform, NativePlatform)
+  //crossProject(JSPlatform, JVMPlatform, NativePlatform)
+  crossProject(JVMPlatform, NativePlatform)
     .crossType(CrossType.Full) // [Pure, Full, Dummy], default: CrossType.Full
     .in(file("."))
     .settings(sharedSettings)
     .settings(/**/)
-    .jsSettings(
+    //.jsSettings(
       /*{
         libraryDependencies += "org.querki" %%% "jstree-facade" % "0.5"
         libraryDependencies += "com.lihaoyi" %% "scalatags" % "0.6.7"
@@ -30,14 +31,14 @@ lazy val modules =
         libraryDependencies += "org.scala-js" %% "scalajs-library" % "0.6.26"
         libraryDependencies += "org.scala-js" %% "scalajs-test-interface" % "0.6.26" % Test
       }*/
-      ) // defined in sbt-scalajs-crossproject
+     // ) // defined in sbt-scalajs-crossproject
     .jvmSettings(/* ... */)
     // configure Scala-Native settings
     .nativeSettings(/* ... */) // defined in sbt-scala-native
 
 
 // Optional in sbt 1.x (mandatory in sbt 0.13.x)
-lazy val scalaJS     = modules.js
+//lazy val scalaJS     = modules.js
 lazy val scalaJVM    = modules.jvm
 lazy val scalaNative = modules.native
 

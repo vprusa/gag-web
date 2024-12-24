@@ -42,7 +42,7 @@
                                     <executable>sbt</executable>
                                     <arguments>
                                         <argument>compile</argument>
-                                        <argument>fastOptJSO</argument>
+					<!--<argument>fastOptJSO</argument>-->
                                         <argument>publishM2</argument>
                                     </arguments>
                                 </configuration>
@@ -59,9 +59,9 @@
             </build>
         </profile>
     </profiles>
-    <modules>
+    <!--<modules>
         <module>shared</module>
-    </modules>
+    </modules>-->
 
     <repositories>
         <repository>
