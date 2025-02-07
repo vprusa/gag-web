@@ -1,4 +1,4 @@
-scalaVersion := "2.11.12"
+scalaVersion := "2.12.12"
 
 // TODO check if overriding ThisBuild/* and name does not break other sbt submodules
 ThisBuild / organization := "cz.muni.fi.gag.web"

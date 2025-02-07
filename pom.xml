@@ -537,7 +537,7 @@
 	</profiles>
 
 	<modules>
-		<module>scala</module>
+		<!--<module>scala</module>-->
 		<module>persistence</module>
 		<module>services</module>
 		<module>app</module>

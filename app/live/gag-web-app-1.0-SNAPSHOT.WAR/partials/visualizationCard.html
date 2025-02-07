@@ -8,7 +8,7 @@
 	</style>
 
 	<script>
-		var handVisualization;
+	/*	var handVisualization;
 		$( document ).ready(function() {
 			$('#container').hover(function() {
 				$('body').css('overflow','hidden');
@@ -28,7 +28,17 @@
 				handVisualization.main(); //activate ScalaJS main class
 
 			//}
-	    });
+	    });*/
+	import { VisualizationScene } from '../js.visualization.2.js';
+
+	let handVisualization;
+
+	document.addEventListener("DOMContentLoaded", function () {
+		const container = document.getElementById('container');
+		const numberOfHandsPairs = parseInt(document.getElementById('vis-numberOfHandsPairs').value, 10);
+
+		handVisualization = new VisualizationScene(container, 800, 600, numberOfHandsPairs);
+	});
 	</script>
 
 	<div class="card-header card-header-primary">

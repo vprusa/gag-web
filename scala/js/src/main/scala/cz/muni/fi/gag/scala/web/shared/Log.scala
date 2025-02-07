@@ -5,7 +5,8 @@ import cz.muni.fi.gag.web.scala.shared.common.LogT
 
 import scala.scalajs.js.Dynamic.{global => g}
 
-object Log extends LogT {
+//object Log extends LogT {
+object Log {
 
   object Level {
     trait LogLevel
@@ -23,7 +24,7 @@ object Log extends LogT {
     if(lvl == logLevel || logLevel == ALL || logLevel.isInstanceOf[lvl.type]){dump(msg)}
   }
 
-  override def dump(msg: Any): Unit = {
+  def dump(msg: Any): Unit = {
     dumpJS(msg.asInstanceOf[scala.scalajs.js.Any])
   }
 
