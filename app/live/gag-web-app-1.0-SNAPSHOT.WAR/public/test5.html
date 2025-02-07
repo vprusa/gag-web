@@ -49,14 +49,22 @@
 
             const handSkeleton = new THREE.Group();
             Object.keys(fingers).forEach(finger => {
-                const baseJoint = createFinger(wrist, fingers[finger].base);
-                const fingerLine = createFinger(fingers[finger].base, fingers[finger].tip);
-                const fingerGroup = new THREE.Group();
-                fingerGroup.add(baseJoint);
-                fingerGroup.add(fingerLine);
-                handSkeleton.add(fingerGroup);
-                fingers[finger].group = fingerGroup;
-                fingers[finger].tipLine = fingerLine;
+                const baseJoint = new THREE.Object3D();
+                baseJoint.position.copy(fingers[finger].base);
+
+                const tipJoint = new THREE.Object3D();
+                tipJoint.position.set(0, fingers[finger].tip.y - fingers[finger].base.y, 0);
+                baseJoint.add(tipJoint);
+
+                const baseLine = createFinger(wrist, fingers[finger].base);
+                const tipLine = createFinger(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, fingers[finger].tip.y - fingers[finger].base.y, 0));
+                tipJoint.add(tipLine);
+
+                handSkeleton.add(baseJoint);
+                handSkeleton.add(baseLine);
+
+                fingers[finger].baseJoint = baseJoint;
+                fingers[finger].tipJoint = tipJoint;
             });
             scene.add(handSkeleton);
             camera.position.z = 5;
@@ -84,11 +92,11 @@
 
             // Finger rotation control
             function updateFingerRotation() {
-                fingers.thumb.tipLine.rotation.x = THREE.MathUtils.degToRad(parseFloat(thumbInput.value));
-                fingers.index.tipLine.rotation.x = THREE.MathUtils.degToRad(parseFloat(indexInput.value));
-                fingers.middle.tipLine.rotation.x = THREE.MathUtils.degToRad(parseFloat(middleInput.value));
-                fingers.ring.tipLine.rotation.x = THREE.MathUtils.degToRad(parseFloat(ringInput.value));
-                fingers.little.tipLine.rotation.x = THREE.MathUtils.degToRad(parseFloat(littleInput.value));
+                fingers.thumb.tipJoint.rotation.x = THREE.MathUtils.degToRad(parseFloat(thumbInput.value));
+                fingers.index.tipJoint.rotation.x = THREE.MathUtils.degToRad(parseFloat(indexInput.value));
+                fingers.middle.tipJoint.rotation.x = THREE.MathUtils.degToRad(parseFloat(middleInput.value));
+                fingers.ring.tipJoint.rotation.x = THREE.MathUtils.degToRad(parseFloat(ringInput.value));
+                fingers.little.tipJoint.rotation.x = THREE.MathUtils.degToRad(parseFloat(littleInput.value));
             }
 
             thumbInput.addEventListener('input', updateFingerRotation);
