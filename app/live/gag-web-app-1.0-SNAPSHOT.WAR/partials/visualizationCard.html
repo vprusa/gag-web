@@ -76,6 +76,8 @@
 			};
 
 			const handSkeleton = new THREE.Group();
+			handSkeleton.fingers = {}; // Store fingers in handSkeleton
+
 			Object.keys(fingers).forEach(finger => {
 				const baseJoint = new THREE.Object3D();
 				baseJoint.position.copy(fingers[finger].base);
@@ -90,16 +92,12 @@
 				handSkeleton.add(baseLine);
 				handSkeleton.add(baseJoint);
 
-				fingers[finger].baseJoint = baseJoint;
-				fingers[finger].tipJoint = tipJoint;
+				handSkeleton.fingers[finger] = { baseJoint, tipJoint };
 			});
+
 			scene.add(handSkeleton);
-			console.log("window.handSkeleton set to window!");
 			window.handSkeleton = handSkeleton; // Store globally for updates
-			console.log("window.handSkeleton");
-			console.log(window.handSkeleton);
-			camera.position.z = 3;
-			camera.position.y = 1;
+			camera.position.z = 5;
 
 			// Mouse drag rotation
 			let isDragging = false;
