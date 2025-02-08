@@ -121,33 +121,55 @@ angular.module('app').factory('VisTools', function () {
 
   console.log("Init logs");
   vis.updateVisualizationAsync = async function (data) {
-    if (!window.handSkeleton) {
-      console.error("Hand skeleton visualization is not initialized.");
+    if (!window.leftHandSkeleton || !window.rightHandSkeleton) {
+      console.error("Hand skeletons are not initialized.");
       return;
     }
 
-    // Update wrist rotation using quaternion
-    const wristQuaternion = new THREE.Quaternion(data.rq._x, data.rq._y, data.rq._z, data.rq._w);
-    window.handSkeleton.rotation.setFromQuaternion(wristQuaternion);
+    // Update wrist rotations
+    const leftWristQuaternion = new THREE.Quaternion(data.lq._x, data.lq._y, data.lq._z, data.lq._w);
+    // const rightWristQuaternion = new THREE.Quaternion(data.rq._x, data.rq._y, data.rq._z, data.rq._w);
+    const rightWristQuaternion = new THREE.Quaternion(data.rql._x, data.rql._y, data.rql._z, data.rql._w);
 
-    // Update each finger's second joint rotation
-    const fingers = {
-      thumb: data.rqt,
-      index: data.rqi,
-      middle: data.rqm,
-      ring: data.rqr,
-      little: data.rql
-    };
+    // window.leftHandSkeleton.wristJoint.setRotationFromQuaternion(leftWristQuaternion);
+    // window.leftHandSkeleton.rotation.y += Math.PI; // Ensure left hand stays flipped
+    window.rightHandSkeleton.wristJoint.setRotationFromQuaternion(rightWristQuaternion);
+    window.leftHandSkeleton.wristJoint.setRotationFromQuaternion(leftWristQuaternion);
+    // const index2 = 4;
 
-    Object.keys(fingers).forEach(finger => {
-      if (window.handSkeleton.fingers[finger]) {
-        const quaternion = new THREE.Quaternion(
-            fingers[finger]._x,
-            fingers[finger]._y,
-            fingers[finger]._z,
-            fingers[finger]._w
-        );
-        window.handSkeleton.fingers[finger].tipJoint.setRotationFromQuaternion(quaternion);
+    // console.log(rightWristQuaternion);
+    // window.leftHandSkeleton.rotation.y += Math.PI; // Ensure left hand stays flipped
+
+    // Update fingers relative to wrist
+    const fingers = ["thumb", "index", "middle", "ring", "little"];
+    const leftFingerData = [data.lqt, data.lqi, data.lqm, data.lqr, data.lql];
+    const rightFingerData = [data.rqt, data.rqi, data.rqm, data.rqr, data.rql];
+    // console.log(rightFingerData[index2]);
+    // const rightQuatW = new THREE.Quaternion(rightFingerData[index2]._x, rightFingerData[index2]._y, rightFingerData[index2]._z, rightFingerData[index2]._w);
+    // window.rightHandSkeleton.wristJoint.setRotationFromQuaternion(rightQuatW);
+
+    fingers.forEach((finger, index) => {
+      if (window.leftHandSkeleton.wristJoint.fingers[finger]) {
+        const leftQuat = new THREE.Quaternion(leftFingerData[index]._x, leftFingerData[index]._y, leftFingerData[index]._z, leftFingerData[index]._w);
+        window.leftHandSkeleton.wristJoint.fingers[finger].baseJoint.setRotationFromQuaternion(leftQuat);
+      }
+      if (finger == "little") {
+        // const rightQuat = new THREE.Quaternion(rightFingerData[index]._x, rightFingerData[index]._y, rightFingerData[index]._z, rightFingerData[index]._w);
+        // window.rightHandSkeleton.wristJoint.setRotationFromQuaternion(rightQuat);
+      } else {
+        if (window.rightHandSkeleton.wristJoint.fingers[finger]) {
+          console.log(finger);
+          // const rightQuat = new THREE.Quaternion(rightFingerData[index]._x, rightFingerData[index]._y, rightFingerData[index]._z, rightFingerData[index]._w);
+          // window.rightHandSkeleton.wristJoint.fingers[finger].baseJoint.setRotationFromQuaternion(rightQuat);
+          // window.rightHandSkeleton.wristJoint.fingers[finger].tipJoint.quaternion.copy(rightWristQuaternion.clone().multiply(rightQuat));
+          // const combinedRightQuat = new THREE.Quaternion();
+          // combinedRightQuat.multiplyQuaternions(rightWristQuaternion, rightQuat); // Apply wrist rotation first
+          // window.rightHandSkeleton.fingers[finger].tipJoint.quaternion.copy(combinedRightQuat);
+          // window.rightHandSkeleton.wristJoint.fingers[finger].baseJoint.setRotationFromQuaternion(combinedRightQuat);
+          const rightQuat = new THREE.Quaternion(rightFingerData[index]._x, rightFingerData[index]._y, rightFingerData[index]._z, rightFingerData[index]._w);
+          window.rightHandSkeleton.wristJoint.fingers[finger].tipJoint.quaternion.multiplyQuaternions(rightWristQuaternion.clone().invert(), rightQuat);
+
+        }
       }
     });
 

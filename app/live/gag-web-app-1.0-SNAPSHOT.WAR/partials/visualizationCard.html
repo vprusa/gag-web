@@ -59,47 +59,68 @@
 			const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
 			scene.add(ambientLight);
 
-			// Create hand skeleton
+			// Create hand skeleton function
 			const material = new THREE.LineBasicMaterial({ color: 0x00ff00, linewidth: 3 });
 			const createFinger = (base, tip) => {
 				const geometry = new THREE.BufferGeometry().setFromPoints([base, tip]);
 				return new THREE.Line(geometry, material);
 			};
 
-			const wrist = new THREE.Vector3(0, 0, 0);
-			const fingers = {
-				thumb: { base: new THREE.Vector3(-0.4, 0.8, 0), length: 0.6 },
-				index: { base: new THREE.Vector3(-0.2, 1.0, 0), length: 0.8 },
-				middle: { base: new THREE.Vector3(0, 1.0, 0), length: 1.0 },
-				ring: { base: new THREE.Vector3(0.2, 1.0, 0), length: 0.9 },
-				little: { base: new THREE.Vector3(0.4, 1.0, 0), length: 0.6 }
+			const createHandSkeleton = (offsetX, rotateY = 0) => {
+				const handSkeleton = new THREE.Group();
+
+				// Create a wrist joint that will act as the rotation pivot
+				const wristJoint = new THREE.Object3D();
+				wristJoint.position.set(offsetX, 0, 0);
+				handSkeleton.add(wristJoint); // Attach wrist to handSkeleton
+
+				const fingers = {
+					thumb: { base: new THREE.Vector3(-0.4, 0.8, 0), length: 0.6 },
+					index: { base: new THREE.Vector3(-0.2, 1.0, 0), length: 0.8 },
+					middle: { base: new THREE.Vector3(0, 1.0, 0), length: 1.0 },
+					ring: { base: new THREE.Vector3(0.2, 1.0, 0), length: 0.9 },
+					little: { base: new THREE.Vector3(0.4, 1.0, 0), length: 0.6 }
+				};
+
+				wristJoint.fingers = {};
+
+				Object.keys(fingers).forEach(finger => {
+					const baseJoint = new THREE.Object3D();
+					baseJoint.position.copy(fingers[finger].base);
+					const tipJoint = new THREE.Object3D();
+					baseJoint.add(tipJoint);
+
+					const baseLine = createFinger(new THREE.Vector3(0, 0, 0), fingers[finger].base);
+					const tipLine = createFinger(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, fingers[finger].length, 0));
+					tipJoint.add(tipLine);
+
+					wristJoint.add(baseLine);
+					wristJoint.add(baseJoint);
+					wristJoint.fingers[finger] = { baseJoint, tipJoint };
+				});
+
+				handSkeleton.wristJoint = wristJoint; // Store wristJoint inside the handSkeleton for reference
+				// handSkeleton.y += rotateY; // Rotate wrist by default for left hand
+
+				return handSkeleton;
 			};
+			// window.rightHandSkeleton.setRotationFromQuaternion(new THREE.Quaternion(0.121704, 0.0247192, 0.012085, 0.0072631));
+			// window.rightHandSkeleton.rotation.x += Math.PI;
+			// Create both hands
+			const leftHand = createHandSkeleton(1.0, Math.PI); // Rotate left hand by 180 degrees
+			const rightHand = createHandSkeleton(1.0);
+			scene.add(leftHand);
+			scene.add(rightHand);
 
-			const handSkeleton = new THREE.Group();
-			handSkeleton.fingers = {}; // Store fingers in handSkeleton
+			window.leftHandSkeleton = leftHand;
+			window.rightHandSkeleton = rightHand;
+			window.leftHandSkeleton.rotation.y += Math.PI;
+			// window.rightHandSkeleton.rotation.y += Math.PI;
 
-			Object.keys(fingers).forEach(finger => {
-				const baseJoint = new THREE.Object3D();
-				baseJoint.position.copy(fingers[finger].base);
-				const tipJoint = new THREE.Object3D();
-				// tipJoint.position.y = fingers[finger].length;
-				baseJoint.add(tipJoint);
+			camera.position.z = 3;
+			camera.position.y = 1;
 
-				const baseLine = createFinger(wrist, fingers[finger].base);
-				const tipLine = createFinger(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, fingers[finger].length, 0));
-				tipJoint.add(tipLine);
-
-				handSkeleton.add(baseLine);
-				handSkeleton.add(baseJoint);
-
-				handSkeleton.fingers[finger] = { baseJoint, tipJoint };
-			});
-
-			scene.add(handSkeleton);
-			window.handSkeleton = handSkeleton; // Store globally for updates
-			camera.position.z = 5;
-
-			// Mouse drag rotation
+			// Mouse drag rotation (rotate the scene instead of the hand)
 			let isDragging = false;
 			let previousMousePosition = { x: 0, y: 0 };
 			container.addEventListener("mousedown", (event) => {
@@ -110,12 +131,44 @@
 				if (!isDragging) return;
 				let deltaX = event.clientX - previousMousePosition.x;
 				let deltaY = event.clientY - previousMousePosition.y;
-				handSkeleton.rotation.y += deltaX * 0.01;
-				handSkeleton.rotation.x += deltaY * 0.01;
+				scene.rotation.y += deltaX * 0.01;
+				scene.rotation.x += deltaY * 0.01;
 				previousMousePosition = { x: event.clientX, y: event.clientY };
 			});
 			container.addEventListener("mouseup", () => { isDragging = false; });
 			container.addEventListener("mouseleave", () => { isDragging = false; });
+
+			// Update hand rotations using quaternions
+			window.updateHandsVisualization = function (data) {
+				if (!window.leftHandSkeleton || !window.rightHandSkeleton) {
+					console.error("Hand skeletons are not initialized.");
+					return;
+				}
+
+				// Update wrist rotations
+				const leftWristQuaternion = new THREE.Quaternion(data.lq._x, data.lq._y, data.lq._z, data.lq._w);
+				const rightWristQuaternion = new THREE.Quaternion(data.rq._x, data.rq._y, data.rq._z, data.rq._w);
+				window.leftHandSkeleton.setRotationFromQuaternion(leftWristQuaternion);
+				window.rightHandSkeleton.setRotationFromQuaternion(rightWristQuaternion);
+
+				window.leftHandSkeleton.rotation.y += Math.PI;
+
+				// Update fingers
+				const fingers = ["thumb", "index", "middle", "ring", "little"];
+				const leftFingerData = [data.lqt, data.lqi, data.lqm, data.lqr, data.lql];
+				const rightFingerData = [data.rqt, data.rqi, data.rqm, data.rqr, data.rql];
+
+				fingers.forEach((finger, index) => {
+					if (window.leftHandSkeleton.wristJoint.fingers[finger]) {
+						const leftQuat = new THREE.Quaternion(leftFingerData[index]._x, leftFingerData[index]._y, leftFingerData[index]._z, leftFingerData[index]._w);
+						window.leftHandSkeleton.wristJoint.fingers[finger].tipJoint.setRotationFromQuaternion(leftQuat);
+					}
+					if (window.rightHandSkeleton.wristJoint.fingers[finger]) {
+						const rightQuat = new THREE.Quaternion(rightFingerData[index]._x, rightFingerData[index]._y, rightFingerData[index]._z, rightFingerData[index]._w);
+						window.rightHandSkeleton.wristJoint.fingers[finger].tipJoint.setRotationFromQuaternion(rightQuat);
+					}
+				});
+			};
 
 			// Animation loop
 			function animate() {
