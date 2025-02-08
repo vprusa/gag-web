@@ -3,6 +3,7 @@
 /**
  * @author Vojtěch Průša (prusa.vojtech@gmail.com)
  */
+console.log("init app vis tools");
 angular.module('app').factory('VisTools', function () {
   // visualization
   let vis = {
@@ -118,7 +119,38 @@ angular.module('app').factory('VisTools', function () {
     vis.updateVisualizationAsync(data);
   };
 
+  console.log("Init logs");
   vis.updateVisualizationAsync = async function (data) {
+    if (!window.handSkeleton) {
+      console.error("Hand skeleton visualization is not initialized.");
+      return;
+    }
+
+    // Update wrist rotation using quaternion
+    const wristQuaternion = new THREE.Quaternion(data.rq._x, data.rq._y, data.rq._z, data.rq._w);
+    window.handSkeleton.rotation.setFromQuaternion(wristQuaternion);
+
+    // Update each finger's second joint rotation
+    const fingers = {
+      thumb: data.rqt,
+      index: data.rqi,
+      middle: data.rqm,
+      ring: data.rqr,
+      little: data.rql
+    };
+
+    Object.keys(fingers).forEach(finger => {
+      if (window.handSkeleton.fingers[finger]) {
+        const quaternion = new THREE.Quaternion(
+            fingers[finger]._x,
+            fingers[finger]._y,
+            fingers[finger]._z,
+            fingers[finger]._w
+        );
+        window.handSkeleton.fingers[finger].tipJoint.setRotationFromQuaternion(quaternion);
+      }
+    });
+
     //console.log("updateVisualizationAsync")
     //console.log(data)
     //data.rq.normalize();
@@ -132,7 +164,7 @@ angular.module('app').factory('VisTools', function () {
 
     // console.log("data.rqr");
     // console.log(data.rqr);
-    handVisualization.scene.updateAngles(0,
+/*    handVisualization.scene.updateAngles(0,
       // TODO make wrist work
       //data.rq._y, -data.rq._x, data.rq._z, data.rq._w,
       data.rq._x, data.rq._y, data.rq._z, data.rq._w,
@@ -150,7 +182,7 @@ angular.module('app').factory('VisTools', function () {
       data.lqm._x, data.lqm._y, data.lqm._z, data.lqm._w,
       data.lqr._x, data.lqr._y, data.lqr._z, data.lqr._w,
       data.lql._x, data.lql._y, data.lql._z, data.lql._w
-    );
+    );*/
   };
 
   return vis;
