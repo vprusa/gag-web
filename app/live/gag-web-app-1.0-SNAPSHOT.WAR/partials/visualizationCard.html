@@ -1,4 +1,56 @@
 <div class="card">
+	<div class="sensor-adjustments" style="margin-bottom: 40px; margin-top: -20px;">
+		<table border="1" style="width:100%; text-align: center;">
+			<tr>
+				<th>Joint</th>
+				<th>X</th>
+				<th>Y</th>
+				<th>Z</th>
+			</tr>
+			<tr>
+				<td>Wrist</td>
+				<td>
+<!--					<input type="range" id="wrist-x" min="-180" max="180" value="0">-->
+					<input type="range" id="wrist-x" min="-180" max="180" value="0"
+						   oninput="document.getElementById('wrist-x-num').value = this.value;">
+					<input type="number" id="wrist-x-num" min="-180" max="180" value="0"
+						   oninput="document.getElementById('wrist-x').value = this.value;">
+				</td>
+				<td><input type="range" id="wrist-y" min="-180" max="180" value="0"></td>
+				<td><input type="range" id="wrist-z" min="-180" max="180" value="0"></td>
+			</tr>
+			<tr>
+				<td>Thumb</td>
+				<td><input type="range" id="thumb-x" min="-180" max="180" value="0"></td>
+				<td><input type="range" id="thumb-y" min="-180" max="180" value="0"></td>
+				<td><input type="range" id="thumb-z" min="-180" max="180" value="0"></td>
+			</tr>
+			<tr>
+				<td>Index</td>
+				<td><input type="range" id="index-x" min="-180" max="180" value="0"></td>
+				<td><input type="range" id="index-y" min="-180" max="180" value="0"></td>
+				<td><input type="range" id="index-z" min="-180" max="180" value="0"></td>
+			</tr>
+			<tr>
+				<td>Middle</td>
+				<td><input type="range" id="middle-x" min="-180" max="180" value="0"></td>
+				<td><input type="range" id="middle-y" min="-180" max="180" value="0"></td>
+				<td><input type="range" id="middle-z" min="-180" max="180" value="0"></td>
+			</tr>
+			<tr>
+				<td>Ring</td>
+				<td><input type="range" id="ring-x" min="-180" max="180" value="0"></td>
+				<td><input type="range" id="ring-y" min="-180" max="180" value="0"></td>
+				<td><input type="range" id="ring-z" min="-180" max="180" value="0"></td>
+			</tr>
+			<tr>
+				<td>Little</td>
+				<td><input type="range" id="little-x" min="-180" max="180" value="0"></td>
+				<td><input type="range" id="little-y" min="-180" max="180" value="0"></td>
+				<td><input type="range" id="little-z" min="-180" max="180" value="0"></td>
+			</tr>
+		</table>
+	</div>
 
 	<div class="card-header card-header-primary">
 		<h4 class="card-title">Live</h4>
@@ -9,7 +61,7 @@
 		<div class="pusher">
 			<main id="main" class="ui green tertiary inverted segment">
 <!--				<section class="ui blue pilled message">Vis</section>-->
-				<section id="container" style="width: 100%; height: 300px;"></section>
+				<section id="container" style="width: 350px; height: 300px;"></section>
 			</main>
 		</div>
 		<progress style="background: #ab47bc; width: 100%; height: 5px;" id="player-progress" max="100"
@@ -107,8 +159,8 @@
 			// window.rightHandSkeleton.setRotationFromQuaternion(new THREE.Quaternion(0.121704, 0.0247192, 0.012085, 0.0072631));
 			// window.rightHandSkeleton.rotation.x += Math.PI;
 			// Create both hands
-			const leftHand = createHandSkeleton(1.0, Math.PI); // Rotate left hand by 180 degrees
-			const rightHand = createHandSkeleton(1.0);
+			const leftHand = createHandSkeleton(1.2, Math.PI); // Rotate left hand by 180 degrees
+			const rightHand = createHandSkeleton(1.2);
 			scene.add(leftHand);
 			scene.add(rightHand);
 
@@ -117,7 +169,7 @@
 			window.leftHandSkeleton.rotation.y += Math.PI;
 			// window.rightHandSkeleton.rotation.y += Math.PI;
 
-			camera.position.z = 3;
+			camera.position.z = 3.5;
 			camera.position.y = 1;
 
 			// Mouse drag rotation (rotate the scene instead of the hand)

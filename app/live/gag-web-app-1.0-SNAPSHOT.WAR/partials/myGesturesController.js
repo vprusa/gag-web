@@ -57,6 +57,7 @@ angular
         };
 
         $scope.listDetail = function (id) {
+          console.log("listDetail");
           if ($scope.selectedGestureList.display == -1 || id != $scope.selectedGestureList.display) {
             commonTools.getGestureDetailData(id).then(function (response) {
               $scope.selectedGestureList.data = response;
@@ -131,6 +132,7 @@ angular
             commonTools.getGestureInteresting($scope.selectedGestureDetail.selectedGesture).then(function (response) {
               // console.log(response);
               $scope.vis.resetProgressBar();
+              console.log(response);
               $scope.vis.currentGesture.startTime = response[0].t;
               $scope.vis.currentGesture.endTime = response[1].t;
             }, function (response) {

@@ -128,83 +128,48 @@ angular.module('app').factory('VisTools', function () {
 
     // Update wrist rotations
     const leftWristQuaternion = new THREE.Quaternion(data.lq._x, data.lq._y, data.lq._z, data.lq._w);
-    // const rightWristQuaternion = new THREE.Quaternion(data.rq._x, data.rq._y, data.rq._z, data.rq._w);
     const rightWristQuaternion = new THREE.Quaternion(data.rql._x, data.rql._y, data.rql._z, data.rql._w);
 
-    // window.leftHandSkeleton.wristJoint.setRotationFromQuaternion(leftWristQuaternion);
-    // window.leftHandSkeleton.rotation.y += Math.PI; // Ensure left hand stays flipped
+    // Read wrist-x input and convert degrees to radians
+    const wristXOffset = parseFloat(document.getElementById("wrist-x").value) * (Math.PI / 180);
+    const offsetQuaternion = new THREE.Quaternion().setFromEuler(new THREE.Euler(wristXOffset, 0, 0));
+    // leftWristQuaternion.multiply(offsetQuaternion); // should be inverted
+    rightWristQuaternion.multiply(offsetQuaternion);
+
     window.rightHandSkeleton.wristJoint.setRotationFromQuaternion(rightWristQuaternion);
     window.leftHandSkeleton.wristJoint.setRotationFromQuaternion(leftWristQuaternion);
-    // const index2 = 4;
-
-    // console.log(rightWristQuaternion);
-    // window.leftHandSkeleton.rotation.y += Math.PI; // Ensure left hand stays flipped
 
     // Update fingers relative to wrist
     const fingers = ["thumb", "index", "middle", "ring", "little"];
     const leftFingerData = [data.lqt, data.lqi, data.lqm, data.lqr, data.lql];
     const rightFingerData = [data.rqt, data.rqi, data.rqm, data.rqr, data.rql];
-    // console.log(rightFingerData[index2]);
-    // const rightQuatW = new THREE.Quaternion(rightFingerData[index2]._x, rightFingerData[index2]._y, rightFingerData[index2]._z, rightFingerData[index2]._w);
-    // window.rightHandSkeleton.wristJoint.setRotationFromQuaternion(rightQuatW);
 
     fingers.forEach((finger, index) => {
       if (window.leftHandSkeleton.wristJoint.fingers[finger]) {
+        // todo use invert()
         const leftQuat = new THREE.Quaternion(leftFingerData[index]._x, leftFingerData[index]._y, leftFingerData[index]._z, leftFingerData[index]._w);
         window.leftHandSkeleton.wristJoint.fingers[finger].baseJoint.setRotationFromQuaternion(leftQuat);
       }
       if (finger == "little") {
-        // const rightQuat = new THREE.Quaternion(rightFingerData[index]._x, rightFingerData[index]._y, rightFingerData[index]._z, rightFingerData[index]._w);
-        // window.rightHandSkeleton.wristJoint.setRotationFromQuaternion(rightQuat);
+        // skip little finger that acts as wrist data
       } else {
         if (window.rightHandSkeleton.wristJoint.fingers[finger]) {
-          console.log(finger);
-          // const rightQuat = new THREE.Quaternion(rightFingerData[index]._x, rightFingerData[index]._y, rightFingerData[index]._z, rightFingerData[index]._w);
-          // window.rightHandSkeleton.wristJoint.fingers[finger].baseJoint.setRotationFromQuaternion(rightQuat);
-          // window.rightHandSkeleton.wristJoint.fingers[finger].tipJoint.quaternion.copy(rightWristQuaternion.clone().multiply(rightQuat));
-          // const combinedRightQuat = new THREE.Quaternion();
-          // combinedRightQuat.multiplyQuaternions(rightWristQuaternion, rightQuat); // Apply wrist rotation first
-          // window.rightHandSkeleton.fingers[finger].tipJoint.quaternion.copy(combinedRightQuat);
-          // window.rightHandSkeleton.wristJoint.fingers[finger].baseJoint.setRotationFromQuaternion(combinedRightQuat);
+          // console.log(finger);
+          const fingerXOffset = parseFloat(document.getElementById(finger + "-x").value) * (Math.PI / 180);
+          const fingerYOffset = parseFloat(document.getElementById(finger + "-y").value) * (Math.PI / 180);
+          const fingerZOffset = parseFloat(document.getElementById(finger + "-z").value) * (Math.PI / 180);
+          const offsetQuaternion = new THREE.Quaternion().setFromEuler(new THREE.Euler(fingerXOffset, fingerYOffset, fingerZOffset));
+
           const rightQuat = new THREE.Quaternion(rightFingerData[index]._x, rightFingerData[index]._y, rightFingerData[index]._z, rightFingerData[index]._w);
-          window.rightHandSkeleton.wristJoint.fingers[finger].tipJoint.quaternion.multiplyQuaternions(rightWristQuaternion.clone().invert(), rightQuat);
+          window.rightHandSkeleton.wristJoint.fingers[finger].tipJoint.quaternion
+              .multiplyQuaternions(rightWristQuaternion.clone().invert(), rightQuat)
+              .multiply(offsetQuaternion).invert();
+
 
         }
       }
     });
 
-    //console.log("updateVisualizationAsync")
-    //console.log(data)
-    //data.rq.normalize();
-    //data.rq._x *= 10.0;
-    //data.rq._y *= 10.0;
-    //data.rq._z *= 10.0;
-    //data.rq._w *= 10.0;
-    //console.log(data.rqm);
-    // console.log("data.rql");
-    // console.log(data.rql);
-
-    // console.log("data.rqr");
-    // console.log(data.rqr);
-/*    handVisualization.scene.updateAngles(0,
-      // TODO make wrist work
-      //data.rq._y, -data.rq._x, data.rq._z, data.rq._w,
-      data.rq._x, data.rq._y, data.rq._z, data.rq._w,
-      //-data.rq._x, data.rq._z, -data.rq._y, data.rq._w,
-      //data.rqm._x, data.rqm._y, data.rqm._z, data.rqm._w,
-      data.rqt._x, data.rqt._y, data.rqt._z, data.rqt._w,
-      data.rqi._x, data.rqi._y, data.rqi._z, data.rqi._w,
-      data.rqm._x, data.rqm._y, data.rqm._z, data.rqm._w,
-      data.rqr._x, data.rqr._y, data.rqr._z, data.rqr._w,
-      data.rql._x, data.rql._y, data.rql._z, data.rql._w,
-
-      data.lq._x, data.lq._y, data.lq._z, data.lq._w,
-      data.lqt._x, data.lqt._y, data.lqt._z, data.lqt._w,
-      data.lqi._x, data.lqi._y, data.lqi._z, data.lqi._w,
-      data.lqm._x, data.lqm._y, data.lqm._z, data.lqm._w,
-      data.lqr._x, data.lqr._y, data.lqr._z, data.lqr._w,
-      data.lql._x, data.lql._y, data.lql._z, data.lql._w
-    );*/
   };
 
   return vis;
