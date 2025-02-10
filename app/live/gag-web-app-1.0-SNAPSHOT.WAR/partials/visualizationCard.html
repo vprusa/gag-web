@@ -1,53 +1,298 @@
 <div class="card">
 	<div class="sensor-adjustments" style="margin-bottom: 40px; margin-top: -20px;">
+		<h3>Left Hand Skeleton</h3>
 		<table border="1" style="width:100%; text-align: center;">
 			<tr>
 				<th>Joint</th>
 				<th>X</th>
+				<th>X</th>
 				<th>Y</th>
+				<th>Y</th>
+				<th>Z</th>
 				<th>Z</th>
 			</tr>
 			<tr>
 				<td>Wrist</td>
 				<td>
-<!--					<input type="range" id="wrist-x" min="-180" max="180" value="0">-->
-					<input type="range" id="wrist-x" min="-180" max="180" value="0"
-						   oninput="document.getElementById('wrist-x-num').value = this.value;">
-					<input type="number" id="wrist-x-num" min="-180" max="180" value="0"
-						   oninput="document.getElementById('wrist-x').value = this.value;">
+					<input type="range" id="left-wrist-x" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-wrist-x-num').value = this.value;">
 				</td>
-				<td><input type="range" id="wrist-y" min="-180" max="180" value="0"></td>
-				<td><input type="range" id="wrist-z" min="-180" max="180" value="0"></td>
+				<td>
+					<input type="number" id="left-wrist-x-num" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-wrist-x').value = this.value;">
+				</td>
+				<td>
+					<input type="range" id="left-wrist-y" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-wrist-y-num').value = this.value;">
+				</td>
+				<td>
+					<input type="number" id="left-wrist-y-num" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-wrist-y').value = this.value;">
+				</td>
+				<td>
+					<input type="range" id="left-wrist-z" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-wrist-z-num').value = this.value;">
+				</td>
+				<td>
+					<input type="number" id="left-wrist-z-num" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-wrist-z').value = this.value;">
+				</td>
 			</tr>
 			<tr>
 				<td>Thumb</td>
-				<td><input type="range" id="thumb-x" min="-180" max="180" value="0"></td>
-				<td><input type="range" id="thumb-y" min="-180" max="180" value="0"></td>
-				<td><input type="range" id="thumb-z" min="-180" max="180" value="0"></td>
+				<td>
+					<input type="range" id="left-thumb-x" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-thumb-x-num').value = this.value;">
+				</td>
+				<td>
+					<input type="number" id="left-thumb-x-num" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-thumb-x').value = this.value;">
+				</td>
+				<td>
+					<input type="range" id="left-thumb-y" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-thumb-y-num').value = this.value;">
+				</td>
+				<td>
+					<input type="number" id="left-thumb-y-num" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-thumb-y').value = this.value;">
+				</td>
+				<td>
+					<input type="range" id="left-thumb-z" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-thumb-z-num').value = this.value;">
+				</td>
+				<td>
+					<input type="number" id="left-thumb-z-num" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-thumb-z').value = this.value;">
+				</td>
 			</tr>
 			<tr>
 				<td>Index</td>
-				<td><input type="range" id="index-x" min="-180" max="180" value="0"></td>
-				<td><input type="range" id="index-y" min="-180" max="180" value="0"></td>
-				<td><input type="range" id="index-z" min="-180" max="180" value="0"></td>
-			</tr>
-			<tr>
-				<td>Middle</td>
-				<td><input type="range" id="middle-x" min="-180" max="180" value="0"></td>
-				<td><input type="range" id="middle-y" min="-180" max="180" value="0"></td>
-				<td><input type="range" id="middle-z" min="-180" max="180" value="0"></td>
+				<td>
+					<input type="range" id="left-index-x" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-thumb-x-num').value = this.value;">
+				</td>
+				<td>
+					<input type="number" id="left-index-x-num" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-thumb-x').value = this.value;">
+				</td>
+				<td>
+					<input type="range" id="left-index-y" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-thumb-y-num').value = this.value;">
+				</td>
+				<td>
+					<input type="number" id="left-index-y-num" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-thumb-y').value = this.value;">
+				</td>
+				<td>
+					<input type="range" id="left-index-z" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-thumb-z-num').value = this.value;">
+				</td>
+				<td>
+					<input type="number" id="left-index-z-num" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-thumb-z').value = this.value;">
+				</td>
 			</tr>
 			<tr>
 				<td>Ring</td>
-				<td><input type="range" id="ring-x" min="-180" max="180" value="0"></td>
-				<td><input type="range" id="ring-y" min="-180" max="180" value="0"></td>
-				<td><input type="range" id="ring-z" min="-180" max="180" value="0"></td>
+				<td>
+					<input type="range" id="left-ring-x" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-thumb-x-num').value = this.value;">
+				</td>
+				<td>
+					<input type="number" id="left-ring-x-num" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-thumb-x').value = this.value;">
+				</td>
+				<td>
+					<input type="range" id="left-ring-y" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-thumb-y-num').value = this.value;">
+				</td>
+				<td>
+					<input type="number" id="left-ring-y-num" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-thumb-y').value = this.value;">
+				</td>
+				<td>
+					<input type="range" id="left-ring-z" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-thumb-z-num').value = this.value;">
+				</td>
+				<td>
+					<input type="number" id="left-ring-z-num" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-thumb-z').value = this.value;">
+				</td>
 			</tr>
 			<tr>
 				<td>Little</td>
-				<td><input type="range" id="little-x" min="-180" max="180" value="0"></td>
-				<td><input type="range" id="little-y" min="-180" max="180" value="0"></td>
-				<td><input type="range" id="little-z" min="-180" max="180" value="0"></td>
+				<td>
+					<input type="range" id="left-little-x" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-thumb-x-num').value = this.value;">
+				</td>
+				<td>
+					<input type="number" id="left-little-x-num" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-thumb-x').value = this.value;">
+				</td>
+				<td>
+					<input type="range" id="left-little-y" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-thumb-y-num').value = this.value;">
+				</td>
+				<td>
+					<input type="number" id="left-little-y-num" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-thumb-y').value = this.value;">
+				</td>
+				<td>
+					<input type="range" id="left-little-z" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-thumb-z-num').value = this.value;">
+				</td>
+				<td>
+					<input type="number" id="left-little-z-num" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-thumb-z').value = this.value;">
+				</td>
+			</tr>
+		</table>
+
+		<h3>Right Hand Skeleton</h3>
+		<table border="1" style="width:100%; text-align: center;">
+			<tr>
+				<th>Joint</th>
+				<th>X</th>
+				<th>X</th>
+				<th>Y</th>
+				<th>Y</th>
+				<th>Z</th>
+				<th>Z</th>
+			</tr>
+			<tr>
+				<td>Wrist</td>
+				<td>
+					<input type="range" id="right-wrist-x" min="-180" max="180" value="0"
+						   oninput="document.getElementById('right-wrist-x-num').value = this.value;">
+				</td>
+				<td>
+					<input type="number" id="right-wrist-x-num" min="-180" max="180" value="0"
+						   oninput="document.getElementById('right-wrist-x').value = this.value;">
+				</td>
+				<td>
+					<input type="range" id="right-wrist-y" min="-180" max="180" value="0"
+						   oninput="document.getElementById('right-wrist-y-num').value = this.value;">
+				</td>
+				<td>
+					<input type="number" id="right-wrist-y-num" min="-180" max="180" value="0"
+						   oninput="document.getElementById('right-wrist-y').value = this.value;">
+				</td>
+				<td>
+					<input type="range" id="right-wrist-z" min="-180" max="180" value="0"
+						   oninput="document.getElementById('right-wrist-z-num').value = this.value;">
+				</td>
+				<td>
+					<input type="number" id="right-wrist-z-num" min="-180" max="180" value="0"
+						   oninput="document.getElementById('right-wrist-z').value = this.value;">
+				</td>
+			</tr>
+			<tr>
+				<td>Thumb</td>
+				<td>
+					<input type="range" id="right-thumb-x" min="-180" max="180" value="0"
+						   oninput="document.getElementById('right-thumb-x-num').value = this.value;">
+				</td>
+				<td>
+					<input type="number" id="right-thumb-x-num" min="-180" max="180" value="0"
+						   oninput="document.getElementById('right-thumb-x').value = this.value;">
+				</td>
+				<td>
+					<input type="range" id="right-thumb-y" min="-180" max="180" value="0"
+						   oninput="document.getElementById('right-thumb-y-num').value = this.value;">
+				</td>
+				<td>
+					<input type="number" id="right-thumb-y-num" min="-180" max="180" value="0"
+						   oninput="document.getElementById('right-thumb-y').value = this.value;">
+				</td>
+				<td>
+					<input type="range" id="right-thumb-z" min="-180" max="180" value="0"
+						   oninput="document.getElementById('right-thumb-z-num').value = this.value;">
+				</td>
+				<td>
+					<input type="number" id="right-thumb-z-num" min="-180" max="180" value="0"
+						   oninput="document.getElementById('right-thumb-z').value = this.value;">
+				</td>
+			</tr>
+			<tr>
+				<td>Index</td>
+				<td>
+					<input type="range" id="right-index-x" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-thumb-x-num').value = this.value;">
+				</td>
+				<td>
+					<input type="number" id="right-index-x-num" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-thumb-x').value = this.value;">
+				</td>
+				<td>
+					<input type="range" id="right-index-y" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-thumb-y-num').value = this.value;">
+				</td>
+				<td>
+					<input type="number" id="right-index-y-num" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-thumb-y').value = this.value;">
+				</td>
+				<td>
+					<input type="range" id="right-index-z" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-thumb-z-num').value = this.value;">
+				</td>
+				<td>
+					<input type="number" id="right-index-z-num" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-thumb-z').value = this.value;">
+				</td>
+			</tr>
+			<tr>
+				<td>Ring</td>
+				<td>
+					<input type="range" id="right-ring-x" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-thumb-x-num').value = this.value;">
+				</td>
+				<td>
+					<input type="number" id="right-ring-x-num" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-thumb-x').value = this.value;">
+				</td>
+				<td>
+					<input type="range" id="right-ring-y" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-thumb-y-num').value = this.value;">
+				</td>
+				<td>
+					<input type="number" id="right-ring-y-num" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-thumb-y').value = this.value;">
+				</td>
+				<td>
+					<input type="range" id="right-ring-z" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-thumb-z-num').value = this.value;">
+				</td>
+				<td>
+					<input type="number" id="right-ring-z-num" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-thumb-z').value = this.value;">
+				</td>
+			</tr>
+			<tr>
+				<td>Little</td>
+				<td>
+					<input type="range" id="right-little-x" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-thumb-x-num').value = this.value;">
+				</td>
+				<td>
+					<input type="number" id="right-little-x-num" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-thumb-x').value = this.value;">
+				</td>
+				<td>
+					<input type="range" id="right-little-y" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-thumb-y-num').value = this.value;">
+				</td>
+				<td>
+					<input type="number" id="right-little-y-num" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-thumb-y').value = this.value;">
+				</td>
+				<td>
+					<input type="range" id="right-little-z" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-thumb-z-num').value = this.value;">
+				</td>
+				<td>
+					<input type="number" id="right-little-z-num" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-thumb-z').value = this.value;">
+				</td>
 			</tr>
 		</table>
 	</div>
