@@ -1,11 +1,11 @@
 package cz.muni.fi.gag.web.services.rest.endpoint;
 
-import cz.muni.fi.gag.web.persistence.entity.DataLine;
-import cz.muni.fi.gag.web.persistence.entity.Gesture;
-import cz.muni.fi.gag.web.persistence.entity.User;
+import cz.muni.fi.gag.web.persistence.entity.*;
 import cz.muni.fi.gag.web.services.filters.RecordedDataFilter;
 import cz.muni.fi.gag.web.services.service.DataLineService;
+import cz.muni.fi.gag.web.services.service.FingerDataLineService;
 import cz.muni.fi.gag.web.services.service.GestureService;
+import cz.muni.fi.gag.web.services.service.WristDataLineService;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
@@ -32,6 +32,11 @@ public class GestureEndpoint extends BaseEndpoint {
 
     @Inject
     private DataLineService dataLineService;
+
+    @Inject
+    private FingerDataLineService fingerDataLineService;
+    private WristDataLineService wristDataLineService;
+
 
     /*
      * @GET
@@ -112,16 +117,26 @@ public class GestureEndpoint extends BaseEndpoint {
 
             for (DataLine oldDataLine : filteredOldDataLines) {
                 // check if this will override the old data, i do not want to override old dataline gestureId, I want to create new dataline from the old
-//                filteredDataLine.setGesture(newGesture);
-//                dataLineService.create(filteredDataLine);
                 DataLine newDataLine = new DataLine();
                 newDataLine.setGesture(newGesture);
                 newDataLine.setTimestamp(oldDataLine.getTimestamp());
-//                newDataLine.setSensorData(oldDataLine.getSensorData()); // Assuming there's a method for copying data
-//                newDataLine.setAdditionalMetadata(oldDataLine.getAdditionalMetadata()); // Copy any additional fields
-
                 // Save the newly created data line
-                dataLineService.create(newDataLine);
+                // TODO check if I need save dataline and [Wrist|Finger]DataLines, or just [Wrist|Finger]DataLines,
+                //  forgot the javax datastructure inheritance
+                DataLine savedDataLine = dataLineService.create(newDataLine);
+                if (oldDataLine.getPosition()== Sensor.WRIST) {
+                    WristDataLine oldWristDataLine = wristDataLineService.findById(oldDataLine.getId()).get();
+                    WristDataLine newWristDataLine = oldWristDataLine.deepCopy();
+                    newWristDataLine.setGesture(newGesture);
+                    newWristDataLine = wristDataLineService.create(newWristDataLine);
+                } else {
+                    // finger
+                    FingerDataLine oldFingerDataLine = fingerDataLineService.findById(oldDataLine.getId()).get();
+                    FingerDataLine newFingerDataLine = oldFingerDataLine.deepCopy();
+                    newFingerDataLine.setGesture(newGesture);
+                    newFingerDataLine = fingerDataLineService.create(newFingerDataLine);
+//                    DataLine savedDataLine = dataLineService.create(newDataLine);
+                }
             }
             builder = Response.ok(newGesture);
         } catch (Exception e) {

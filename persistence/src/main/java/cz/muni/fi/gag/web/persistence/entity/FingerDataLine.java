@@ -3,6 +3,7 @@ package cz.muni.fi.gag.web.persistence.entity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.Entity;
+import java.util.Date;
 
 /**
  * @author Vojtech Prusa
@@ -216,4 +217,29 @@ public class FingerDataLine extends DataLine {
                 + ", accX=" + accX + ", accY=" + accY + ", accZ=" + accZ + "]";
     }
 
+    public FingerDataLine deepCopy() {
+        FingerDataLine copy = new FingerDataLine();
+
+        // Copy timestamp
+        copy.timestamp = (this.timestamp != null) ? new Date(this.timestamp.getTime()) : null;
+
+        // Copy gesture
+        copy.gesture = this.gesture;
+
+        // Copy position
+        copy.setPosition(this.getPosition());
+
+        // Copy hand position
+        copy.setHandPosition(this.getHandPosition());
+
+        copy.accX = this.accX;
+        copy.accY = this.accY;
+        copy.accZ = this.accZ;
+        copy.quatX = this.quatX;
+        copy.quatY = this.quatY;
+        copy.quatZ = this.quatZ;
+        copy.quatA = this.quatA;
+
+        return copy;
+    }
 }

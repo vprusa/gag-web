@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.Entity;
 import javax.persistence.Transient;
+import java.util.Date;
 
 /**
  * @author Vojtech Prusa
@@ -89,6 +90,34 @@ public class WristDataLine extends FingerDataLine {
         return super.toString() + " WristDataLine [magX=" + magX + ", magY=" + magY + ", magZ=" + magZ + "]";
     }
 
-    
+
+    public WristDataLine deepCopy() {
+        WristDataLine copy = new WristDataLine();
+
+        // Copy timestamp
+        copy.timestamp = (this.timestamp != null) ? new Date(this.timestamp.getTime()) : null;
+
+        // Copy gesture
+        copy.gesture = this.gesture;
+
+        // Copy position
+        copy.setPosition(this.getPosition());
+
+        // Copy hand position
+        copy.setHandPosition(this.getHandPosition());
+
+        copy.setAccX(getAccX());
+        copy.setAccY(getAccY());
+        copy.setAccZ(getAccZ());
+        copy.setQuatX(this.getQuatX());
+        copy.setQuatY(this.getQuatY());
+        copy.setQuatZ(this.getQuatZ());
+        copy.setQuatA(this.getQuatA());
+        copy.setMagX(this.getMagX());
+        copy.setMagY(this.getMagY());
+        copy.setMagZ(this.getMagZ());
+
+        return copy;
+    }
 
 }
