@@ -2,7 +2,7 @@
 
 ### Sample gesture recognition screen recording
 
-![right_hand_wave__single_dl_recognition](notes/videos/Screencast_20250216_234725__right_hand_wave__single_dl_recognition.webm)
+![right_hand_wave__single_dl_recognition](notes/videos/Screencast_20250216_234725__right_hand_wave__single_dl_recognition.webm.gif)
 
 ### Building/Running/Deploying
 
