@@ -15,7 +15,7 @@ mvn wildfly:start wildfly:undeploy install wildfly:deploy -DskipTests=true -Dche
 or to re-deploy on running server:
 
 ```
-mvn wildfly:undeploy install wildfly:deploy -DskipTests=true -Dcheckstyle.skip 
+mvn wildfly:undeploy clean install wildfly:deploy -DskipTests=true -Dcheckstyle.skip 
 ```
 
 #### Frontend 
