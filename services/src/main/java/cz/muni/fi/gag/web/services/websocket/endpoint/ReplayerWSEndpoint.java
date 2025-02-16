@@ -89,7 +89,7 @@ public class ReplayerWSEndpoint extends BaseWSEndpoint {
                 switch (pa.getAction()) {
                     case PLAY: {
                         // stop existing first
-                        log.info("action: " + PlayerActions.ActionsEnum.PLAY);
+                        log.info("Action: " + PlayerActions.ActionsEnum.PLAY);
                         Thread replayer = (Thread) session.getUserProperties().get(REPLAYER_KEY);
                         rep.prepare(true);
                         rep.setGestureId(pa.getGestureId());

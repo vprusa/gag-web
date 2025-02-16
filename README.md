@@ -33,6 +33,12 @@ In dir
 mvn dependency:get -Ddest=./ -Dartifact=mysql:mysql-connector-java:8.0.17 && mvn clean wildfly:undeploy install wildfly:deploy -DskipTests=true -Dcheckstyle.skip && mvn test -Dtest=WebsocketDatalineEndpointTest -DfailIfNoTests=false -Dcheckstyle.skip | tee app2.log
 ```
 
+#### sql
+
+```
+mysql -u gagweb --password=<password> -h localhost gagweb
+```
+
 #### zip 
 
 ```

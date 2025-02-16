@@ -1,9 +1,8 @@
 <div class="card">
 	<div class="sensor-adjustments" style="margin-bottom: 40px; margin-top: -20px;">
-		<h3>Left Hand Skeleton</h3>
 		<table border="1" style="width:100%; text-align: center;">
 			<tr>
-				<th>Joint</th>
+				<th>Left</th>
 				<th>X</th>
 				<th>X</th>
 				<th>Y</th>
@@ -92,6 +91,34 @@
 						   oninput="document.getElementById('left-thumb-z').value = this.value;">
 				</td>
 			</tr>
+
+			<tr>
+				<td>Middle</td>
+				<td>
+					<input type="range" id="left-middle-x" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-middle-x-num').value = this.value;">
+				</td>
+				<td>
+					<input type="number" id="left-middle-x-num" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-middle-x').value = this.value;">
+				</td>
+				<td>
+					<input type="range" id="left-middle-y" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-middle-y-num').value = this.value;">
+				</td>
+				<td>
+					<input type="number" id="left-middle-y-num" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-middle-y').value = this.value;">
+				</td>
+				<td>
+					<input type="range" id="left-middle-z" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-middle-z-num').value = this.value;">
+				</td>
+				<td>
+					<input type="number" id="left-middle-z-num" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-middle-z').value = this.value;">
+				</td>
+			</tr>
 			<tr>
 				<td>Ring</td>
 				<td>
@@ -148,10 +175,9 @@
 			</tr>
 		</table>
 
-		<h3>Right Hand Skeleton</h3>
 		<table border="1" style="width:100%; text-align: center;">
 			<tr>
-				<th>Joint</th>
+				<th>Right</th>
 				<th>X</th>
 				<th>X</th>
 				<th>Y</th>
@@ -238,6 +264,33 @@
 				<td>
 					<input type="number" id="right-index-z-num" min="-180" max="180" value="0"
 						   oninput="document.getElementById('left-thumb-z').value = this.value;">
+				</td>
+			</tr>
+			<tr>
+				<td>Middle</td>
+				<td>
+					<input type="range" id="right-middle-x" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-middle-x-num').value = this.value;">
+				</td>
+				<td>
+					<input type="number" id="right-middle-x-num" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-middle-x').value = this.value;">
+				</td>
+				<td>
+					<input type="range" id="right-middle-y" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-middle-y-num').value = this.value;">
+				</td>
+				<td>
+					<input type="number" id="right-middle-y-num" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-middle-y').value = this.value;">
+				</td>
+				<td>
+					<input type="range" id="right-middle-z" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-middle-z-num').value = this.value;">
+				</td>
+				<td>
+					<input type="number" id="right-middle-z-num" min="-180" max="180" value="0"
+						   oninput="document.getElementById('left-middle-z').value = this.value;">
 				</td>
 			</tr>
 			<tr>

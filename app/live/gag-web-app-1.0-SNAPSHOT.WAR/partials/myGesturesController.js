@@ -133,8 +133,10 @@ angular
               // console.log(response);
               $scope.vis.resetProgressBar();
               console.log(response);
-              $scope.vis.currentGesture.startTime = response[0].t;
-              $scope.vis.currentGesture.endTime = response[1].t;
+              if (response.length > 1) {
+                $scope.vis.currentGesture.startTime = response[0].t;
+                $scope.vis.currentGesture.endTime = response[1].t;
+              }
             }, function (response) {
               $scope.alerts.push({type: 'danger', title: 'Error ' + response.status, msg: response.statusText});
             });

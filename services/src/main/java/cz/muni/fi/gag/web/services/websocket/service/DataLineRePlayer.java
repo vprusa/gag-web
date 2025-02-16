@@ -28,8 +28,6 @@ import static cz.muni.fi.gag.web.services.websocket.service.DataLineRePlayer.Pla
  * Also fix this in {@link GestureRecognizer}
  */
 @Named
-//@Singleton
-//@Stateful
 @ApplicationScoped
 public class DataLineRePlayer implements Runnable, Serializable {
 
@@ -104,22 +102,26 @@ public class DataLineRePlayer implements Runnable, Serializable {
         prepare(false);
     }
     public void prepare(boolean force){
+        Log.info("Replay: preparing.");
         play();
-        if(dli == null){
+        Log.info("Replay: getting iterator.");
+        if (dli == null){
             dli = dataLineService.findByGestureId(gestureId).listIterator();
-        }else if(force){
+        } else if(force) {
             dli = dataLineService.findByGestureId(gestureId).listIterator();
         }
+        Log.info("Replay: prepare done.");
     }
 
     // https://stackoverflow.com/questions/28922040/alternative-to-thread-suspend-and-resume
     @Override
     public void run() {
         prepare();
-        Log.info("Running DataLine re-play");
+        Log.info("Running DataLine replay");
         // https://stackoverflow.com/questions/16504140/thread-stop-deprecated
-        // TODO fix the fix of the fix ?
+        // TODO fix the fix of the fix?
         if (Thread.interrupted()) {
+            Log.info("Replay interrupted");
             return;
         }
         Date before = null;
@@ -128,6 +130,7 @@ public class DataLineRePlayer implements Runnable, Serializable {
         try {
             int diffZeroLimitCounter = 0;
             while (dli != null && dli.hasNext()) {
+                Log.info("Replay: dli: " + dli.toString());
                 DataLine dl = dli.next();
                     switch (getState()) {
                         case IDLE:

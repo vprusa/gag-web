@@ -71,7 +71,8 @@ angular
           //selectedGesture: {-1: 'Select existing gesture'},
           //					<option selected value="-1">Select existing gesture</option>
           selectedGesture: "",
-          actionOptions: ['append', 'override']
+          actionOptions: ['append', 'override'],
+          hand: "1"
         };
 
         // Warning ... idk it is broken using ng-model displays additional broken option...

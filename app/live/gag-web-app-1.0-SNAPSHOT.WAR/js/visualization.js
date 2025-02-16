@@ -131,7 +131,7 @@ angular.module('app').factory('VisTools', function () {
     const rightWristQuaternion = new THREE.Quaternion(data.rql._x, data.rql._y, data.rql._z, data.rql._w);
 
     // Read wrist-x input and convert degrees to radians
-    const wristXOffset = parseFloat(document.getElementById("wrist-x").value) * (Math.PI / 180);
+    const wristXOffset = parseFloat(document.getElementById("right-wrist-x-num").value) * (Math.PI / 180);
     const offsetQuaternion = new THREE.Quaternion().setFromEuler(new THREE.Euler(wristXOffset, 0, 0));
     // leftWristQuaternion.multiply(offsetQuaternion); // should be inverted
     rightWristQuaternion.multiply(offsetQuaternion);
@@ -155,9 +155,9 @@ angular.module('app').factory('VisTools', function () {
       } else {
         if (window.rightHandSkeleton.wristJoint.fingers[finger]) {
           // console.log(finger);
-          const fingerXOffset = parseFloat(document.getElementById(finger + "-x").value) * (Math.PI / 180);
-          const fingerYOffset = parseFloat(document.getElementById(finger + "-y").value) * (Math.PI / 180);
-          const fingerZOffset = parseFloat(document.getElementById(finger + "-z").value) * (Math.PI / 180);
+          const fingerXOffset = parseFloat(document.getElementById("right-" + finger + "-x").value) * (Math.PI / 180);
+          const fingerYOffset = parseFloat(document.getElementById("right-" + finger + "-y").value) * (Math.PI / 180);
+          const fingerZOffset = parseFloat(document.getElementById("right-" + finger + "-z").value) * (Math.PI / 180);
           const offsetQuaternion = new THREE.Quaternion().setFromEuler(new THREE.Euler(fingerXOffset, fingerYOffset, fingerZOffset));
 
           const rightQuat = new THREE.Quaternion(rightFingerData[index]._x, rightFingerData[index]._y, rightFingerData[index]._z, rightFingerData[index]._w);

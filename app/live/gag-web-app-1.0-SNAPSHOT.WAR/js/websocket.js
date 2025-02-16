@@ -87,7 +87,7 @@ angular.module('app').factory('WSTools', function (/*$rootScope*/) {
    */
   ws.onSendMessage = function (data) {
     // override
-    console.log("TODO ws.onSendMessage:override")
+    // console.log("TODO ws.onSendMessage:override")
   };
 
   ws.sendMessage = function (msg) {

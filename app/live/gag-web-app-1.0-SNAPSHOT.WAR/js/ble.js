@@ -141,8 +141,8 @@ angular.module('app').factory('BLETools', ['WSTools', function (WSTools) {
     //let received = ble.ab2str(data.currentTarget.value.buffer);
 
     let received = new Uint8Array(data.currentTarget.value.buffer);
-    let hand = received[0] == '*'.charCodeAt(0) ? 'RIGHT' : 'LEFT';
-    //let hand = received[0] == '*'.charCodeAt(0) ? 0 : 1;
+    // let hand = received[0] == '*'.charCodeAt(0) ? 'RIGHT' : 'LEFT';
+    let hand = received[0] == '*'.charCodeAt(0) ? 0 : 1;
     let finger = ble.convertNumberToFinger(received[2]);
     /*
     let quatA = ble.bytesToInt(received[3],received[4]);
