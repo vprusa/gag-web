@@ -152,7 +152,7 @@ angular
           var selectedDataLineIds = $scope.selectedGestureList.data.filter(item => item.selected).map(item=>item.id);
           console.log(selectedDataLineIds);
           // TODO
-          commonTools.saveAsNew($scope.selectedGestureList.gestureId, $scope.saveSelectedAsNewGestureAlias, selectedDataLineIds).then(function(){
+          commonTools.createGestureFrom($scope.selectedGestureList.gestureId, $scope.saveSelectedAsNewGestureAlias, selectedDataLineIds).then(function(){
            /* $scope.gestures = $scope.gestures.filter(function(item) {
               return item.id !== id;
             });*/
@@ -165,7 +165,7 @@ angular
                 msg: response.statusText
               });
             });*/
-            console.log("saveAsNew");
+            console.log("createGestureFrom");
           });
         };
 

@@ -38,12 +38,12 @@ angular.module('app', [
       });
     },
     createGesture: function (userAlias) {
-      return $http.post("/gagweb/api/gesture/" + userAlias).then(function (response) {
+      return $http.post("/gagweb/api/gesture/create/" + userAlias).then(function (response) {
         return response.data;
       });
     },
     createGestureFrom: function (oldGestureId, newAlias, dataLineIds) {
-      return $http.post("/gagweb/api/gesture-from/" + oldGestureId + "/" + newAlias, dataLineIds).then(function (response) {
+      return $http.post("/gagweb/api/gesture/gesture-from/" + oldGestureId + "/" + newAlias, dataLineIds).then(function (response) {
         return response.data;
       });
     },

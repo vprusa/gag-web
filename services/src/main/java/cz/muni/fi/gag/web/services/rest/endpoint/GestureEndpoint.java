@@ -72,35 +72,15 @@ public class GestureEndpoint extends BaseEndpoint {
         }
     }
 
-    // TODO add consumption of json object of now gesture data
-    @POST
-    //@Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed(USER_R)
-    @Path("{userAlias}")
-    public Response createGesture(@PathParam("userAlias") String userAlias) {
-        Response.ResponseBuilder builder;
-        try {
-            Gesture g = new Gesture();
-            g.setUserAlias(userAlias);
-            g.setFiltered(false);
-            g.setDateCreated(new Date());
-            g.setUser(current());
-            Gesture created = gestureService.create(g);
-            builder = Response.ok(created);
-        } catch (Exception e) {
-            builder = Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage());
-        }
-        return builder.build();
-    }
 
     @POST
-    //@Consumes(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed(USER_R)
-    @Path("/gesture-from/{oldGestureId}/{newAlias}")
-    public Response gestureFrom(@PathParam("oldGestureId") Long oldGestureId, @PathParam("newAlias") String newAlias, /*TODO @PathParam("ids")*/ List<Long> dataLineIds) {
+    @Path("gesture-from/{oldGestureId}/{newAlias}")
+    public Response gestureFrom(@PathParam("oldGestureId") Long oldGestureId, @PathParam("newAlias") String newAlias, List<Long> dataLineIds) {
         // $http.post("/gagweb/api/gesture-from/" + oldGestureId + "/" + newAlias, dataLineIds).then(function (response) {
+        log.info("Creating gestureFrom oldGestureId:" + oldGestureId + " newAlias: " + newAlias);
         Response.ResponseBuilder builder;
         try {
             Gesture g = new Gesture();
@@ -144,6 +124,29 @@ public class GestureEndpoint extends BaseEndpoint {
         }
         return builder.build();
     }
+
+    // TODO add consumption of json object of now gesture data
+    @POST
+    //@Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed(USER_R)
+    @Path("create/{userAlias}")
+    public Response createGesture(@PathParam("userAlias") String userAlias) {
+        Response.ResponseBuilder builder;
+        try {
+            Gesture g = new Gesture();
+            g.setUserAlias(userAlias);
+            g.setFiltered(false);
+            g.setDateCreated(new Date());
+            g.setUser(current());
+            Gesture created = gestureService.create(g);
+            builder = Response.ok(created);
+        } catch (Exception e) {
+            builder = Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage());
+        }
+        return builder.build();
+    }
+
 
     @DELETE
     @Path("{id}")
