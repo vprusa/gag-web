@@ -80,6 +80,23 @@ public /*abstract */class DataLine extends GenericEntity implements Serializable
         this.hand = this.hand;
     }
 
+    public DataLine deepCopy() {
+        DataLine copy = new DataLine();
+
+        // Copy timestamp
+        copy.timestamp = (this.timestamp != null) ? new Date(this.timestamp.getTime()) : null;
+
+        // Copy gesture
+        copy.gesture = this.gesture;
+
+        // Copy position
+        copy.position = this.position;
+
+        // Copy hand position
+        copy.hand = this.hand;
+
+        return copy;
+    }
 
     @Override
     public String toString() {

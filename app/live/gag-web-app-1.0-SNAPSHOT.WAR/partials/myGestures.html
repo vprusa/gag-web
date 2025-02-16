@@ -1,9 +1,11 @@
 <!--<script src="./partials/characteristics.js"></script>-->
 
+
 <div class="row" data-ng-controller="MyGesturesController"  >
+
 	<div class="col-lg-6 col-md-12">
 		<input id="vis-numberOfHandsPairs" type="hidden" ng-value="{{vis.numberOfHandsPairs}}" >
-		<div ng-include="'partials/visualizationCard.html'" sty></div>
+		<div ng-include="'partials/visualizationCard.html'"></div>
 	</div>
 
 	<div class="col-lg-6 col-md-12">
@@ -52,7 +54,7 @@
 								<td>{{item.dateCreated | date: 'yyyy-MM-dd HH:MM'}}</td>
 								<td>
 									<a href="" class="btn btn-info" ng-click='listDetail(item.id)'
-										 ng-style="{'background-color':(selectedGestureList.display == item.id? 'green':'') }">
+										 ng-style="{'background-color':(selectedGestureList.gestureId == item.id? 'green':'') }">
 										<span class="glyphicon glyphicon-list-alt"></span>
 									</a>
 									<!--<a href="" class="btn btn-info" ng-click='clearGesture(item.id)'>
@@ -80,54 +82,85 @@
 			</div>
 		</div>
 	</div>
-</div>
 
-<div class="row">
-	<div class="card">
-		<div class="card-header card-header-primary">
-			<h4 class="card-title ">Gesture detail - whole (RS)</h4>
-			<p class="card-category">{{selectedGestureList.info}}</p>
-		</div>
-		<div class="card-body">
-			<div class="" ></div>
-			<div class="table-responsive" ng-if="selectedGestureList.display != -1">
-				<table class="table">
-					<thead class="text-primary">
-						<th>ID</th>
-						<th>Time</th>
-						<th>Position</th>
-						<th>quatA</th>
-						<th>quatX</th>
-						<th>quatY</th>
-						<th>quatZ</th>
-						<th>accX</th>
-						<th>accY</th>
-						<th>accZ</th>
-						<th>magX</th>
-						<th>magY</th>
-						<th>magZ</th>
-					</thead>
-					<tbody>
-						<tr ng-repeat="item in selectedGestureList.data">
+	<div class="row">
+		<div class="card">
+			<div class="card-header card-header-primary">
+				<h4 class="card-title ">Gesture detail - whole (RS)</h4>
+				<p class="card-category">{{selectedGestureList.info}}</p>
+			</div>
+			<div class="card-body">
+				<div>
+					<div>
+						<label>Selected new gesture:</label>
+						<input class="form-control" ng-model="saveSelectedAsNewGestureAlias" type="text"
+								   placeholder="Gesture Name"
+						style="display: inline-block; width: 20%; margin-left: 10px;">
+						<button class="btn btn-info desc"
+								ng-disabled="!anyItemSelected()"
+								ng-click="saveSelectedAsNewGesture()"><span class="glyphicon  glyphicon-save"></span></button>
+
+					</div>
+					<button class="btn btn-info desc"
+							ng-click="invertSelection()"><span class="glyphicon glyphicon-random"></span></button>
+					<button class="btn btn-info desc"
+							ng-disabled="!anyItemSelected()"
+							ng-click="deleteSelectedItems()"><span class="glyphicon glyphicon-remove"></span></button>
+
+				</div>
+				<div class="" ></div>
+	<!--			<div class="table-responsive" ng-if="selectedGestureList.display != -1">-->
+					<div class="table-responsive">
+
+					<table class="table">
+						<thead class="text-primary">
+							<th>ID</th>
+							<th>Time</th>
+							<th>Hand</th>
+							<th>Position</th>
+							<th>quatA</th>
+							<th>quatX</th>
+							<th>quatY</th>
+							<th>quatZ</th>
+							<th>accX</th>
+							<th>accY</th>
+							<th>accZ</th>
+							<th>magX</th>
+							<th>magY</th>
+							<th>magZ</th>
+							<th>Ops
+							</th>
+						</thead>
+						<tbody>
+							<tr ng-repeat="item in selectedGestureList.data" data-ng-click="item.selected = !item.selected"
+								ng-style="{'background-color':(item.selected ? 'green':'') }">
+
 							<td>{{item.id}}</td>
-							<td>{{item.t | date: 'yyyy-MM-dd HH:MM'}}</td>
-							<td>{{item.p}}</td>
-							<td>{{item.qA}}</td>
-							<td>{{item.qX}}</td>
-							<td>{{item.qY}}</td>
-							<td>{{item.qZ}}</td>
-							<td>{{item.aX}}</td>
-							<td>{{item.aY}}</td>
-							<td>{{item.aZ}}</td>
-							<td>{{item.mX}}</td>
-							<td>{{item.mY}}</td>
-							<td>{{item.mZ}}</td>
-						</tr>
-					</tbody>
-				</table>
+								<td>{{item.t | date: 'yyyy-MM-dd HH:MM'}}</td>
+								<td>{{item.h}}</td>
+								<td>{{item.p}}</td>
+								<td>{{item.qA}}</td>
+								<td>{{item.qX}}</td>
+								<td>{{item.qY}}</td>
+								<td>{{item.qZ}}</td>
+								<td>{{item.aX}}</td>
+								<td>{{item.aY}}</td>
+								<td>{{item.aZ}}</td>
+								<td>{{item.mX}}</td>
+								<td>{{item.mY}}</td>
+								<td>{{item.mZ}}</td>
+								<td>
+									<button class="btn btn-info desc"
+											ng-click='item.delete'><span class="glyphicon glyphicon-remove"></span></button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
 			</div>
 		</div>
 	</div>
 </div>
+
 
 <div ng-include="'partials/logMessages.html'"></div>

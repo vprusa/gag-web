@@ -42,6 +42,11 @@ angular.module('app', [
         return response.data;
       });
     },
+    createGestureFrom: function (oldGestureId, newAlias, dataLineIds) {
+      return $http.post("/gagweb/api/gesture-from/" + oldGestureId + "/" + newAlias, dataLineIds).then(function (response) {
+        return response.data;
+      });
+    },
     clearGesture: function (id) {
       return $http.post("/gagweb/api/gesture/clear/" + id).then(function (response) {
         return response.data;
@@ -59,6 +64,12 @@ angular.module('app', [
     },
     getGestureDetailData: function (id) {
       return $http.get("/gagweb/api/dataline/gesture/" + id).then(function (response) {
+        return response.data;
+      });
+    },
+    deleteDataLine: function (ids) {
+      // TODO ids is list of ids to be deleted
+      return $http.post("/gagweb/api/dataline/delete/", ids).then(function (response) {
         return response.data;
       });
     },

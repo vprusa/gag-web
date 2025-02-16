@@ -23,6 +23,14 @@ angular
           });
         });
 
+        $scope.selectedGestureList = {
+          gestureId: -1,
+          data: [],
+          selectedGesture: -1
+        };
+
+        $scope.selectedItems = {}
+
         $scope.ws = WSTools;
         $scope.vis = VisTools;
 
@@ -48,20 +56,29 @@ angular
 
         $scope.selectedGestureDetail = {
           info: "Watch 3D model of hands",
-          data: []
+          data: [],
+          selectedGesture: -1
         };
-
-        $scope.selectedGestureList = {
-          display: -1,
-          data: []
-        };
+        $scope.saveSelectedAsNewGestureAlias = "save-as-new-";
 
         $scope.listDetail = function (id) {
           console.log("listDetail");
-          if ($scope.selectedGestureList.display == -1 || id != $scope.selectedGestureList.display) {
+          if ($scope.selectedGestureList.gestureId == -1 || id != $scope.selectedGestureList.gestureId) {
+
             commonTools.getGestureDetailData(id).then(function (response) {
+              console.log("listDetail - response");
+              console.log(response);
               $scope.selectedGestureList.data = response;
-              $scope.selectedGestureList.display = id;
+              $scope.selectedGestureList.gestureId = id;
+              /*if (!$scope.$$phase) {
+              $scope.$apply();}
+              $timeout(function () {
+                $scope.selectedGestureList.data = response.data;
+                $scope.selectedGestureList.gestureId = id;
+                if (!$scope.$$phase) {
+                  $scope.$apply();}
+              }, 0);
+*/
             }, function (response) {
               $scope.alerts.push({
                 type: 'danger',
@@ -70,7 +87,7 @@ angular
               });
             });
           } else {
-            $scope.selectedGestureList.display = -1;
+            $scope.selectedGestureList.gestureId = -1;
           }
         };
 
@@ -96,10 +113,59 @@ angular
             });
         };
 
+        $scope.deleteSelectedItems = function () {
+          let selectedIds = $scope.selectedGestureList.data
+              .filter(item => item.selected)
+              .map(item => item.id);
+
+          if (selectedIds.length === 0) return;
+
+          $http.post("/gagweb/api/dataline/delete/", selectedIds).then(function (response) {
+            // Remove deleted items from list
+            $scope.selectedGestureList.data = $scope.selectedGestureList.data.filter(item => !item.selected);
+          }).catch(function (error) {
+            console.error("Error deleting selected data lines:", error);
+          });
+        };
+
+        $scope.anyItemSelected = function () {
+          return $scope.selectedGestureList.data.filter(item => item.selected).length > 0;
+        };
+
+        $scope.invertSelection = function () {
+          $scope.selectedGestureList.data.forEach(item => {
+            item.selected = !item.selected;
+          });
+        };
+
         $scope.switchActivateGesture = function (id, active) {
           commonTools.setGestureActive(id, !active).then(function(){
             var index = $scope.gestures.map(function(e) { return e.id; }).indexOf(id);
             $scope.gestures[index].active = !active;
+          });
+        };
+
+        $scope.saveSelectedAsNewGesture = function () {
+          console.log("Save selected as new gesture");
+          console.log($scope.saveSelectedAsNewGestureAlias);
+          console.log($scope.selectedGestureList.gestureId);
+          var selectedDataLineIds = $scope.selectedGestureList.data.filter(item => item.selected).map(item=>item.id);
+          console.log(selectedDataLineIds);
+          // TODO
+          commonTools.saveAsNew($scope.selectedGestureList.gestureId, $scope.saveSelectedAsNewGestureAlias, selectedDataLineIds).then(function(){
+           /* $scope.gestures = $scope.gestures.filter(function(item) {
+              return item.id !== id;
+            });*/
+           /* commonTools.getGestures().then(function (response) {
+              $scope.gestures = response;
+            }, function (response) {
+              $scope.alerts.push({
+                type: 'danger',
+                title: 'Error ' + response.status,
+                msg: response.statusText
+              });
+            });*/
+            console.log("saveAsNew");
           });
         };
 

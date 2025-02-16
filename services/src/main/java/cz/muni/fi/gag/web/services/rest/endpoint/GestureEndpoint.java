@@ -1,8 +1,10 @@
 package cz.muni.fi.gag.web.services.rest.endpoint;
 
+import cz.muni.fi.gag.web.persistence.entity.DataLine;
 import cz.muni.fi.gag.web.persistence.entity.Gesture;
 import cz.muni.fi.gag.web.persistence.entity.User;
 import cz.muni.fi.gag.web.services.filters.RecordedDataFilter;
+import cz.muni.fi.gag.web.services.service.DataLineService;
 import cz.muni.fi.gag.web.services.service.GestureService;
 
 import javax.annotation.security.RolesAllowed;
@@ -15,6 +17,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static cz.muni.fi.gag.web.persistence.entity.UserRole.USER_R;
 
@@ -26,6 +29,9 @@ public class GestureEndpoint extends BaseEndpoint {
 
     @Inject
     private GestureService gestureService;
+
+    @Inject
+    private DataLineService dataLineService;
 
     /*
      * @GET
@@ -77,6 +83,47 @@ public class GestureEndpoint extends BaseEndpoint {
             g.setUser(current());
             Gesture created = gestureService.create(g);
             builder = Response.ok(created);
+        } catch (Exception e) {
+            builder = Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage());
+        }
+        return builder.build();
+    }
+
+    @POST
+    //@Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed(USER_R)
+    @Path("/gesture-from/{oldGestureId}/{newAlias}")
+    public Response gestureFrom(@PathParam("oldGestureId") Long oldGestureId, @PathParam("newAlias") String newAlias, /*TODO @PathParam("ids")*/ List<Long> dataLineIds) {
+        // $http.post("/gagweb/api/gesture-from/" + oldGestureId + "/" + newAlias, dataLineIds).then(function (response) {
+        Response.ResponseBuilder builder;
+        try {
+            Gesture g = new Gesture();
+            g.setUserAlias(newAlias);
+            g.setFiltered(true);
+            g.setDateCreated(new Date());
+            g.setUser(current());
+            Gesture newGesture = gestureService.create(g);
+            List<DataLine> oldDLs = dataLineService.findByGestureId(oldGestureId);
+            // Filter out only the data lines that match the provided IDs
+            List<DataLine> filteredOldDataLines = oldDLs.stream()
+                    .filter(dl -> dataLineIds.contains(dl.getId()))
+                    .collect(Collectors.toList());
+
+            for (DataLine oldDataLine : filteredOldDataLines) {
+                // check if this will override the old data, i do not want to override old dataline gestureId, I want to create new dataline from the old
+//                filteredDataLine.setGesture(newGesture);
+//                dataLineService.create(filteredDataLine);
+                DataLine newDataLine = new DataLine();
+                newDataLine.setGesture(newGesture);
+                newDataLine.setTimestamp(oldDataLine.getTimestamp());
+//                newDataLine.setSensorData(oldDataLine.getSensorData()); // Assuming there's a method for copying data
+//                newDataLine.setAdditionalMetadata(oldDataLine.getAdditionalMetadata()); // Copy any additional fields
+
+                // Save the newly created data line
+                dataLineService.create(newDataLine);
+            }
+            builder = Response.ok(newGesture);
         } catch (Exception e) {
             builder = Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage());
         }
