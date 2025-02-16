@@ -1,5 +1,7 @@
 <div class="card">
-	<div class="sensor-adjustments" style="margin-bottom: 40px; margin-top: -20px;">
+	<span>Show visualization offsets: <input type="checkbox" id="toggleSensorsAdjustments" style="display: inline-block; margin-bottom: 2px;"></span>
+	<br>
+	<div class="sensor-adjustments" style="margin-bottom: 40px; margin-top: 0px;" id="sensor-adjustments">
 		<table border="1" style="width:100%; text-align: center;">
 			<tr>
 				<th>Left</th>
@@ -394,6 +396,20 @@
 		// $( document ).ready(function() {
 		initVis = function() {
 			console.log("Initializing visualization.js");
+
+			$(document).ready(function () {
+				// Function to toggle visibility
+				function toggleVisibility() {
+					$("#sensor-adjustments").toggle($("#toggleSensorsAdjustments").is(":checked"));
+				}
+
+				// Run on checkbox change
+				$("#toggleSensorsAdjustments").change(toggleVisibility);
+
+				// Run on page load to set initial state
+				toggleVisibility();
+			});
+
 			const container = document.getElementById('container');
 
 			// Scene setup
@@ -533,6 +549,8 @@
 			console.log("Executing last...");
 			initVis();
 		}, 1);
+
+
 	</script>
 
 

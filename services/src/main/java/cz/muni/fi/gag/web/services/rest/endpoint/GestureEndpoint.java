@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static cz.muni.fi.gag.web.persistence.entity.UserRole.USER_R;
+import static cz.muni.fi.gag.web.persistence.entity.UserRole.*;
 
 /**
  * @author Vojtech Prusa
@@ -35,6 +35,8 @@ public class GestureEndpoint extends BaseEndpoint {
 
     @Inject
     private FingerDataLineService fingerDataLineService;
+
+    @Inject
     private WristDataLineService wristDataLineService;
 
 
@@ -76,8 +78,9 @@ public class GestureEndpoint extends BaseEndpoint {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed(USER_R)
-    @Path("gesture-from/{oldGestureId}/{newAlias}")
+//    @RolesAllowed(USER_R)
+    @RolesAllowed({ANONYMOUS_R, USER_R, ADMIN_R})
+    @Path("from/{oldGestureId}/{newAlias}")
     public Response gestureFrom(@PathParam("oldGestureId") Long oldGestureId, @PathParam("newAlias") String newAlias, List<Long> dataLineIds) {
         // $http.post("/gagweb/api/gesture-from/" + oldGestureId + "/" + newAlias, dataLineIds).then(function (response) {
         log.info("Creating gestureFrom oldGestureId:" + oldGestureId + " newAlias: " + newAlias);
@@ -97,14 +100,12 @@ public class GestureEndpoint extends BaseEndpoint {
 
             for (DataLine oldDataLine : filteredOldDataLines) {
                 // check if this will override the old data, i do not want to override old dataline gestureId, I want to create new dataline from the old
-                DataLine newDataLine = new DataLine();
-                newDataLine.setGesture(newGesture);
-                newDataLine.setTimestamp(oldDataLine.getTimestamp());
+                DataLine newDataLine = oldDataLine.deepCopy();
                 // Save the newly created data line
                 // TODO check if I need save dataline and [Wrist|Finger]DataLines, or just [Wrist|Finger]DataLines,
                 //  forgot the javax datastructure inheritance
                 DataLine savedDataLine = dataLineService.create(newDataLine);
-                if (oldDataLine.getPosition()== Sensor.WRIST) {
+                if (oldDataLine.getPosition() == Sensor.WRIST) {
                     WristDataLine oldWristDataLine = wristDataLineService.findById(oldDataLine.getId()).get();
                     WristDataLine newWristDataLine = oldWristDataLine.deepCopy();
                     newWristDataLine.setGesture(newGesture);

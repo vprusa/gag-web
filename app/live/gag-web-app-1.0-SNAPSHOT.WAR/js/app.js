@@ -43,7 +43,7 @@ angular.module('app', [
       });
     },
     createGestureFrom: function (oldGestureId, newAlias, dataLineIds) {
-      return $http.post("/gagweb/api/gesture/gesture-from/" + oldGestureId + "/" + newAlias, dataLineIds).then(function (response) {
+      return $http.post("/gagweb/api/gesture/from/" + oldGestureId + "/" + newAlias, dataLineIds).then(function (response) {
         return response.data;
       });
     },

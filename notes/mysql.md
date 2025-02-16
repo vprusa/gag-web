@@ -25,6 +25,9 @@ select min(dl.timestamp), max(dl.timestamp), max(dl.timestamp) - min(dl.timestam
 ```
 select * from DataLine as dl where dl.gesture_id = 27 and dl.timestamp in (select min(dl2.timestamp) from DataLine as dl2 where dl2.gesture_id = 27);
 select * from DataLine as dl where dl.gesture_id = 27 and dl.timestamp in (select max(dl2.timestamp) from DataLine as dl2 where dl2.gesture_id = 27);
+
+select * from DataLine dl join FingerDataLine fdl on dl.id = fdl.id join WristDataLine wdl on dl.id = wdl.id where dl.gesture_id = 7;
+
 ```
 
 ## Upgrade
