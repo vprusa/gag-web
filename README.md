@@ -1,5 +1,9 @@
 # Web app for (Gyro-Accelerometric|Gestures Automation) Glove
 
+### Sample gesture recognition screen recording
+
+![right_hand_wave__single_dl_recognition](notes/videos/Screencast_20250216_234725__right_hand_wave__single_dl_recognition.webm)
+
 ### Building/Running/Deploying
 
 ```

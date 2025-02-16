@@ -4,6 +4,14 @@
  * @author Vojtěch Průša (prusa.vojtech@gmail.com)
  */
 console.log("init app vis tools");
+
+function formatTimestamp(timestamp) {
+  const date = new Date(timestamp);
+  return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')} ` +
+      `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}.${date.getMilliseconds().toString().padStart(3, '0')}`;
+}
+
+
 angular.module('app').factory('VisTools', function () {
   // visualization
   let vis = {
@@ -15,6 +23,8 @@ angular.module('app').factory('VisTools', function () {
   vis.currentGesture = {
     startTime: 0,
     currentTime: 0,
+    currentTimeHuman: 0,
+    currentDLId: 0,
     endTime: 0,
     progressPercentage: 0,
     data: {
@@ -38,6 +48,7 @@ angular.module('app').factory('VisTools', function () {
     vis.currentGesture.currentPercentage = 0;
     vis.currentGesture.startTime = 0;
     vis.currentGesture.currentTime = 0;
+    // vis.currentGesture.currentTimeHuman = 0;
   };
 
   // TODO move parseFloat somewhere else, e.g. inside THREE.Quaternion ?
@@ -45,6 +56,8 @@ angular.module('app').factory('VisTools', function () {
     //console.log("updateVisFromDataLine");
     //console.log(dl);
     vis.currentGesture.currentTime = dl.t;
+    vis.currentGesture.currentTimeHuman = formatTimestamp(dl.t); // new Date(dl.t).toLocaleTimeString()
+    vis.currentGesture.currentDLId = dl.id;
     switch (dl.p) {
       case "THUMB":{
         let ar = new THREE.Quaternion(parseFloat(dl.qX), parseFloat(dl.qY), parseFloat(dl.qZ), parseFloat(dl.qA));
