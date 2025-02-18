@@ -38,7 +38,7 @@
 					</td>
 					<!-- <p class="card-category">{{selectedGestureDetail.info}}</p>-->
 				</div>
-				<div class="table-responsive">
+				<div class="table-responsive" style="max-height: 650px; overflow: scroll;">
 					<table class="table table-hover">
 						<thead class="text-warning">
 							<th>ID</th>
@@ -104,13 +104,17 @@
 					<button class="btn btn-info desc"
 							ng-click="invertSelection()"><span class="glyphicon glyphicon-random"></span></button>
 					<button class="btn btn-info desc"
+							ng-disabled="anyItemSelected()"
+							ng-click="deselectAll()"><span class="glyphicon glyphicon-remove-sign"></span></button>
+					<button class="btn btn-info desc"
 							ng-disabled="!anyItemSelected()"
 							ng-click="deleteSelectedItems()"><span class="glyphicon glyphicon-remove"></span></button>
 
+
 				</div>
-				<div class="" ></div>
+				<div class=""></div>
 	<!--			<div class="table-responsive" ng-if="selectedGestureList.display != -1">-->
-					<div class="table-responsive">
+					<div class="table-responsive"  style="max-height: 850px; overflow: scroll;">
 
 					<table class="table">
 						<thead class="text-primary">
@@ -132,7 +136,8 @@
 							</th>
 						</thead>
 						<tbody>
-							<tr ng-repeat="item in selectedGestureList.data" data-ng-click="item.selected = !item.selected"
+							<tr ng-repeat="(index, item)  in selectedGestureList.data"
+								data-ng-click="toggleSelection($event, index)"
 								ng-style="{'background-color':(item.selected ? 'green':'') }">
 
 							<td>{{item.id}}</td>

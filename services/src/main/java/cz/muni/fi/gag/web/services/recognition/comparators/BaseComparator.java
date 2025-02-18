@@ -186,7 +186,7 @@ public abstract class BaseComparator<T extends FingerDataLine> implements Gestur
                 // by some lower boundary (3?)
 //                matchesIt.remove();
 //                matches.clear();
-            }else{
+            } else {
                 matchers.add(matcher);
             }
         }

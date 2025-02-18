@@ -138,6 +138,28 @@ angular
           });
         };
 
+        $scope.deselectAll = function () {
+          $scope.selectedGestureList.data.forEach(item => item.selected = false);
+          $scope.lastSelectedIndex = null;
+        };
+
+
+        $scope.lastSelectedIndex = null;
+
+        $scope.toggleSelection = function ($event, index) {
+          if ($event.shiftKey && $scope.lastSelectedIndex !== null) {
+            let start = Math.min($scope.lastSelectedIndex, index);
+            let end = Math.max($scope.lastSelectedIndex, index);
+            for (let i = start; i <= end; i++) {
+              $scope.selectedGestureList.data[i].selected = true;
+            }
+          } else {
+            $scope.selectedGestureList.data[index].selected = !$scope.selectedGestureList.data[index].selected;
+          }
+
+          $scope.lastSelectedIndex = index;
+        };
+
         $scope.switchActivateGesture = function (id, active) {
           commonTools.setGestureActive(id, !active).then(function(){
             var index = $scope.gestures.map(function(e) { return e.id; }).indexOf(id);
