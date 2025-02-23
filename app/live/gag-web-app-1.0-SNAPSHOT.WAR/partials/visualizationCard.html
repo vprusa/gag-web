@@ -1,8 +1,8 @@
 <div class="card">
-	<span>Show visualization offsets: <input type="checkbox" id="toggleSensorsAdjustments" style="display: inline-block; margin-bottom: 2px;"></span>
+	<span>Show visualization offsets: <input type="checkbox" checked id="toggleSensorsAdjustments" style="display: inline-block; margin-bottom: 2px;"></span>
 	<br>
 	<div class="sensor-adjustments" style="margin-bottom: 40px; margin-top: 0px;" id="sensor-adjustments">
-		<table border="1" style="width:100%; text-align: center;">
+		<!--<table border="1" style="width:100%; text-align: center;">
 			<tr>
 				<th>Left</th>
 				<th>X</th>
@@ -349,6 +349,34 @@
 						   oninput="document.getElementById('left-little-z').value = this.value;">
 				</td>
 			</tr>
+		</table>-->
+		<!--<tr ng-repeat="hand in ['left', 'right']">
+				<td rowspan="6">{{hand | uppercase}}</td>
+			</tr>-->
+
+		<table border="1" ng-repeat="hand in ['left', 'right']">
+			<thead>
+			<tr>
+<!--
+				<th>Hand</th>
+-->
+				<th>Sensor</th>
+				<th>X</th>
+				<th>Y</th>
+				<th>Z</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr ng-repeat="sensor in ['wrist', 'thumb', 'index', 'middle', 'ring', 'little']">
+				<td>{{sensor | uppercase}}</td>
+				<td  ng-repeat="sensor_axis in ['x','y','z']">
+					<input type="range" min="-180" max="180"
+						   ng-model="vis.visualizationOffsets[hand + '-' + sensor + '-'+sensor_axis+'-num']" style="display: inline-block; width: 60%;">
+					<input type="number" min="-180" max="180"
+						   ng-model="vis.visualizationOffsets[hand + '-' + sensor + '-'+sensor_axis+'-num']" style="display: inline-block; width: 30%;">
+				</td>
+			</tr>
+			</tbody>
 		</table>
 	</div>
 

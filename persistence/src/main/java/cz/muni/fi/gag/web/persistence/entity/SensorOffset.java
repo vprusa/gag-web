@@ -32,8 +32,9 @@ public abstract class SensorOffset extends GenericEntity {
 
     private short z;
 
-    @ManyToOne(fetch = FetchType.EAGER ) //LAZY)
+    private Sensor position;
 
+    @ManyToOne(fetch = FetchType.EAGER ) //LAZY)
     @NotNull
     @JoinColumn(name = "offsets")
     private HandDevice device;
@@ -65,6 +66,14 @@ public abstract class SensorOffset extends GenericEntity {
         this.z = z;
     }
 
+    public Sensor getPosition() {
+        return position;
+    }
+
+    public void setPosition(Sensor position) {
+        this.position = position;
+    }
+
     public HandDevice getDevice() {
         return device;
     }
@@ -87,6 +96,7 @@ public abstract class SensorOffset extends GenericEntity {
         int result = 1;
         result = prime * result + ((device == null) ? 0 : device.hashCode());
         result = prime * result + ((sensorType == null) ? 0 : sensorType.hashCode());
+        result = prime * result + ((position == null) ? 0 : position.hashCode());
         result = prime * result + x;
         result = prime * result + y;
         result = prime * result + z;
@@ -104,6 +114,8 @@ public abstract class SensorOffset extends GenericEntity {
         final SensorOffset other = (SensorOffset) obj;
         return getX() == other.getX() && getY() == other.getY() && getZ() == other.getZ() && getDevice() != null
                 && getDevice().equals(other.getDevice()) && getSensorType() != null
-                && getSensorType().equals(other.getSensorType());
+                && getSensorType().equals(other.getSensorType())
+                && getPosition().equals(other.getPosition());
+
     }
 }

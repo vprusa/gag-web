@@ -44,6 +44,18 @@ angular.module('app').factory('VisTools', function () {
     }
   };
 
+  vis.visualizationOffsets = {};
+
+  // TODO use global variables for each hand and sensor
+  ["left", "right"].forEach(hand => {
+    ["wrist", "thumb", "index", "middle", "ring", "little"].forEach(finger => {
+      ["x", "y", "z"].forEach(axis => {
+        let key = `${hand}-${finger}-${axis}-num`;
+        vis.visualizationOffsets[key] = 0; // Default to 0
+      });
+    });
+  });
+
   vis.resetProgressBar = function () {
     vis.currentGesture.currentPercentage = 0;
     vis.currentGesture.startTime = 0;

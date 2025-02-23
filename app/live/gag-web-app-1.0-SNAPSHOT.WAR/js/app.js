@@ -77,7 +77,19 @@ angular.module('app', [
       return $http.post("/gagweb/api/fingerdataline", data).then(function (response) {
         return response.data;
       });
-    }
+    },
+    getSensorOffset: function (handDevice, position, sensorType) {
+      return $http.get("/gagweb/api/sensoroffsets/specific/" + handDevice + "/" + position + "/" + sensorType
+      ).then(function (response) {
+        return response.data;
+      });
+    },
+    setSensorOffset: function (handDevice, position, sensorType, value) {
+      return $http.post("/gagweb/api/sensoroffsets/specific/" + handDevice + "/" + position + "/" + sensorType, value
+      ).then(function (response) {
+        return response.data;
+      });
+    },
   };
 }]).service('createUpdateTools', function () {
   var alerts = [];

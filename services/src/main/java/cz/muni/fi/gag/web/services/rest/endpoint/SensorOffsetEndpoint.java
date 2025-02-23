@@ -1,6 +1,9 @@
 package cz.muni.fi.gag.web.services.rest.endpoint;
 
+import cz.muni.fi.gag.web.persistence.entity.FingerSensorOffset;
+import cz.muni.fi.gag.web.persistence.entity.Sensor;
 import cz.muni.fi.gag.web.persistence.entity.SensorOffset;
+import cz.muni.fi.gag.web.persistence.entity.WristSensorOffset;
 import cz.muni.fi.gag.web.services.service.SensorOffsetService;
 
 import javax.annotation.security.RolesAllowed;
@@ -17,6 +20,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import java.util.List;
 import java.util.Optional;
 
 import static cz.muni.fi.gag.web.persistence.entity.UserRole.USER_R;
@@ -29,17 +33,80 @@ import static cz.muni.fi.gag.web.persistence.entity.UserRole.USER_R;
 public class SensorOffsetEndpoint {
 
     @Inject
-    private SensorOffsetService dataLineService;
+    private SensorOffsetService sensorOffsetService;
 
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getSensorOffsetById(@PathParam("id") Long id) {
-        Optional<SensorOffset> dataLine = dataLineService.findById(id);
+        Optional<SensorOffset> dataLine = sensorOffsetService.findById(id);
         if (!dataLine.isPresent()) {
             Response.status(Status.NOT_FOUND);
         }
         return Response.ok(dataLine.get()).build();
+    }
+
+    @GET
+    @Path("/specific/{handDevice}/{position}/{sensorType}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getSensorOffsetBySensorType(
+            @PathParam("handDevice") Long handDevice,
+            @PathParam("position") Long position,
+            @PathParam("sensorType") Long sensorType
+    ) {
+        List<SensorOffset> sensorOffsets = sensorOffsetService.findByOffsetsAndPosition(
+                handDevice,
+                position,
+                sensorType
+        );
+
+        if (sensorOffsets.isEmpty()) {
+            Response.status(Status.NOT_FOUND);
+        }
+        return Response.ok(sensorOffsets.get(0)).build();
+    }
+
+    @POST
+    @Path("/specific/{handDevice}/{position}/{sensorType}/{values}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response getSensorOffsetBySensorType(
+            @PathParam("handDevice") Long handDevice,
+            @PathParam("position") Long position,
+            @PathParam("sensorType") Long sensorType,
+            @PathParam("values") List<Integer> values
+    ) {
+        List<SensorOffset> sensorOffsets = sensorOffsetService.findByOffsetsAndPosition(
+                handDevice,
+                position,
+                sensorType
+        );
+
+        if (position == Sensor.WRIST.ordinal()) { // TODO rework to String types?
+            WristSensorOffset sensorOffset = new WristSensorOffset();
+            sensorOffset.setX(values.get(0).shortValue());
+            sensorOffset.setY(values.get(1).shortValue());
+            sensorOffset.setZ(values.get(2).shortValue());
+            if (sensorOffsets.isEmpty()) {
+                sensorOffsetService.create(sensorOffset);
+            } else {
+                sensorOffset.setId(sensorOffsets.get(0).getId());
+                sensorOffsetService.update(sensorOffset);
+            }
+            return Response.ok(sensorOffsets.get(0)).build();
+        } else {
+            FingerSensorOffset sensorOffset = new FingerSensorOffset();
+            sensorOffset.setX(values.get(0).shortValue());
+            sensorOffset.setY(values.get(1).shortValue());
+            sensorOffset.setZ(values.get(2).shortValue());
+            if (sensorOffsets.isEmpty()) {
+                sensorOffsetService.create(sensorOffset);
+            } else {
+                sensorOffset.setId(sensorOffsets.get(0).getId());
+                sensorOffsetService.update(sensorOffset);
+            }
+            return Response.ok(sensorOffsets.get(0)).build();
+        }
     }
 
     @POST
@@ -49,7 +116,7 @@ public class SensorOffsetEndpoint {
     public Response createSensorOffset(SensorOffset dataLine) {
         Response.ResponseBuilder builder;
         try {
-            SensorOffset created = dataLineService.create(dataLine);
+            SensorOffset created = sensorOffsetService.create(dataLine);
             builder = Response.ok(created);
         } catch (Exception e) {
             builder = Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage());
@@ -62,12 +129,12 @@ public class SensorOffsetEndpoint {
     @RolesAllowed(USER_R)
     public Response removeSensorOffset(@PathParam("id") Long id) throws Exception {
         Response.ResponseBuilder builder;
-        Optional<SensorOffset> dataLine = dataLineService.findById(id);
+        Optional<SensorOffset> dataLine = sensorOffsetService.findById(id);
         if (!dataLine.isPresent()) {
             Response.status(Status.NOT_FOUND);
         }
         try {
-            dataLineService.remove(dataLine.get());
+            sensorOffsetService.remove(dataLine.get());
             builder = Response.ok();
         } catch (Exception e) {
             builder = Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage());
@@ -82,13 +149,13 @@ public class SensorOffsetEndpoint {
     @RolesAllowed(USER_R)
     public Response updateSensorOffset(@PathParam("id") Long id, SensorOffset dataLine) {
         Response.ResponseBuilder builder;
-        Optional<SensorOffset> oldSensorOffset = dataLineService.findById(id);
+        Optional<SensorOffset> oldSensorOffset = sensorOffsetService.findById(id);
         if (!oldSensorOffset.isPresent()) {
             Response.status(Status.NOT_FOUND);
         }
         dataLine.setId(oldSensorOffset.get().getId());
         try {
-            SensorOffset updated = dataLineService.update(dataLine);
+            SensorOffset updated = sensorOffsetService.update(dataLine);
             builder = Response.ok(updated);
         } catch (Exception e) {
             builder = Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage());

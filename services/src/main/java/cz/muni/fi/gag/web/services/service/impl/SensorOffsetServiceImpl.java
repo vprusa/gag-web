@@ -7,6 +7,8 @@ import cz.muni.fi.gag.web.persistence.entity.SensorOffset;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import java.util.Collections;
+import java.util.List;
 
 /**
  *
@@ -25,4 +27,10 @@ public class SensorOffsetServiceImpl extends GenericCRUDServiceImpl<SensorOffset
         return genericDao;
     }
 
+    @Override
+    public List<SensorOffset> findByOffsetsAndPosition(
+            Long handDeviceId, Long position, Long sensorType
+    ) {
+        return genericDao.findByOffsetsAndPosition(handDeviceId, position, sensorType);
+    }
 }
