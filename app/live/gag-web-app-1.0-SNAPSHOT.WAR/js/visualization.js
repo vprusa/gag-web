@@ -330,7 +330,8 @@ angular.module('app').factory('VisTools', function () {
       return;
     }
 
-    const useLittle = false;
+    // const useLittle = false;
+    const useLittle = true;
 
     if (useLittle) {
 
@@ -355,10 +356,11 @@ angular.module('app').factory('VisTools', function () {
       // rightWristQuaternion.premultiply(correctionQuaternion);
 
   // Correct right wrist orientation
-      rightWristQuaternion.premultiply(correctionQuaternion);
+  //     rightWristQuaternion.premultiply(correctionQuaternion);
       // rightWristQuaternion.premultiply(correctionQuaternion2);
       rightWristQuaternion.premultiply(offsetQuaternion);
-      window.rightHandSkeleton.wristJoint.setRotationFromQuaternion(rightWristQuaternion);
+      // rightWristQuaternion.invert();
+      window.rightHandSkeleton.wristJoint.setRotationFromQuaternion(rightWristQuaternion.invert());
 
 
       // window.rightHandSkeleton.wristJoint.setRotationFromQuaternion(rightWristQuaternion);
@@ -392,7 +394,7 @@ angular.module('app').factory('VisTools', function () {
             var wqback = rightWristQuaternion.clone();
             window.rightHandSkeleton.wristJoint.fingers[finger].tipJoint.quaternion
                 .multiply(offsetQuaternion)
-                .multiplyQuaternions(wqback, rightQuat);
+                .multiplyQuaternions(wqback, rightQuat.invert());
           // .multiplyQuaternions(wqback, rightQuat.invert());
             // .multiplyQuaternions(rightWristQuaternion.clone().invert(), rightQuat)
                 // .multiplyQuaternions(rightWristQuaternion.clone().invert(), rightQuat);
