@@ -107,7 +107,9 @@ angular
         };
 
         $scope.stop = function () {
+          WSTools.setState(WSTools.reqStates.STOP, gesture.id);
           $scope.data.recordingInfo.isRecording = false;
+          $scope.$apply();
         };
 
         $scope.onSendMessage = function (data) {
