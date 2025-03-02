@@ -179,7 +179,7 @@ angular.module('app').factory('BLETools', ['WSTools', function (WSTools) {
         "mZ": 1
       };
       if (received[2] == "5" || received[2] == "6") {
-        console.log(json_Message);
+        // console.log(json_Message);
       }
       return json_Message;
     }else{

@@ -469,9 +469,12 @@
 
 				// Create a wrist joint that will act as the rotation pivot
 				const wristJoint = new THREE.Object3D();
-				wristJoint.position.set(offsetX, 0, 0);
-				handSkeleton.add(wristJoint); // Attach wrist to handSkeleton
-
+				// wristJoint.position.set(offsetX, 0, 0);
+				const handSkeletonPivot = new THREE.Group();
+				handSkeletonPivot.add(wristJoint); // Attach wrist to handSkeleton
+				handSkeletonPivot.position.set(offsetX, 0, 0);
+				handSkeleton.add(handSkeletonPivot); // Attach wrist to handSkeleton
+				handSkeleton.handSkeletonPivot = handSkeletonPivot;
 				const fingers = {
 					thumb: { base: new THREE.Vector3(-0.4, 0.8, 0), length: 0.6 },
 					index: { base: new THREE.Vector3(-0.2, 1.0, 0), length: 0.8 },
