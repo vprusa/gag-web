@@ -333,6 +333,7 @@ angular.module('app').factory('VisTools', function () {
     // Update wrist rotations
     const leftWristQuaternion = new THREE.Quaternion(data.lq._x, data.lq._y, data.lq._z, data.lq._w);
     // const rightWristQuaternion = new THREE.Quaternion(data.rql._x, data.rql._y, data.rql._z, data.rql._w);
+    // const rightWristQuaternion = new THREE.Quaternion(data.rq._x, data.rq._y, data.rq._z, data.rq._w);
     const rightWristQuaternion = new THREE.Quaternion(data.rq._x, data.rq._y, data.rq._z, data.rq._w);
 
     // Read wrist-x input and convert degrees to radians
@@ -342,9 +343,31 @@ angular.module('app').factory('VisTools', function () {
     const wristZOffset = parseFloat(vis.visualizationOffsets["right-wrist-z-num"]) * (Math.PI / 180);
     const offsetQuaternion = new THREE.Quaternion().setFromEuler(new THREE.Euler(wristXOffset, wristYOffset, wristZOffset));
     // leftWristQuaternion.multiply(offsetQuaternion); // should be inverted
-    rightWristQuaternion.multiply(offsetQuaternion);
 
-    window.rightHandSkeleton.wristJoint.setRotationFromQuaternion(rightWristQuaternion);
+    // Define correction quaternion to rotate -90° around X-axis
+    // const correctionQuaternion = new THREE.Quaternion();
+    // const correctionQuaternion2 = new THREE.Quaternion();
+    // correctionQuaternion.setFromAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI / 2);
+    // correctionQuaternion2.setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / 2);
+    // rightWristQuaternion.premultiply(correctionQuaternion);
+
+// Correct right wrist orientation
+//     rightWristQuaternion.premultiply(correctionQuaternion);
+    // window.rightHandSkeleton.wristJoint.setRotationFromQuaternion(rightWristQuaternion);
+
+
+    const correctionQuaternion = new THREE.Quaternion();
+    correctionQuaternion.setFromAxisAngle(new THREE.Vector3(0, 0, 1), Math.PI / 2); // Adjust axis as needed
+
+// Modify wrist quaternion values **before** setting them
+    let adjustedRightWristQuaternion = new THREE.Quaternion();
+    adjustedRightWristQuaternion.copy(rightWristQuaternion);
+    adjustedRightWristQuaternion.premultiply(correctionQuaternion);
+
+    // rightWristQuaternion.multiply(offsetQuaternion);
+
+    // window.rightHandSkeleton.wristJoint.setRotationFromQuaternion(rightWristQuaternion);
+    window.rightHandSkeleton.wristJoint.setRotationFromQuaternion(adjustedRightWristQuaternion);
     window.leftHandSkeleton.wristJoint.setRotationFromQuaternion(leftWristQuaternion);
 
     // Update fingers relative to wrist
@@ -362,6 +385,7 @@ angular.module('app').factory('VisTools', function () {
         // skip little finger that acts as wrist data
       // } else {
         if (window.rightHandSkeleton.wristJoint.fingers[finger]) {
+
           // console.log(finger);
           const fingerXOffset = parseFloat(vis.visualizationOffsets["right-" + finger + "-x"]) * (Math.PI / 180);
           const fingerYOffset = parseFloat(vis.visualizationOffsets["right-" + finger + "-y"]) * (Math.PI / 180);
@@ -372,11 +396,14 @@ angular.module('app').factory('VisTools', function () {
           // window.rightHandSkeleton.wristJoint.fingers[finger].tipJoint.quaternion
           //     .multiplyQuaternions(rightWristQuaternion.clone().invert(), rightQuat)
           //     .multiply(offsetQuaternion).invert();
+
+          var wqback = rightWristQuaternion.clone();
           window.rightHandSkeleton.wristJoint.fingers[finger].tipJoint.quaternion
               // .multiplyQuaternions(rightWristQuaternion.clone().invert(), rightQuat)
-              .multiplyQuaternions(rightWristQuaternion.clone().invert(), rightQuat);
+              // .multiplyQuaternions(rightWristQuaternion.clone().invert(), rightQuat);
+              // .multiplyQuaternions(wqback, rightQuat);
               // .multiplyQuaternions(offsetQuaternion.invert(), rightQuat);
-              // .multiplyQuaternions(offsetQuaternion, rightQuat);
+              .multiplyQuaternions(offsetQuaternion, rightQuat);
           // .multiply(offsetQuaternion).invert();
 
         }
@@ -385,6 +412,6 @@ angular.module('app').factory('VisTools', function () {
 
   };
 
+
   return vis;
 });
-
