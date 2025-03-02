@@ -75,7 +75,9 @@ angular.module('app').factory('BLETools', ['WSTools', function (WSTools) {
         return "RING";
       case 4:
         return "LITTLE";
-      case 5:
+      // case 5:
+      //   return "WRIST";
+      case 6:
         return "WRIST";
       default:
         return "NONE";

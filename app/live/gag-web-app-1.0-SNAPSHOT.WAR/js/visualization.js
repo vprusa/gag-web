@@ -1,3 +1,182 @@
+/*
+'use strict';
+
+/!**
+ * @author Vojtěch Průša (prusa.vojtech@gmail.com)
+ *!/
+console.log("init app vis tools");
+
+function formatTimestamp(timestamp) {
+  const date = new Date(timestamp);
+  return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')} ` +
+      `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}.${date.getMilliseconds().toString().padStart(3, '0')}`;
+}
+
+
+angular.module('app').factory('VisTools', function () {
+  // visualization
+  let vis = {
+    currentGesture: {
+      data: {}
+    }
+  };
+
+  vis.currentGesture = {
+    startTime: 0,
+    currentTime: 0,
+    currentTimeHuman: 0,
+    currentDLId: 0,
+    endTime: 0,
+    progressPercentage: 0,
+    data: {
+      rq: new THREE.Quaternion(),
+      rqt: new THREE.Quaternion(),
+      rqi: new THREE.Quaternion(),
+      rqm: new THREE.Quaternion(),
+      rqr: new THREE.Quaternion(),
+      rql: new THREE.Quaternion(),
+
+      lq: new THREE.Quaternion(),
+      lqt: new THREE.Quaternion(),
+      lqi: new THREE.Quaternion(),
+      lqm: new THREE.Quaternion(),
+      lqr: new THREE.Quaternion(),
+      lql: new THREE.Quaternion()
+    }
+  };
+
+  vis.resetProgressBar = function () {
+    vis.currentGesture.currentPercentage = 0;
+    vis.currentGesture.startTime = 0;
+    vis.currentGesture.currentTime = 0;
+    // vis.currentGesture.currentTimeHuman = 0;
+  };
+
+  // TODO move parseFloat somewhere else, e.g. inside THREE.Quaternion ?
+  vis.updateVisFromDataLine = function (dl) {
+    //console.log("updateVisFromDataLine");
+    //console.log(dl);
+    vis.currentGesture.currentTime = dl.t;
+    vis.currentGesture.currentTimeHuman = formatTimestamp(dl.t); // new Date(dl.t).toLocaleTimeString()
+    vis.currentGesture.currentDLId = dl.id;
+    switch (dl.p) {
+      case "THUMB":{
+        let ar = new THREE.Quaternion(parseFloat(dl.qX), parseFloat(dl.qY), parseFloat(dl.qZ), parseFloat(dl.qA));
+        vis.currentGesture.data.rqt = ar;
+        vis.updateVisualization();
+      }break;
+      case "INDEX": {
+        let ar = new THREE.Quaternion(parseFloat(dl.qX), parseFloat(dl.qY), parseFloat(dl.qZ), parseFloat(dl.qA));
+        vis.currentGesture.data.rqi = ar;
+        vis.updateVisualization();
+      }break;
+      // TODO move wrist case up
+      case "WRIST":
+      // TODO fix, should be dealt in backend response... 
+      case null:{
+        let ar = new THREE.Quaternion(parseFloat(dl.qX), parseFloat(dl.qY), parseFloat(dl.qZ), parseFloat(dl.qA));
+        vis.currentGesture.data.rq = ar;
+        vis.updateVisualization();
+      }break;
+      case "MIDDLE":{
+        let ar = new THREE.Quaternion(parseFloat(dl.qX), parseFloat(dl.qY), parseFloat(dl.qZ), parseFloat(dl.qA));
+        vis.currentGesture.data.rqm = ar;
+        // console.log("MIDDLE: data.rql");
+        // console.log(vis.currentGesture.data.rql);
+
+        // console.log("data.rqr");
+        // console.log(vis.currentGesture.data.rqr);
+        vis.updateVisualization();
+      }break;
+      case "RING":{
+        let ar = new THREE.Quaternion(parseFloat(dl.qX), parseFloat(dl.qY), parseFloat(dl.qZ), parseFloat(dl.qA));
+
+        vis.currentGesture.data.rqr = ar;
+        // console.log("RING: data.rql");
+        // console.log(vis.currentGesture.data.rql);
+
+        // console.log("data.rqr");
+        // console.log(vis.currentGesture.data.rqr);
+        vis.updateVisualization();
+      }break;
+      case "LITTLE":{
+        let ar = new THREE.Quaternion(parseFloat(dl.qX), parseFloat(dl.qY), parseFloat(dl.qZ), parseFloat(dl.qA));
+        vis.currentGesture.data.rql = ar;
+        vis.updateVisualization();
+      }break;
+      default:
+    }
+  };
+
+  vis.updateVisualization = function () {
+    var data = JSON.parse(JSON.stringify(vis.currentGesture.data));
+    vis.currentGesture.progressPercentage = (vis.currentGesture.currentTime - vis.currentGesture.startTime)/
+     (vis.currentGesture.endTime - vis.currentGesture.startTime);
+    // console.log(vis.currentGesture.progressPercentage);
+    vis.updateVisualizationAsync(data);
+  };
+
+  console.log("Init logs");
+  vis.updateVisualizationAsync = async function (data) {
+    if (!window.leftHandSkeleton || !window.rightHandSkeleton) {
+      console.error("Hand skeletons are not initialized.");
+      return;
+    }
+
+    // Update wrist rotations
+    const leftWristQuaternion = new THREE.Quaternion(data.lq._x, data.lq._y, data.lq._z, data.lq._w);
+    // const rightWristQuaternion = new THREE.Quaternion(data.rql._x, data.rql._y, data.rql._z, data.rql._w);
+    const rightWristQuaternion = new THREE.Quaternion(data.rq._x, data.rq._y, data.rq._z, data.rq._w);
+    console.log(rightWristQuaternion);
+
+    // Read wrist-x input and convert degrees to radians
+    const wristXOffset = parseFloat(document.getElementById("right-wrist-x-num").value) * (Math.PI / 180);
+    const offsetQuaternion = new THREE.Quaternion().setFromEuler(new THREE.Euler(wristXOffset, 0, 0));
+    // leftWristQuaternion.multiply(offsetQuaternion); // should be inverted
+    rightWristQuaternion.multiply(offsetQuaternion);
+
+    window.rightHandSkeleton.wristJoint.setRotationFromQuaternion(rightWristQuaternion);
+    window.leftHandSkeleton.wristJoint.setRotationFromQuaternion(leftWristQuaternion);
+
+    // Update fingers relative to wrist
+    const fingers = ["thumb", "index", "middle", "ring", "little"];
+    const leftFingerData = [data.lqt, data.lqi, data.lqm, data.lqr, data.lql];
+    const rightFingerData = [data.rqt, data.rqi, data.rqm, data.rqr, data.rql];
+
+    fingers.forEach((finger, index) => {
+      if (window.leftHandSkeleton.wristJoint.fingers[finger]) {
+        // todo use invert()
+        const leftQuat = new THREE.Quaternion(leftFingerData[index]._x, leftFingerData[index]._y, leftFingerData[index]._z, leftFingerData[index]._w);
+        window.leftHandSkeleton.wristJoint.fingers[finger].baseJoint.setRotationFromQuaternion(leftQuat);
+      }
+      // if (finger == "little") {
+        // skip little finger that acts as wrist data
+      // } else {
+        if (window.rightHandSkeleton.wristJoint.fingers[finger]) {
+          // console.log(finger);
+          const fingerXOffset = parseFloat(document.getElementById("right-" + finger + "-x").value) * (Math.PI / 180);
+          const fingerYOffset = parseFloat(document.getElementById("right-" + finger + "-y").value) * (Math.PI / 180);
+          const fingerZOffset = parseFloat(document.getElementById("right-" + finger + "-z").value) * (Math.PI / 180);
+          const offsetQuaternion = new THREE.Quaternion().setFromEuler(new THREE.Euler(fingerXOffset, fingerYOffset, fingerZOffset));
+
+          const rightQuat = new THREE.Quaternion(rightFingerData[index]._x, rightFingerData[index]._y, rightFingerData[index]._z, rightFingerData[index]._w);
+          window.rightHandSkeleton.wristJoint.fingers[finger].tipJoint.quaternion
+              .multiplyQuaternions(rightWristQuaternion.clone().invert(), rightQuat)
+              // .multiplyQuaternions(offsetQuaternion.invert(), rightQuat);
+              .multiplyQuaternions(offsetQuaternion, rightQuat);
+              // .multiply(offsetQuaternion).invert();
+        }
+      // }
+    });
+
+  };
+
+  return vis;
+});
+
+*/
+
+
 'use strict';
 
 /**
@@ -81,9 +260,9 @@ angular.module('app').factory('VisTools', function () {
         vis.currentGesture.data.rqi = ar;
         vis.updateVisualization();
       }break;
-      // TODO move wrist case up
+        // TODO move wrist case up
       case "WRIST":
-      // TODO fix, should be dealt in backend response... 
+        // TODO fix, should be dealt in backend response...
       case null:{
         let ar = new THREE.Quaternion(parseFloat(dl.qX), parseFloat(dl.qY), parseFloat(dl.qZ), parseFloat(dl.qA));
         vis.currentGesture.data.rq = ar;
@@ -139,7 +318,7 @@ angular.module('app').factory('VisTools', function () {
   vis.updateVisualization = function () {
     var data = JSON.parse(JSON.stringify(vis.currentGesture.data));
     vis.currentGesture.progressPercentage = (vis.currentGesture.currentTime - vis.currentGesture.startTime)/
-     (vis.currentGesture.endTime - vis.currentGesture.startTime);
+        (vis.currentGesture.endTime - vis.currentGesture.startTime);
     // console.log(vis.currentGesture.progressPercentage);
     vis.updateVisualizationAsync(data);
   };
@@ -153,11 +332,15 @@ angular.module('app').factory('VisTools', function () {
 
     // Update wrist rotations
     const leftWristQuaternion = new THREE.Quaternion(data.lq._x, data.lq._y, data.lq._z, data.lq._w);
-    const rightWristQuaternion = new THREE.Quaternion(data.rql._x, data.rql._y, data.rql._z, data.rql._w);
+    // const rightWristQuaternion = new THREE.Quaternion(data.rql._x, data.rql._y, data.rql._z, data.rql._w);
+    const rightWristQuaternion = new THREE.Quaternion(data.rq._x, data.rq._y, data.rq._z, data.rq._w);
 
     // Read wrist-x input and convert degrees to radians
-    const wristXOffset = parseFloat(document.getElementById("right-wrist-x-num").value) * (Math.PI / 180);
-    const offsetQuaternion = new THREE.Quaternion().setFromEuler(new THREE.Euler(wristXOffset, 0, 0));
+    // const wristXOffset = parseFloat(document.getElementById("right-wrist-x-num").value) * (Math.PI / 180);
+    const wristXOffset = parseFloat(vis.visualizationOffsets["right-wrist-x-num"]) * (Math.PI / 180);
+    const wristYOffset = parseFloat(vis.visualizationOffsets["right-wrist-y-num"]) * (Math.PI / 180);
+    const wristZOffset = parseFloat(vis.visualizationOffsets["right-wrist-z-num"]) * (Math.PI / 180);
+    const offsetQuaternion = new THREE.Quaternion().setFromEuler(new THREE.Euler(wristXOffset, wristYOffset, wristZOffset));
     // leftWristQuaternion.multiply(offsetQuaternion); // should be inverted
     rightWristQuaternion.multiply(offsetQuaternion);
 
@@ -175,27 +358,33 @@ angular.module('app').factory('VisTools', function () {
         const leftQuat = new THREE.Quaternion(leftFingerData[index]._x, leftFingerData[index]._y, leftFingerData[index]._z, leftFingerData[index]._w);
         window.leftHandSkeleton.wristJoint.fingers[finger].baseJoint.setRotationFromQuaternion(leftQuat);
       }
-      if (finger == "little") {
+      // if (finger == "little") {
         // skip little finger that acts as wrist data
-      } else {
+      // } else {
         if (window.rightHandSkeleton.wristJoint.fingers[finger]) {
           // console.log(finger);
-          const fingerXOffset = parseFloat(document.getElementById("right-" + finger + "-x").value) * (Math.PI / 180);
-          const fingerYOffset = parseFloat(document.getElementById("right-" + finger + "-y").value) * (Math.PI / 180);
-          const fingerZOffset = parseFloat(document.getElementById("right-" + finger + "-z").value) * (Math.PI / 180);
+          const fingerXOffset = parseFloat(vis.visualizationOffsets["right-" + finger + "-x"]) * (Math.PI / 180);
+          const fingerYOffset = parseFloat(vis.visualizationOffsets["right-" + finger + "-y"]) * (Math.PI / 180);
+          const fingerZOffset = parseFloat(vis.visualizationOffsets["right-" + finger + "-z"]) * (Math.PI / 180);
           const offsetQuaternion = new THREE.Quaternion().setFromEuler(new THREE.Euler(fingerXOffset, fingerYOffset, fingerZOffset));
 
           const rightQuat = new THREE.Quaternion(rightFingerData[index]._x, rightFingerData[index]._y, rightFingerData[index]._z, rightFingerData[index]._w);
+          // window.rightHandSkeleton.wristJoint.fingers[finger].tipJoint.quaternion
+          //     .multiplyQuaternions(rightWristQuaternion.clone().invert(), rightQuat)
+          //     .multiply(offsetQuaternion).invert();
           window.rightHandSkeleton.wristJoint.fingers[finger].tipJoint.quaternion
-              .multiplyQuaternions(rightWristQuaternion.clone().invert(), rightQuat)
-              .multiply(offsetQuaternion).invert();
-
+              // .multiplyQuaternions(rightWristQuaternion.clone().invert(), rightQuat)
+              .multiplyQuaternions(rightWristQuaternion.clone().invert(), rightQuat);
+              // .multiplyQuaternions(offsetQuaternion.invert(), rightQuat);
+              // .multiplyQuaternions(offsetQuaternion, rightQuat);
+          // .multiply(offsetQuaternion).invert();
 
         }
-      }
+      // }
     });
 
   };
 
   return vis;
 });
+
