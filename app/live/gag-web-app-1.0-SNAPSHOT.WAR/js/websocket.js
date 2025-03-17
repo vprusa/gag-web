@@ -94,7 +94,8 @@ angular.module('app').factory('WSTools', function (/*$rootScope*/) {
     if (ws.checkStates.isRecording() || ws.checkStates.isRecognizing()) {
     // if (ws.checkStates.isRecording()) {
       ws.onSendMessage(msg);
-      //console.log("sending message");
+      console.log("sending message");
+      console.log(msg);
       ws.websocketSession.send(msg);
     } else if (msg.includes("type")) {
       console.log("Sending Action message: " + msg);

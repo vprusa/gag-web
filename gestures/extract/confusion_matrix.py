@@ -96,8 +96,10 @@ def generate_confusion_matrix(df, output_file):
     plt.ylabel("True Label")
     plt.title("Confusion Matrix")
     plt.savefig(output_file)
-    plt.show()
-    
+    # plt.show()
+    plt.savefig("confusion_matrix.png")
+    plt.close()
+
     print("Classification Report:")
     print(classification_report(y_test, y_pred))
     

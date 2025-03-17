@@ -7,6 +7,7 @@ from scipy.spatial.transform import Rotation as R
 from scipy.signal import argrelextrema
 from datetime import datetime
 
+
 # Command-line argument parser
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Extract and analyze quaternion data from MySQL.")
@@ -18,12 +19,18 @@ def parse_arguments():
     parser.add_argument("--gesture_id", type=int, required=True, help="Gesture ID to filter data")
     parser.add_argument("--hand", type=int, required=False,
                         help="Optional: Hand to process (e.g., 0 for left, 1 for right). If not provided, all hands are processed.")
+    parser.add_argument("--position", type=int, nargs="+", default=[0, 1, 2, 3, 4, 5],
+                        help="List of sensor positions to use (default: all positions).")
     parser.add_argument("--threshold-extraction", type=float, default=0.1,
                         help="Threshold for filtering extreme points")
     parser.add_argument("--threshold-recognition", type=float, default=0.2,
                         help="Threshold for gesture recognition in DB")
     parser.add_argument("--suffix", type=str, required=False,
                         help="Optional: Suffix for new gesture name. If not provided, data will not be stored in the database.")
+    parser.add_argument("--start", action="store_true",
+                        help="Include the first quaternion for each position in the result.")
+    parser.add_argument("--end", action="store_true",
+                        help="Include the last quaternion for each position in the result.")
 
     return parser.parse_args()
 
@@ -37,8 +44,8 @@ def connect_db(host, user, password, database):
         return None
 
 
-# Fetch quaternion data for a specific `gesture_id`, filtering by `hand` if provided
-def fetch_quaternion_data(conn, gesture_id, hand):
+# Fetch quaternion data for a specific `gesture_id`, filtering by `hand` and `position` if provided
+def fetch_quaternion_data(conn, gesture_id, hand, positions):
     query = """
     SELECT 
         dl.id,
@@ -66,6 +73,11 @@ def fetch_quaternion_data(conn, gesture_id, hand):
     if hand is not None:
         query += " AND dl.hand = %s"
         params.append(hand)
+
+    if positions:
+        placeholders = ", ".join(["%s"] * len(positions))
+        query += f" AND dl.position IN ({placeholders})"
+        params.extend(positions)
 
     query += " ORDER BY dl.timestamp ASC;"
 
@@ -138,6 +150,22 @@ def find_rotation_extremes(df, order=3, threshold=0.1):
     return pd.concat(results, ignore_index=True) if results else pd.DataFrame()
 
 
+# Add start and end quaternions if requested
+def add_start_end_quaternions(df, df_extremes, start, end):
+    result = []
+
+    if start:
+        start_rows = df.groupby('position').first().reset_index()
+        result.append(start_rows)
+
+    result.append(df_extremes)
+
+    if end:
+        end_rows = df.groupby('position').last().reset_index()
+        result.append(end_rows)
+
+    return pd.concat(result, ignore_index=True)
+
 # Create a new gesture and return its ID
 def create_new_gesture(conn, old_gesture_name, user_id, suffix, threshold_recognition):
     new_gesture_name = f"{old_gesture_name}-{suffix}"
@@ -153,23 +181,33 @@ def create_new_gesture(conn, old_gesture_name, user_id, suffix, threshold_recogn
 
     return cursor.lastrowid  # Return the newly inserted gesture's ID
 
-
-# Store extracted quaternion data under new gesture
 def store_extracted_datalines(conn, df_extremes, new_gesture_id):
+    """
+    Stores extracted extreme rotation points into the database under the new gesture.
+
+    :param conn: MySQL connection
+    :param df_extremes: DataFrame containing extracted quaternion data
+    :param new_gesture_id: ID of the new gesture
+    """
     cursor = conn.cursor()
 
     for _, row in df_extremes.iterrows():
-        # cursor.execute(
-        #     "INSERT INTO DataLine (hand, position, timestamp, gesture_id) VALUES (%s, %s, %s, %s);",
-        #     (row['hand'], row['position'], row['timestamp'], new_gesture_id)
-        # )
+        # Ensure timestamp is in the correct format
+        if isinstance(row['timestamp'], (int, float)):  # If Unix timestamp, convert to datetime
+            formatted_timestamp = datetime.utcfromtimestamp(row['timestamp']).strftime('%Y-%m-%d %H:%M:%S.%f')
+        elif isinstance(row['timestamp'], str):  # If it's a string, parse it correctly
+            formatted_timestamp = datetime.strptime(row['timestamp'], '%Y-%m-%d %H:%M:%S.%f').strftime('%Y-%m-%d %H:%M:%S.%f')
+        else:  # Assume it's already a `datetime` object
+            formatted_timestamp = row['timestamp'].strftime('%Y-%m-%d %H:%M:%S.%f')
+
+        # Insert into DataLine table
         cursor.execute(
             "INSERT INTO DataLine (hand, position, timestamp, gesture_id) VALUES (%s, %s, %s, %s);",
-            (row['hand'], row['position'], datetime.utcfromtimestamp(row['timestamp']).strftime('%Y-%m-%d %H:%M:%S.%f'),
-             new_gesture_id)
+            (row['hand'], row['position'], formatted_timestamp, new_gesture_id)
         )
         new_dataline_id = cursor.lastrowid
 
+        # Insert into FingerDataLine table
         cursor.execute(
             "INSERT INTO FingerDataLine (accX, accY, accZ, quatA, quatX, quatY, quatZ, id) VALUES (0, 0, 0, %s, %s, %s, %s, %s);",
             (row['qw'], row['qx'], row['qy'], row['qz'], new_dataline_id)
@@ -181,23 +219,31 @@ def store_extracted_datalines(conn, df_extremes, new_gesture_id):
 # Main function
 if __name__ == "__main__":
     args = parse_arguments()
+
+    print("\n📌 **Command-line arguments:**")
+    pprint.pprint(vars(args))
+
     conn = connect_db(args.host, args.user, args.password, args.database)
     if not conn:
         exit(1)
 
-    df_quaternions = fetch_quaternion_data(conn, args.gesture_id, args.hand)
+    df_quaternions = fetch_quaternion_data(conn, args.gesture_id, args.hand, args.position)
     if df_quaternions is not None:
         df_with_velocity = compute_angular_velocity(df_quaternions)
         df_extremes = find_rotation_extremes(df_with_velocity, order=3, threshold=args.threshold_extraction)
 
+        # Add start and end quaternions if requested
+        df_final = add_start_end_quaternions(df_quaternions, df_extremes, args.start, args.end)
+
+        # Save to CSV for local analysis
+        df_final.to_csv("extreme_rotation_points.csv", index=False)
+        print(f"✅ Extreme rotation points saved to 'extreme_rotation_points.csv' ({len(df_final)} samples)")
+
         if args.suffix:
-            # new_gesture_id = create_new_gesture(conn, df_quaternions.iloc[0]['userAlias'],
-            #                                     df_quaternions.iloc[0]['user_id'], args.suffix,
-            #                                     args.threshold_recognition)
             new_gesture_id = create_new_gesture(conn, df_quaternions.iloc[0]['userAlias'],
                                                 int(df_quaternions.iloc[0]['user_id']), args.suffix,
                                                 args.threshold_recognition)
-            store_extracted_datalines(conn, df_extremes, new_gesture_id)
-            print(f"✅ Stored {len(df_extremes)} extracted points under new gesture ID: {new_gesture_id}")
+            store_extracted_datalines(conn, df_final, new_gesture_id)
+            print(f"✅ Stored {len(df_final)} extracted points under new gesture ID: {new_gesture_id}")
 
     conn.close()

@@ -77,7 +77,7 @@ angular.module('app').factory('BLETools', ['WSTools', function (WSTools) {
         return "LITTLE";
         // return "WRIST";
       // case 5:
-        //   return "WRIST";
+      //     return "WRIST";
       case 6:
         return "WRIST";
       default:
@@ -183,6 +183,7 @@ angular.module('app').factory('BLETools', ['WSTools', function (WSTools) {
         // console.log(json_Message);
       }
       return json_Message;
+    }else if (finger == "NONE"){
     }else{
       var json_Message = {
         // "id": null,
