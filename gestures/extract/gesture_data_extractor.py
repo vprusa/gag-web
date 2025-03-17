@@ -2,10 +2,10 @@ import mysql.connector
 import numpy as np
 import pandas as pd
 import argparse
-import pprint
 from scipy.spatial.transform import Rotation as R
 from scipy.signal import argrelextrema
 from datetime import datetime
+from pprint import pprint
 
 
 # Command-line argument parser
@@ -88,7 +88,7 @@ def fetch_quaternion_data(conn, gesture_id, hand, positions):
     df = pd.DataFrame(data) if data else None
     if df is not None and not df.empty:
         print("\n✅ First 6 retrieved quaternions:")
-        pprint.pprint(df.head(6).to_dict(orient="records"))  # Display first 6 samples
+        pprint(df.head(6).to_dict(orient="records"))  # Display first 6 samples
 
     return df
 
@@ -151,20 +151,357 @@ def find_rotation_extremes(df, order=3, threshold=0.1):
 
 
 # Add start and end quaternions if requested
+# def add_start_end_quaternions(df, df_extremes, start, end):
+#     result = []
+# 
+#     if start:
+#         start_rows = df.groupby('position').first().reset_index()
+#         result.append(start_rows)
+# 
+#     result.append(df_extremes)
+# 
+#     if end:
+#         end_rows = df.groupby('position').last().reset_index()
+#         result.append(end_rows)
+# 
+#     return pd.concat(result, ignore_index=True)
+# def add_start_end_quaternions(df, df_extremes, start, end):
+#     """
+#     Adds first and/or last quaternions for each position to the final dataset.
+#
+#     :param df: Original DataFrame with all quaternions
+#     :param df_extremes: Extracted extreme rotation quaternions
+#     :param start: Boolean, if True, add first quaternions
+#     :param end: Boolean, if True, add last quaternions
+#     :return: Combined DataFrame with added start/end quaternions
+#     """
+#     result = []
+#
+#     # Ensure data is sorted by timestamp before grouping
+#     df_sorted = df.sort_values(by="timestamp")
+#
+#     if start:
+#         if 'position' in df_sorted.columns:
+#             start_rows = df_sorted.groupby('position', as_index=False).first()
+#             print(f"✅ Added {len(start_rows)} start quaternions.")
+#             result.append(start_rows)
+#         else:
+#             print("⚠️ No 'position' column found, cannot add start quaternions.")
+#
+#     if not df_extremes.empty:
+#         result.append(df_extremes)
+#     else:
+#         print("⚠️ No extreme points detected, skipping extraction data.")
+#
+#     if end:
+#         if 'position' in df_sorted.columns:
+#             end_rows = df_sorted.groupby('position', as_index=False).last()
+#             from pprint import pprint
+#             pprint (df_sorted)
+#             print(f"✅ Added {len(end_rows)} end quaternions.")
+#             result.append(end_rows)
+#         else:
+#             print("⚠️ No 'position' column found, cannot add end quaternions.")
+#
+#     if result:
+#         return pd.concat(result, ignore_index=True)
+#     else:
+#         print("⚠️ No data available to concatenate, returning empty DataFrame.")
+#         return pd.DataFrame()
+# def add_start_end_quaternions(df, df_extremes, start, end):
+#     """
+#     Adds first and/or last quaternions for each position to the final dataset while maintaining order.
+#
+#     :param df: Original DataFrame with all quaternions
+#     :param df_extremes: Extracted extreme rotation quaternions
+#     :param start: Boolean, if True, add first quaternions
+#     :param end: Boolean, if True, add last quaternions
+#     :return: Combined DataFrame with added start/end quaternions
+#     """
+#     result = []
+#
+#     # Ensure data is sorted by timestamp before extracting start/end quaternions
+#     df_sorted = df.sort_values(by="timestamp").copy()
+#
+#     if start:
+#         start_rows = df_sorted.loc[df_sorted.groupby("position").head(1).index]  # First row per position
+#         print(f"✅ Added {len(start_rows)} start quaternions.")
+#         result.append(start_rows)
+#
+#     if not df_extremes.empty:
+#         result.append(df_extremes)
+#     else:
+#         print("⚠️ No extreme points detected, skipping extraction data.")
+#
+#     if end:
+#         pprint(df_sorted)
+#         end_rows = df_sorted.loc[df_sorted.groupby("position").tail(1).index]  # Last row per position
+#         print(f"✅ Added {len(end_rows)} end quaternions.")
+#         result.append(end_rows)
+#
+#     if result:
+#         return pd.concat(result, ignore_index=True)
+#     else:
+#         print("⚠️ No data available to concatenate, returning empty DataFrame.")
+#         return pd.DataFrame()
+
+# def add_start_end_quaternions(df, df_extremes, start, end):
+#     """
+#     Adds first and/or last quaternions for each position to the final dataset.
+#
+#     :param df: Original DataFrame with all quaternions
+#     :param df_extremes: Extracted extreme rotation quaternions
+#     :param start: Boolean, if True, add first quaternions
+#     :param end: Boolean, if True, add last quaternions
+#     :return: Combined DataFrame with added start/end quaternions
+#     """
+#     result = []
+#     pos_dl = list(df.groupby("position", group_keys=False))
+#     pprint(pos_dl)
+#     pos_dl_sorted = list(pos_dl.apply(lambda x: x.sort_values(by="timestamp")))
+#     pprint(pos_dl_sorted)
+#     if start:
+#         start_rows = pos_dl_sorted.head(1)
+#         print(f"✅ Added {len(start_rows)} start quaternions.")
+#         result.append(start_rows)
+#
+#     if not df_extremes.empty:
+#         result.append(df_extremes)
+#     else:
+#         print("⚠️ No extreme points detected, skipping extraction data.")
+#
+#     if end:
+#         end_rows = pos_dl_sorted.tail(1)
+#         print(f"✅ Added {len(end_rows)} end quaternions.")
+#         result.append(end_rows)
+#
+#     if result:
+#         return pd.concat(result, ignore_index=True)
+#     else:
+#         print("⚠️ No data available to concatenate, returning empty DataFrame.")
+#         return pd.DataFrame()
+
+# def add_start_end_quaternions(df, df_extremes, start, end):
+#     """
+#     Adds the first and/or last quaternion from each sensor position before/after extracted data.
+#
+#     :param df: Original DataFrame with quaternions
+#     :param df_extremes: DataFrame with extracted extreme rotation points
+#     :param start: Boolean flag to include the first quaternion per position
+#     :param end: Boolean flag to include the last quaternion per position
+#     :return: Concatenated DataFrame with preserved timestamp order
+#     """
+#     result = []
+#     pprint(df)
+#     # Ensure df is sorted by timestamp before extracting head/tail
+#
+#     if start:
+#         df_grouped = df.groupby('position', group_keys=False)
+#         df_sorted = df_grouped.sort_values(by=['timestamp'], ascending=True).
+#
+#         result.append(start_rows)
+#
+#     result.append(df_extremes)
+#
+#     if end:
+#         end_rows = df_sorted.groupby('position', group_keys=False).apply(lambda x: x.tail(1))
+#         result.append(end_rows)
+#
+#     # Concatenate and restore order by timestamp
+#     df_final = pd.concat(result, ignore_index=True).sort_values(by=['timestamp'], ascending=True)
+#
+#     return df_final
+
+
+# def add_start_end_quaternions(df, df_extremes, start, end):
+#     """
+#     Adds the first and/or last quaternion from each sensor position before/after extracted data.
+#     This function manually groups and sorts data to ensure correct order.
+#
+#     :param df: Original DataFrame with quaternions
+#     :param df_extremes: DataFrame with extracted extreme rotation points
+#     :param start: Boolean flag to include the first quaternion per position
+#     :param end: Boolean flag to include the last quaternion per position
+#     :return: Concatenated DataFrame with preserved timestamp order
+#     """
+#     result = []
+#
+#     # Ensure all timestamps are converted to `datetime` format
+#     if df['timestamp'].dtype in ['float64', 'int64']:
+#         df['timestamp'] = pd.to_datetime(df['timestamp'], unit='s', errors='coerce')  # Convert Unix timestamps
+#     elif df['timestamp'].dtype == 'object':  # If stored as a string
+#         df['timestamp'] = pd.to_datetime(df['timestamp'], errors='coerce')
+#
+#     # Handle NaN timestamps (remove rows with missing timestamps)
+#     df = df.dropna(subset=['timestamp'])
+#
+#     # Convert timestamps to numeric values for sorting
+#     df['timestamp'] = df['timestamp'].astype(np.int64)  # Convert to nanoseconds
+#
+#     # Sort manually by looping over each `position`
+#     sorted_rows = []
+#     first_rows = []
+#     last_rows = []
+#
+#     unique_positions = df['position'].unique()
+#
+#     for pos in unique_positions:
+#         group = df[df['position'] == pos].copy()
+#         group = group.sort_values(by=['timestamp'], ascending=True)
+#
+#         if start and not group.empty:
+#             first_rows.append(group.iloc[0])  # Select first row for this position
+#
+#         sorted_rows.append(group)  # Store sorted group
+#
+#         if end and not group.empty:
+#             last_rows.append(group.iloc[-1])  # Select last row for this position
+#
+#     # Concatenate manually collected rows
+#     if start:
+#         result.extend(first_rows)
+#
+#     result.extend(sorted_rows)
+#
+#     if end:
+#         result.extend(last_rows)
+#
+#     # Convert result back to DataFrame
+#     df_final = pd.DataFrame(result).sort_values(by=['timestamp'], ascending=True)
+#
+#     return df_final
+
+# def add_start_end_quaternions(df, df_extremes, start, end):
+#     """
+#     Adds the first and/or last quaternion from each sensor position before/after extracted data.
+#     This function manually groups and sorts data to ensure correct order.
+#
+#     :param df: Original DataFrame with quaternions
+#     :param df_extremes: DataFrame with extracted extreme rotation points
+#     :param start: Boolean flag to include the first quaternion per position
+#     :param end: Boolean flag to include the last quaternion per position
+#     :return: Concatenated DataFrame with preserved timestamp order
+#     """
+#     result = []
+#
+#     # Ensure 'timestamp' column exists before processing
+#     if 'timestamp' not in df.columns:
+#         raise KeyError("❌ The dataframe is missing the 'timestamp' column.")
+#
+#     # Ensure all timestamps are converted to `datetime` format
+#     if df['timestamp'].dtypes in ['float64', 'int64']:  # If Unix timestamp format
+#         df['timestamp'] = pd.to_datetime(df['timestamp'], unit='s', errors='coerce')
+#     elif df['timestamp'].dtypes == 'object':  # If stored as a string
+#         df['timestamp'] = pd.to_datetime(df['timestamp'], errors='coerce')
+#
+#     # Handle NaN timestamps (remove rows with missing timestamps)
+#     df = df.dropna(subset=['timestamp'])
+#
+#     # Sort manually by looping over each `position`
+#     sorted_rows = []
+#     first_rows = []
+#     last_rows = []
+#
+#     unique_positions = df['position'].unique()
+#
+#     for pos in unique_positions:
+#         group = df[df['position'] == pos].copy()
+#         group = group.sort_values(by=['timestamp'], ascending=True)
+#
+#         if start and not group.empty:
+#             first_rows.append(group.iloc[0])  # Select first row for this position
+#
+#         sorted_rows.append(group)  # Store sorted group
+#
+#         if end and not group.empty:
+#             last_rows.append(group.iloc[-1])  # Select last row for this position
+#
+#     # Concatenate manually collected rows
+#     if start:
+#         result.extend(first_rows)
+#
+#     result.extend(df_extremes)
+#
+#     if end:
+#         result.extend(last_rows)
+#
+#     # Convert result back to DataFrame
+#     df_final = pd.concat(result, ignore_index=True).sort_values(by=['timestamp'], ascending=True)
+#
+#     return df_final
+
+
 def add_start_end_quaternions(df, df_extremes, start, end):
-    result = []
+    """
+    Adds the first and/or last quaternion from each sensor position before/after extracted data.
+    This function manually groups and sorts data to ensure correct order.
 
+    :param df: Original DataFrame with quaternions
+    :param df_extremes: DataFrame with extracted extreme rotation points
+    :param start: Boolean flag to include the first quaternion per position
+    :param end: Boolean flag to include the last quaternion per position
+    :return: Concatenated DataFrame with preserved timestamp order
+    """
+    # Ensure timestamps are in consistent datetime format
+    if df['timestamp'].dtype in ['float64', 'int64']:
+        df['timestamp'] = pd.to_datetime(df['timestamp'], unit='s', errors='coerce')
+    elif df['timestamp'].dtype == 'object':
+        df['timestamp'] = pd.to_datetime(df['timestamp'], errors='coerce')
+
+    # Remove any NaN timestamps
+    df = df.dropna(subset=['timestamp'])
+
+    # Convert timestamps to Unix format for sorting
+    df['timestamp'] = df['timestamp'].astype(np.int64) // 10**9  # Convert nanoseconds to seconds
+
+    # Store manually sorted groups
+    sorted_rows = []
+    first_rows = []
+    last_rows = []
+
+    # **Manual grouping and sorting**
+    unique_positions = df['position'].unique()
+    grouped_data = {pos: df[df['position'] == pos].sort_values(by=['timestamp']).to_dict(orient="records") for pos in unique_positions}
+
+    for pos, records2 in grouped_data.items():
+        # pprint("records2")
+        # pprint(records2)
+        # records = records2.sort(by=['timestamp'])
+        records = records2
+        # pprint("  ")
+        # pprint("records")
+        # pprint(records)
+        if not records:
+            continue  # Skip empty groups
+
+        if start:
+            first_rows.append(records[0])  # First quaternion per position
+
+        sorted_rows.extend(records)  # Keep full list sorted
+
+        if end:
+            last_rows.append(records[-1])  # Last quaternion per position
+
+    # Combine results while maintaining order
+    final_result = []
     if start:
-        start_rows = df.groupby('position').first().reset_index()
-        result.append(start_rows)
-
-    result.append(df_extremes)
+        final_result.extend(first_rows)
+    df_extremes_sorted = df_extremes.sort_values(by=['timestamp']).to_dict(orient="records")
+    final_result.extend(df_extremes_sorted)  # Add extracted extreme points
+    # final_result.extend(sorted_rows)
 
     if end:
-        end_rows = df.groupby('position').last().reset_index()
-        result.append(end_rows)
+        pprint(last_rows)
+        final_result.extend(last_rows)
 
-    return pd.concat(result, ignore_index=True)
+    # Convert back to DataFrame and restore original timestamp format
+    df_final = pd.DataFrame(final_result)
+    df_final['timestamp'] = pd.to_datetime(df_final['timestamp'], unit='s')  # Restore datetime format
+    # pprint("")
+    # pprint("df_final")
+    # pprint(df_final)
+    return df_final
+
 
 # Create a new gesture and return its ID
 def create_new_gesture(conn, old_gesture_name, user_id, suffix, threshold_recognition):
@@ -221,7 +558,7 @@ if __name__ == "__main__":
     args = parse_arguments()
 
     print("\n📌 **Command-line arguments:**")
-    pprint.pprint(vars(args))
+    pprint(vars(args))
 
     conn = connect_db(args.host, args.user, args.password, args.database)
     if not conn:

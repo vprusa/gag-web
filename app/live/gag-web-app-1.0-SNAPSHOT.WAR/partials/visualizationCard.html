@@ -2,358 +2,7 @@
 	<span>Show visualization offsets: <input type="checkbox" checked id="toggleSensorsAdjustments" style="display: inline-block; margin-bottom: 2px;"></span>
 	<br>
 	<div class="sensor-adjustments" style="margin-bottom: 40px; margin-top: 0px;" id="sensor-adjustments">
-		<!--<table border="1" style="width:100%; text-align: center;">
-			<tr>
-				<th>Left</th>
-				<th>X</th>
-				<th>X</th>
-				<th>Y</th>
-				<th>Y</th>
-				<th>Z</th>
-				<th>Z</th>
-			</tr>
-			<tr>
-				<td>Wrist</td>
-				<td>
-					<input type="range" id="left-wrist-x" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-wrist-x-num').value = this.value;">
-				</td>
-				<td>
-					<input type="number" id="left-wrist-x-num" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-wrist-x').value = this.value;">
-				</td>
-				<td>
-					<input type="range" id="left-wrist-y" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-wrist-y-num').value = this.value;">
-				</td>
-				<td>
-					<input type="number" id="left-wrist-y-num" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-wrist-y').value = this.value;">
-				</td>
-				<td>
-					<input type="range" id="left-wrist-z" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-wrist-z-num').value = this.value;">
-				</td>
-				<td>
-					<input type="number" id="left-wrist-z-num" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-wrist-z').value = this.value;">
-				</td>
-			</tr>
-			<tr>
-				<td>Thumb</td>
-				<td>
-					<input type="range" id="left-thumb-x" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-thumb-x-num').value = this.value;">
-				</td>
-				<td>
-					<input type="number" id="left-thumb-x-num" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-thumb-x').value = this.value;">
-				</td>
-				<td>
-					<input type="range" id="left-thumb-y" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-thumb-y-num').value = this.value;">
-				</td>
-				<td>
-					<input type="number" id="left-thumb-y-num" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-thumb-y').value = this.value;">
-				</td>
-				<td>
-					<input type="range" id="left-thumb-z" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-thumb-z-num').value = this.value;">
-				</td>
-				<td>
-					<input type="number" id="left-thumb-z-num" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-thumb-z').value = this.value;">
-				</td>
-			</tr>
-			<tr>
-				<td>Index</td>
-				<td>
-					<input type="range" id="left-index-x" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-index-x-num').value = this.value;">
-				</td>
-				<td>
-					<input type="number" id="left-index-x-num" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-index-x').value = this.value;">
-				</td>
-				<td>
-					<input type="range" id="left-index-y" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-index-y-num').value = this.value;">
-				</td>
-				<td>
-					<input type="number" id="left-index-y-num" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-index-y').value = this.value;">
-				</td>
-				<td>
-					<input type="range" id="left-index-z" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-index-z-num').value = this.value;">
-				</td>
-				<td>
-					<input type="number" id="left-index-z-num" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-index-z').value = this.value;">
-				</td>
-			</tr>
-
-			<tr>
-				<td>Middle</td>
-				<td>
-					<input type="range" id="left-middle-x" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-middle-x-num').value = this.value;">
-				</td>
-				<td>
-					<input type="number" id="left-middle-x-num" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-middle-x').value = this.value;">
-				</td>
-				<td>
-					<input type="range" id="left-middle-y" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-middle-y-num').value = this.value;">
-				</td>
-				<td>
-					<input type="number" id="left-middle-y-num" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-middle-y').value = this.value;">
-				</td>
-				<td>
-					<input type="range" id="left-middle-z" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-middle-z-num').value = this.value;">
-				</td>
-				<td>
-					<input type="number" id="left-middle-z-num" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-middle-z').value = this.value;">
-				</td>
-			</tr>
-			<tr>
-				<td>Ring</td>
-				<td>
-					<input type="range" id="left-ring-x" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-ring-x-num').value = this.value;">
-				</td>
-				<td>
-					<input type="number" id="left-ring-x-num" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-ring-x').value = this.value;">
-				</td>
-				<td>
-					<input type="range" id="left-ring-y" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-ring-y-num').value = this.value;">
-				</td>
-				<td>
-					<input type="number" id="left-ring-y-num" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-ring-y').value = this.value;">
-				</td>
-				<td>
-					<input type="range" id="left-ring-z" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-ring-z-num').value = this.value;">
-				</td>
-				<td>
-					<input type="number" id="left-ring-z-num" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-ring-z').value = this.value;">
-				</td>
-			</tr>
-			<tr>
-				<td>Little</td>
-				<td>
-					<input type="range" id="left-little-x" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-little-x-num').value = this.value;">
-				</td>
-				<td>
-					<input type="number" id="left-little-x-num" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-little-x').value = this.value;">
-				</td>
-				<td>
-					<input type="range" id="left-little-y" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-little-y-num').value = this.value;">
-				</td>
-				<td>
-					<input type="number" id="left-little-y-num" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-little-y').value = this.value;">
-				</td>
-				<td>
-					<input type="range" id="left-little-z" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-little-z-num').value = this.value;">
-				</td>
-				<td>
-					<input type="number" id="left-little-z-num" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-little-z').value = this.value;">
-				</td>
-			</tr>
-		</table>
-
-		<table border="1" style="width:100%; text-align: center;">
-			<tr>
-				<th>Right</th>
-				<th>X</th>
-				<th>X</th>
-				<th>Y</th>
-				<th>Y</th>
-				<th>Z</th>
-				<th>Z</th>
-			</tr>
-			<tr>
-				<td>Wrist</td>
-				<td>
-					<input type="range" id="right-wrist-x" min="-180" max="180" value="0"
-						   oninput="document.getElementById('right-wrist-x-num').value = this.value;">
-				</td>
-				<td>
-					<input type="number" id="right-wrist-x-num" min="-180" max="180" value="0"
-						   oninput="document.getElementById('right-wrist-x').value = this.value;">
-				</td>
-				<td>
-					<input type="range" id="right-wrist-y" min="-180" max="180" value="0"
-						   oninput="document.getElementById('right-wrist-y-num').value = this.value;">
-				</td>
-				<td>
-					<input type="number" id="right-wrist-y-num" min="-180" max="180" value="0"
-						   oninput="document.getElementById('right-wrist-y').value = this.value;">
-				</td>
-				<td>
-					<input type="range" id="right-wrist-z" min="-180" max="180" value="0"
-						   oninput="document.getElementById('right-wrist-z-num').value = this.value;">
-				</td>
-				<td>
-					<input type="number" id="right-wrist-z-num" min="-180" max="180" value="0"
-						   oninput="document.getElementById('right-wrist-z').value = this.value;">
-				</td>
-			</tr>
-			<tr>
-				<td>Thumb</td>
-				<td>
-					<input type="range" id="right-thumb-x" min="-180" max="180" value="0"
-						   oninput="document.getElementById('right-thumb-x-num').value = this.value;">
-				</td>
-				<td>
-					<input type="number" id="right-thumb-x-num" min="-180" max="180" value="0"
-						   oninput="document.getElementById('right-thumb-x').value = this.value;">
-				</td>
-				<td>
-					<input type="range" id="right-thumb-y" min="-180" max="180" value="0"
-						   oninput="document.getElementById('right-thumb-y-num').value = this.value;">
-				</td>
-				<td>
-					<input type="number" id="right-thumb-y-num" min="-180" max="180" value="0"
-						   oninput="document.getElementById('right-thumb-y').value = this.value;">
-				</td>
-				<td>
-					<input type="range" id="right-thumb-z" min="-180" max="180" value="0"
-						   oninput="document.getElementById('right-thumb-z-num').value = this.value;">
-				</td>
-				<td>
-					<input type="number" id="right-thumb-z-num" min="-180" max="180" value="0"
-						   oninput="document.getElementById('right-thumb-z').value = this.value;">
-				</td>
-			</tr>
-			<tr>
-				<td>Index</td>
-				<td>
-					<input type="range" id="right-index-x" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-index-x-num').value = this.value;">
-				</td>
-				<td>
-					<input type="number" id="right-index-x-num" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-index-x').value = this.value;">
-				</td>
-				<td>
-					<input type="range" id="right-index-y" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-index-y-num').value = this.value;">
-				</td>
-				<td>
-					<input type="number" id="right-index-y-num" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-index-y').value = this.value;">
-				</td>
-				<td>
-					<input type="range" id="right-index-z" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-index-z-num').value = this.value;">
-				</td>
-				<td>
-					<input type="number" id="right-index-z-num" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-index-z').value = this.value;">
-				</td>
-			</tr>
-			<tr>
-				<td>Middle</td>
-				<td>
-					<input type="range" id="right-middle-x" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-middle-x-num').value = this.value;">
-				</td>
-				<td>
-					<input type="number" id="right-middle-x-num" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-middle-x').value = this.value;">
-				</td>
-				<td>
-					<input type="range" id="right-middle-y" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-middle-y-num').value = this.value;">
-				</td>
-				<td>
-					<input type="number" id="right-middle-y-num" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-middle-y').value = this.value;">
-				</td>
-				<td>
-					<input type="range" id="right-middle-z" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-middle-z-num').value = this.value;">
-				</td>
-				<td>
-					<input type="number" id="right-middle-z-num" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-middle-z').value = this.value;">
-				</td>
-			</tr>
-			<tr>
-				<td>Ring</td>
-				<td>
-					<input type="range" id="right-ring-x" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-ring-x-num').value = this.value;">
-				</td>
-				<td>
-					<input type="number" id="right-ring-x-num" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-ring-x').value = this.value;">
-				</td>
-				<td>
-					<input type="range" id="right-ring-y" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-ring-y-num').value = this.value;">
-				</td>
-				<td>
-					<input type="number" id="right-ring-y-num" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-ring-y').value = this.value;">
-				</td>
-				<td>
-					<input type="range" id="right-ring-z" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-ring-z-num').value = this.value;">
-				</td>
-				<td>
-					<input type="number" id="right-ring-z-num" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-thumb-z').value = this.value;">
-				</td>
-			</tr>
-			<tr>
-				<td>Little</td>
-				<td>
-					<input type="range" id="right-little-x" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-little-x-num').value = this.value;">
-				</td>
-				<td>
-					<input type="number" id="right-little-x-num" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-little-x').value = this.value;">
-				</td>
-				<td>
-					<input type="range" id="right-little-y" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-little-y-num').value = this.value;">
-				</td>
-				<td>
-					<input type="number" id="right-little-y-num" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-little-y').value = this.value;">
-				</td>
-				<td>
-					<input type="range" id="right-little-z" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-little-z-num').value = this.value;">
-				</td>
-				<td>
-					<input type="number" id="right-little-z-num" min="-180" max="180" value="0"
-						   oninput="document.getElementById('left-little-z').value = this.value;">
-				</td>
-			</tr>
-		</table>-->
-		<!--<tr ng-repeat="hand in ['left', 'right']">
-				<td rowspan="6">{{hand | uppercase}}</td>
-			</tr>-->
-
+		<button data-ng-click="window.animationLoop()">Update</button>
 		<table border="1" ng-repeat="hand in ['left', 'right']">
 			<thead>
 			<tr>
@@ -396,22 +45,6 @@
 				  value="{{vis.currentGesture.progressPercentage*100.0}}"></progress>
 		<div>Id: <input value="{{vis.currentGesture.currentDLId}}"></input> Timestamp: <input value="{{vis.currentGesture.currentTimeHuman}}"></input></div>
 
-	<!--	<table class="table">
-			<thead class="text-primary">
-			<th>ID</th>
-			<th>Time</th>
-			<th>Hand</th>
-			<th>Position</th>
-			</thead>
-			<tbody>
-			<tr ng-repeat="item in selectedGestureList.data">
-				<td>{{item.id}}</td>
-				<td>{{item.t | date: 'yyyy-MM-dd HH:MM'}}</td>
-				<td>{{item.h}}</td>
-				<td>{{item.p}}</td>
-			</tr>
-			</tbody>
-		</table>-->
 	</div>
 
 <!--	<script src="https://cdn.jsdelivr.net/npm/three@0.139.2/build/three.min.js"></script>-->
@@ -546,9 +179,28 @@
 					return;
 				}
 
+				function getRotatedQuaternion(where) {
+					const axis = new THREE.Vector3(0, 1, 0); // Rotate around the Y-axis
+					const angle = THREE.MathUtils.degToRad(90); // Convert degrees to radians
+					const quaternion = new THREE.Quaternion();
+					quaternion.setFromAxisAngle(axis, angle);
+					console.log("using default wrist quaternion offset: " + where);
+					return quaternion;
+				}
+
 				// Update wrist rotations
-				const leftWristQuaternion = new THREE.Quaternion(data.lq._x, data.lq._y, data.lq._z, data.lq._w);
-				const rightWristQuaternion = new THREE.Quaternion(data.rq._x, data.rq._y, data.rq._z, data.rq._w);
+				// const leftWristQuaternion = new THREE.Quaternion(data.lq._x, data.lq._y, data.lq._z, data.lq._w);
+				// const rightWristQuaternion = new THREE.Quaternion(data.rq._x, data.rq._y, data.rq._z, data.rq._w);
+
+				const leftWristQuaternion = (data.lq && data.lq._x !== undefined)
+						? new THREE.Quaternion(data.lq._x, data.lq._y, data.lq._z, data.lq._w)
+						: getRotatedQuaternion("left");
+
+				const rightWristQuaternion = (data.rq && data.rq._x !== undefined)
+						? new THREE.Quaternion(data.rq._x, data.rq._y, data.rq._z, data.rq._w)
+						: getRotatedQuaternion("right");
+				console.log("rightWristQuaternion: " + rightWristQuaternion);
+
 				window.leftHandSkeleton.setRotationFromQuaternion(leftWristQuaternion);
 				window.rightHandSkeleton.setRotationFromQuaternion(rightWristQuaternion);
 
@@ -576,6 +228,7 @@
 				requestAnimationFrame(animate);
 				renderer.render(scene, camera);
 			}
+			window.animationLoop = animate;
 			animate();
 		};
 		setTimeout(() => {
