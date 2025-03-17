@@ -33,11 +33,11 @@ import java.security.Principal;
         decoders = {},
         configurator = CustomServerEndpointConfiguration.class
 )
-public class ReplayerWSEndpoint extends BaseWSEndpoint {
+public class ReplayerWSEndpoint/* extends BaseWSEndpoint*/ {
 
     public static final Log.TypedLogger log = new Log.TypedLogger<Log.LoggerTypeWSReplayer>(Log.LoggerTypeWSReplayer.class);
 
-    private static final String REPLAYER_KEY = "replayer";
+    public static final String REPLAYER_KEY = "replayer";
 
     @Inject
     private DataLineService dataLineService;
@@ -49,7 +49,7 @@ public class ReplayerWSEndpoint extends BaseWSEndpoint {
     private UserService userService;
 
     @Inject
-    private DataLineRePlayer rep;
+    private DataLineRePlayer replayer;
 
     @OnOpen
     public void onOpen(Session session, EndpointConfig config) {
@@ -68,8 +68,8 @@ public class ReplayerWSEndpoint extends BaseWSEndpoint {
     }
 
     // TODO add decoders as custom bean injections?
-    private ActionDecoder<Action> ad = new ActionDecoder(Action.class);
-    private ActionDecoder<PlayerActions> pad = new ActionDecoder(PlayerActions.class, Action.ActionsTypesEnum.PLAYER);
+    private ActionDecoder<Action> actionDecoder = new ActionDecoder(Action.class);
+    private ActionDecoder<PlayerActions> playerActionDecoder = new ActionDecoder(PlayerActions.class, Action.ActionsTypesEnum.PLAYER);
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -80,22 +80,22 @@ public class ReplayerWSEndpoint extends BaseWSEndpoint {
         log.info(msg.toString());
 
         // considering no DataLine matched...
-        if (ad.willDecode(msg)) {
+        if (actionDecoder.willDecode(msg)) {
             log.info("ad.decode(msg)");
             log.info(msg);
-            if (pad.willDecode(msg)) {
+            if (playerActionDecoder.willDecode(msg)) {
                 log.info("pad");
-                PlayerActions pa = (PlayerActions) pad.decode(msg);
+                PlayerActions pa = (PlayerActions) playerActionDecoder.decode(msg);
                 switch (pa.getAction()) {
                     case PLAY: {
                         // stop existing first
                         log.info("Action: " + PlayerActions.ActionsEnum.PLAY);
                         Thread replayer = (Thread) session.getUserProperties().get(REPLAYER_KEY);
-                        rep.prepare(true);
-                        rep.setGestureId(pa.getGestureId());
-                        rep.setSession(session);
+                        this.replayer.prepare(true);
+                        this.replayer.setGestureId(pa.getGestureId());
+                        this.replayer.setSession(session);
                         if (replayer == null) {
-                            replayer = new Thread(rep);
+                            replayer = new Thread(this.replayer);
                         }
                         replayer.start();
                         session.getUserProperties().put(REPLAYER_KEY, replayer);
@@ -107,7 +107,7 @@ public class ReplayerWSEndpoint extends BaseWSEndpoint {
                             log.info("Replayer pause");
                             log.info(replayer.toString());
                             if (replayer != null) {
-                                rep.pause();
+                                this.replayer.pause();
                             }
                         }
                         break;
@@ -116,7 +116,7 @@ public class ReplayerWSEndpoint extends BaseWSEndpoint {
                         Thread replayer = (Thread) session.getUserProperties().get(REPLAYER_KEY);
                         synchronized (replayer) {
                             if (replayer != null) {
-                                rep.play();
+                                this.replayer.play();
                                 replayer.notify();
                             }
                         }
@@ -126,7 +126,7 @@ public class ReplayerWSEndpoint extends BaseWSEndpoint {
                         Thread replayer = (Thread) session.getUserProperties().get(REPLAYER_KEY);
                         synchronized (replayer) {
                             if (replayer != null) {
-                                rep.stop();
+                                this.replayer.stop();
                             }
                         }
                         break;

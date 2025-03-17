@@ -32,7 +32,7 @@ import static cz.gag.web.services.websocket.service.DataLineRePlayer.PlayerState
 public class DataLineRePlayer implements Runnable, Serializable {
 
     public static final String GESTURE_KEY = "gestureId";
-    public static final int TIME_DIFF_ZERO_LIMIT = 5;
+    private static final int TIME_DIFF_ZERO_LIMIT = 5;
     public static final Logger log = Logger.getLogger(DataLineRePlayer.class.getSimpleName());
 
     private Session session;
