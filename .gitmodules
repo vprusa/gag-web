@@ -1,0 +1,3 @@
+[submodule "spock-example"]
+	path = spock-example
+	url = ./spock-example
