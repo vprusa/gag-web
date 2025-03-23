@@ -143,7 +143,7 @@ public class GestureRecognizer/* implements Serializable*/ {
 //                            e.printStackTrace();
 //                        }
 
-                        // lets remove unnecessary data (quickfix for GestureCollectors TODO )
+                        // TODO lets remove unnecessary data (quickfix for GestureCollectors  )
                         // Relies on RecognizerWSEndpoint:".*JsonInclude.Include.NON_NULL.*"
                         for(Map.Entry<Sensor, SingleSensorGestureMatcher> entry : matches.getSssgmm().entrySet()) {
                             entry.getValue().clearG();
