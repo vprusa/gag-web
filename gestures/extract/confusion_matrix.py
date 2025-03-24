@@ -229,27 +229,68 @@ def categorize_by_angular_distance(input_df, avg_ref, threshold):
     print(categorized_df.to_string(index=False))
     return categorized_df
 # Generate single confusion matrix based on angular threshold classification
-def generate_angular_confusion_matrix(df, ref_ids, input_ids, position, output_prefix):
-    y_true = df['matched']
-    y_pred = df['matched']  # for now assume ideal classification (replace with real prediction logic if available)
-    cm = confusion_matrix(y_true, y_pred, labels=[0, 1])
+# def generate_angular_confusion_matrix(df, ref_ids, input_ids, position, output_prefix):
+#     y_true = df['matched']
+#     y_pred = df['matched']  # for now assume ideal classification (replace with real prediction logic if available)
+#     cm = confusion_matrix(y_true, y_pred, labels=[0, 1])
+#
+#     out_path = os.path.join(
+#         f"{output_prefix}_ref_gestures_{'_'.join(map(str, ref_ids))}_in_gestures_{'_'.join(map(str, input_ids))}",
+#         f"pos_{position}"
+#     )
+#     os.makedirs(out_path, exist_ok=True)
+#     file_path = os.path.join(out_path, f"angular_diff_confusion.png")
+#
+#     plt.figure(figsize=(4, 3))
+#     sns.heatmap(cm, annot=True, fmt='d', cmap='Purples', xticklabels=[0, 1], yticklabels=[0, 1])
+#     plt.title("Angular Difference Confusion Matrix")
+#     plt.xlabel("Predicted")
+#     plt.ylabel("Actual")
+#     plt.tight_layout()
+#     plt.savefig(file_path)
+#     plt.close()
+#     print(f"✅ Saved angular difference confusion matrix: {file_path}")
 
+def generate_angular_confusion_matrix(df, ref_ids, input_ids, position, output_prefix):
     out_path = os.path.join(
         f"{output_prefix}_ref_gestures_{'_'.join(map(str, ref_ids))}_in_gestures_{'_'.join(map(str, input_ids))}",
         f"pos_{position}"
     )
     os.makedirs(out_path, exist_ok=True)
-    file_path = os.path.join(out_path, f"angular_diff_confusion.png")
 
+    # Global confusion matrix
+    y_true = df['matched']
+    y_pred = df['matched']  # Placeholder for prediction logic
+    cm = confusion_matrix(y_true, y_pred, labels=[0, 1])
+
+    file_path = os.path.join(out_path, f"angular_diff_confusion.png")
     plt.figure(figsize=(4, 3))
     sns.heatmap(cm, annot=True, fmt='d', cmap='Purples', xticklabels=[0, 1], yticklabels=[0, 1])
-    plt.title("Angular Difference Confusion Matrix")
+    plt.title("Angular Difference Confusion Matrix (Global)")
     plt.xlabel("Predicted")
     plt.ylabel("Actual")
     plt.tight_layout()
     plt.savefig(file_path)
     plt.close()
-    print(f"✅ Saved angular difference confusion matrix: {file_path}")
+    print(f"✅ Saved global angular difference confusion matrix: {file_path}")
+
+    # Per-dataline confusion matrices
+    for idx in df['index'].unique():
+        subset = df[df['index'] == idx]
+        y_true = subset['matched']
+        y_pred = subset['matched']  # Again, assumed perfect matching for placeholder
+        cm = confusion_matrix(y_true, y_pred, labels=[0, 1])
+
+        file_path = os.path.join(out_path, f"angular_diff_confusion.idx_{idx}.png")
+        plt.figure(figsize=(4, 3))
+        sns.heatmap(cm, annot=True, fmt='d', cmap='Purples', xticklabels=[0, 1], yticklabels=[0, 1])
+        plt.title(f"Angular Diff Confusion Matrix (Index {idx})")
+        plt.xlabel("Predicted")
+        plt.ylabel("Actual")
+        plt.tight_layout()
+        plt.savefig(file_path)
+        plt.close()
+        print(f"✅ Saved angular diff matrix for index {idx}: {file_path}")
 
 # # Main execution
 # if __name__ == "__main__":
