@@ -6,33 +6,14 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import os
-from sklearn.metrics import confusion_matrix
-from scipy.spatial.transform import Rotation as R
 from sklearn.metrics import confusion_matrix, classification_report
+from scipy.spatial.transform import Rotation as R
+import sys
+from io import StringIO
 
-# Command-line argument parser
 
-# def parse_arguments():
-#     parser = argparse.ArgumentParser(description="Generate quaternion confusion matrices based on referential gestures.")
-#
-#     parser.add_argument("--host", type=str, required=True)
-#     parser.add_argument("--user", type=str, required=True)
-#     parser.add_argument("--password", type=str, required=True)
-#     parser.add_argument("--database", type=str, required=True)
-#     parser.add_argument("--gestures", type=int, nargs='+', required=True)
-#     parser.add_argument("--positions", type=int, nargs='+', required=True)
-#     parser.add_argument("--ref-gestures", type=int, nargs='+', required=True)
-#     parser.add_argument("--output_prefix", type=str, default="quaternion_plot_out")
-#     parser.add_argument("--calc-threshold", action="store_true")
-#     parser.add_argument("--threshold", type=float)
-#     parser.add_argument("--angular-diff", action="store_true")
-#     parser.add_argument("--calc-max", action="store_true")
-#
-#     return parser.parse_args()
-# Extend argument parser with actual-match labels
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Generate quaternion confusion matrices based on referential gestures.")
-
     parser.add_argument("--host", type=str, required=True)
     parser.add_argument("--user", type=str, required=True)
     parser.add_argument("--password", type=str, required=True)
@@ -46,15 +27,13 @@ def parse_arguments():
     parser.add_argument("--angular-diff", action="store_true")
     parser.add_argument("--calc-max", action="store_true")
     parser.add_argument("--actual-matches", type=int, nargs='+', help="List of expected matches (1 or 0) for each input gesture")
-
     return parser.parse_args()
 
 
-# Connect to MySQL database
 def connect_db(host, user, password, database):
     return mysql.connector.connect(host=host, user=user, password=password, database=database)
 
-# Fetch gesture data
+
 def fetch_gesture_data(conn, gesture_ids, position):
     query = f"""
     SELECT dl.id, dl.position, dl.timestamp,
@@ -69,6 +48,7 @@ def fetch_gesture_data(conn, gesture_ids, position):
     cursor.execute(query, gesture_ids + [position])
     return pd.DataFrame(cursor.fetchall())
 
+
 def compute_avg_reference_and_threshold(df, override_threshold=None, calc_max=False, use_angular=False):
     grouped = df.groupby('gesture_id')
     min_len = grouped.size().min()
@@ -81,7 +61,8 @@ def compute_avg_reference_and_threshold(df, override_threshold=None, calc_max=Fa
     print(f"Using angular difference: {use_angular}")
     print("Aligned Quaternions (per gesture):")
     for idx, quat_set in enumerate(aligned):
-        print(f"  Gesture {idx}:\n{quat_set}")
+        print(f"  Gesture {idx}:")
+        print(quat_set)
     print("\nAveraged Gesture:")
     print(avg_gesture)
 
@@ -109,6 +90,7 @@ def compute_avg_reference_and_threshold(df, override_threshold=None, calc_max=Fa
     final_threshold = max(diffs) if calc_max else np.mean(diffs)
     print(f"\n✅ Final computed threshold: {final_threshold:.6f}")
     return avg_gesture, final_threshold
+
 
 def categorize_by_angular_distance(input_df, avg_ref, threshold):
     categories = []
@@ -139,66 +121,28 @@ def categorize_by_angular_distance(input_df, avg_ref, threshold):
     print("\n📋 Angular Difference Categorization Result:")
     print(categorized_df.to_string(index=False))
     return categorized_df
-#
-# def generate_angular_confusion_matrix(df, ref_ids, input_ids, position, output_prefix):
-#     out_path = os.path.join(
-#         f"{output_prefix}_ref_gestures_{'_'.join(map(str, ref_ids))}_in_gestures_{'_'.join(map(str, input_ids))}",
-#         f"pos_{position}"
-#     )
-#     os.makedirs(out_path, exist_ok=True)
-#
-#     # Global confusion matrix
-#     y_true = df['matched']
-#     y_pred = df['matched']  # Placeholder for prediction logic
-#     cm = confusion_matrix(y_true, y_pred, labels=[0, 1])
-#
-#     file_path = os.path.join(out_path, f"angular_diff_confusion.png")
-#     plt.figure(figsize=(4, 3))
-#     sns.heatmap(cm, annot=True, fmt='d', cmap='Purples', xticklabels=[0, 1], yticklabels=[0, 1])
-#     plt.title("Angular Difference Confusion Matrix (Global)")
-#     plt.xlabel("Predicted")
-#     plt.ylabel("Actual")
-#     plt.tight_layout()
-#     plt.savefig(file_path)
-#     plt.close()
-#     print(f"✅ Saved global angular difference confusion matrix: {file_path}")
-#     print("\n📊 Classification Report (Global):")
-#     print(classification_report(y_true, y_pred, labels=[0, 1]))
-#
-#     # Per-dataline confusion matrices
-#     for idx in df['index'].unique():
-#         subset = df[df['index'] == idx]
-#         y_true = subset['matched']
-#         y_pred = subset['matched']  # Again, assumed perfect matching for placeholder
-#         cm = confusion_matrix(y_true, y_pred, labels=[0, 1])
-#
-#         file_path = os.path.join(out_path, f"angular_diff_confusion.idx_{idx}.png")
-#         plt.figure(figsize=(4, 3))
-#         sns.heatmap(cm, annot=True, fmt='d', cmap='Purples', xticklabels=[0, 1], yticklabels=[0, 1])
-#         plt.title(f"Angular Diff Confusion Matrix (Index {idx})")
-#         plt.xlabel("Predicted")
-#         plt.ylabel("Actual")
-#         plt.tight_layout()
-#         plt.savefig(file_path)
-#         plt.close()
-#         print(f"✅ Saved angular diff matrix for index {idx}: {file_path}")
-#
-#         print(f"\n📊 Classification Report (Index {idx}):")
-#         print(classification_report(y_true, y_pred, labels=[0, 1]))
 
 
+def assign_actual_matches(categorized_df, gesture_ids, actual_matches):
+    mapping = dict(zip(gesture_ids, actual_matches))
+    categorized_df['actual_match'] = categorized_df['gesture_id'].map(mapping).fillna(0).astype(int)
+    return categorized_df
 
-def generate_angular_confusion_matrix(df, ref_ids, input_ids, position, output_prefix):
-    out_path = os.path.join(
-        f"{output_prefix}_ref_gestures_{'_'.join(map(str, ref_ids))}_in_gestures_{'_'.join(map(str, input_ids))}",
-        f"pos_{position}"
-    )
+
+def generate_angular_confusion_matrix(df, ref_ids, input_ids, position, output_prefix, actual_matches, args):
+    actual_str = ''.join(map(str, actual_matches)) if actual_matches else 'unknown'
+    dir_prefix = f"out_ref_gestures_{'_'.join(map(str, ref_ids))}_in_gestures_{'_'.join(map(str, input_ids))}_actual_matches_{actual_str}"
+    out_path = os.path.join(dir_prefix, f"pos_{position}")
     os.makedirs(out_path, exist_ok=True)
 
-    # Global confusion matrix
+    old_stdout = sys.stdout
+    sys.stdout = mystdout = StringIO()
+
+    print("\n📊 Classification Report (Global):")
     y_true = df['actual_match']
     y_pred = df['matched']
     cm = confusion_matrix(y_true, y_pred, labels=[0, 1])
+    print(classification_report(y_true, y_pred, labels=[0, 1]))
 
     file_path = os.path.join(out_path, f"angular_diff_confusion.png")
     plt.figure(figsize=(4, 3))
@@ -210,15 +154,14 @@ def generate_angular_confusion_matrix(df, ref_ids, input_ids, position, output_p
     plt.savefig(file_path)
     plt.close()
     print(f"✅ Saved global angular difference confusion matrix: {file_path}")
-    print("\n📊 Classification Report (Global):")
-    print(classification_report(y_true, y_pred, labels=[0, 1]))
 
-    # Per-dataline confusion matrices
     for idx in df['index'].unique():
+        print(f"\n📊 Classification Report (Index {idx}):")
         subset = df[df['index'] == idx]
         y_true = subset['actual_match']
         y_pred = subset['matched']
         cm = confusion_matrix(y_true, y_pred, labels=[0, 1])
+        print(classification_report(y_true, y_pred, labels=[0, 1]))
 
         file_path = os.path.join(out_path, f"angular_diff_confusion.idx_{idx}.png")
         plt.figure(figsize=(4, 3))
@@ -231,15 +174,18 @@ def generate_angular_confusion_matrix(df, ref_ids, input_ids, position, output_p
         plt.close()
         print(f"✅ Saved angular diff matrix for index {idx}: {file_path}")
 
-        print(f"\n📊 Classification Report (Index {idx}):")
-        print(classification_report(y_true, y_pred, labels=[0, 1]))
+    sys.stdout = old_stdout
+    log_content = mystdout.getvalue()
 
+    with open(os.path.join(out_path, "program_args.txt"), "w") as f:
+        f.write("Command-line arguments:\n")
+        for k, v in vars(args).items():
+            f.write(f"{k}: {v}\n")
 
-# Add actual match values to categorized df
-def assign_actual_matches(categorized_df, gesture_ids, actual_matches):
-    mapping = dict(zip(gesture_ids, actual_matches))
-    categorized_df['actual_match'] = categorized_df['gesture_id'].map(mapping).fillna(0).astype(int)
-    return categorized_df
+    with open(os.path.join(out_path, "program.log"), "w") as f:
+        f.write(log_content)
+
+    print(log_content)
 
 
 if __name__ == "__main__":
@@ -253,18 +199,12 @@ if __name__ == "__main__":
             print("❌ No referential gesture data.")
             continue
 
-        # avg_ref, threshold = compute_avg_reference_and_threshold(
-        #     ref_df,
-        #     override_threshold=args.threshold if args.calc_threshold else args.threshold,
-        #     calc_max=args.calc_max
-        # )
         avg_ref, threshold = compute_avg_reference_and_threshold(
             ref_df,
             override_threshold=args.threshold if args.calc_threshold else args.threshold,
             calc_max=args.calc_max,
             use_angular=args.angular_diff
         )
-
         print(f"📐 Using threshold: {threshold:.6f}")
 
         input_df = fetch_gesture_data(conn, args.gestures, pos)
@@ -272,11 +212,33 @@ if __name__ == "__main__":
             print("❌ No input gesture data.")
             continue
 
-        # categorized_df = categorize_by_threshold(input_df, avg_ref, threshold)
-        # generate_confusion_matrices(categorized_df, args.ref_gestures, args.gestures, pos, args.output_prefix)
+        print("\n📦 Input gesture datalines:")
+        for gid in input_df['gesture_id'].unique():
+            print(f"\nGesture ID {gid}:")
+            print(input_df[input_df['gesture_id'] == gid][['qw', 'qx', 'qy', 'qz']])
 
-        if args.angular_diff:
-            angular_df = categorize_by_angular_distance(input_df, avg_ref, threshold)
-            generate_angular_confusion_matrix(angular_df, args.ref_gestures, args.gestures, pos, args.output_prefix)
+        categorized_df = categorize_by_angular_distance(input_df, avg_ref, threshold)
 
+        if args.actual_matches:
+            categorized_df = assign_actual_matches(categorized_df, args.gestures, args.actual_matches)
+        else:
+            print("⚠️ --actual-matches not provided. Defaulting all to match (1).")
+            categorized_df['actual_match'] = 1
+
+        # generate_angular_confusion_matrix(categorized_df, args.ref_gestures, args.gestures, pos, args.output_prefix, args.actual_matches, args)
+    if args.actual_matches:
+        categorized_df = assign_actual_matches(categorized_df, args.gestures, args.actual_matches)
+    else:
+        print("⚠️ --actual-matches not provided. Defaulting all to match (1).")
+        categorized_df['actual_match'] = categorized_df['matched']  # fallback: same as old behavior
+
+    generate_angular_confusion_matrix(
+        categorized_df,
+        args.ref_gestures,
+        args.gestures,
+        pos,
+        args.output_prefix,
+        args.actual_matches if args.actual_matches else categorized_df['actual_match'].tolist(),
+        args
+    )
     conn.close()
