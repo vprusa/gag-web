@@ -2,114 +2,140 @@ import mysql.connector
 import numpy as np
 import pandas as pd
 import argparse
-from datetime import datetime
-from sklearn.metrics import confusion_matrix
-import matplotlib.pyplot as plt
 import seaborn as sns
+import matplotlib.pyplot as plt
+import os
+from sklearn.metrics import confusion_matrix
+
 
 # Command-line argument parser
 def parse_arguments():
-    parser = argparse.ArgumentParser(description="Classify gestures by similarity to a referential gesture.")
+    parser = argparse.ArgumentParser(
+        description="Generate quaternion confusion matrices based on referential gestures.")
 
-    parser.add_argument("--host", type=str, required=True, help="MySQL server host")
-    parser.add_argument("--user", type=str, required=True, help="MySQL username")
-    parser.add_argument("--password", type=str, required=True, help="MySQL password")
-    parser.add_argument("--database", type=str, required=True, help="MySQL database name")
-    parser.add_argument("--ref-gesture", type=int, required=True, help="Referential gesture ID")
-    parser.add_argument("--gestures", type=int, nargs='+', required=True, help="Gesture IDs to compare against reference")
-    parser.add_argument("--class-threshold", type=float, default=0.01, help="Classification threshold (angular distance)")
+    parser.add_argument("--host", type=str, required=True)
+    parser.add_argument("--user", type=str, required=True)
+    parser.add_argument("--password", type=str, required=True)
+    parser.add_argument("--database", type=str, required=True)
+    parser.add_argument("--gestures", type=int, nargs='+', required=True)
+    parser.add_argument("--positions", type=int, nargs='+', required=True)
+    parser.add_argument("--ref-gestures", type=int, nargs='+', required=True)
+    parser.add_argument("--output_prefix", type=str, default="quaternion_plot_out")
+    parser.add_argument("--calc-threshold", action="store_true")
+    parser.add_argument("--threshold", type=float)
 
     return parser.parse_args()
 
-# Fetch gesture data (assumes all data for one gesture and position)
-def fetch_gesture_data(conn, gesture_id):
-    query = """
-    SELECT dl.id, dl.timestamp, fdl.quatA AS qw, fdl.quatX AS qx, fdl.quatY AS qy, fdl.quatZ AS qz
+
+# Connect to MySQL database
+def connect_db(host, user, password, database):
+    return mysql.connector.connect(host=host, user=user, password=password, database=database)
+
+
+# Fetch gesture data
+def fetch_gesture_data(conn, gesture_ids, position):
+    query = f"""
+    SELECT dl.id, dl.position, dl.timestamp,
+           fdl.quatA AS qw, fdl.quatX AS qx, fdl.quatY AS qy, fdl.quatZ AS qz,
+           dl.gesture_id
     FROM FingerDataLine fdl
     JOIN DataLine dl ON fdl.id = dl.id
-    WHERE dl.gesture_id = %s
+    WHERE dl.gesture_id IN ({', '.join(['%s'] * len(gesture_ids))}) AND dl.position = %s
     ORDER BY dl.timestamp ASC;
     """
     cursor = conn.cursor(dictionary=True)
-    cursor.execute(query, (gesture_id,))
-    data = cursor.fetchall()
-    return pd.DataFrame(data) if data else None
+    cursor.execute(query, gesture_ids + [position])
+    return pd.DataFrame(cursor.fetchall())
 
-# Compute angle between two quaternions
-def quaternion_distance(q1, q2):
-    q1 = q1 / np.linalg.norm(q1)
-    q2 = q2 / np.linalg.norm(q2)
-    dot_product = np.abs(np.dot(q1, q2))
-    angle = 2 * np.arccos(np.clip(dot_product, -1.0, 1.0))
-    return angle
 
-# Classification logic
-def classify_gesture_against_reference(ref_df, test_df, threshold):
-    if len(ref_df) != len(test_df):
-        print("❌ Gesture skipped due to mismatched dataline count.")
-        return None  # Invalid due to mismatch
+# Calculate average gesture and threshold
+def compute_avg_reference_and_threshold(df, override_threshold=None):
+    grouped = df.groupby('gesture_id')
+    min_len = grouped.size().min()
+    aligned = [g.iloc[:min_len][['qw', 'qx', 'qy', 'qz']].to_numpy() for _, g in grouped]
+    avg_gesture = np.mean(aligned, axis=0)
 
-    for i in range(len(ref_df)):
-        ref_q = ref_df.loc[i, ['qw', 'qx', 'qy', 'qz']].to_numpy()
-        test_q = test_df.loc[i, ['qw', 'qx', 'qy', 'qz']].to_numpy()
-        angle = quaternion_distance(ref_q, test_q)
-        print(f"   ▸ Row {i}: angle = {angle:.6f} rad")
-        if angle > threshold:
-            return False  # Mismatch found
-    return True
+    if override_threshold is not None:
+        return avg_gesture, override_threshold
 
-# Main function
+    diffs = []
+    for i in range(min_len):
+        per_row_diffs = [np.linalg.norm(g[i] - avg_gesture[i]) for g in aligned]
+        diffs.append(np.mean(per_row_diffs))
+
+    return avg_gesture, np.mean(diffs)
+
+
+# Categorize input gestures based on threshold
+def categorize_by_threshold(input_df, avg_ref, threshold):
+    categories = []
+    grouped = input_df.groupby('gesture_id')
+    min_len = min(len(g) for _, g in grouped)
+    for gesture_id, g in grouped:
+        for i in range(min_len):
+            quat = g.iloc[i][['qw', 'qx', 'qy', 'qz']].to_numpy()
+            ref_quat = avg_ref[i]
+            dist = np.linalg.norm(quat - ref_quat)
+            match = int(dist <= threshold)
+            categories.append({
+                'gesture_id': gesture_id,
+                'index': i,
+                'matched': match,
+                'qw': quat[0], 'qx': quat[1], 'qy': quat[2], 'qz': quat[3]
+            })
+    return pd.DataFrame(categories)
+
+
+# Generate confusion matrices and plots
+def generate_confusion_matrices(df, ref_ids, input_ids, position, output_prefix):
+    for i in df['index'].unique():
+        subset = df[df['index'] == i]
+        for axis in ['qw', 'qx', 'qy', 'qz']:
+            y_true = subset['matched']
+            y_pred = (subset[axis] > 0).astype(int)
+            cm = confusion_matrix(y_true, y_pred, labels=[0, 1])
+
+            out_path = os.path.join(
+                f"{output_prefix}_ref_gestures_{'_'.join(map(str, ref_ids))}_in_gestures_{'_'.join(map(str, input_ids))}",
+                f"pos_{position}"
+            )
+            os.makedirs(out_path, exist_ok=True)
+            filename = f"quat_{subset['gesture_id'].iloc[0]}.idx_{i}.axis_{axis}.png"
+            filepath = os.path.join(out_path, filename)
+
+            plt.figure(figsize=(4, 3))
+            sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=[0, 1], yticklabels=[0, 1])
+            plt.title(f"Confusion Matrix (Index {i}, Axis {axis})")
+            plt.xlabel("Predicted")
+            plt.ylabel("Actual")
+            plt.tight_layout()
+            plt.savefig(filepath)
+            plt.close()
+            print(f"✅ Saved: {filepath}")
+
+
+# Main execution
 if __name__ == "__main__":
     args = parse_arguments()
+    conn = connect_db(args.host, args.user, args.password, args.database)
 
-    print("\n🔧 Running script with arguments:")
-    print(args)
-
-    conn = mysql.connector.connect(host=args.host, user=args.user, password=args.password, database=args.database)
-    if not conn:
-        exit(1)
-
-    print(f"\n📌 Loading reference gesture: {args.ref_gesture}")
-    ref_df = fetch_gesture_data(conn, args.ref_gesture)
-    if ref_df is None or ref_df.empty:
-        print("❌ Could not load referential gesture data.")
-        conn.close()
-        exit(1)
-
-    print("\n📋 Evaluating gestures:")
-    y_true = []
-    y_pred = []
-
-    for gesture_id in args.gestures:
-        print(f"\n🔎 Gesture {gesture_id}")
-        test_df = fetch_gesture_data(conn, gesture_id)
-        if test_df is None or test_df.empty:
-            print("⚠️ Skipped: No data.")
+    for pos in args.positions:
+        print(f"\n📍 Processing position {pos}")
+        ref_df = fetch_gesture_data(conn, args.ref_gestures, pos)
+        if ref_df.empty:
+            print("❌ No referential gesture data.")
             continue
 
-        result = classify_gesture_against_reference(ref_df, test_df, args.class_threshold)
-        if result is None:
-            continue  # Skip mismatched length
+        avg_ref, threshold = compute_avg_reference_and_threshold(ref_df,
+                                                                 args.threshold if args.calc_threshold else args.threshold)
+        print(f"📐 Using threshold: {threshold:.6f}")
 
-        match = int(result)
-        print("✅ MATCH" if match else "❌ NOT MATCHED")
+        input_df = fetch_gesture_data(conn, args.gestures, pos)
+        if input_df.empty:
+            print("❌ No input gesture data.")
+            continue
 
-        y_true.append(1)  # Assume all gestures are supposed to match
-        y_pred.append(match)
-
-    if y_true:
-        print("\n📊 Confusion Matrix:")
-        cm = confusion_matrix(y_true, y_pred, labels=[0, 1])
-        df_cm = pd.DataFrame(cm, index=["True Not Match", "True Match"], columns=["Pred Not Match", "Pred Match"])
-        print(df_cm)
-
-        # Optional visualization
-        plt.figure(figsize=(6, 4))
-        sns.heatmap(df_cm, annot=True, fmt="d", cmap="Blues")
-        plt.title("Confusion Matrix")
-        plt.xlabel("Predicted")
-        plt.ylabel("Actual")
-        plt.tight_layout()
-        plt.show()
+        categorized_df = categorize_by_threshold(input_df, avg_ref, threshold)
+        generate_confusion_matrices(categorized_df, args.ref_gestures, args.gestures, pos, args.output_prefix)
 
     conn.close()
