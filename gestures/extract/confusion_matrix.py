@@ -4,6 +4,7 @@ import pandas as pd
 import argparse
 import seaborn as sns
 import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
 import os
 from sklearn.metrics import confusion_matrix
 
@@ -86,10 +87,12 @@ def categorize_by_threshold(input_df, avg_ref, threshold):
     return pd.DataFrame(categories)
 
 
-# Generate confusion matrices and plots
+# Generate confusion matrices and plots, then merge per index
 def generate_confusion_matrices(df, ref_ids, input_ids, position, output_prefix):
     for i in df['index'].unique():
         subset = df[df['index'] == i]
+        axis_images = {}
+
         for axis in ['qw', 'qx', 'qy', 'qz']:
             y_true = subset['matched']
             y_pred = (subset[axis] > 0).astype(int)
@@ -100,18 +103,32 @@ def generate_confusion_matrices(df, ref_ids, input_ids, position, output_prefix)
                 f"pos_{position}"
             )
             os.makedirs(out_path, exist_ok=True)
-            filename = f"quat_{subset['gesture_id'].iloc[0]}.idx_{i}.axis_{axis}.png"
-            filepath = os.path.join(out_path, filename)
+            img_filename = f"quat_{subset['gesture_id'].iloc[0]}.idx_{i}.axis_{axis}.png"
+            img_filepath = os.path.join(out_path, img_filename)
 
             plt.figure(figsize=(4, 3))
             sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=[0, 1], yticklabels=[0, 1])
-            plt.title(f"Confusion Matrix (Index {i}, Axis {axis})")
+            plt.title(f"Confusion Matrix ({axis.upper()})")
             plt.xlabel("Predicted")
             plt.ylabel("Actual")
             plt.tight_layout()
-            plt.savefig(filepath)
+            plt.savefig(img_filepath)
             plt.close()
-            print(f"✅ Saved: {filepath}")
+            axis_images[axis] = img_filepath
+
+        # Merge images into one
+        merged_img_path = os.path.join(out_path, f"quat_{subset['gesture_id'].iloc[0]}.idx_{i}.png")
+        fig, axes = plt.subplots(2, 2, figsize=(8, 6))
+        axes = axes.flatten()
+        for idx, axis in enumerate(['qw', 'qx', 'qy', 'qz']):
+            img = mpimg.imread(axis_images[axis])
+            axes[idx].imshow(img)
+            axes[idx].axis('off')
+            axes[idx].set_title(axis.upper())
+        plt.tight_layout()
+        plt.savefig(merged_img_path)
+        plt.close()
+        print(f"✅ Saved merged image: {merged_img_path}")
 
 
 # Main execution
