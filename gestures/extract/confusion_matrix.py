@@ -232,6 +232,23 @@ if __name__ == "__main__":
         print("⚠️ --actual-matches not provided. Defaulting all to match (1).")
         categorized_df['actual_match'] = categorized_df['matched']  # fallback: same as old behavior
 
+    # generate_angular_confusion_matrix(
+    #     categorized_df,
+    #     args.ref_gestures,
+    #     args.gestures,
+    #     pos,
+    #     args.output_prefix,
+    #     args.actual_matches if args.actual_matches else categorized_df['actual_match'].tolist(),
+    #     args
+    # )
+
+    ...
+    if args.actual_matches:
+        categorized_df = assign_actual_matches(categorized_df, args.gestures, args.actual_matches)
+    else:
+        print("⚠️ --actual-matches not provided. Defaulting all to match (1).")
+        categorized_df['actual_match'] = categorized_df['matched']  # fallback: same as old behavior
+
     generate_angular_confusion_matrix(
         categorized_df,
         args.ref_gestures,
@@ -241,4 +258,37 @@ if __name__ == "__main__":
         args.actual_matches if args.actual_matches else categorized_df['actual_match'].tolist(),
         args
     )
+
+    # Additional categorization: gesture-level match if all datalines match
+    gesture_summary = categorized_df.groupby('gesture_id')['matched'].agg(lambda x: int(all(x))).reset_index()
+    if args.actual_matches:
+        gesture_summary['actual_match'] = pd.Series(args.actual_matches, index=gesture_summary.index)
+    else:
+        gesture_summary['actual_match'] = gesture_summary['matched']  # fallback
+
+    print("\n📊 Gesture-Level Classification Report:")
+    from sklearn.metrics import classification_report, confusion_matrix
+
+    y_true_gest = gesture_summary['actual_match']
+    y_pred_gest = gesture_summary['matched']
+    print(classification_report(y_true_gest, y_pred_gest, labels=[0, 1]))
+
+    # Optionally, save gesture-level matrix
+    gesture_cm = confusion_matrix(y_true_gest, y_pred_gest, labels=[0, 1])
+    gesture_out_path = os.path.join(
+        f"out_ref_gestures_{'_'.join(map(str, args.ref_gestures))}_in_gestures_{'_'.join(map(str, args.gestures))}_actual_matches_{''.join(map(str, args.actual_matches if args.actual_matches else gesture_summary['actual_match'].tolist()))}",
+        f"pos_{pos}",
+        "gesture_level_confusion.png"
+    )
+    os.makedirs(os.path.dirname(gesture_out_path), exist_ok=True)
+    plt.figure(figsize=(4, 3))
+    sns.heatmap(gesture_cm, annot=True, fmt='d', cmap='Blues', xticklabels=[0, 1], yticklabels=[0, 1])
+    plt.title("Gesture-Level Confusion Matrix\nTL: TN | TR: FP\nBL: FN | BR: TP")
+    plt.xlabel("Predicted")
+    plt.ylabel("Actual")
+    plt.tight_layout()
+    plt.savefig(gesture_out_path)
+    plt.close()
+    print(f"✅ Saved gesture-level confusion matrix: {gesture_out_path}")
+
     conn.close()
