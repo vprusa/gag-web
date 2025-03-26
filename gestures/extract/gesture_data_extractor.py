@@ -441,13 +441,13 @@ def store_extracted_datalines(conn, df_extremes, new_gesture_id):
             formatted_timestamp = row['timestamp'].strftime('%Y-%m-%d %H:%M:%S.%f')
 
         cursor.execute(
-            "INSERT INTO Dataline (hand, position, timestamp, gesture_id) VALUES (%s, %s, %s, %s);",
+            "INSERT INTO DataLine (hand, position, timestamp, gesture_id) VALUES (%s, %s, %s, %s);",
             (row['hand'], row['position'], formatted_timestamp, new_gesture_id)
         )
         new_datalign_id = cursor.lastrowid
 
         cursor.execute(
-            "INSERT INTO FingerDatalign (accX, accY, accZ, quatA, quatX, quatY, quatZ, id) VALUES (0, 0, 0, %s, %s, %s, %s, %s);",
+            "INSERT INTO FingerDataLine (accX, accY, accZ, quatA, quatX, quatY, quatZ, id) VALUES (0, 0, 0, %s, %s, %s, %s, %s);",
             (row['qw'], row['qx'], row['qy'], row['qz'], new_datalign_id)
         )
 

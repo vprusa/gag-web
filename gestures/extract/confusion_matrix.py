@@ -93,6 +93,35 @@ def compute_avg_reference_and_threshold(df, override_threshold=None, calc_max=Fa
     return avg_gesture, final_threshold
 
 
+# def categorize_by_angular_distance(input_df, avg_ref, threshold):
+#     categories = []
+#     grouped = input_df.groupby('gesture_id')
+#     min_len = min(len(g) for _, g in grouped)
+#     print("\n🔍 Debug Info: categorize_by_angular_distance")
+#     print(f"Using threshold: {threshold:.6f}")
+#
+#     for gesture_id, g in grouped:
+#         print(f"\nGesture ID: {gesture_id}")
+#         for i in range(min_len):
+#             quat = g.iloc[i][['qw', 'qx', 'qy', 'qz']].to_numpy()
+#             ref_quat = avg_ref[i]
+#             q1 = R.from_quat([quat[1], quat[2], quat[3], quat[0]])
+#             q2 = R.from_quat([ref_quat[1], ref_quat[2], ref_quat[3], ref_quat[0]])
+#             confusion_matrix.pyangle = q1.inv() * q2
+#             angle_diff = angle.magnitude()
+#             match = int(angle_diff <= threshold)
+#             print(f"  Index {i}: angle_diff = {angle_diff:.6f}, match = {match}")
+#             categories.append({
+#                 'gesture_id': gesture_id,
+#                 'index': i,
+#                 'angle_diff': angle_diff,
+#                 'matched': match
+#             })
+#
+#     categorized_df = pd.DataFrame(categories)
+#     print("\n📋 Angular Difference Categorization Result:")
+#     print(categorized_df.to_string(index=False))
+#     return categorized_df
 def categorize_by_angular_distance(input_df, avg_ref, threshold):
     categories = []
     grouped = input_df.groupby('gesture_id')
@@ -107,8 +136,9 @@ def categorize_by_angular_distance(input_df, avg_ref, threshold):
             ref_quat = avg_ref[i]
             q1 = R.from_quat([quat[1], quat[2], quat[3], quat[0]])
             q2 = R.from_quat([ref_quat[1], ref_quat[2], ref_quat[3], ref_quat[0]])
-            angle = q1.inv() * q2
-            angle_diff = angle.magnitude()
+
+            # Correct the reference to use the quaternion rotation comparison
+            angle_diff = (q1.inv() * q2).magnitude()
             match = int(angle_diff <= threshold)
             print(f"  Index {i}: angle_diff = {angle_diff:.6f}, match = {match}")
             categories.append({
@@ -226,10 +256,240 @@ def store_ref_gesture(conn, name, avg_quats, ref_df, position, threshold):
 
     conn.commit()
     print(f"✅ Saved new referential gesture '{name}' with ID: {gesture_id}")
+#
+# if __name__ == "__main__":
+#     args = parse_arguments()
+#     conn = connect_db(args.host, args.user, args.password, args.database)
+#
+#     for pos in args.positions:
+#         print(f"\n📍 Processing position {pos}")
+#         ref_df = fetch_gesture_data(conn, args.ref_gestures, pos)
+#         if ref_df.empty:
+#             print("❌ No referential gesture data.")
+#             continue
+#
+#         avg_ref, threshold = compute_avg_reference_and_threshold(
+#             ref_df,
+#             override_threshold=args.threshold if args.calc_threshold else args.threshold,
+#             calc_max=args.calc_max,
+#             use_angular=args.angular_diff
+#         )
+#         print(f"📐 Using threshold: {threshold:.6f}")
+#
+#         input_df = fetch_gesture_data(conn, args.gestures, pos)
+#         if input_df.empty:
+#             print("❌ No input gesture data.")
+#             continue
+#
+#         print("\n📦 Input gesture datalines:")
+#         for gid in input_df['gesture_id'].unique():
+#             print(f"\nGesture ID {gid}:")
+#             print(input_df[input_df['gesture_id'] == gid][['qw', 'qx', 'qy', 'qz']])
+#
+#         categorized_df = categorize_by_angular_distance(input_df, avg_ref, threshold)
+#
+#         if args.actual_matches:
+#             categorized_df = assign_actual_matches(categorized_df, args.gestures, args.actual_matches)
+#         else:
+#             print("⚠️ --actual-matches not provided. Defaulting all to match (1).")
+#             categorized_df['actual_match'] = 1
+#
+#         if args.actual_matches:
+#             categorized_df = assign_actual_matches(categorized_df, args.gestures, args.actual_matches)
+#         else:
+#             print("⚠️ --actual-matches not provided. Defaulting all to match (1).")
+#             categorized_df['actual_match'] = categorized_df['matched']  # fallback: same as old behavior
+#
+#         if args.actual_matches:
+#             categorized_df = assign_actual_matches(categorized_df, args.gestures, args.actual_matches)
+#         else:
+#             print("⚠️ --actual-matches not provided. Defaulting all to match (1).")
+#             categorized_df['actual_match'] = categorized_df['matched']  # fallback: same as old behavior
+#
+#         generate_angular_confusion_matrix(
+#             categorized_df,
+#             args.ref_gestures,
+#             args.gestures,
+#             pos,
+#             args.output_prefix,
+#             args.actual_matches if args.actual_matches else categorized_df['actual_match'].tolist(),
+#             args
+#         )
+#
+#         # Additional categorization: gesture-level match if all datalines match
+#         gesture_summary = categorized_df.groupby('gesture_id')['matched'].agg(lambda x: int(all(x))).reset_index()
+#         if args.actual_matches:
+#             gesture_summary['actual_match'] = pd.Series(args.actual_matches, index=gesture_summary.index)
+#         else:
+#             gesture_summary['actual_match'] = gesture_summary['matched']  # fallback
+#
+#         print("\n📊 Gesture-Level Classification Report:")
+#         from sklearn.metrics import classification_report, confusion_matrix
+#
+#         y_true_gest = gesture_summary['actual_match']
+#         y_pred_gest = gesture_summary['matched']
+#         print(classification_report(y_true_gest, y_pred_gest, labels=[0, 1]))
+#
+#         # Optionally, save gesture-level matrix
+#         gesture_cm = confusion_matrix(y_true_gest, y_pred_gest, labels=[0, 1])
+#         gesture_out_dir_path = os.path.join(
+#             f"out_ref_gestures_{'_'.join(map(str, args.ref_gestures))}_in_gestures_{'_'.join(map(str, args.gestures))}_actual_matches_{''.join(map(str, args.actual_matches if args.actual_matches else gesture_summary['actual_match'].tolist()))}",
+#             f"pos_{pos}"
+#         )
+#         gesture_out_path = os.path.join(
+#             gesture_out_dir_path,
+#             "gesture_level_confusion.png"
+#         )
+#         os.makedirs(os.path.dirname(gesture_out_path), exist_ok=True)
+#         plt.figure(figsize=(4, 3))
+#         sns.heatmap(gesture_cm, annot=True, fmt='d', cmap='Blues', xticklabels=[0, 1], yticklabels=[0, 1])
+#         plt.title("Gesture-Level Confusion Matrix\nTL: TN | TR: FP\nBL: FN | BR: TP")
+#         plt.xlabel("Predicted")
+#         plt.ylabel("Actual")
+#         plt.tight_layout()
+#         plt.savefig(gesture_out_path)
+#         plt.close()
+#         print(f"✅ Saved gesture-level confusion matrix: {gesture_out_path}")
+#
+#         # Optional: Save averaged referential gesture to DB
+#         if args.save_ref_gesture:
+#             store_ref_gesture(conn, args.save_ref_gesture, avg_ref, ref_df, pos, threshold)
+#
+#     conn.close()
+#
+#     print( f"nautilus {gesture_out_dir_path} & disown" )
 
+# if __name__ == "__main__":
+#     args = parse_arguments()
+#     conn = connect_db(args.host, args.user, args.password, args.database)
+#
+#     # Initialize an empty list to hold the aggregated categorized data
+#     aggregated_df = []
+#
+#     for pos in args.positions:
+#         print(f"\n📍 Processing position {pos}")
+#         ref_df = fetch_gesture_data(conn, args.ref_gestures, pos)
+#         if ref_df.empty:
+#             print("❌ No referential gesture data.")
+#             continue
+#
+#         avg_ref, threshold = compute_avg_reference_and_threshold(
+#             ref_df,
+#             override_threshold=args.threshold if args.calc_threshold else args.threshold,
+#             calc_max=args.calc_max,
+#             use_angular=args.angular_diff
+#         )
+#         print(f"📐 Using threshold: {threshold:.6f}")
+#
+#         input_df = fetch_gesture_data(conn, args.gestures, pos)
+#         if input_df.empty:
+#             print("❌ No input gesture data.")
+#             continue
+#
+#         print("\n📦 Input gesture datalines:")
+#         for gid in input_df['gesture_id'].unique():
+#             print(f"\nGesture ID {gid}:")
+#             print(input_df[input_df['gesture_id'] == gid][['qw', 'qx', 'qy', 'qz']])
+#
+#         categorized_df = categorize_by_angular_distance(input_df, avg_ref, threshold)
+#
+#         if args.actual_matches:
+#             categorized_df = assign_actual_matches(categorized_df, args.gestures, args.actual_matches)
+#         else:
+#             print("⚠️ --actual-matches not provided. Defaulting all to match (1).")
+#             categorized_df['actual_match'] = 1
+#
+#         # Append categorized_df to the aggregated list
+#         aggregated_df.append(categorized_df)
+#
+#         generate_angular_confusion_matrix(
+#             categorized_df,
+#             args.ref_gestures,
+#             args.gestures,
+#             pos,
+#             args.output_prefix,
+#             args.actual_matches if args.actual_matches else categorized_df['actual_match'].tolist(),
+#             args
+#         )
+#
+#         # Additional categorization: gesture-level match if all datalines match
+#         gesture_summary = categorized_df.groupby('gesture_id')['matched'].agg(lambda x: int(all(x))).reset_index()
+#         if args.actual_matches:
+#             gesture_summary['actual_match'] = pd.Series(args.actual_matches, index=gesture_summary.index)
+#         else:
+#             gesture_summary['actual_match'] = gesture_summary['matched']  # fallback
+#
+#         print("\n📊 Gesture-Level Classification Report:")
+#         from sklearn.metrics import classification_report, confusion_matrix
+#
+#         y_true_gest = gesture_summary['actual_match']
+#         y_pred_gest = gesture_summary['matched']
+#         print(classification_report(y_true_gest, y_pred_gest, labels=[0, 1]))
+#
+#         # Optionally, save gesture-level matrix
+#         gesture_cm = confusion_matrix(y_true_gest, y_pred_gest, labels=[0, 1])
+#         gesture_out_dir_path = os.path.join(
+#             f"out_ref_gestures_{'_'.join(map(str, args.ref_gestures))}_in_gestures_{'_'.join(map(str, args.gestures))}_actual_matches_{''.join(map(str, args.actual_matches if args.actual_matches else gesture_summary['actual_match'].tolist()))}",
+#             f"pos_{pos}"
+#         )
+#         gesture_out_path = os.path.join(
+#             gesture_out_dir_path,
+#             "gesture_level_confusion.png"
+#         )
+#         os.makedirs(os.path.dirname(gesture_out_path), exist_ok=True)
+#         plt.figure(figsize=(4, 3))
+#         sns.heatmap(gesture_cm, annot=True, fmt='d', cmap='Blues', xticklabels=[0, 1], yticklabels=[0, 1])
+#         plt.title("Gesture-Level Confusion Matrix\nTL: TN | TR: FP\nBL: FN | BR: TP")
+#         plt.xlabel("Predicted")
+#         plt.ylabel("Actual")
+#         plt.tight_layout()
+#         plt.savefig(gesture_out_path)
+#         plt.close()
+#         print(f"✅ Saved gesture-level confusion matrix: {gesture_out_path}")
+#
+#         # Optional: Save averaged referential gesture to DB
+#         if args.save_ref_gesture:
+#             store_ref_gesture(conn, args.save_ref_gesture, avg_ref, ref_df, pos, threshold)
+#
+#     conn.close()
+#
+#     # After the loop ends, aggregate the results into a single DataFrame
+#     aggregated_df = pd.concat(aggregated_df, ignore_index=True)
+#
+#     # Generate the overall confusion matrix for all positions combined
+#     print("\n📊 Global Classification Report (Aggregated Across All Positions):")
+#     y_true = aggregated_df['actual_match']
+#     y_pred = aggregated_df['matched']
+#     cm = confusion_matrix(y_true, y_pred, labels=[0, 1])
+#     print(classification_report(y_true, y_pred, labels=[0, 1]))
+#
+#     # Save the global confusion matrix
+#     global_out_path = os.path.join(args.output_prefix, "global_angular_diff_confusion.png")
+#     os.makedirs(os.path.dirname(global_out_path), exist_ok=True)
+#     plt.figure(figsize=(4, 3))
+#     sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=[0, 1], yticklabels=[0, 1])
+#     plt.title("Global Angular Difference Confusion Matrix (All Positions)")
+#     plt.xlabel("Predicted")
+#     plt.ylabel("Actual")
+#     plt.tight_layout()
+#     plt.savefig(global_out_path)
+#     plt.close()
+#     print(f"✅ Saved global angular difference confusion matrix: {global_out_path}")
+#
+#     print( f"nautilus {gesture_out_dir_path} & disown" )
+#
 if __name__ == "__main__":
     args = parse_arguments()
     conn = connect_db(args.host, args.user, args.password, args.database)
+
+    # Initialize an empty list to hold the aggregated categorized data
+    aggregated_df = []
+
+    # Initialize a dictionary to store match summaries
+    match_summary = {}
+
+    # Align the actual matches with gestures
+    actual_matches_map = dict(zip(args.gestures, args.actual_matches))
 
     for pos in args.positions:
         print(f"\n📍 Processing position {pos}")
@@ -258,85 +518,104 @@ if __name__ == "__main__":
 
         categorized_df = categorize_by_angular_distance(input_df, avg_ref, threshold)
 
-        if args.actual_matches:
-            categorized_df = assign_actual_matches(categorized_df, args.gestures, args.actual_matches)
-        else:
-            print("⚠️ --actual-matches not provided. Defaulting all to match (1).")
-            categorized_df['actual_match'] = 1
+        # Assign actual matches to the categorized dataframe
+        categorized_df['actual_match'] = categorized_df['gesture_id'].map(actual_matches_map).fillna(0).astype(int)
 
-        # generate_angular_confusion_matrix(categorized_df, args.ref_gestures, args.gestures, pos, args.output_prefix, args.actual_matches, args)
-    if args.actual_matches:
-        categorized_df = assign_actual_matches(categorized_df, args.gestures, args.actual_matches)
-    else:
-        print("⚠️ --actual-matches not provided. Defaulting all to match (1).")
-        categorized_df['actual_match'] = categorized_df['matched']  # fallback: same as old behavior
+        # Append categorized_df to the aggregated list
+        aggregated_df.append(categorized_df)
 
-    # generate_angular_confusion_matrix(
-    #     categorized_df,
-    #     args.ref_gestures,
-    #     args.gestures,
-    #     pos,
-    #     args.output_prefix,
-    #     args.actual_matches if args.actual_matches else categorized_df['actual_match'].tolist(),
-    #     args
-    # )
+        # Update match_summary with the match count for each gesture and position
+        for gesture_id in categorized_df['gesture_id'].unique():
+            # Get the match count for each gesture at this position
+            total_matches = categorized_df[categorized_df['gesture_id'] == gesture_id]['matched'].sum()
+            total_datalines = categorized_df[categorized_df['gesture_id'] == gesture_id].shape[0]
 
-#    ...
-    if args.actual_matches:
-        categorized_df = assign_actual_matches(categorized_df, args.gestures, args.actual_matches)
-    else:
-        print("⚠️ --actual-matches not provided. Defaulting all to match (1).")
-        categorized_df['actual_match'] = categorized_df['matched']  # fallback: same as old behavior
+            # Initialize the entry for the gesture if not already present
+            if gesture_id not in match_summary:
+                match_summary[gesture_id] = {}
 
-    generate_angular_confusion_matrix(
-        categorized_df,
-        args.ref_gestures,
-        args.gestures,
-        pos,
-        args.output_prefix,
-        args.actual_matches if args.actual_matches else categorized_df['actual_match'].tolist(),
-        args
-    )
+            match_summary[gesture_id][pos] = {
+                'matches': total_matches,
+                'total_datalines': total_datalines,
+                'match_percentage': total_matches / total_datalines * 100 if total_datalines > 0 else 0
+            }
 
-    # Additional categorization: gesture-level match if all datalines match
-    gesture_summary = categorized_df.groupby('gesture_id')['matched'].agg(lambda x: int(all(x))).reset_index()
-    if args.actual_matches:
-        gesture_summary['actual_match'] = pd.Series(args.actual_matches, index=gesture_summary.index)
-    else:
-        gesture_summary['actual_match'] = gesture_summary['matched']  # fallback
+        generate_angular_confusion_matrix(
+            categorized_df,
+            args.ref_gestures,
+            args.gestures,
+            pos,
+            args.output_prefix,
+            args.actual_matches if args.actual_matches else categorized_df['actual_match'].tolist(),
+            args
+        )
 
-    print("\n📊 Gesture-Level Classification Report:")
-    from sklearn.metrics import classification_report, confusion_matrix
+        # Additional categorization: gesture-level match if all datalines match
+        gesture_summary = categorized_df.groupby('gesture_id')['matched'].agg(lambda x: int(all(x))).reset_index()
+        gesture_summary['actual_match'] = gesture_summary['gesture_id'].map(actual_matches_map)
 
-    y_true_gest = gesture_summary['actual_match']
-    y_pred_gest = gesture_summary['matched']
-    print(classification_report(y_true_gest, y_pred_gest, labels=[0, 1]))
+        print("\n📊 Gesture-Level Classification Report:")
+        from sklearn.metrics import classification_report, confusion_matrix
 
-    # Optionally, save gesture-level matrix
-    gesture_cm = confusion_matrix(y_true_gest, y_pred_gest, labels=[0, 1])
-    gesture_out_dir_path = os.path.join(
-        f"out_ref_gestures_{'_'.join(map(str, args.ref_gestures))}_in_gestures_{'_'.join(map(str, args.gestures))}_actual_matches_{''.join(map(str, args.actual_matches if args.actual_matches else gesture_summary['actual_match'].tolist()))}",
-        f"pos_{pos}"
-    )
-    gesture_out_path = os.path.join(
-        gesture_out_dir_path,
-        "gesture_level_confusion.png"
-    )
-    os.makedirs(os.path.dirname(gesture_out_path), exist_ok=True)
-    plt.figure(figsize=(4, 3))
-    sns.heatmap(gesture_cm, annot=True, fmt='d', cmap='Blues', xticklabels=[0, 1], yticklabels=[0, 1])
-    plt.title("Gesture-Level Confusion Matrix\nTL: TN | TR: FP\nBL: FN | BR: TP")
-    plt.xlabel("Predicted")
-    plt.ylabel("Actual")
-    plt.tight_layout()
-    plt.savefig(gesture_out_path)
-    plt.close()
-    print(f"✅ Saved gesture-level confusion matrix: {gesture_out_path}")
+        y_true_gest = gesture_summary['actual_match']
+        y_pred_gest = gesture_summary['matched']
+        print(classification_report(y_true_gest, y_pred_gest, labels=[0, 1]))
 
-    # Optional: Save averaged referential gesture to DB
-    if args.save_ref_gesture:
-        store_ref_gesture(conn, args.save_ref_gesture, avg_ref, ref_df, pos, threshold)
+        # Optionally, save gesture-level matrix
+        gesture_cm = confusion_matrix(y_true_gest, y_pred_gest, labels=[0, 1])
+        gesture_out_dir_path = os.path.join(
+            f"out_ref_gestures_{'_'.join(map(str, args.ref_gestures))}_in_gestures_{'_'.join(map(str, args.gestures))}_actual_matches_{''.join(map(str, args.actual_matches if args.actual_matches else gesture_summary['actual_match'].tolist()))}",
+            f"pos_{pos}"
+        )
+        gesture_out_path = os.path.join(
+            gesture_out_dir_path,
+            "gesture_level_confusion.png"
+        )
+        os.makedirs(os.path.dirname(gesture_out_path), exist_ok=True)
+        plt.figure(figsize=(4, 3))
+        sns.heatmap(gesture_cm, annot=True, fmt='d', cmap='Blues', xticklabels=[0, 1], yticklabels=[0, 1])
+        plt.title("Gesture-Level Confusion Matrix\nTL: TN | TR: FP\nBL: FN | BR: TP")
+        plt.xlabel("Predicted")
+        plt.ylabel("Actual")
+        plt.tight_layout()
+        plt.savefig(gesture_out_path)
+        plt.close()
+        print(f"✅ Saved gesture-level confusion matrix: {gesture_out_path}")
+
+        # Optional: Save averaged referential gesture to DB
+        if args.save_ref_gesture:
+            store_ref_gesture(conn, args.save_ref_gesture, avg_ref, ref_df, pos, threshold)
 
     conn.close()
 
-    print( f"nautilus {gesture_out_dir_path} & disown" )
+    # After the loop ends, aggregate the results into a single DataFrame
+    aggregated_df = pd.concat(aggregated_df, ignore_index=True)
+
+    # Identify gestures where all datalines match across all positions
+    all_matched_gestures = aggregated_df.groupby('gesture_id')['matched'].agg(lambda x: all(x == 1)).reset_index()
+    all_matched_gestures = all_matched_gestures[all_matched_gestures['matched'] == 1]
+
+    print("\n📊 All Matched Gestures (Across All Positions):")
+    print(all_matched_gestures)
+
+    # Now generate the final confusion matrix that indicates all matched gestures
+    final_cm = confusion_matrix(all_matched_gestures['matched'], all_matched_gestures['matched'], labels=[0, 1])
+    print(classification_report(all_matched_gestures['matched'], all_matched_gestures['matched'], labels=[0, 1]))
+
+    # Save the final confusion matrix
+    final_out_path = os.path.join(
+        gesture_out_dir_path,
+        "final_all_matched_confusion.png"
+    )
+    os.makedirs(os.path.dirname(final_out_path), exist_ok=True)
+    plt.figure(figsize=(4, 3))
+    sns.heatmap(final_cm, annot=True, fmt='d', cmap='Blues', xticklabels=[0, 1], yticklabels=[0, 1])
+    plt.title("Final Confusion Matrix: All Datelines Matched (Across All Positions)")
+    plt.xlabel("Predicted")
+    plt.ylabel("Actual")
+    plt.tight_layout()
+    plt.savefig(final_out_path)
+    plt.close()
+    print(f"✅ Saved final confusion matrix: {final_out_path}")
+
+    print(f"nautilus {gesture_out_dir_path} & disown")
