@@ -243,7 +243,7 @@ angular.module('app').factory('VisTools', function () {
         const angle = THREE.MathUtils.degToRad(180); // Convert degrees to radians
         const quaternion = new THREE.Quaternion();
         quaternion.setFromAxisAngle(axis, angle);
-        console.log("using default wrist quaternion offset: " + where);
+        // console.log("using default wrist quaternion offset: " + where);
         return quaternion;
       }
 
@@ -260,8 +260,8 @@ angular.module('app').factory('VisTools', function () {
       && (data.rq._x != 0 && data.rq._z != 0 && data.rq._y != 0 && data.rq._w != 1 ))
           ? new THREE.Quaternion(data.rq._x, data.rq._y, data.rq._z, data.rq._w)
           : getRotatedQuaternion("right");
-      console.log("rightWristQuaternion: " );
-      console.log(rightWristQuaternion);
+      // console.log("rightWristQuaternion: " );
+      // console.log(rightWristQuaternion);
 
       // Update wrist rotations
       // const leftWristQuaternion = new THREE.Quaternion(data.lq._x, data.lq._y, data.lq._z, data.lq._w);

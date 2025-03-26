@@ -219,6 +219,15 @@ angular.module('app').controller(
         all: []
       };
 
+      let log = function (msg) {
+        //console.log("msg");
+        //    console.log(msg);
+        $('#LogMessages table tr:last').after(
+            "<tr><td>" + new Date().toLocaleTimeString() + "</td><td>" + msg + "</td></tr>"
+        );
+      };
+      WSTools.log = log;
+
       WSTools.onMessage = function (evt) {
         var msg = evt.data;
         gestureMatches.last = null;
@@ -244,7 +253,7 @@ angular.module('app').controller(
         } else if (Array.isArray(msgObjs) && msgObjs.length > 0 && 'data' in msgObjs[0] && 'gest' in msgObjs[0]) {
           // if at least 1 item exists
           var recognizedGestures = msgObjs;
-          console.log('recognized!');
+          // console.log('recognized!');
 
           // TODO improve (iterate over all gestures*matches is terrible)
           // TODO also consider disabling this shady state variable called 'changed'
@@ -256,6 +265,7 @@ angular.module('app').controller(
               if (e.id == recognizedGesture.gest.id) {
                 console.log("recognizedGesture");
                 console.log(recognizedGesture);
+                WSTools.log(" Recognized gesture: id: " + recognizedGesture.gest.id + ", alias: '" + recognizedGesture.gest.userAlias + "', threshold: " + recognizedGesture.gest.shouldMatch);
                 if (!e.recognized) {
                   changed = true;
                 }

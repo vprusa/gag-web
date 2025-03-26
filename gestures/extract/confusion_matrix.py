@@ -27,6 +27,7 @@ def parse_arguments():
     parser.add_argument("--angular-diff", action="store_true")
     parser.add_argument("--calc-max", action="store_true")
     parser.add_argument("--actual-matches", type=int, nargs='+', help="List of expected matches (1 or 0) for each input gesture")
+    parser.add_argument("--save-ref-gesture", type=str, help="Name of new gesture to save averaged referential data")
     return parser.parse_args()
 
 
@@ -188,6 +189,44 @@ def generate_angular_confusion_matrix(df, ref_ids, input_ids, position, output_p
     print(log_content)
 
 
+
+
+
+def store_ref_gesture(conn, name, avg_quats, ref_df, position, threshold):
+    if avg_quats is None or avg_quats.shape[0] == 0:
+        print("⚠️ No averaged data to store.")
+        return
+
+    first_ref_gesture_id = ref_df['gesture_id'].unique()[0]
+    timestamps = ref_df[ref_df['gesture_id'] == first_ref_gesture_id]['timestamp'].values[:len(avg_quats)]
+
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO Gesture (dateCreated, delay, exec, isActive, isFiltered, shouldMatch, userAlias, user_id)
+        VALUES (NOW(), 1, NULL, 1, 1, %s, %s, 1)
+    """, (threshold, name))
+    gesture_id = cursor.lastrowid
+
+    for i, quat in enumerate(avg_quats):
+        ts = timestamps[i] if i < len(timestamps) else datetime.utcnow()
+        # Ensure ts is Python datetime
+        if isinstance(ts, np.datetime64):
+            ts = pd.to_datetime(ts).to_pydatetime()
+
+        cursor.execute(
+            "INSERT INTO DataLine (hand, position, timestamp, gesture_id) VALUES (%s, %s, %s, %s)",
+            (None, position, ts, gesture_id)
+        )
+        dataline_id = cursor.lastrowid
+
+        cursor.execute(
+            "INSERT INTO FingerDataLine (accX, accY, accZ, quatA, quatX, quatY, quatZ, id) VALUES (0, 0, 0, %s, %s, %s, %s, %s)",
+            (quat[0], quat[1], quat[2], quat[3], dataline_id)
+        )
+
+    conn.commit()
+    print(f"✅ Saved new referential gesture '{name}' with ID: {gesture_id}")
+
 if __name__ == "__main__":
     args = parse_arguments()
     conn = connect_db(args.host, args.user, args.password, args.database)
@@ -242,7 +281,7 @@ if __name__ == "__main__":
     #     args
     # )
 
-    ...
+#    ...
     if args.actual_matches:
         categorized_df = assign_actual_matches(categorized_df, args.gestures, args.actual_matches)
     else:
@@ -290,5 +329,9 @@ if __name__ == "__main__":
     plt.savefig(gesture_out_path)
     plt.close()
     print(f"✅ Saved gesture-level confusion matrix: {gesture_out_path}")
+
+    # Optional: Save averaged referential gesture to DB
+    if args.save_ref_gesture:
+        store_ref_gesture(conn, args.save_ref_gesture, avg_ref, ref_df, pos, threshold)
 
     conn.close()

@@ -63,7 +63,7 @@
                     <table class="table table-hover">
                         <thead class="text-warning">
                         <th>ID</th>
-                        <th>Alias | Delay [| Exec]</th>
+                        <th>Alias | Threshold | Delay [| Exec]</th>
                         <!--							<th>Date created</th>-->
                         <th>Operations</th>
                         </thead>
@@ -78,10 +78,14 @@
                                         ng-click='selectGesture(item.id)'>{{item.userAlias}}
                                 </button>
                                 <br>
-                                <!-- TODO -->
                                 <span class="">
-                                    {{item.delay}} s1
+                                    {{item.shouldMatch}} |
                                 </span>
+
+                                <span class="">
+                                    {{item.delay}} s
+                                </span>
+
                                 <span ng-if="item.exec" class="">
                                     | {{item.exec}}
                                 </span>
