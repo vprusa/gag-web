@@ -7,7 +7,6 @@ from scipy.signal import argrelextrema
 from datetime import datetime
 from pprint import pprint
 
-
 # Command-line argument parser
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Extract and analyze quaternion data from MySQL.")
@@ -34,7 +33,6 @@ def parse_arguments():
 
     return parser.parse_args()
 
-
 # MySQL connection helper
 def connect_db(host, user, password, database):
     try:
@@ -43,9 +41,8 @@ def connect_db(host, user, password, database):
         print(f"❌ Database Connection Error: {err}")
         return None
 
-
 # Fetch quaternion data for a specific `gesture_id`, filtering by `hand` and `position` if provided
-def fetch_quaternion_data(conn, gesture_id, hand, positions):
+def fetch_quaternion_data(conn, gesture_id, hand, positions, num_to_show=6):
     query = """
     SELECT 
         dl.id,
@@ -87,11 +84,10 @@ def fetch_quaternion_data(conn, gesture_id, hand, positions):
 
     df = pd.DataFrame(data) if data else None
     if df is not None and not df.empty:
-        print("\n✅ First 6 retrieved quaternions:")
-        pprint(df.head(6).to_dict(orient="records"))  # Display first 6 samples
+        print(f"\n✅ First {num_to_show} retrieved quaternions:")
+        pprint(df.head(num_to_show).to_dict(orient="records"))
 
     return df
-
 
 # Compute angular velocity
 def compute_angular_velocity(df):
@@ -125,7 +121,6 @@ def compute_angular_velocity(df):
 
     return pd.concat(results, ignore_index=True) if results else pd.DataFrame()
 
-
 # Find extreme rotation changes
 def find_rotation_extremes(df, order=3, threshold=0.1):
     df = df.copy()
@@ -149,128 +144,82 @@ def find_rotation_extremes(df, order=3, threshold=0.1):
 
     return pd.concat(results, ignore_index=True) if results else pd.DataFrame()
 
-
 def add_start_end_quaternions(df, df_extremes, start, end):
-    """
-    Adds the first and/or last quaternion from each sensor position before/after extracted data.
-    This function manually groups and sorts data to ensure correct order.
-
-    :param df: Original DataFrame with quaternions
-    :param df_extremes: DataFrame with extracted extreme rotation points
-    :param start: Boolean flag to include the first quaternion per position
-    :param end: Boolean flag to include the last quaternion per position
-    :return: Concatenated DataFrame with presearved timestamp order
-    """
-    # Ensure timestamps are in consistent datetime format
     if df['timestamp'].dtype in ['float64', 'int64']:
         df['timestamp'] = pd.to_datetime(df['timestamp'], unit='s', errors='coerce')
     elif df['timestamp'].dtype == 'object':
         df['timestamp'] = pd.to_datetime(df['timestamp'], errors='coerce')
 
-    # Remove any NaN timestamps
     df = df.dropna(subset=['timestamp'])
+    df['timestamp'] = df['timestamp'].astype(np.int64) // 10**9
 
-    # Convert timestamps to Unix format for sorting
-    df['timestamp'] = df['timestamp'].astype(np.int64) // 10**9  # Convert nanoseconds to seconds
-
-    # Store manually sorted groups
     sorted_rows = []
     first_rows = []
     last_rows = []
 
-    # **Manual grouping and sorting**
     unique_positions = df['position'].unique()
     grouped_data = {pos: df[df['position'] == pos].sort_values(by=['timestamp']).to_dict(orient="records") for pos in unique_positions}
 
-    for pos, records2 in grouped_data.items():
-        # pprint("records2")
-        # pprint(records2)
-        # records = records2.sort(by=['timestamp'])
-        records = records2
-        # pprint("  ")
-        # pprint("records")
-        # pprint(records)
+    for pos, records in grouped_data.items():
         if not records:
-            continue  # Skip empty groups
+            continue
 
         if start:
-            first_rows.append(records[0])  # First quaternion per position
+            first_rows.append(records[0])
 
-        sorted_rows.extend(records)  # Keep full list sorted
+        sorted_rows.extend(records)
 
         if end:
-            last_rows.append(records[-1])  # Last quaternion per position
+            last_rows.append(records[-1])
 
-    # Combine results while maintaining order
     final_result = []
     if start:
         final_result.extend(first_rows)
     df_extremes_sorted = df_extremes.sort_values(by=['timestamp']).to_dict(orient="records")
-    final_result.extend(df_extremes_sorted)  # Add extracted extreme points
-    # final_result.extend(sorted_rows)
+    final_result.extend(df_extremes_sorted)
 
     if end:
-        pprint(last_rows)
         final_result.extend(last_rows)
 
-    # Convert back to DataFrame and restore original timestamp format
     df_final = pd.DataFrame(final_result)
-    df_final['timestamp'] = pd.to_datetime(df_final['timestamp'], unit='s')  # Restore datetime format
-    # pprint("")
-    # pprint("df_final")
-    # pprint(df_final)
+    df_final['timestamp'] = pd.to_datetime(df_final['timestamp'], unit='s')
     return df_final
-
 
 # Create a new gesture and return its ID
 def create_new_gesture(conn, old_gesture_name, user_id, suffix, threshold_recognition):
     new_gesture_name = f"{old_gesture_name}-{suffix}"
-
     query = """
     INSERT INTO Gesture (dateCreated, delay, exec, isActive, isFiltered, shouldMatch, userAlias, user_id)
     VALUES (NOW(), 1, NULL, 1, 1, %s, %s, %s);
     """
-
     cursor = conn.cursor()
     cursor.execute(query, (threshold_recognition, new_gesture_name, user_id))
     conn.commit()
+    return cursor.lastrowid
 
-    return cursor.lastrowid  # Return the newly inserted gesture's ID
-
+# Store extracted quaternions
 def store_extracted_datalines(conn, df_extremes, new_gesture_id):
-    """
-    Stores extracted extreme rotation points into the database under the new gesture.
-
-    :param conn: MySQL connection
-    :param df_extremes: DataFrame containing extracted quaternion data
-    :param new_gesture_id: ID of the new gesture
-    """
     cursor = conn.cursor()
-
     for _, row in df_extremes.iterrows():
-        # Ensure timestamp is in the correct format
-        if isinstance(row['timestamp'], (int, float)):  # If Unix timestamp, convert to datetime
+        if isinstance(row['timestamp'], (int, float)):
             formatted_timestamp = datetime.utcfromtimestamp(row['timestamp']).strftime('%Y-%m-%d %H:%M:%S.%f')
-        elif isinstance(row['timestamp'], str):  # If it's a string, parse it correctly
+        elif isinstance(row['timestamp'], str):
             formatted_timestamp = datetime.strptime(row['timestamp'], '%Y-%m-%d %H:%M:%S.%f').strftime('%Y-%m-%d %H:%M:%S.%f')
-        else:  # Assume it's already a `datetime` object
+        else:
             formatted_timestamp = row['timestamp'].strftime('%Y-%m-%d %H:%M:%S.%f')
 
-        # Insert into DataLine table
         cursor.execute(
             "INSERT INTO DataLine (hand, position, timestamp, gesture_id) VALUES (%s, %s, %s, %s);",
             (row['hand'], row['position'], formatted_timestamp, new_gesture_id)
         )
         new_dataline_id = cursor.lastrowid
 
-        # Insert into FingerDataLine table
         cursor.execute(
             "INSERT INTO FingerDataLine (accX, accY, accZ, quatA, quatX, quatY, quatZ, id) VALUES (0, 0, 0, %s, %s, %s, %s, %s);",
             (row['qw'], row['qx'], row['qy'], row['qz'], new_dataline_id)
         )
 
     conn.commit()
-
 
 # Main function
 if __name__ == "__main__":
@@ -283,15 +232,20 @@ if __name__ == "__main__":
     if not conn:
         exit(1)
 
-    df_quaternions = fetch_quaternion_data(conn, args.gesture_id, args.hand, args.position)
+    num_to_show = len(args.position)
+
+    df_quaternions = fetch_quaternion_data(conn, args.gesture_id, args.hand, args.position, num_to_show=num_to_show)
     if df_quaternions is not None:
         df_with_velocity = compute_angular_velocity(df_quaternions)
         df_extremes = find_rotation_extremes(df_with_velocity, order=3, threshold=args.threshold_extraction)
 
-        # Add start and end quaternions if requested
-        df_final = add_start_end_quaternions(df_quaternions, df_extremes, args.start, args.end)
+        if not df_extremes.empty:
+            print(f"\n✅ Extracted extreme rotation points:")
+            pprint(df_extremes.to_dict(orient="records"))
+        else:
+            print("\n⚠️ No extreme rotation points found.")
 
-        # Save to CSV for local analysis
+        df_final = add_start_end_quaternions(df_quaternions, df_extremes, args.start, args.end)
         df_final.to_csv("extreme_rotation_points.csv", index=False)
         print(f"✅ Extreme rotation points saved to 'extreme_rotation_points.csv' ({len(df_final)} samples)")
 

@@ -13,6 +13,21 @@ python gesture_data_extractor.py --host "localhost" --user "gagweb" --password "
 
 ```
 
+
+## right hand switch
+
+```
+python gesture_data_extractor.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id 50 --threshold-extraction 0.01 --threshold-recognition 0.8 --position 1 --start --end --suffix p_1_wswe_te_0.01 | tee logs/gesture_data_extractor.py.`now_str`.log
+
+python gesture_data_extractor.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id 61 --threshold-extraction 0.01 --threshold-recognition 0.2 --position 0 1 2 3 4 5 --start --end --suffix p_012345_wswe_te_0.01 | tee logs/gesture_data_extractor.py.`now_str`.log
+
+
+
+for id in 64 65 66 67 68 69 70 71; do python gesture_data_extractor.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id $id --threshold-extraction 0.001 --threshold-recognition 0.2 --position 0 1 2 3 4 5 --start --end --suffix p_012345_wswe_te_0.01 | tee logs/gesture_data_extractor.py.`now_str`.log;  python gesture_data_extractor.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id $id --threshold-extraction 0.001 --threshold-recognition 0.2 --position 0 1 2 3 4 5 --start --suffix p_012345_wsne_te_0.01 | tee logs/gesture_data_extractor.py.`now_str`.log; done
+
+
+```
+
 # delete gesture by id
 
 ```

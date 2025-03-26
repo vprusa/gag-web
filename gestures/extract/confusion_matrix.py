@@ -314,9 +314,12 @@ if __name__ == "__main__":
 
     # Optionally, save gesture-level matrix
     gesture_cm = confusion_matrix(y_true_gest, y_pred_gest, labels=[0, 1])
-    gesture_out_path = os.path.join(
+    gesture_out_dir_path = os.path.join(
         f"out_ref_gestures_{'_'.join(map(str, args.ref_gestures))}_in_gestures_{'_'.join(map(str, args.gestures))}_actual_matches_{''.join(map(str, args.actual_matches if args.actual_matches else gesture_summary['actual_match'].tolist()))}",
-        f"pos_{pos}",
+        f"pos_{pos}"
+    )
+    gesture_out_path = os.path.join(
+        gesture_out_dir_path,
         "gesture_level_confusion.png"
     )
     os.makedirs(os.path.dirname(gesture_out_path), exist_ok=True)
@@ -335,3 +338,5 @@ if __name__ == "__main__":
         store_ref_gesture(conn, args.save_ref_gesture, avg_ref, ref_df, pos, threshold)
 
     conn.close()
+
+    print( f"nautilus {gesture_out_dir_path} & disown" )
