@@ -10,7 +10,11 @@ from sklearn.metrics import confusion_matrix, classification_report
 from scipy.spatial.transform import Rotation as R
 import sys
 from io import StringIO
+import warnings
+from sklearn.metrics import classification_report
 
+# Suppress the specific UndefinedMetricWarning
+# warnings.filterwarnings("ignore", category=UndefinedMetricWarning)
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Generate quaternion confusion matrices based on referential gestures.")
@@ -478,6 +482,7 @@ def store_ref_gesture(conn, name, avg_quats, ref_df, position, threshold):
 #
 #     print( f"nautilus {gesture_out_dir_path} & disown" )
 #
+
 if __name__ == "__main__":
     args = parse_arguments()
     conn = connect_db(args.host, args.user, args.password, args.database)
@@ -488,8 +493,11 @@ if __name__ == "__main__":
     # Initialize a dictionary to store match summaries
     match_summary = {}
 
-    # Align the actual matches with gestures
-    actual_matches_map = dict(zip(args.gestures, args.actual_matches))
+    # Initialize a dictionary to store match information for each gesture
+    gesture_match_info = {}
+
+    # Initialize a list to store all matched gestures for the final confusion matrix
+    all_matched_gestures = []
 
     for pos in args.positions:
         print(f"\n📍 Processing position {pos}")
@@ -518,8 +526,11 @@ if __name__ == "__main__":
 
         categorized_df = categorize_by_angular_distance(input_df, avg_ref, threshold)
 
-        # Assign actual matches to the categorized dataframe
-        categorized_df['actual_match'] = categorized_df['gesture_id'].map(actual_matches_map).fillna(0).astype(int)
+        if args.actual_matches:
+            categorized_df = assign_actual_matches(categorized_df, args.gestures, args.actual_matches)
+        else:
+            print("⚠️ --actual-matches not provided. Defaulting all to match (1).")
+            categorized_df['actual_match'] = 1
 
         # Append categorized_df to the aggregated list
         aggregated_df.append(categorized_df)
@@ -552,7 +563,10 @@ if __name__ == "__main__":
 
         # Additional categorization: gesture-level match if all datalines match
         gesture_summary = categorized_df.groupby('gesture_id')['matched'].agg(lambda x: int(all(x))).reset_index()
-        gesture_summary['actual_match'] = gesture_summary['gesture_id'].map(actual_matches_map)
+        if args.actual_matches:
+            gesture_summary['actual_match'] = pd.Series(args.actual_matches, index=gesture_summary.index)
+        else:
+            gesture_summary['actual_match'] = gesture_summary['matched']  # fallback
 
         print("\n📊 Gesture-Level Classification Report:")
         from sklearn.metrics import classification_report, confusion_matrix
@@ -591,16 +605,50 @@ if __name__ == "__main__":
     # After the loop ends, aggregate the results into a single DataFrame
     aggregated_df = pd.concat(aggregated_df, ignore_index=True)
 
-    # Identify gestures where all datalines match across all positions
-    all_matched_gestures = aggregated_df.groupby('gesture_id')['matched'].agg(lambda x: all(x == 1)).reset_index()
-    all_matched_gestures = all_matched_gestures[all_matched_gestures['matched'] == 1]
+    # Print match summary for each gesture per position
+    print("\n📋 Match Summary Per Gesture Per Position:")
+    for gesture_id, positions in match_summary.items():
+        print(f"\nGesture ID {gesture_id}:")
+        for pos, data in positions.items():
+            print(f"  Position {pos}: Matches: {data['matches']}/{data['total_datalines']} ({data['match_percentage']:.2f}%)")
 
-    print("\n📊 All Matched Gestures (Across All Positions):")
-    print(all_matched_gestures)
 
-    # Now generate the final confusion matrix that indicates all matched gestures
-    final_cm = confusion_matrix(all_matched_gestures['matched'], all_matched_gestures['matched'], labels=[0, 1])
-    print(classification_report(all_matched_gestures['matched'], all_matched_gestures['matched'], labels=[0, 1]))
+    # Create a dictionary to store match info (match and expected flags) for each gesture
+    gesture_match_flags = {}
+    for idx, gesture_id in enumerate(args.gestures):
+        # Get the expected match flag from --actual-matches
+        expected_match = args.actual_matches[idx] if idx < len(
+            args.actual_matches) else 1  # Default to 1 if not provided
+
+        # Check the actual match based on the match summary
+        all_positions_match = all(
+            match_summary.get(gesture_id, {}).get(pos, {}).get('matches', 0) > 0 for pos in args.positions)
+        match_flag = 1 if all_positions_match else 0
+
+        # Add to the gesture_match_flags dictionary
+        gesture_match_flags[gesture_id] = {
+            'match': match_flag,
+            'expected': expected_match
+        }
+
+        # Add the gesture's match result to all_matched_gestures for final confusion matrix
+        all_matched_gestures.append({
+            'gesture_id': gesture_id,
+            'match': match_flag,
+            'expected': expected_match
+        })
+
+    # Print match info for each gesture
+    print("\n📋 Match Info for Each Gesture:")
+    for gesture_id, flags in gesture_match_flags.items():
+        print(f"Gesture ID {gesture_id}: Match: {flags['match']}, Expected: {flags['expected']}")
+
+    # Now generate the final confusion matrix based on all_matched_gestures
+    y_true = [gesture['expected'] for gesture in all_matched_gestures]
+    y_pred = [gesture['match'] for gesture in all_matched_gestures]
+
+    final_cm = confusion_matrix(y_true, y_pred, labels=[0, 1])
+    print(classification_report(y_true, y_pred, labels=[0, 1]))
 
     # Save the final confusion matrix
     final_out_path = os.path.join(
@@ -610,7 +658,7 @@ if __name__ == "__main__":
     os.makedirs(os.path.dirname(final_out_path), exist_ok=True)
     plt.figure(figsize=(4, 3))
     sns.heatmap(final_cm, annot=True, fmt='d', cmap='Blues', xticklabels=[0, 1], yticklabels=[0, 1])
-    plt.title("Final Confusion Matrix: All Datelines Matched (Across All Positions)")
+    plt.title("Final Confusion Matrix:\nAll Datelines and Positions Matched\nTL: TN | TR: FP\nBL: FN | BR: TP")
     plt.xlabel("Predicted")
     plt.ylabel("Actual")
     plt.tight_layout()
