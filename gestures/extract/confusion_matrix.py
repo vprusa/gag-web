@@ -493,11 +493,8 @@ if __name__ == "__main__":
     # Initialize a dictionary to store match summaries
     match_summary = {}
 
-    # Initialize a dictionary to store match information for each gesture
-    gesture_match_info = {}
-
-    # Initialize a list to store all matched gestures for the final confusion matrix
-    all_matched_gestures = []
+    # Initialize a list to store all gestures' match flags
+    all_gesture_match_info = []
 
     for pos in args.positions:
         print(f"\n📍 Processing position {pos}")
@@ -561,57 +558,10 @@ if __name__ == "__main__":
             args
         )
 
-        # Additional categorization: gesture-level match if all datalines match
-        gesture_summary = categorized_df.groupby('gesture_id')['matched'].agg(lambda x: int(all(x))).reset_index()
-        if args.actual_matches:
-            gesture_summary['actual_match'] = pd.Series(args.actual_matches, index=gesture_summary.index)
-        else:
-            gesture_summary['actual_match'] = gesture_summary['matched']  # fallback
-
-        print("\n📊 Gesture-Level Classification Report:")
-        from sklearn.metrics import classification_report, confusion_matrix
-
-        y_true_gest = gesture_summary['actual_match']
-        y_pred_gest = gesture_summary['matched']
-        print(classification_report(y_true_gest, y_pred_gest, labels=[0, 1]))
-
-        # Optionally, save gesture-level matrix
-        gesture_cm = confusion_matrix(y_true_gest, y_pred_gest, labels=[0, 1])
-        gesture_out_dir_path = os.path.join(
-            f"out_ref_gestures_{'_'.join(map(str, args.ref_gestures))}_in_gestures_{'_'.join(map(str, args.gestures))}_actual_matches_{''.join(map(str, args.actual_matches if args.actual_matches else gesture_summary['actual_match'].tolist()))}",
-            f"pos_{pos}"
-        )
-        gesture_out_path = os.path.join(
-            gesture_out_dir_path,
-            "gesture_level_confusion.png"
-        )
-        os.makedirs(os.path.dirname(gesture_out_path), exist_ok=True)
-        plt.figure(figsize=(4, 3))
-        sns.heatmap(gesture_cm, annot=True, fmt='d', cmap='Blues', xticklabels=[0, 1], yticklabels=[0, 1])
-        plt.title("Gesture-Level Confusion Matrix\nTL: TN | TR: FP\nBL: FN | BR: TP")
-        plt.xlabel("Predicted")
-        plt.ylabel("Actual")
-        plt.tight_layout()
-        plt.savefig(gesture_out_path)
-        plt.close()
-        print(f"✅ Saved gesture-level confusion matrix: {gesture_out_path}")
-
-        # Optional: Save averaged referential gesture to DB
-        if args.save_ref_gesture:
-            store_ref_gesture(conn, args.save_ref_gesture, avg_ref, ref_df, pos, threshold)
-
     conn.close()
 
     # After the loop ends, aggregate the results into a single DataFrame
     aggregated_df = pd.concat(aggregated_df, ignore_index=True)
-
-    # Print match summary for each gesture per position
-    print("\n📋 Match Summary Per Gesture Per Position:")
-    for gesture_id, positions in match_summary.items():
-        print(f"\nGesture ID {gesture_id}:")
-        for pos, data in positions.items():
-            print(f"  Position {pos}: Matches: {data['matches']}/{data['total_datalines']} ({data['match_percentage']:.2f}%)")
-
 
     # Create a dictionary to store match info (match and expected flags) for each gesture
     gesture_match_flags = {}
@@ -620,9 +570,9 @@ if __name__ == "__main__":
         expected_match = args.actual_matches[idx] if idx < len(
             args.actual_matches) else 1  # Default to 1 if not provided
 
-        # Check the actual match based on the match summary
+        # Check if the gesture has 100% match in all positions
         all_positions_match = all(
-            match_summary.get(gesture_id, {}).get(pos, {}).get('matches', 0) > 0 for pos in args.positions)
+            match_summary.get(gesture_id, {}).get(pos, {}).get('match_percentage', 0) == 100 for pos in args.positions)
         match_flag = 1 if all_positions_match else 0
 
         # Add to the gesture_match_flags dictionary
@@ -631,25 +581,40 @@ if __name__ == "__main__":
             'expected': expected_match
         }
 
-        # Add the gesture's match result to all_matched_gestures for final confusion matrix
-        all_matched_gestures.append({
+        # Add to all_gesture_match_info for the final confusion matrix
+        all_gesture_match_info.append({
             'gesture_id': gesture_id,
             'match': match_flag,
             'expected': expected_match
         })
+
+    # Print match summary for each gesture per position
+    print("\n📋 Match Summary Per Gesture Per Position:")
+    for gesture_id, positions in match_summary.items():
+        print(f"\nGesture ID {gesture_id}:")
+        for pos, data in positions.items():
+            print(
+                f"  Position {pos}: Matches: {data['matches']}/{data['total_datalines']} ({data['match_percentage']:.2f}%)")
 
     # Print match info for each gesture
     print("\n📋 Match Info for Each Gesture:")
     for gesture_id, flags in gesture_match_flags.items():
         print(f"Gesture ID {gesture_id}: Match: {flags['match']}, Expected: {flags['expected']}")
 
-    # Now generate the final confusion matrix based on all_matched_gestures
-    y_true = [gesture['expected'] for gesture in all_matched_gestures]
-    y_pred = [gesture['match'] for gesture in all_matched_gestures]
+    # Now generate the final confusion matrix based on all_gesture_match_info
+    y_true = [gesture['expected'] for gesture in all_gesture_match_info]
+    y_pred = [gesture['match'] for gesture in all_gesture_match_info]
 
     final_cm = confusion_matrix(y_true, y_pred, labels=[0, 1])
     print(classification_report(y_true, y_pred, labels=[0, 1]))
-
+    gesture_out_dir_path = os.path.join(
+        f"out_ref_gestures_{'_'.join(map(str, args.ref_gestures))}_in_gestures_{'_'.join(map(str, args.gestures))}_actual_matches_{''.join(map(str, args.actual_matches if args.actual_matches else gesture_summary['actual_match'].tolist()))}",
+        f"pos_{pos}"
+    )
+    gesture_out_path = os.path.join(
+        gesture_out_dir_path,
+        "gesture_level_confusion.png"
+    )
     # Save the final confusion matrix
     final_out_path = os.path.join(
         gesture_out_dir_path,
@@ -658,7 +623,7 @@ if __name__ == "__main__":
     os.makedirs(os.path.dirname(final_out_path), exist_ok=True)
     plt.figure(figsize=(4, 3))
     sns.heatmap(final_cm, annot=True, fmt='d', cmap='Blues', xticklabels=[0, 1], yticklabels=[0, 1])
-    plt.title("Final Confusion Matrix:\nAll Datelines and Positions Matched\nTL: TN | TR: FP\nBL: FN | BR: TP")
+    plt.title("Final Confusion Matrix: \nAll Datelines and Positions\nTL: TN | TR: FP\nBL: FN | BR: TP")
     plt.xlabel("Predicted")
     plt.ylabel("Actual")
     plt.tight_layout()
