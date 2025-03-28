@@ -25,6 +25,7 @@ def parse_arguments():
     parser.add_argument("--end", action="store_true")
     parser.add_argument("-v", action="store_true", help="Verbose: print all extracted datalines")
     parser.add_argument("--align", type=str, help="Trim per-position data using format top:n or bottom:n")
+    parser.add_argument("--min-points", type=int, default=5, help="Minimum points per sensor to aim for when estimating threshold")
 
     return parser.parse_args()
 
@@ -84,85 +85,6 @@ def fetch_quaternion_data(conn, gesture_id, hand, positions, num_to_show=6):
 
     return df
 
-
-# def detect_rotation_extremes_datalines(df, angle_threshold_deg=10.0, include_start=False, include_end=False,
-#                                        align=False):
-#     if df is None or df.empty:
-#         return pd.DataFrame()
-#
-#     angle_threshold_rad = np.radians(angle_threshold_deg)
-#     all_extremes = []
-#
-#     for pos in df['position'].unique():
-#         df_pos = df[df['position'] == pos].reset_index()
-#         quats = df_pos[['qx', 'qy', 'qz', 'qw']].values
-#         n = len(quats)
-#         extremes = []
-#
-#         if n == 1:
-#             if include_start:
-#                 extremes = [0]
-#         else:
-#             rot = R.from_quat(quats)
-#             for i in range(1, len(rot)):
-#                 dq = rot[i - 1].inv() * rot[i]
-#                 if np.linalg.norm(dq.as_rotvec()) > angle_threshold_rad:
-#                     extremes.append(i)
-#
-#         extremes = sorted(set(extremes))
-#         all_extremes.append(df_pos.loc[extremes])
-#
-#     if not all_extremes:
-#         return pd.DataFrame()
-#
-#     if align:
-#         min_len = min(len(df) for df in all_extremes)
-#         all_extremes = [df.iloc[:min_len] for df in all_extremes]
-#
-#     result = pd.concat(all_extremes).sort_values(by=['position', 'timestamp']).reset_index(drop=True)
-#
-#     # Apply --align trimming to extremes only
-#     if isinstance(align, str):
-#         trimmed = []
-#         for pos in result['position'].unique():
-#             df_pos = result[result['position'] == pos]
-#             if align.startswith('top:'):
-#                 n = int(align.split(':')[1])
-#                 trimmed.append(df_pos.head(n))
-#             elif align.startswith('bottom:'):
-#                 n = int(align.split(':')[1])
-#                 trimmed.append(df_pos.tail(n))
-#         result = pd.concat(trimmed).sort_values(by=['position', 'timestamp']).reset_index(drop=True)
-#
-#     # Now apply start/end inclusion
-#     if include_start or include_end:
-#         extended = []
-#         for pos in df['position'].unique():
-#             df_pos = df[df['position'] == pos].sort_values(by='timestamp').reset_index()
-#             df_ext = result[result['position'] == pos]
-#             if include_start:
-#                 first_row = df_pos.iloc[[0]]
-#                 df_ext = pd.concat([first_row, df_ext])
-#             if include_end:
-#                 last_row = df_pos.iloc[[-1]]
-#                 df_ext = pd.concat([df_ext, last_row])
-#             extended.append(df_ext)
-#         result = pd.concat(extended).drop_duplicates().sort_values(by=['position', 'timestamp']).reset_index(drop=True)
-#
-#     # Apply --align trimming if specified
-#     if isinstance(align, str):
-#         trimmed = []
-#         for pos in result['position'].unique():
-#             df_pos = result[result['position'] == pos]
-#             if align.startswith('top:'):
-#                 n = int(align.split(':')[1])
-#                 trimmed.append(df_pos.head(n))
-#             elif align.startswith('bottom:'):
-#                 n = int(align.split(':')[1])
-#                 trimmed.append(df_pos.tail(n))
-#         result = pd.concat(trimmed).sort_values(by=['position', 'timestamp']).reset_index(drop=True)
-#
-#     return result
 
 def detect_rotation_extremes_datalines(df, angle_threshold_deg=10.0, include_start=False, include_end=False, align=False):
     if df is None or df.empty:
@@ -313,6 +235,39 @@ def tests():
     run_test_case("2 pos, 3 lines each, middle change", build_test_df({0: [q0, q1, q0], 1: [q0, q1, q0]}), 4)
 
 
+def estimate_threshold(df, min_required=5, start=None, end=None, tol=0.1):
+    print(f"🔍 Estimating threshold for at least {min_required} extremes per sensor...")
+        # Estimate sensible bounds from max quaternion differences across positions
+    if start is None or end is None:
+        max_diff = 0
+        for pos in df['position'].unique():
+            df_pos = df[df['position'] == pos].sort_values(by='timestamp')
+            quats = df_pos[['qx', 'qy', 'qz', 'qw']].values
+            if len(quats) < 2:
+                continue
+            rot = R.from_quat(quats)
+            for i in range(1, len(rot)):
+                dq = rot[i - 1].inv() * rot[i]
+                angle = np.degrees(np.linalg.norm(dq.as_rotvec()))
+                max_diff = max(max_diff, angle)
+        start = max_diff
+        end = 0.1
+    low, high = end, start
+    while high - low > tol:
+        mid = (high + low) / 2.0
+        print(f"  Trying threshold: {round(mid, 3)}°")
+        result = detect_rotation_extremes_datalines(df, angle_threshold_deg=mid)
+        if result.empty or 'position' not in result.columns:
+            break
+        counts = result['position'].value_counts()
+        if all(counts[pos] >= min_required for pos in df['position'].unique()):
+            high = mid
+        else:
+            low = mid
+            final = round(high, 3)
+    print(f"🎯 Estimated threshold: {final}°")
+    return final
+
 def main():
     args = parse_arguments()
     conn = connect_db(args.host, args.user, args.password, args.database)
@@ -323,10 +278,12 @@ def main():
     if df_quaternions is None or df_quaternions.empty:
         print("❌ No data found for given gesture.")
         return
-
+    min_points = args.min_points
+    threshold = estimate_threshold(df_quaternions, min_required=min_points) if args.threshold_extraction is None else args.threshold_extraction * 180
+    print(f" threshold: {threshold}")
     df_final = detect_rotation_extremes_datalines(
         df_quaternions,
-        angle_threshold_deg=args.threshold_extraction * 180,
+        angle_threshold_deg=threshold,
         include_start=args.start,
         include_end=args.end,
         align=args.align
@@ -350,3 +307,4 @@ def main():
 if __name__ == "__main__":
     tests()
     main()
+
