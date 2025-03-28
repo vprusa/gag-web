@@ -88,7 +88,9 @@ def fetch_quaternion_data(conn, gesture_id, hand, positions, num_to_show=6):
     df = pd.DataFrame(data) if data else None
     if df is not None and not df.empty:
         print(f"\n✅ First {num_to_show} retrieved quaternions:")
-        pprint(df.head(num_to_show).to_dict(orient="records"))
+        # pprint(df.head(num_to_show).to_dict(orient="records"))
+        columns_to_display = ['gesture_id', 'position', 'timestamp', 'hand', 'angular_velocity', 'qx', 'qy', 'qz', 'qw']
+        print(tabulate(df.head(num_to_show), headers=columns_to_display, tablefmt="pretty"))
 
     return df
 
@@ -527,6 +529,10 @@ if __name__ == "__main__":
 
         df_final = add_start_end_quaternions(df_quaternions, df_extremes, args.start, args.end)
         df_final.to_csv("extreme_rotation_points.csv", index=False)
+        print("Extremes:")
+        columns_to_display = [ 'id', 'position', 'timestamp', 'qx', 'qy', 'qz', 'qw']
+        print(tabulate(df_final, headers=columns_to_display, tablefmt="pretty"))
+
         print(f"✅ Extreme rotation points saved to 'extreme_rotation_points.csv' ({len(df_final)} samples)")
 
         if args.suffix:
