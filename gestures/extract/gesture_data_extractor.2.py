@@ -146,7 +146,6 @@ def detect_rotation_extremes_datalines(df, angle_threshold_deg=10.0, include_sta
                     sampled = group.reset_index(drop=True).iloc[[i for i in range(len(group)) if i % (len(group) / nth) == 0]]
                     trimmed.append(sampled)
                 print("not implemented")
-
         semiresult = pd.concat(trimmed).sort_values(by=['position', 'timestamp']).reset_index(drop=True)
 
     # Step 4: add --start and --end if requested
@@ -203,6 +202,13 @@ def store_extracted_datalines(conn, df_extremes, new_gesture_id):
             "INSERT INTO FingerDataLine (accX, accY, accZ, quatA, quatX, quatY, quatZ, id) VALUES (0, 0, 0, %s, %s, %s, %s, %s);",
             (row['qw'], row['qx'], row['qy'], row['qz'], new_dataline_id)
         )
+
+              # Insert into WristDataLine if position is 5
+        if row['position'] == 5:
+            cursor.execute(
+                "INSERT INTO WristDataLine (magX, magY, magZ, id) VALUES (%s, %s, %s, %s);",
+                (0, 0, 0, new_dataline_id)
+            )
 
     conn.commit()
 
