@@ -127,6 +127,26 @@ def detect_rotation_extremes_datalines(df, angle_threshold_deg=10.0, include_sta
             elif align.startswith('bottom:'):
                 n = int(align.split(':')[1])
                 trimmed.append(df_pos.tail(n))
+            elif align.startswith('middle:'):
+                n = int(align.split(':')[1])
+                mid = len(df_pos) // 2
+                half = n // 2
+                start = max(mid - half, 0)
+                trimmed.append(df_pos.iloc[start:start + n])
+            elif align.startswith('nth:'):
+                nth = int(align.split(':')[1])
+                grouped = semiresult.groupby('position')
+                for pos_value, group in grouped:
+                    sampled = group.reset_index(drop=True).iloc[[i for i in range(len(group)) if i % nth == 0]]
+                    trimmed.append(sampled)
+            elif align.startswith('xnth:'):
+                nth = int(align.split(':')[1])
+                grouped = semiresult.groupby('position')
+                for pos_value, group in grouped:
+                    sampled = group.reset_index(drop=True).iloc[[i for i in range(len(group)) if i % (len(group) / nth) == 0]]
+                    trimmed.append(sampled)
+                print("not implemented")
+
         semiresult = pd.concat(trimmed).sort_values(by=['position', 'timestamp']).reset_index(drop=True)
 
     # Step 4: add --start and --end if requested

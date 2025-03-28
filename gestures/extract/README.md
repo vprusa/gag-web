@@ -35,6 +35,10 @@ for id in 61 62 63 64 65 66 67 68 69 70 71 ; do python gesture_data_extractor.py
 for id in 61 62 63 64 65 66 67 68 69 70 71 ; do python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id $i --threshold-extraction 0.15 -v --threshold-recognition 0.2 --position 0 1 2 3 4 5 --start --end --align bottom:1 --suffix p_012345_wswe_te_0.15 | tee gesture_data_extractor.2.py.`now_str`.log done
 
 
+python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id 62 --min-points 1 -v --threshold-recognition 0.2 --position 0 1 2 3 4 5 --start --end --align nth:10 | tee logs-2025-03-28_17-11-15/gesture_data_extractor.2.py.`now_str`.log
+
+
+
 ```
 
 # delete gesture by id
