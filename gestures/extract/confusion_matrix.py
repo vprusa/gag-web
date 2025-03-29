@@ -167,11 +167,9 @@ if __name__ == "__main__":
 
         for r in range(1, len(all_gestures)):
             for ref_combo in combinations(all_gestures, r):
-                test_combo = [g for g in all_gestures if g not in ref_combo]
-                if not test_combo:
-                    continue
-
                 ref_list = list(ref_combo)
+                test_combo = all_gestures
+
                 col_label_base = f"ref_{'-'.join(map(str, ref_list))}"
                 total_matches = 0
                 combo_threshold = None
@@ -201,27 +199,31 @@ if __name__ == "__main__":
                             matrix_data[row_label] = {}
                         label_with_threshold = f"{col_label_base}@{combo_threshold:.3f}"
 
-                        # Only count whole gesture match (e.g., 100% of datalines matched)
                         gesture_df = categorized_df[categorized_df['gesture_id'] == gesture_id]
-                        match_ratio = gesture_df['matched'].mean()  # ratio of matching lines
-                        gesture_matched = match_ratio == 1.0  # or use >= 0.9 for thresholded
+                        position_groups = gesture_df.groupby('index')
+                        all_matched = all(g['matched'].mean() == 1.0 for _, g in position_groups)
+                        gesture_matched = all_matched
 
-                        if gesture_matched:
-                            matrix_data[row_label][label_with_threshold] = matrix_data[row_label].get(
-                                label_with_threshold, 0) + 1
+                        if gesture_id in ref_list:
+                            matrix_data[row_label][label_with_threshold] = None
+                        elif gesture_matched:
+                            matrix_data[row_label][label_with_threshold] = matrix_data[row_label].get(label_with_threshold, 0) + 1
+                        else:
+                            matrix_data[row_label][label_with_threshold] = matrix_data[row_label].get(label_with_threshold, 0) + 0
 
                     label_thresholds[label_with_threshold] = combo_threshold
 
+                print(f"📊 Summary for {label_with_threshold}:")
+                for gesture_id in test_combo:
+                    row_label = f"gesture_{gesture_id}"
+                    value = matrix_data.get(row_label, {}).get(label_with_threshold, '—')
+                    status = "✔ Matched" if value == 1 else ("— (Excluded)" if value is None else "✘ Not Matched")
+                    print(f"  Gesture {gesture_id}: {status}")
+
         all_cols = sorted(matrix_data[next(iter(matrix_data))].keys())
-        matrix_df = pd.DataFrame.from_dict(matrix_data, orient='index').fillna(0).astype(int)[all_cols]
-        matrix_df = matrix_df.transpose()  # 🔁 Switch axes: now rows=ref_gestures, cols=input_gestures
-
-        # ➕ Add a 'Total' column with row-wise sum (total matches per reference combination)
+        matrix_df = pd.DataFrame.from_dict(matrix_data, orient='index')[all_cols]
+        matrix_df = matrix_df.transpose()
         matrix_df['Total'] = matrix_df.sum(axis=1)
-
-        # ➕ Compute 'Trust' as Total / (#ref_gestures * #input_gestures)
-        trust_scores = []
-        ref_counts = []
 
         trust_scores = []
         ref_counts = []
@@ -235,22 +237,13 @@ if __name__ == "__main__":
                 num_refs = 1
 
             ref_counts.append(num_refs)
-            num_inputs = len(matrix_df.columns) - 2  # excluding Total and Trust
+            num_inputs = len(matrix_df.columns) - 2
             total = matrix_df.at[row_label, 'Total']
-            # 📐 Option A: Matches per reference-input pair
-            trust_a = total / (num_refs * num_inputs) if num_refs * num_inputs > 0 else 0
-            # 📊 Option B: Matches per input gesture (ignoring ref count)
-            trust_b = total / num_inputs if num_inputs > 0 else 0
-            # 🧮 Option C: Matches per ref gesture (ignoring input count)
             trust_c = total / num_refs if num_refs > 0 else 0
-            # 🎯 Choose your preferred trust strategy:
-            trust = trust_c  # change to trust_b or trust_c if desired
-
-            trust_scores.append(trust)
+            trust_scores.append(trust_c)
 
         matrix_df['Trust'] = trust_scores
 
-        # ➕ Add 'Threshold' from label_thresholds
         thresholds = []
         for row_label in matrix_df.index:
             threshold_val = None
@@ -261,12 +254,10 @@ if __name__ == "__main__":
             thresholds.append(threshold_val if threshold_val is not None else 0)
         matrix_df['Threshold'] = thresholds
 
-        # 🔀 Reorder rows by number of reference gestures and alphabetically by gesture IDs
         matrix_df['RefCount'] = ref_counts
         matrix_df['RefKey'] = matrix_df.index.to_series().apply(
             lambda x: '-'.join(sorted(x.split('@')[0].replace('ref_', '').split('-'), key=int)))
-        matrix_df['Threshold'] = matrix_df.index.to_series().apply( lambda x: float(x.split('@')[1]))
-        # threshold_df = matrix_df.index.to_series().apply( lambda x: float(x.split('@')[1]))
+        matrix_df['Threshold'] = matrix_df.index.to_series().apply(lambda x: float(x.split('@')[1]))
         matrix_df = matrix_df.sort_values(by=['RefCount', 'Total'], ascending=[True, False])
         threshold_df = matrix_df[['Threshold']]
         matrix_df = matrix_df.drop(columns=['RefCount', 'RefKey', 'Threshold'])
@@ -274,16 +265,11 @@ if __name__ == "__main__":
         print("\n📊 Brute-force Gesture Coverage Matrix (match counts):")
         print(matrix_df.to_string())
 
-        # ➖ Extract columns to be plotted separately
         heatmap_df = matrix_df.drop(columns=['Total', 'Trust']).copy()
-
-        # Create visual versions with '-' for gesture overlap and proper formatting
         display_df = heatmap_df.fillna('-')
-
         total_df = matrix_df[['Total']]
         trust_df = matrix_df[['Trust']]
 
-        # 🔧 Create figure and axes manually (no GridSpec)
         fig, axes = plt.subplots(1, 4, figsize=(14, 0.2 * len(matrix_df)))
         ax0, ax1, ax2, ax3 = axes
 
@@ -294,7 +280,7 @@ if __name__ == "__main__":
         ax0.set_ylabel("Reference Gesture Combinations")
         ax0.tick_params(axis='x', rotation=45)
 
-        sns.heatmap(total_df, annot=True, fmt='d', cmap='Greens', ax=ax1, cbar=False)
+        sns.heatmap(total_df, annot=True, fmt='.0f', cmap='Greens', ax=ax1, cbar=False)
         ax1.set_title("Total")
         ax1.set_yticks([])
         ax1.set_xticklabels(['Total'], rotation=45, ha='right')
@@ -317,4 +303,5 @@ if __name__ == "__main__":
         print(f"\n✅ Saved brute-force coverage heatmap to {heatmap_path}")
         conn.close()
         sys.exit(0)
+
 
