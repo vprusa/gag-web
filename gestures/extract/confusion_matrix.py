@@ -194,16 +194,23 @@ if __name__ == "__main__":
                         continue
 
                     categorized_df = categorize_by_angular_distance(input_df, avg_ref, threshold)
-                    matches = categorized_df['matched'].sum()
-                    total_matches += matches
 
                     for gesture_id in test_combo:
                         row_label = f"gesture_{gesture_id}"
                         if row_label not in matrix_data:
                             matrix_data[row_label] = {}
                         label_with_threshold = f"{col_label_base}@{combo_threshold:.3f}"
-                        matrix_data[row_label][label_with_threshold] = matrix_data[row_label].get(label_with_threshold, 0) + \
-                            categorized_df[categorized_df['gesture_id'] == gesture_id]['matched'].sum()
+
+                        # Only count whole gesture match (e.g., 100% of datalines matched)
+                        gesture_df = categorized_df[categorized_df['gesture_id'] == gesture_id]
+                        match_ratio = gesture_df['matched'].mean()  # ratio of matching lines
+                        gesture_matched = match_ratio == 1.0  # or use >= 0.9 for thresholded
+
+                        if gesture_matched:
+                            matrix_data[row_label][label_with_threshold] = matrix_data[row_label].get(
+                                label_with_threshold, 0) + 1
+
+                    label_thresholds[label_with_threshold] = combo_threshold
 
         all_cols = sorted(matrix_data[next(iter(matrix_data))].keys())
         matrix_df = pd.DataFrame.from_dict(matrix_data, orient='index').fillna(0).astype(int)[all_cols]
