@@ -201,9 +201,10 @@ if __name__ == "__main__":
                         row_label = f"gesture_{gesture_id}"
                         if row_label not in matrix_data:
                             matrix_data[row_label] = {}
-                        label_with_threshold = f"{col_label_base}@{combo_threshold:.2f}"
+                        label_with_threshold = f"{col_label_base}@{combo_threshold:.3f}"
                         matrix_data[row_label][label_with_threshold] = matrix_data[row_label].get(label_with_threshold, 0) + \
                             categorized_df[categorized_df['gesture_id'] == gesture_id]['matched'].sum()
+
         all_cols = sorted(matrix_data[next(iter(matrix_data))].keys())
         matrix_df = pd.DataFrame.from_dict(matrix_data, orient='index').fillna(0).astype(int)[all_cols]
         matrix_df = matrix_df.transpose()  # 🔁 Switch axes: now rows=ref_gestures, cols=input_gestures
@@ -214,17 +215,6 @@ if __name__ == "__main__":
         # ➕ Compute 'Trust' as Total / (#ref_gestures * #input_gestures)
         trust_scores = []
         ref_counts = []
-        # for row_label in matrix_df.index:
-        #     try:
-        #         ref_part = row_label.split('@')[0].replace('ref_', '')
-        #         num_refs = len(ref_part.split('-'))
-        #     except Exception:
-        #         num_refs = 1
-        #     ref_counts.append(num_refs)
-        #     num_inputs = len(matrix_df.columns) - 2  # excluding Total and Trust
-        #     trust = matrix_df.at[row_label, 'Total'] / (num_refs * num_inputs) if num_refs * num_inputs > 0 else 0
-        #     trust_scores.append(trust)
-        # matrix_df['Trust'] = trust_scores
 
         trust_scores = []
         ref_counts = []
@@ -253,11 +243,26 @@ if __name__ == "__main__":
 
         matrix_df['Trust'] = trust_scores
 
+        # ➕ Add 'Threshold' from label_thresholds
+        thresholds = []
+        for row_label in matrix_df.index:
+            threshold_val = None
+            for key in label_thresholds:
+                if key in row_label:
+                    threshold_val = label_thresholds[key]
+                    break
+            thresholds.append(threshold_val if threshold_val is not None else 0)
+        matrix_df['Threshold'] = thresholds
+
         # 🔀 Reorder rows by number of reference gestures and alphabetically by gesture IDs
         matrix_df['RefCount'] = ref_counts
-        matrix_df['RefKey'] = matrix_df.index.to_series().apply(lambda x: '-'.join(sorted(x.split('@')[0].replace('ref_', '').split('-'), key=int)))
+        matrix_df['RefKey'] = matrix_df.index.to_series().apply(
+            lambda x: '-'.join(sorted(x.split('@')[0].replace('ref_', '').split('-'), key=int)))
+        matrix_df['Threshold'] = matrix_df.index.to_series().apply( lambda x: float(x.split('@')[1]))
+        # threshold_df = matrix_df.index.to_series().apply( lambda x: float(x.split('@')[1]))
         matrix_df = matrix_df.sort_values(by=['RefCount', 'Total'], ascending=[True, False])
-        matrix_df = matrix_df.drop(columns=['RefCount', 'RefKey'])
+        threshold_df = matrix_df[['Threshold']]
+        matrix_df = matrix_df.drop(columns=['RefCount', 'RefKey', 'Threshold'])
 
         print("\n📊 Brute-force Gesture Coverage Matrix (match counts):")
         print(matrix_df.to_string())
@@ -265,43 +270,37 @@ if __name__ == "__main__":
         # ➖ Extract columns to be plotted separately
         heatmap_df = matrix_df.drop(columns=['Total', 'Trust']).copy()
 
-        # Replace 0s where gesture is also in ref_gesture set with '-' string
-        for row_label in heatmap_df.index:
-            ref_gestures = set(map(int, row_label.split('@')[0].replace('ref_', '').split('-')))
-            for col in heatmap_df.columns:
-                gesture_id = int(col.replace('gesture_', ''))
-                if gesture_id in ref_gestures:
-                    heatmap_df.at[row_label, col] = np.nan  # Mark as NaN for '-' later
-
         # Create visual versions with '-' for gesture overlap and proper formatting
         display_df = heatmap_df.fillna('-')
 
         total_df = matrix_df[['Total']]
         trust_df = matrix_df[['Trust']]
 
-        # 🔧 Create figure with three heatmaps side by side
-        from matplotlib.gridspec import GridSpec
-        fig = plt.figure(figsize=(14, 0.2 * len(matrix_df)))
-        gs = GridSpec(1, 3, width_ratios=[4, 0.7, 0.7], wspace=0.05)
+        # 🔧 Create figure and axes manually (no GridSpec)
+        fig, axes = plt.subplots(1, 4, figsize=(14, 0.2 * len(matrix_df)))
+        ax0, ax1, ax2, ax3 = axes
 
-        ax0 = fig.add_subplot(gs[0])
-        sns.heatmap(heatmap_df.astype(float), annot=display_df.values, fmt='', cmap='YlGnBu', ax=ax0, cbar=False, linewidths=0.5, linecolor='darkgrey')
+        sns.heatmap(heatmap_df.astype(float), annot=display_df.values, fmt='', cmap='YlGnBu', ax=ax0, cbar=False,
+                    linewidths=0.5, linecolor='darkgrey')
         ax0.set_title("Match Counts")
         ax0.set_xlabel("Input Gestures")
         ax0.set_ylabel("Reference Gesture Combinations")
         ax0.tick_params(axis='x', rotation=45)
 
-        ax1 = fig.add_subplot(gs[1])
         sns.heatmap(total_df, annot=True, fmt='d', cmap='Greens', ax=ax1, cbar=False)
         ax1.set_title("Total")
         ax1.set_yticks([])
         ax1.set_xticklabels(['Total'], rotation=45, ha='right')
 
-        ax2 = fig.add_subplot(gs[2])
-        sns.heatmap(trust_df, annot=True, fmt='.2f', cmap='Oranges', ax=ax2, cbar=False)
+        sns.heatmap(trust_df, annot=True, fmt='.3f', cmap='Oranges', ax=ax2, cbar=False)
         ax2.set_title("Trust")
         ax2.set_yticks([])
         ax2.set_xticklabels(['Trust'], rotation=45, ha='right')
+
+        sns.heatmap(threshold_df, annot=True, fmt='.3f', cmap='Purples', ax=ax3, cbar=False)
+        ax3.set_title("Threshold")
+        ax3.set_yticks([])
+        ax3.set_xticklabels(['Threshold'], rotation=45, ha='right')
 
         plt.tight_layout()
         os.makedirs("out_heatmap", exist_ok=True)
@@ -311,5 +310,4 @@ if __name__ == "__main__":
         print(f"\n✅ Saved brute-force coverage heatmap to {heatmap_path}")
         conn.close()
         sys.exit(0)
-
 
