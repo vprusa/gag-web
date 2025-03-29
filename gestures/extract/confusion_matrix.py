@@ -205,6 +205,7 @@ if __name__ == "__main__":
                         matrix_data[row_label][label_with_threshold] = matrix_data[row_label].get(label_with_threshold, 0) + \
                             categorized_df[categorized_df['gesture_id'] == gesture_id]['matched'].sum()
 
+
         all_cols = sorted(matrix_data[next(iter(matrix_data))].keys())
         matrix_df = pd.DataFrame.from_dict(matrix_data, orient='index').fillna(0).astype(int)[all_cols]
         matrix_df = matrix_df.transpose()  # 🔁 Switch axes: now rows=ref_gestures, cols=input_gestures
@@ -212,15 +213,43 @@ if __name__ == "__main__":
         # ➕ Add a 'Total' column with row-wise sum (total matches per reference combination)
         matrix_df['Total'] = matrix_df.sum(axis=1)
 
-        # ➕ Add a 'Trust' column as a normalized version of 'Total' by number of input gestures available
-        input_gesture_count = len(matrix_df.columns) - 1  # exclude 'Total'
-        matrix_df['Trust'] = matrix_df['Total'] / input_gesture_count if input_gesture_count > 0 else 0
+        # ➕ Compute 'Trust' as Total / (#ref_gestures * #input_gestures)
+        trust_scores = []
+        ref_counts = []
+        for row_label in matrix_df.index:
+            try:
+                ref_part = row_label.split('@')[0].replace('ref_', '')
+                num_refs = len(ref_part.split('-'))
+            except Exception:
+                num_refs = 1
+            ref_counts.append(num_refs)
+            num_inputs = len(matrix_df.columns) - 2  # excluding Total and Trust
+            trust = matrix_df.at[row_label, 'Total'] / (num_refs * num_inputs) if num_refs * num_inputs > 0 else 0
+            trust_scores.append(trust)
+        matrix_df['Trust'] = trust_scores
+
+        # 🔀 Reorder rows by number of reference gestures
+        matrix_df['RefCount'] = ref_counts
+        matrix_df = matrix_df.sort_values(by='RefCount')
+        matrix_df = matrix_df.drop(columns=['RefCount'])
 
         print("\n📊 Brute-force Gesture Coverage Matrix (match counts):")
         print(matrix_df.to_string())
 
         # ➖ Extract columns to be plotted separately
-        heatmap_df = matrix_df.drop(columns=['Total', 'Trust'])
+        heatmap_df = matrix_df.drop(columns=['Total', 'Trust']).copy()
+
+        # Replace 0s where gesture is also in ref_gesture set with '-' string
+        for row_label in heatmap_df.index:
+            ref_gestures = set(map(int, row_label.split('@')[0].replace('ref_', '').split('-')))
+            for col in heatmap_df.columns:
+                gesture_id = int(col.replace('gesture_', ''))
+                if gesture_id in ref_gestures:
+                    heatmap_df.at[row_label, col] = np.nan  # Mark as NaN for '-' later
+
+        # Create visual versions with '-' for gesture overlap and proper formatting
+        display_df = heatmap_df.fillna('-')
+
         total_df = matrix_df[['Total']]
         trust_df = matrix_df[['Trust']]
 
@@ -230,7 +259,7 @@ if __name__ == "__main__":
         gs = GridSpec(1, 3, width_ratios=[4, 0.7, 0.7], wspace=0.05)
 
         ax0 = fig.add_subplot(gs[0])
-        sns.heatmap(heatmap_df, annot=True, fmt='d', cmap='YlGnBu', ax=ax0, cbar=False)
+        sns.heatmap(heatmap_df.astype(float), annot=display_df.values, fmt='', cmap='YlGnBu', ax=ax0, cbar=False, linewidths=0.5, linecolor='darkgrey')
         ax0.set_title("Match Counts")
         ax0.set_xlabel("Input Gestures")
         ax0.set_ylabel("Reference Gesture Combinations")
