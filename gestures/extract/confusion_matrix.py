@@ -204,8 +204,6 @@ if __name__ == "__main__":
                         label_with_threshold = f"{col_label_base}@{combo_threshold:.2f}"
                         matrix_data[row_label][label_with_threshold] = matrix_data[row_label].get(label_with_threshold, 0) + \
                             categorized_df[categorized_df['gesture_id'] == gesture_id]['matched'].sum()
-
-
         all_cols = sorted(matrix_data[next(iter(matrix_data))].keys())
         matrix_df = pd.DataFrame.from_dict(matrix_data, orient='index').fillna(0).astype(int)[all_cols]
         matrix_df = matrix_df.transpose()  # 🔁 Switch axes: now rows=ref_gestures, cols=input_gestures
@@ -216,22 +214,50 @@ if __name__ == "__main__":
         # ➕ Compute 'Trust' as Total / (#ref_gestures * #input_gestures)
         trust_scores = []
         ref_counts = []
+        # for row_label in matrix_df.index:
+        #     try:
+        #         ref_part = row_label.split('@')[0].replace('ref_', '')
+        #         num_refs = len(ref_part.split('-'))
+        #     except Exception:
+        #         num_refs = 1
+        #     ref_counts.append(num_refs)
+        #     num_inputs = len(matrix_df.columns) - 2  # excluding Total and Trust
+        #     trust = matrix_df.at[row_label, 'Total'] / (num_refs * num_inputs) if num_refs * num_inputs > 0 else 0
+        #     trust_scores.append(trust)
+        # matrix_df['Trust'] = trust_scores
+
+        trust_scores = []
+        ref_counts = []
         for row_label in matrix_df.index:
             try:
                 ref_part = row_label.split('@')[0].replace('ref_', '')
-                num_refs = len(ref_part.split('-'))
+                ref_ids = list(map(int, ref_part.split('-')))
+                num_refs = len(ref_ids)
             except Exception:
+                ref_ids = []
                 num_refs = 1
+
             ref_counts.append(num_refs)
             num_inputs = len(matrix_df.columns) - 2  # excluding Total and Trust
-            trust = matrix_df.at[row_label, 'Total'] / (num_refs * num_inputs) if num_refs * num_inputs > 0 else 0
+            total = matrix_df.at[row_label, 'Total']
+            # 📐 Option A: Matches per reference-input pair
+            trust_a = total / (num_refs * num_inputs) if num_refs * num_inputs > 0 else 0
+            # 📊 Option B: Matches per input gesture (ignoring ref count)
+            trust_b = total / num_inputs if num_inputs > 0 else 0
+            # 🧮 Option C: Matches per ref gesture (ignoring input count)
+            trust_c = total / num_refs if num_refs > 0 else 0
+            # 🎯 Choose your preferred trust strategy:
+            trust = trust_c  # change to trust_b or trust_c if desired
+
             trust_scores.append(trust)
+
         matrix_df['Trust'] = trust_scores
 
-        # 🔀 Reorder rows by number of reference gestures
+        # 🔀 Reorder rows by number of reference gestures and alphabetically by gesture IDs
         matrix_df['RefCount'] = ref_counts
-        matrix_df = matrix_df.sort_values(by='RefCount')
-        matrix_df = matrix_df.drop(columns=['RefCount'])
+        matrix_df['RefKey'] = matrix_df.index.to_series().apply(lambda x: '-'.join(sorted(x.split('@')[0].replace('ref_', '').split('-'), key=int)))
+        matrix_df = matrix_df.sort_values(by=['RefCount', 'Total'], ascending=[True, False])
+        matrix_df = matrix_df.drop(columns=['RefCount', 'RefKey'])
 
         print("\n📊 Brute-force Gesture Coverage Matrix (match counts):")
         print(matrix_df.to_string())
@@ -285,3 +311,5 @@ if __name__ == "__main__":
         print(f"\n✅ Saved brute-force coverage heatmap to {heatmap_path}")
         conn.close()
         sys.exit(0)
+
+
