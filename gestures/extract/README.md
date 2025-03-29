@@ -79,7 +79,12 @@ python confusion_matrix.py --host "localhost" --user "gagweb" --password "passwo
 
 
 python confusion_matrix.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 153 157 158 162  --gestures 154 155 156 159 160 161 163  --actual-matches 1 1 1 1 0 0 1 --positions 0 1 2 3 4 5 --angular-diff --calc-threshold --calc-max --save-ref-gesture x-r-switch-avg-max--153-157-158-162 | tee logs/confusion_matrix.py.`now_str`.log
+```
 
+## conf matrix switch hands
+```
+
+python confusion_matrix.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 269 270 271  --gestures 272 273 274 275 276 277 278  --actual-matches 1 1 1 1 1 1 1 --positions 0 1 2 3 4 5 --angular-diff --calc-threshold --calc-max --save-ref-gesture x-r-switch--max--269--271 | tee logs/confusion_matrix.py.x-r-switch.`now_str`.log
 
 ```
 

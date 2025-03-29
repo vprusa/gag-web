@@ -54,42 +54,8 @@ def fetch_gesture_data(conn, gesture_ids, position):
     return pd.DataFrame(cursor.fetchall())
 
 
-# def store_ref_gesture(conn, name, avg_quats, ref_df, threshold):
-#     if avg_quats is None or avg_quats.shape[0] == 0:
-#         print("⚠️ No averaged data to store.")
-#         return
-#
-#     first_ref_gesture_id = ref_df['gesture_id'].unique()[0]
-#     timestamps_df = ref_df[ref_df['gesture_id'] == first_ref_gesture_id][['position', 'timestamp']].reset_index(drop=True)
-#
-#     cursor = conn.cursor()
-#     cursor.execute("""
-#         INSERT INTO Gesture (dateCreated, delay, exec, isActive, isFiltered, shouldMatch, userAlias, user_id)
-#         VALUES (NOW(), 1, NULL, 1, 1, %s, %s, 1)
-#     """, (threshold, name))
-#     gesture_id = cursor.lastrowid
-#     print (f"Saved gesture with id: {gesture_id} and alias: {name}")
-#     for i, quat in enumerate(avg_quats):
-#         ts = timestamps_df.iloc[i]['timestamp'] if i < len(timestamps_df) else datetime.utcnow()
-#         position = timestamps_df.iloc[i]['position'] if i < len(timestamps_df) else 0
-#         if isinstance(ts, np.datetime64):
-#             ts = pd.to_datetime(ts).to_pydatetime()
-#
-#         cursor.execute(
-#             "INSERT INTO DataLine (hand, position, timestamp, gesture_id) VALUES (%s, %s, %s, %s)",
-#             (None, position, ts, gesture_id)
-#         )
-#         dataline_id = cursor.lastrowid
-#
-#         cursor.execute(
-#             "INSERT INTO FingerDataLine (accX, accY, accZ, quatA, quatX, quatY, quatZ, id) VALUES (0, 0, 0, %s, %s, %s, %s, %s)",
-#             (quat[0], quat[1], quat[2], quat[3], dataline_id)
-#         )
-#
-#     conn.commit()
-#     print(f"✅ Saved new referential gesture '{name}' with ID: {gesture_id}")
-
 from pprint import pprint
+from datetime import datetime
 
 def store_ref_gesture(conn, name, avg_quats, ref_df, threshold):
     if avg_quats is None or avg_quats.shape[0] == 0:
@@ -125,13 +91,40 @@ def store_ref_gesture(conn, name, avg_quats, ref_df, threshold):
         )
         dataline_id = cursor.lastrowid
 
+        # Insert quaternion into FingerDataLine
         cursor.execute(
             "INSERT INTO FingerDataLine (accX, accY, accZ, quatA, quatX, quatY, quatZ, id) VALUES (0, 0, 0, %s, %s, %s, %s, %s)",
             (float(quat[3]), float(quat[0]), float(quat[1]), float(quat[2]), int(dataline_id))
         )
 
+        # If position == 5, also insert dummy or derived data into WristDataLine
+        if int(position) == 5:
+            # Try to fetch wrist data from ref_df
+            try:
+                wrist_row = ref_df[
+                    (ref_df['gesture_id'] == first_ref_gesture_id) &
+                    (ref_df['timestamp'] == ts) &
+                    (ref_df['position'] == 5)
+                ].iloc[0]
+                wrist_vals = (
+                    float(wrist_row.get('quatA', 0)),
+                    float(wrist_row.get('quatX', 0)),
+                    float(wrist_row.get('quatY', 0)),
+                    float(wrist_row.get('quatZ', 0)),
+                    dataline_id
+                )
+            except Exception as e:
+                print(f"⚠️ Wrist data not found for timestamp {ts}, inserting zeros. Error: {e}")
+                wrist_vals = (0, 0, 0, 0, dataline_id)
+
+            cursor.execute("""
+                INSERT INTO WristDataLine (magX, magY, magZ, id)
+                VALUES (%s, %s, %s, %s)
+            """, (0, 0, 0, dataline_id))
+
     conn.commit()
     print(f"✅ Saved new referential gesture '{name}' with ID: {gesture_id}")
+
 
 
 
@@ -247,7 +240,7 @@ def assign_actual_matches(categorized_df, gesture_ids, actual_matches):
 
 def generate_angular_confusion_matrix(df, ref_ids, input_ids, position, output_prefix, actual_matches, args):
     actual_str = ''.join(map(str, actual_matches)) if actual_matches else 'unknown'
-    dir_prefix = f"out_ref_gestures_{'_'.join(map(str, ref_ids))}_in_gestures_{'_'.join(map(str, input_ids))}_actual_matches_{actual_str}"
+    dir_prefix = f"out_ref_gestures/out_ref_gestures_{'_'.join(map(str, ref_ids))}_in_gestures_{'_'.join(map(str, input_ids))}_actual_matches_{actual_str}"
     out_path = os.path.join(dir_prefix, f"pos_{position}")
     os.makedirs(out_path, exist_ok=True)
 
@@ -469,13 +462,13 @@ if __name__ == "__main__":
     final_cm = confusion_matrix(y_true, y_pred, labels=[0, 1])
     print(classification_report(y_true, y_pred, labels=[0, 1]))
     gesture_out_dir_path = os.path.join(
-        f"out_ref_gestures_{'_'.join(map(str, args.ref_gestures))}_in_gestures_{'_'.join(map(str, args.gestures))}_actual_matches_{''.join(map(str, args.actual_matches if args.actual_matches else gesture_summary['actual_match'].tolist()))}",
-        f"pos_{pos}"
+        f"out_ref_gestures/out_ref_gestures_{'_'.join(map(str, args.ref_gestures))}_in_gestures_{'_'.join(map(str, args.gestures))}_actual_matches_{''.join(map(str, args.actual_matches if args.actual_matches else gesture_summary['actual_match'].tolist()))}"
+        # f"pos_{pos}"
     )
-    gesture_out_path = os.path.join(
-        gesture_out_dir_path,
-        "gesture_level_confusion.png"
-    )
+    # gesture_out_path = os.path.join(
+    #     gesture_out_dir_path,
+    #     "gesture_level_confusion.png"
+    # )
     # Save the final confusion matrix
     final_out_path = os.path.join(
         gesture_out_dir_path,
@@ -495,13 +488,10 @@ if __name__ == "__main__":
     print(f"nautilus {gesture_out_dir_path} & disown")
 
 
-    # avg_quats = np.array([])  # Replace this with your averaged quaternion array
-    # avg_quats
     ref_df2 = pd.concat(ref_df_list, ignore_index=True)
     avg_quats = np.vstack(avg_refs)
 
     if args.save_ref_gesture:
-        # store_ref_gesture(conn, args.save_ref_gesture, avg_quats, ref_df, global_threshold)
         store_ref_gesture(conn, args.save_ref_gesture, avg_quats, ref_df2, global_threshold)
 
 
