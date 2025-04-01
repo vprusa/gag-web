@@ -343,5 +343,42 @@ angular.module('app').factory('VisTools', function () {
   };
 
 
+  vis.forceApplyOffsets = function () {
+    const parts = ['WRIST', 'THUMB', 'INDEX', 'MIDDLE', 'RING', 'LITTLE'];
+    const map = {
+      WRIST: 'rq',
+      THUMB: 'rqt',
+      INDEX: 'rqi',
+      MIDDLE: 'rqm',
+      RING: 'rqr',
+      LITTLE: 'rql'
+    };
+
+    const now = Date.now();
+
+    parts.forEach((part, index) => {
+      const key = map[part];
+      const q = vis.currentGesture.data[key];
+
+      if (!q || q._x === undefined) {
+        console.warn(`No quaternion data for ${part}`);
+        return;
+      }
+
+      const mockDataLine = {
+        p: part,
+        id: vis.currentGesture.currentDLId + index + 1,
+        t: now,
+        qX: q._x,
+        qY: q._y,
+        qZ: q._z,
+        qA: q._w
+      };
+
+      vis.updateVisFromDataLine(mockDataLine);
+    });
+  };
+
+
   return vis;
 });
