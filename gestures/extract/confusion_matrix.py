@@ -169,10 +169,10 @@ if __name__ == "__main__":
             for ref_combo in combinations(all_gestures, r):
                 ref_list = list(ref_combo)
                 test_combo = all_gestures
-
                 col_label_base = f"ref_{'-'.join(map(str, ref_list))}"
-                total_matches = 0
-                combo_threshold = None
+                label_with_threshold = None
+                thresholds_for_combo = []
+                gesture_match_flags = {gid: [] for gid in test_combo}
 
                 for pos in args.positions:
                     ref_df = fetch_gesture_data(conn, ref_list, pos)
@@ -185,7 +185,7 @@ if __name__ == "__main__":
                         calc_max=args.calc_max,
                         use_angular=args.angular_diff
                     )
-                    combo_threshold = threshold
+                    thresholds_for_combo.append(threshold)
 
                     input_df = fetch_gesture_data(conn, test_combo, pos)
                     if input_df.empty:
@@ -194,36 +194,35 @@ if __name__ == "__main__":
                     categorized_df = categorize_by_angular_distance(input_df, avg_ref, threshold)
 
                     for gesture_id in test_combo:
-                        row_label = f"gesture_{gesture_id}"
-                        if row_label not in matrix_data:
-                            matrix_data[row_label] = {}
-                        label_with_threshold = f"{col_label_base}@{combo_threshold:.3f}"
-
                         gesture_df = categorized_df[categorized_df['gesture_id'] == gesture_id]
                         position_groups = gesture_df.groupby('index')
                         all_matched = all(g['matched'].mean() == 1.0 for _, g in position_groups)
-                        gesture_matched = all_matched
+                        gesture_match_flags[gesture_id].append(all_matched)
 
-                        if gesture_id in ref_list:
-                            matrix_data[row_label][label_with_threshold] = None
-                        elif gesture_matched:
-                            matrix_data[row_label][label_with_threshold] = matrix_data[row_label].get(label_with_threshold, 0) + 1
-                        else:
-                            matrix_data[row_label][label_with_threshold] = matrix_data[row_label].get(label_with_threshold, 0) + 0
-
-                    label_thresholds[label_with_threshold] = combo_threshold
+                combo_threshold = max(thresholds_for_combo) if thresholds_for_combo else 0
+                label_with_threshold = f"{col_label_base}@{combo_threshold:.3f}"
+                label_thresholds[label_with_threshold] = combo_threshold
 
                 print(f"📊 Summary for {label_with_threshold}:")
+
                 for gesture_id in test_combo:
                     row_label = f"gesture_{gesture_id}"
-                    value = matrix_data.get(row_label, {}).get(label_with_threshold, '—')
-                    status = "✔ Matched" if value == 1 else ("— (Excluded)" if value is None else "✘ Not Matched")
-                    print(f"  Gesture {gesture_id}: {status}")
+                    if row_label not in matrix_data:
+                        matrix_data[row_label] = {}
+
+                    if gesture_id in ref_list:
+                        matrix_data[row_label][label_with_threshold] = None
+                        print(f"  Gesture {gesture_id}: — (Excluded)")
+                    else:
+                        fully_matched = all(gesture_match_flags.get(gesture_id, []))
+                        matrix_data[row_label][label_with_threshold] = 1 if fully_matched else 0
+                        status = "✔ Matched" if fully_matched else "✘ Not Matched"
+                        print(f"  Gesture {gesture_id}: {status}")
 
         all_cols = sorted(matrix_data[next(iter(matrix_data))].keys())
         matrix_df = pd.DataFrame.from_dict(matrix_data, orient='index')[all_cols]
         matrix_df = matrix_df.transpose()
-        matrix_df['Total'] = matrix_df.sum(axis=1)
+        matrix_df['Total'] = matrix_df.apply(lambda row: sum(val == 1 for val in row), axis=1)
 
         trust_scores = []
         ref_counts = []
@@ -257,7 +256,6 @@ if __name__ == "__main__":
         matrix_df['RefCount'] = ref_counts
         matrix_df['RefKey'] = matrix_df.index.to_series().apply(
             lambda x: '-'.join(sorted(x.split('@')[0].replace('ref_', '').split('-'), key=int)))
-        matrix_df['Threshold'] = matrix_df.index.to_series().apply(lambda x: float(x.split('@')[1]))
         matrix_df = matrix_df.sort_values(by=['RefCount', 'Total'], ascending=[True, False])
         threshold_df = matrix_df[['Threshold']]
         matrix_df = matrix_df.drop(columns=['RefCount', 'RefKey', 'Threshold'])
@@ -296,11 +294,39 @@ if __name__ == "__main__":
         ax3.set_xticklabels(['Threshold'], rotation=45, ha='right')
 
         plt.tight_layout()
-        os.makedirs("out_heatmap", exist_ok=True)
-        heatmap_path = os.path.join("out_heatmap", "brute_force_heatmap.png")
+        outHeapDirPath = "out_heatmap/gests_" + '_'.join(str(g) for g in all_gestures)
+        os.makedirs(outHeapDirPath, exist_ok=True)
+        heatmap_path = os.path.join(outHeapDirPath, "brute_force_heatmap.png")
         plt.savefig(heatmap_path)
         plt.close()
         print(f"\n✅ Saved brute-force coverage heatmap to {heatmap_path}")
+        # ➕ Additional statistics summary
+        print("📈 Summary Statistics:")
+        print(f"Total combinations evaluated: {len(matrix_df)}")
+
+        matched_rows = (matrix_df['Total'] > 0).sum()
+        print(f"Rows with at least one gesture matched: {matched_rows}")
+
+        threshold_zero_rows = (threshold_df['Threshold'] == 0).sum()
+        threshold_nonzero_rows = (threshold_df['Threshold'] != 0).sum()
+        print(f"Rows with threshold = 0: {threshold_zero_rows}")
+        print(f"Rows with threshold ≠ 0: {threshold_nonzero_rows}")
+
+        print("🏅 Best combinations by RefCount:")
+        matrix_df['Threshold'] = threshold_df['Threshold']
+        matrix_df['RefCount'] = matrix_df.index.to_series().apply(lambda x: len(x.split('@')[0].replace('ref_', '').split('-')))
+
+        for refcount in sorted(matrix_df['RefCount'].unique()):
+            group = matrix_df[matrix_df['RefCount'] == refcount]
+            if group.empty:
+                continue
+            top_row = group.sort_values(by='Total', ascending=False).iloc[0]
+            best_combo = top_row.name
+            best_threshold = top_row['Threshold']
+            print(f"  RefCount {refcount}: Best = {best_combo} with {top_row['Total']} matches, Threshold = {best_threshold:.3f}")
+
+        matrix_df = matrix_df.drop(columns=['RefCount', 'Threshold'])
+
         conn.close()
         sys.exit(0)
 
