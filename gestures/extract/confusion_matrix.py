@@ -320,10 +320,12 @@ if __name__ == "__main__":
             group = matrix_df[matrix_df['RefCount'] == refcount]
             if group.empty:
                 continue
-            top_row = group.sort_values(by='Total', ascending=False).iloc[0]
-            best_combo = top_row.name
-            best_threshold = top_row['Threshold']
-            print(f"  RefCount {refcount}: Best = {best_combo} with {top_row['Total']} matches, Threshold = {best_threshold:.3f}")
+            max_total = group['Total'].max()
+            best_rows = group[group['Total'] == max_total]
+            best_row = best_rows.sort_values(by='Threshold').iloc[0]
+            best_combo = best_row.name
+            best_threshold = best_row['Threshold']
+            print(f"  RefCount {refcount}: Best = {best_combo} with {best_row['Total']} matches, Threshold = {best_threshold:.3f}")
 
         matrix_df = matrix_df.drop(columns=['RefCount', 'Threshold'])
 
