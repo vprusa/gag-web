@@ -154,8 +154,8 @@ angular.module('app').factory('VisTools', function () {
       return;
     }
 
-    // const useLittle = false;
-    const useLittle = true;
+    const useLittle = false;
+    // const useLittle = true;
 
     if (useLittle) {
 
