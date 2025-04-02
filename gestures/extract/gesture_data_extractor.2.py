@@ -84,7 +84,7 @@ def fetch_quaternion_data(conn, gesture_id, hand, positions, num_to_show=6):
         print(tabulate(df.head(num_to_show), headers="keys", tablefmt="pretty"))
 
     return df
-
+import math
 
 def detect_rotation_extremes_datalines(df, angle_threshold_deg=10.0, include_start=False, include_end=False, align=False):
     if df is None or df.empty:
@@ -143,9 +143,19 @@ def detect_rotation_extremes_datalines(df, angle_threshold_deg=10.0, include_sta
                 nth = int(align.split(':')[1])
                 grouped = semiresult.groupby('position')
                 for pos_value, group in grouped:
-                    sampled = group.reset_index(drop=True).iloc[[i for i in range(len(group)) if i % int((len(group) / nth)) == 0]]
+                    # sampled = group.reset_index(drop=True).iloc[[i for i in range(len(group)) if (int(len(group) / nth) != 0 and i % int(len(group) / nth) == 0)]]
+                    sampled = group.reset_index(drop=True).iloc[[i for i in range(len(group)) if (i % math.ceil(len(group) / nth) == 0)]]
                     trimmed.append(sampled)
-                print("not implemented")
+            elif align.startswith('xnth-top:'):
+                nth = int(align.split(':')[1])
+                grouped = semiresult.groupby('position')
+                min_size = min(len(group) for _, group in grouped)
+                for pos_value, group in grouped:
+                    trimmed_group = group.reset_index(drop=True).iloc[:min_size]
+                    sampled = trimmed_group.iloc[
+                        [i for i in range(len(trimmed_group)) if i % max(1, math.ceil(min_size / nth)) == 0]]
+                    trimmed.append(sampled)
+                # print("not implemented")
         semiresult = pd.concat(trimmed).sort_values(by=['position', 'timestamp']).reset_index(drop=True)
 
     # Step 4: add --start and --end if requested
