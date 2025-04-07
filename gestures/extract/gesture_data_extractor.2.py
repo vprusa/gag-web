@@ -5,7 +5,9 @@ import numpy as np
 from datetime import datetime, timedelta, timezone
 from scipy.spatial.transform import Rotation as R
 from tabulate import tabulate
-
+from scipy.signal import argrelextrema
+import math
+from pprint import pprint
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Extract and analyze quaternion data from MySQL.")
@@ -84,9 +86,8 @@ def fetch_quaternion_data(conn, gesture_id, hand, positions, num_to_show=6):
         print(tabulate(df.head(num_to_show), headers="keys", tablefmt="pretty"))
 
     return df
-import math
 
-def detect_rotation_extremes_datalines(df, angle_threshold_deg=10.0, include_start=False, include_end=False, align=False):
+def detect_rotation_extremes_datalines(df, df_extremes, angle_threshold_deg=10.0, include_start=False, include_end=False, align=False):
     if df is None or df.empty:
         return pd.DataFrame()
 
@@ -118,45 +119,46 @@ def detect_rotation_extremes_datalines(df, angle_threshold_deg=10.0, include_sta
 
     # Step 3: apply --align to extremes
     if isinstance(align, str):
-        trimmed = []
-        for pos in semiresult['position'].unique():
-            df_pos = semiresult[semiresult['position'] == pos]
-            if align.startswith('top:'):
-                n = int(align.split(':')[1])
-                trimmed.append(df_pos.head(n))
-            elif align.startswith('bottom:'):
-                n = int(align.split(':')[1])
-                trimmed.append(df_pos.tail(n))
-            elif align.startswith('middle:'):
-                n = int(align.split(':')[1])
-                mid = len(df_pos) // 2
-                half = n // 2
-                start = max(mid - half, 0)
-                trimmed.append(df_pos.iloc[start:start + n])
-            elif align.startswith('nth:'):
-                nth = int(align.split(':')[1])
-                grouped = semiresult.groupby('position')
-                for pos_value, group in grouped:
-                    sampled = group.reset_index(drop=True).iloc[[i for i in range(len(group)) if i % nth == 0]]
-                    trimmed.append(sampled)
-            elif align.startswith('xnth:'):
-                nth = int(align.split(':')[1])
-                grouped = semiresult.groupby('position')
-                for pos_value, group in grouped:
-                    # sampled = group.reset_index(drop=True).iloc[[i for i in range(len(group)) if (int(len(group) / nth) != 0 and i % int(len(group) / nth) == 0)]]
-                    sampled = group.reset_index(drop=True).iloc[[i for i in range(len(group)) if (i % math.ceil(len(group) / nth) == 0)]]
-                    trimmed.append(sampled)
-            elif align.startswith('xnth-top:'):
-                nth = int(align.split(':')[1])
-                grouped = semiresult.groupby('position')
-                min_size = min(len(group) for _, group in grouped)
-                for pos_value, group in grouped:
-                    trimmed_group = group.reset_index(drop=True).iloc[:min_size]
-                    sampled = trimmed_group.iloc[
-                        [i for i in range(len(trimmed_group)) if i % max(1, math.ceil(min_size / nth)) == 0]]
-                    trimmed.append(sampled)
-                # print("not implemented")
-        semiresult = pd.concat(trimmed).sort_values(by=['position', 'timestamp']).reset_index(drop=True)
+        if align.startswith(':'):
+            semiresult = pd.concat(df_extremes).sort_values(by=['position', 'timestamp']).reset_index(drop=True)
+        else:
+            trimmed = []
+            for pos in semiresult['position'].unique():
+                df_pos = semiresult[semiresult['position'] == pos]
+                if align.startswith('top:'):
+                    n = int(align.split(':')[1])
+                    trimmed.append(df_pos.head(n))
+                elif align.startswith('bottom:'):
+                    n = int(align.split(':')[1])
+                    trimmed.append(df_pos.tail(n))
+                elif align.startswith('middle:'):
+                    n = int(align.split(':')[1])
+                    mid = len(df_pos) // 2
+                    half = n // 2
+                    start = max(mid - half, 0)
+                    trimmed.append(df_pos.iloc[start:start + n])
+                elif align.startswith('nth:'):
+                    nth = int(align.split(':')[1])
+                    grouped = semiresult.groupby('position')
+                    for pos_value, group in grouped:
+                        sampled = group.reset_index(drop=True).iloc[[i for i in range(len(group)) if i % nth == 0]]
+                        trimmed.append(sampled)
+                elif align.startswith('xnth:'):
+                    nth = int(align.split(':')[1])
+                    grouped = semiresult.groupby('position')
+                    for pos_value, group in grouped:
+                        sampled = group.reset_index(drop=True).iloc[[i for i in range(len(group)) if (i % math.ceil(len(group) / nth) == 0)]]
+                        trimmed.append(sampled)
+                elif align.startswith('xnth-top:'):
+                    nth = int(align.split(':')[1])
+                    grouped = semiresult.groupby('position')
+                    min_size = min(len(group) for _, group in grouped)
+                    for pos_value, group in grouped:
+                        trimmed_group = group.reset_index(drop=True).iloc[:min_size]
+                        sampled = trimmed_group.iloc[
+                            [i for i in range(len(trimmed_group)) if i % max(1, math.ceil(min_size / nth)) == 0]]
+                        trimmed.append(sampled)
+            semiresult = pd.concat(trimmed).sort_values(by=['position', 'timestamp']).reset_index(drop=True)
 
     # Step 4: add --start and --end if requested
     result = []
@@ -304,6 +306,135 @@ def estimate_threshold(df, min_required=5, start=None, end=None, tol=0.1):
     print(f"🎯 Estimated threshold: {final}°")
     return final
 
+
+#Compute angular velocity
+def compute_angular_velocity(df):
+    df = df.copy()
+    df['timestamp'] = pd.to_datetime(df['timestamp']).astype(np.int64) / 1e9  # Convert to seconds
+
+    results = []
+
+    for position in df['position'].unique():
+        group = df[df['position'] == position].copy()
+
+        if len(group) < 2:
+            print(f"⚠️ Not enough samples for position {position} (skipping)")
+            continue
+
+        quaternions = group[['qx', 'qy', 'qz', 'qw']].values
+        timestamps = group['timestamp'].values
+
+        rotations = R.from_quat(quaternions)
+        angular_velocities = [0]
+
+        for i in range(1, len(quaternions)):
+            delta_rotation = rotations[i - 1].inv() * rotations[i]
+            angle = 2 * np.arccos(np.clip(delta_rotation.as_quat()[-1], -1.0, 1.0))
+            dt = timestamps[i] - timestamps[i - 1]
+            angular_velocity = angle / dt if dt > 0 else 0
+            angular_velocities.append(angular_velocity)
+
+        group['angular_velocity'] = angular_velocities
+        results.append(group)
+
+    return pd.concat(results, ignore_index=True) if results else pd.DataFrame()
+
+
+def store_extreme_rotation_points_with_velocities(df_with_velocity,
+                                                  filename='extreme_rotation_points_with_velocities.csv'):
+    # Ensure that the DataFrame has necessary columns before saving
+    if 'angular_velocity' not in df_with_velocity.columns:
+        print("❌ DataFrame does not contain 'angular_velocity' column!")
+        return
+
+    # Select relevant columns including angular velocity
+    columns_to_save = ['position', 'timestamp', 'hand', 'angular_velocity', 'qx', 'qy', 'qz', 'qw']
+
+    # Filter only rows with extreme rotation points (i.e., angular velocity is above a threshold or calculated as extreme)
+    extreme_df = df_with_velocity[
+        df_with_velocity['angular_velocity'].notna()]  # Filter rows with non-NaN angular velocity
+
+    # Save to CSV
+    extreme_df[columns_to_save].to_csv(filename, index=False)
+
+    print(f"✅ Extreme rotation points with velocities saved to '{filename}'")
+
+
+def find_rotation_extremes(df, order=3, threshold=0.1, align=None):
+    df = df.copy()
+    results = []
+    stats = []
+
+    # Collect extreme data
+    for position in df['position'].unique():
+        group = df[df['position'] == position].copy()
+
+        if len(group) < 2:
+            print(f"⚠️ Not enough samples for position {position} (skipping)")
+            continue
+
+        angular_velocity = group['angular_velocity'].values
+        extreme_indices = argrelextrema(angular_velocity, np.greater, order=order)[0]
+        filtered_extremes = [idx for idx in extreme_indices if angular_velocity[idx] >= threshold]
+
+        if len(filtered_extremes) == 0:
+            print(f"⚠️ No extreme points detected for position {position}")
+        else:
+            # Extract extreme data
+            extreme_data = group.iloc[filtered_extremes]
+            mean_angular_velocity = extreme_data['angular_velocity'].mean()
+            std_angular_velocity = extreme_data['angular_velocity'].std()
+            min_angular_velocity = extreme_data['angular_velocity'].min()
+            max_angular_velocity = extreme_data['angular_velocity'].max()
+
+            # Store statistics for later use
+            stats.append({
+                'Position': position,
+                'Number of Extreme Points': len(filtered_extremes),
+                'Mean Angular Velocity': mean_angular_velocity,
+                'Std Dev Angular Velocity': std_angular_velocity,
+                'Min Angular Velocity': min_angular_velocity,
+                'Max Angular Velocity': max_angular_velocity
+            })
+
+            # Append the extreme data to the results list
+            results.append(extreme_data)
+
+    # Combine all results into a single DataFrame
+    df_results = pd.concat(results, ignore_index=True) if results else pd.DataFrame()
+
+    # Apply alignment to the result data (if 'align' is provided)
+    if align is not None and not df_results.empty:
+        # Find the minimum number of extreme points in any position group
+        min_group_size = min(df_results.groupby('position').size())
+
+        # Trim extreme points based on the align parameter
+        aligned_results = []
+        for position in df_results['position'].unique():
+            group = df_results[df_results['position'] == position].copy()
+
+            # Trim the group based on alignment type
+            if align == 'top':
+                group = group.head(min_group_size)  # Trim from the top
+            elif align == 'bottom':
+                group = group.tail(min_group_size)  # Trim from the bottom
+            elif align == 0:
+                group = group.head(0)  # Exclude all data for this position
+            else:
+                group = group.head(int(align))
+            aligned_results.append(group)
+
+        # Combine aligned results into a single DataFrame
+        df_results = pd.concat(aligned_results, ignore_index=True)
+
+    # Create a DataFrame for the statistics and print it as a table
+    if stats:
+        stats_df = pd.DataFrame(stats)
+        print("\n📊 Statistics for Extracted Extreme Points:")
+        print(stats_df.to_string(index=False))
+
+    return df_results
+
 def main():
     args = parse_arguments()
     conn = connect_db(args.host, args.user, args.password, args.database)
@@ -315,10 +446,19 @@ def main():
         print("❌ No data found for given gesture.")
         return
     min_points = args.min_points
+
+    df_with_velocity = compute_angular_velocity(df_quaternions)
+    # Assuming df_with_velocity is already computed and contains angular_velocity
+    store_extreme_rotation_points_with_velocities(df_with_velocity)
+    print(f"✅ df_with_velocity size: {len(df_with_velocity)} samples ")
+    df_extremes = find_rotation_extremes(df_with_velocity, order=3, threshold=args.threshold_extraction,
+                                         align=args.align)
+
     threshold = estimate_threshold(df_quaternions, min_required=min_points) if args.threshold_extraction is None else args.threshold_extraction * 180
     print(f" threshold: {threshold}")
     df_final = detect_rotation_extremes_datalines(
         df_quaternions,
+        df_extremes,
         angle_threshold_deg=threshold,
         include_start=args.start,
         include_end=args.end,

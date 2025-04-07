@@ -187,6 +187,29 @@ public class GestureEndpoint extends BaseEndpoint {
         return builder.build();
     }
 
+    @PUT
+    @Path("/setGestureShouldMatch/{id}/{active}")
+    @RolesAllowed(USER_R)
+    public Response setGestureShouldMatch(
+            @PathParam("id") Long id,
+            @PathParam("active") Float shouldMatch
+    ) throws Exception {
+        Response.ResponseBuilder builder;
+        Optional<Gesture> gOpt = gestureService.findById(id);
+        if (!gOpt.isPresent()) {
+            Response.status(Status.NOT_FOUND);
+        }
+        try {
+            Gesture g = gOpt.get();
+            g.setShouldMatch(shouldMatch);
+            gestureService.update(g);
+            builder = Response.ok();
+        } catch (Exception e) {
+            builder = Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage());
+        }
+        return builder.build();
+    }
+
     @DELETE
     @Path("/clear/{id}")
     @RolesAllowed(USER_R)

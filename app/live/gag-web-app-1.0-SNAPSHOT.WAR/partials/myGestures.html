@@ -43,7 +43,8 @@
 							<th>ID</th>
 							<th>Alias</th>
 							<th>Date created</th>
-							<th>Operations</th>
+							<th>List</th>
+							<th>Active?</th>
 						</thead>
 						<tbody>
 							<tr ng-repeat="item in gestures | orderBy:'id':true ">
@@ -62,6 +63,8 @@
 									<a href="" title="Remove" class="btn btn-info" ng-click='deleteGesture(item.id)'>
 										<span class="glyphicon glyphicon-remove"></span>
 									</a>
+								</td>
+								<td>
 									<!--
 										TODO Add filter button that will pop up simple form with filtering options (and new-name, active) ;
 										  from RecordedDataFilterImpl:

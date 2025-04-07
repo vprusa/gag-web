@@ -62,6 +62,11 @@ angular.module('app', [
         return response.data;
       });
     },
+    setGestureShouldMatch: function (id, shouldMatch) {
+      return $http.put("/gagweb/api/gesture/setGestureShouldMatch/" + id+"/"+shouldMatch).then(function (response) {
+        return response.data;
+      });
+    },
     getGestureDetailData: function (id) {
       return $http.get("/gagweb/api/dataline/gesture/" + id).then(function (response) {
         return response.data;

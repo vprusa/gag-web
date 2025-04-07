@@ -9,7 +9,7 @@
 <!--
 				<th>Hand</th>
 -->
-				<th>Sensor</th>
+				<th>{{hand}}</th>
 				<th>X</th>
 				<th>Y</th>
 				<th>Z</th>
@@ -35,10 +35,11 @@
 	</div>
 	<div class="card-body">
 		<div ng-if="ble.isConnected"></div>
-		<div class="pusher">
-			<main id="main" class="ui green tertiary inverted segment">
+		<div class="pusher" style="text-align: center;">
+
+			<main id="main" class="ui  tertiary inverted segment" style="width: 380px; height: 330px; background-color: #FFFFFF; display: inline-block;">
 <!--				<section class="ui blue pilled message">Vis</section>-->
-				<section id="container" style="width: 350px; height: 300px;"></section>
+				<section id="container" style="width: 350px; height: 300px; background-color: #FFFFFF !important;"></section>
 			</main>
 		</div>
 		<progress style="background: #ab47bc; width: 100%; height: 5px;" id="player-progress" max="100"
@@ -81,6 +82,7 @@
 			const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
 			const renderer = new THREE.WebGLRenderer({ antialias: true });
 			renderer.setSize(container.clientWidth, container.clientHeight);
+			// renderer.setsetClearColor(0xffffff, 1); // white background, opacity 1
 			container.appendChild(renderer.domElement);
 
 			// Lights

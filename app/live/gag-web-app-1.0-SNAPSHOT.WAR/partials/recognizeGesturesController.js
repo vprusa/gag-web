@@ -305,4 +305,21 @@ angular.module('app').controller(
         WSTools.setState(WSTools.reqStates.STOP);
       };
 
+      $scope.saveShouldMatch = function(item) {
+        var newValue = parseFloat(item.shouldMatch);
+        if (isNaN(newValue)) {
+          console.log("Please enter a valid number.");
+          // item.shouldMatchInput = item.shouldMatch; // revert input
+          return;
+        }
+
+        commonTools.setGestureShouldMatch(item.id, newValue).then(function(response){
+          item.shouldMatch = newValue;
+          console.log("Value saved successfully!");
+        }, function(error){
+          console.log("Error saving value: " + error.statusText);
+          // item.shouldMatchInput = item.shouldMatch; // revert input on failure
+        });
+      };
+
     }]);
