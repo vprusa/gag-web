@@ -29,7 +29,6 @@ import static cz.gag.web.services.websocket.service.GestureRecognizer.Recognizer
 //@Singleton
 public class GestureRecognizer/* implements Serializable*/ {
 
-    //    public static final Logger log = Logger.getLogger(GestureRecognizer.class.getSimpleName());
     public static final Log.TypedLogger log = new Log.TypedLogger<Log.LoggerTypeWSRecognizer>(Log.LoggerTypeWSRecognizer.class);
 
     private RecognizerState state = IDLE;
@@ -40,20 +39,8 @@ public class GestureRecognizer/* implements Serializable*/ {
     @Inject
     private GestureService gestureService;
 
-//    HandComparator sgi = new HandComparator(gRef, dlgIter);
-//    List<HandComparator> hcl;
-//    private HandComparator hc;
-
-
-//    @Inject
-//    private AuthenticationService authService;
-
     // TODO fix re-init with start()
-//    protected List<MultiSensorGestureMatcher> recognizedGestures = new ArrayList<MultiSensorGestureMatcher>();
     protected List<MultiSensorGestureMatcher> recognizedGestures;
-    //    protected Map<Gesture, DataLineGestureSensorIterator[]> gesturesIters = new HashMap<Gesture, DataLineGestureSensorIterator[]>();
-//    protected Map<Gesture, DataLineGestureSensorIterator[]> gesturesIters;
-//    protected List<HandComparator> handComparators = new ArrayList<HandComparator>();
     protected List<HandComparator> handComparators;
 
     public boolean isRecognizing() {
@@ -81,7 +68,6 @@ public class GestureRecognizer/* implements Serializable*/ {
             recognizedGestures = new ArrayList<MultiSensorGestureMatcher>();
             log.info("for current: " + current.toString());
             List<Gesture> lGOpts = gestureService.findActive(current);
-//            gesturesIters = new HashMap<Gesture, DataLineGestureSensorIterator[]>();
             log.info("for lGOpts: " + lGOpts.toString());
 
             for (Iterator<Gesture> git = lGOpts.iterator(); git.hasNext(); ) {
@@ -122,26 +108,14 @@ public class GestureRecognizer/* implements Serializable*/ {
                 recognizedGestures.clear();
 
                 FingerDataLine fdl = (FingerDataLine) dl;
-//                        if (dl instanceof FingerDataLine) {
-//                        } else if (dl instanceof WristDataLine) {
-//                        }
+                // TODO
+                // if (dl instanceof FingerDataLine) {} else if (dl instanceof WristDataLine) {}
                 log.info("handComparators: " + handComparators.toString());
                 for (Iterator<HandComparator> hci = handComparators.iterator(); hci.hasNext(); ) {
                     HandComparator hc = hci.next();
                     MultiSensorGestureMatcher matches = hc.compare(fdl);
                     if (matches != null && !matches.isEmpty()) {
                         log.info("Found gesture match1 at: " + matches.toString());
-                        //                        log.info("Found gesture match at: " + matches);
-
-//                        try {
-//                                log.info("Found gesture match2 at: " + matches.stream().map(GestureMatcher::toString)
-//                                        .collect(Collectors.joining(";;;")));
-//                                log.info("Found gesture match3 at groupingBy: " + matches.stream().map(GestureMatcher::getG)
-//                                        .collect(Collectors.groupingBy(Gesture::getId)).toString());
-//                        } catch (Exception e) {
-                            //                            log.info(e.stac);
-//                            e.printStackTrace();
-//                        }
 
                         // TODO lets remove unnecessary data (quickfix for GestureCollectors  )
                         // Relies on RecognizerWSEndpoint:".*JsonInclude.Include.NON_NULL.*"
@@ -152,8 +126,6 @@ public class GestureRecognizer/* implements Serializable*/ {
                         recognizedGestures.add(matches);
                     }
                 }
-
-//                }
                 log.info("RecognizedGestures: " + recognizedGestures.toString());
 
                 return recognizedGestures;

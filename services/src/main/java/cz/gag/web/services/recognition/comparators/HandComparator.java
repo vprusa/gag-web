@@ -48,7 +48,6 @@ public class HandComparator {
 
     public MultiSensorGestureMatcher compare(FingerDataLine fdl) {
         if (!gmlRet.doesGestureContainsSensor(fdl.getPosition())) {
-//            return Collections.emptyList();
             return null;
         }
 
@@ -57,8 +56,6 @@ public class HandComparator {
         log.info("HandComparator.compare: comparing " + gmlPos.toString());
 
         return gmlRet.collect(gmlPos);
-        // TODO .. remove?
-//        return gmlPos;
     }
 
 }

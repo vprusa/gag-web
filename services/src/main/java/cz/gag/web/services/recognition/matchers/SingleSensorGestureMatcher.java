@@ -11,10 +11,16 @@ final public class SingleSensorGestureMatcher implements GestureMatcher {
     private Integer index;
     private Gesture g;
     private DataLine atDataLine;
+    private long createdTimeMillis;
 
     public SingleSensorGestureMatcher(Integer index, Gesture g) {
         this.index = index;
         this.g = g;
+        this.createdTimeMillis = System.currentTimeMillis();
+    }
+
+    public boolean isExpired(long expirationMillis) {
+        return (System.currentTimeMillis() - createdTimeMillis) > expirationMillis;
     }
 
     public Integer getIndex() {

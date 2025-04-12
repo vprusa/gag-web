@@ -98,3 +98,15 @@ python confusion_matrix.py --host "localhost" --user "gagweb" --password "passwo
 python max_angular_diff_threshold.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gestures 74 75 76 77 78 79 80 81 82 83 --positions 1 --rows 4 | tee logs/max_angular_diff_threshold.py.`now_str`.log
 
 ```
+
+
+# Generate latex table
+
+```
+python generate_latex_dataline_table.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gestures 41 --positions 0 1 2 3 4 5 --bold 9359 9383 9419 9437 --split 3 
+```
+
+```
+python generate_latex_dataline_table.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gestures 41 --positions 0 1 2 3 4 5 --bold 9359 9383 9419 9437 --split 3 --cursive_position 1 --info "9359:83-1.1" "9365:83-1.2" "9371:83-2.1" "9377:83-3.1" "9389:83-1.3" "9419:83-3" "9425:83-1.4"
+
+```

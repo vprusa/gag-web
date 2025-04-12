@@ -24,7 +24,6 @@
                 </style>
                 <select ng-model="data.selectedGesture" ng-change="onSelectChange()"
                         class="btn btn-info">
-
                     <option value="" selected style="content: '\e095'; ">New.. or?</option>
                     <option ng-style="{'background-color':(!item.isFiltered ? 'green':'') }"
                             ng-repeat="item in data.gesturesList" value="{{item.id}}">
@@ -66,6 +65,8 @@
                     </tbody>
                 </table>
 
+
+
                 <table class="table table-hover">
                     <tbody>
                     <tr>
@@ -83,6 +84,39 @@
                     </tbody>
                 </table>
             </div>
+            <!-- Auto Recording Interface -->
+            <div class="card mt-3">
+                <div class="card-header card-header-primary">
+                    <h4 class="card-title">Automated Gesture Recording</h4>
+                </div>
+                <div class="card-body">
+                    <table class="table table-hover">
+                        <tbody>
+                        <tr>
+                            <td>Expected Time (seconds)</td>
+                            <td><input type="number" class="form-control" ng-model="autoRecordConfig.expectedTime"></td>
+                            <td>Countdown</td>
+                            <td><input type="number" class="form-control" ng-model="autoRecordState.countdown" readonly></td>
+                            <td>Delay</td>
+                            <td><input type="number" class="form-control" ng-model="autoRecordState.delay"></td>
+                        </tr>
+                        <tr>
+                            <td>Count To</td>
+                            <td><input type="number" class="form-control" ng-model="autoRecordConfig.countTo"></td>
+                            <td>Index From</td>
+                            <td><input type="number" class="form-control" ng-model="autoRecordConfig.indexFrom"></td>
+                            <td>Current Index</td>
+                            <td><input type="number" class="form-control" ng-model="autoRecordState.currentIndex"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <button class="btn btn-success" ng-click="toggleAutoRecord()">
+                        {{autoRecordState.isAutoRecording ? 'Pause Auto Record' : 'Auto Record'}}
+                    </button>
+                    <button class="btn btn-danger" ng-click="stopAutoRecord()">Stop Auto Record</button>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>

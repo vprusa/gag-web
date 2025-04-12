@@ -129,26 +129,27 @@ public class DataLineRePlayer implements Runnable, Serializable {
 
         try {
             int diffZeroLimitCounter = 0;
+            DataLine dl = null;
             while (dli != null && dli.hasNext()) {
                 Log.info("Replay: dli: " + dli.toString());
-                DataLine dl = dli.next();
-                    switch (getState()) {
-                        case IDLE:
-                            // so far this should not happen, but that may be changed in the future when multiple
-                            // player over single WS connection are implemented
-                            // anyway ... lets continue to STOPPED state ..
-                        case STOPPED:
-                            return;
-                        case PAUSED:
-                            Thread cur = Thread.currentThread();
-                            synchronized (cur) {
-                                cur.wait();
-                            }
-                            break;
-                        case PLAYING:
-                            // noting, keep looping
-                            break;
-                    }
+                dl = dli.next();
+                switch (getState()) {
+                    case IDLE:
+                        // so far this should not happen, but that may be changed in the future when multiple
+                        // player over single WS connection are implemented
+                        // anyway ... lets continue to STOPPED state ..
+                    case STOPPED:
+                        return;
+                    case PAUSED:
+                        Thread cur = Thread.currentThread();
+                        synchronized (cur) {
+                            cur.wait();
+                        }
+                        break;
+                    case PLAYING:
+                        // noting, keep looping
+                        break;
+                }
 
                 if(dl == null && dli!= null && dli.hasNext()){
                     dl = dli.next();
@@ -171,6 +172,8 @@ public class DataLineRePlayer implements Runnable, Serializable {
                 }
                 before = now;
             }
+            dl.setTimestamp(null);
+            session.getBasicRemote().sendObject(dl);
         } catch (InterruptedException | IOException | EncodeException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

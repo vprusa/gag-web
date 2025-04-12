@@ -23,6 +23,15 @@ angular
           });
         });
 
+        let log = function (msg) {
+          //console.log("msg");
+          //    console.log(msg);
+          $('#LogMessages table tr:last').after(
+              "<tr><td>" + new Date().toLocaleTimeString() + "</td><td>" + msg + "</td></tr>"
+          );
+        };
+        $scope.log = log;
+
         $scope.ble = BLETools;
         $scope.ws = WSTools;
 
@@ -121,5 +130,83 @@ angular
         };
 
         WSTools.onSendMessage = $scope.onSendMessage;
+
+
+        $scope.autoRecordConfig = {
+          expectedTime: 5000,
+          countTo: 10,
+          indexFrom: 1,
+          delay: 2000,
+        };
+
+        $scope.autoRecordState = {
+          currentIndex: $scope.autoRecordConfig.indexFrom,
+          countdown: $scope.autoRecordConfig.expectedTime,
+          delay: $scope.autoRecordConfig.delay,
+          isAutoRecording: false,
+          recordingInterval: null
+        };
+
+        const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+        $scope.toggleAutoRecord = function () {
+          if (!$scope.autoRecordState.isAutoRecording) {
+            $scope.autoRecordState.isAutoRecording = true;
+            $scope.autoRecordState.currentIndex = $scope.autoRecordConfig.indexFrom;
+            $scope.startAutoRecord();
+          } else {
+            $scope.autoRecordState.isAutoRecording = false;
+            clearInterval($scope.autoRecordState.recordingInterval);
+          }
+        };
+
+        $scope.stopAutoRecord = function () {
+          $scope.autoRecordState.isAutoRecording = false;
+          clearInterval($scope.autoRecordState.recordingInterval);
+          $scope.autoRecordState.currentIndex = $scope.autoRecordConfig.indexFrom;
+          $scope.log("Auto Recording stopped and reset.");
+        };
+
+        $scope.startAutoRecord = async function () {
+          let recordedIds = [];
+
+          while ($scope.autoRecordState.isAutoRecording && $scope.autoRecordState.currentIndex <= $scope.autoRecordConfig.countTo) {
+            $scope.data.currentGesture.userAlias = $scope.data.currentGesture.userAlias.split('_')[0] + '_' + $scope.autoRecordState.currentIndex;
+
+            $scope.record();
+            $scope.autoRecordState.countdown = $scope.autoRecordConfig.expectedTime;
+
+            let delayRatio = 100;
+            await new Promise(resolve => {
+              $scope.autoRecordState.recordingInterval = setInterval(() => {
+                $scope.$apply(() => $scope.autoRecordState.countdown-=delayRatio);
+                if ($scope.autoRecordState.countdown <= 0) {
+                  clearInterval($scope.autoRecordState.recordingInterval);
+                  resolve();
+                }
+              }, delayRatio);
+            });
+
+            $scope.stop();
+            $scope.log(`Gesture ${$scope.data.currentGesture.userAlias} recorded with ID: ${$scope.data.currentGesture.id}`);
+
+            recordedIds.push($scope.data.currentGesture.id);
+
+            // Enhanced countdown during delay before next recording
+            $scope.autoRecordState.countdown = $scope.autoRecordConfig.expectedTime + $scope.autoRecordState.delay;
+            while ($scope.autoRecordState.countdown > $scope.autoRecordConfig.expectedTime) {
+              await delay(delayRatio);
+              $scope.$apply(() => $scope.autoRecordState.countdown-=delayRatio);
+            }
+
+            $scope.autoRecordState.currentIndex++;
+          }
+
+          if ($scope.autoRecordState.currentIndex > $scope.autoRecordConfig.countTo) {
+            $scope.autoRecordState.isAutoRecording = false;
+            $scope.log(`Auto Recording completed. Gestures recorded: ${recordedIds.join(', ')}`);
+          }
+        };
+
 
       }]);

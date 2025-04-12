@@ -106,7 +106,6 @@ public abstract class BaseComparator<T extends FingerDataLine> implements Gestur
 
             int newPossibleMatchersIndex = matcher.getIndex();
 //            if(ref.size() >= newPossibleMatchersIndex){
-
 //            T fdlRef1 = refList.get(newPossibleMatchersIndex);
             T fdlRef1 = getDL(newPossibleMatchersIndex);
             if (fdlRef1 == null) {
@@ -153,9 +152,6 @@ public abstract class BaseComparator<T extends FingerDataLine> implements Gestur
             //  - own because of future nativity (C++)
             //  - it should work by loading data into memory and then adding it to list
             //  -- fortunately i have
-
-
-
             matcherIndex++;
         }
         // add new if matches at the end
@@ -163,13 +159,6 @@ public abstract class BaseComparator<T extends FingerDataLine> implements Gestur
         // there may happen a skip for match here when |list<DL>|==1 because matched is skipped here on purpose
         // but that should not be allowed
 
-//        log.info("BaseComparator.compare.doesMatch (1.) ");
-//        if (first != null) {
-//            log.info("BaseComparator.compare.doesMatch (1.) " + first.toString());
-//        }
-//        log.info("BaseComparator.compare.doesMatch (fdl) " + fdl.toString());
-
-//        if (matched.isEmpty() && first != null && doesMatch(first, fdl)) {
         if (first != null && doesMatch(first, fdl)) {
             SingleSensorGestureMatcher matcher = new SingleSensorGestureMatcher(1, gRef);
             if (matcher.getIndex() >= getRefTotalSize()) {
@@ -177,7 +166,6 @@ public abstract class BaseComparator<T extends FingerDataLine> implements Gestur
 //                matcher.setG(gRef);
                 matcher.setAtDataLine(fdl);
                 matched.add(matcher);
-
 //                log.info("BaseComparator.compare.matcher (nth) " + matcher.toString());
                 // also this will be overwritten by reverse-chronologically previous match
                 // or not? break;

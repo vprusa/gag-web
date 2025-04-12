@@ -121,6 +121,7 @@ angular.module('app', [
       .when('/newgesture', {templateUrl: 'partials/newGesture.html', controller: 'NewGestureController'})
       .when('/mygestures', {templateUrl: 'partials/myGestures.html', controller: 'MyGesturesController'})
       .when('/recognize', {templateUrl: 'partials/recognizeGestures.html', controller: 'RecognizeGesturesController'})
+      .when('/recognize2', {templateUrl: 'partials/recognizeGestures2.html', controller: 'RecognizeGesturesController2'})
       // if devel  ..
       .when('/toolstests', {templateUrl: 'partials/tools.tests.html', controller: 'ToolsControllerTests'})
       .otherwise({redirectTo: '/'});
