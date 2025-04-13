@@ -149,6 +149,10 @@ public class Gesture extends GenericEntity {
                 ", userAlias='" + (userAlias != null ? userAlias : "null") + '\'' +
                 ", user=" + (user != null ? user : "null") +
                 ", isFiltered=" + (isFiltered != null ? isFiltered : "null") +
+                ", isActive=" + (isActive != null ? isActive : "null") +
+                ", shouldMatch=" + (shouldMatch) +
+                ", delay=" + (delay) +
+                ", exec=" + (exec != null ? exec : "null") +
                 '}';
     }
 

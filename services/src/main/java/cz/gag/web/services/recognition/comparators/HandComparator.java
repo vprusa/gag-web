@@ -53,6 +53,9 @@ public class HandComparator {
 
         Sensor pos = fdl.getPosition();
         List<SingleSensorGestureMatcher> gmlPos = fingers[pos.ordinal()].compare(fdl);
+        if (gmlPos == null) {
+            return null;
+        }
         log.info("HandComparator.compare: comparing " + gmlPos.toString());
 
         return gmlRet.collect(gmlPos);

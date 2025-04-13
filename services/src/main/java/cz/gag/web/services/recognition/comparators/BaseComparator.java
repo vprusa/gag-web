@@ -51,6 +51,7 @@ public abstract class BaseComparator<T extends FingerDataLine> implements Gestur
         this.refTotalSize = this.dlgIter.getTotalSize();
         log.info("BaseComparator.BaseComparator.refTotalSize " + refTotalSize);
         this.matched = new ArrayList<SingleSensorGestureMatcher>();
+        time = System.currentTimeMillis();
     }
 
     public long getRefSize() {
@@ -76,6 +77,10 @@ public abstract class BaseComparator<T extends FingerDataLine> implements Gestur
         return (T) dl;
     }
 
+
+    Long time;
+
+
     // in case of WristComparator this should be overriden
     protected boolean doesMatch(final T fdlRef, T fdl) {
         Quaternion qRef = new Quaternion(fdlRef.getQuatA(), fdlRef.getQuatX(), fdlRef.getQuatY(), fdlRef.getQuatZ()).normalize();
@@ -94,6 +99,7 @@ public abstract class BaseComparator<T extends FingerDataLine> implements Gestur
             return null;
         }
         log.info("BaseComparator.compare");
+
         // TODO brainstorm 'matched = new List<GestureMatcher>()' so multiple gestures could be matched?
         // most likely not necessary and waste of CPU
 //        matched = new ArrayList<GestureMatcher>();
@@ -105,8 +111,6 @@ public abstract class BaseComparator<T extends FingerDataLine> implements Gestur
             SingleSensorGestureMatcher matcher = matchesIt.next();
 
             int newPossibleMatchersIndex = matcher.getIndex();
-//            if(ref.size() >= newPossibleMatchersIndex){
-//            T fdlRef1 = refList.get(newPossibleMatchersIndex);
             T fdlRef1 = getDL(newPossibleMatchersIndex);
             if (fdlRef1 == null) {
                 continue;
@@ -114,8 +118,18 @@ public abstract class BaseComparator<T extends FingerDataLine> implements Gestur
 
             if (doesMatch(fdlRef1, fdl)) {
                 // Wee match, lets continue
+
+                float currentTimeSpent = (System.currentTimeMillis() - time ) / 1000f;
+                if (gRef.getDelay() > currentTimeSpent) {
+                    Log.info("Skipping rec after: " +currentTimeSpent+ " for gesture: "  + gRef.toString());
+                    return null;
+                } else {
+                    Log.info("Continue rec after: " +currentTimeSpent+ " for gesture: " + gRef.toString());
+                    time = System.currentTimeMillis();
+                }
+
                 matcher.incIndex();
-                log.info("BaseComparator.compare.matcher inc-index " + matcher.toString());
+                log.info("BaseComparator.compare.matcher inc-index: " + matcher.toString() + " dl: " + fdl.toString());
             } else {
                 // TODO allow 10% data mismatch?
                 // if 9 out of 10 match in then ignore next wrong and continue recognizing one more time
@@ -130,7 +144,7 @@ public abstract class BaseComparator<T extends FingerDataLine> implements Gestur
                 // Matched!
 //                matcher.setG(gRef);
                 matcher.setAtDataLine(fdl);
-                log.info("BaseComparator.compare.matcher (nth) " + matcher.toString());
+                log.info("BaseComparator.compare.matcher (nth) " + matcher.toString() + " dl: " + fdl.toString());
 
                 matched.add(matcher);
                 // also this will be overwritten by reverse-chronologically previous match

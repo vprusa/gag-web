@@ -132,7 +132,7 @@ angular.module('app').controller(
 
         this.$onInit = function () {
           WSTools.selectedEndpoint = WSTools.endpointRecognizer;
-          WSTools.init();
+          // WSTools.init();
 
           // WSToolsFake.selectedEndpoint = WSToolsFake.endpointReplayer;
           // WSToolsFake.init();
@@ -226,6 +226,7 @@ angular.module('app').controller(
         var startAction = {type: "RECOGNITION", action: "START"};
         var startActionStr = JSON.stringify(startAction);
         $scope.startRecognizing = function () {
+          WSTools.init();
           console.log("startRecognizing");
           WSTools.sendMessage(startActionStr);
 
@@ -313,6 +314,7 @@ angular.module('app').controller(
         $scope.stopRecognizing = function () {
           console.log("stopRecognizing");
           WSTools.setState(WSTools.reqStates.STOP);
+          WSTools.close();
         };
 
         var gestureMatches = {
@@ -451,6 +453,13 @@ angular.module('app').controller(
               .map(g => $scope.switchActivateGesture(g.id, true));
           console.log("Deactivating active gestures... - done");
 
+          await delay(1000);
+          $scope.stopRecognizing();
+          await delay(1000);
+          $scope.startRecognizing();
+          await delay(1000);
+          // $scope.stopRecognizing();
+
           await Promise.all(deactivatePromises);
           for (let refGestureId of $scope.recognitionConfig.refGestureIds) {
             log("Recognizing gesture: " + refGestureId);
@@ -479,6 +488,9 @@ angular.module('app').controller(
               $scope.stopRecognizing();
               await delay(1000);
               // console.log("4");
+              // $scope.recognitionResults[refGestureId][inputGestureId] = $scope.recognitionResults[refGestureId][inputGestureId] || [];
+              // $scope.recognitionResults[refGestureId][inputGestureId].push($scope.lastRecognizedGestureId || null);
+
               $scope.recognitionResults[refGestureId][inputGestureId] = $scope.recognitionResults[refGestureId][inputGestureId] || [];
               $scope.recognitionResults[refGestureId][inputGestureId].push($scope.lastRecognizedGestureId || null);
             }
@@ -503,7 +515,7 @@ angular.module('app').controller(
           console.log(" Recognized gesture captured: id: " + recognizedGesture.gest.id + ", alias: '" + recognizedGesture.gest.userAlias + "'");
         };
 
-        function generateConfusionMatrix() {
+     /*   function generateConfusionMatrix() {
           const matrix = {};
           for (const refId of Object.keys($scope.recognitionResults)) {
             matrix[refId] = {};
@@ -518,6 +530,27 @@ angular.module('app').controller(
           }
           console.table(matrix);
           $scope.log('Confusion matrix generated and logged to console.');
+        }*/
+
+
+        function generateConfusionMatrix() {
+          let html = '<table border="1" cellpadding="5"><tr><th>Reference/Input</th>';
+          $scope.recognitionConfig.inputGestureIds.forEach(inputId => html += '<th>' + inputId + '</th>');
+          html += '</tr>';
+
+          $scope.recognitionConfig.refGestureIds.forEach(refId => {
+            html += '<tr><td>' + refId + '</td>';
+            $scope.recognitionConfig.inputGestureIds.forEach(inputId => {
+              const count = ($scope.recognitionResults[refId] && $scope.recognitionResults[refId][inputId]) ?
+                  $scope.recognitionResults[refId][inputId].filter(x => x == refId).length : 0;
+              html += '<td>' + count + '</td>';
+            });
+            html += '</tr>';
+          });
+
+          html += '</table>';
+
+          $scope.log('Confusion matrix generated: ' + html);
         }
 
 
