@@ -3,6 +3,7 @@
 	<br>
 	<div class="sensor-adjustments" style="margin-bottom: 40px; margin-top: 0px;" id="sensor-adjustments">
 		<button data-ng-click="vis.forceApplyOffsets()">Force Apply Offsets</button>
+		<button ng-click="storeOffsets()">Store Offsets</button>
 		<table border="1" ng-repeat="hand in ['left', 'right']">
 			<thead>
 			<tr>

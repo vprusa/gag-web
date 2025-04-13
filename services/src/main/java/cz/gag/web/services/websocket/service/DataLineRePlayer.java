@@ -172,8 +172,9 @@ public class DataLineRePlayer implements Runnable, Serializable {
                 }
                 before = now;
             }
-            dl.setTimestamp(null);
-            session.getBasicRemote().sendObject(dl);
+//            dl.setTimestamp(null);
+            session.getBasicRemote().sendObject("{'REPLAYER':'DONE', 'g':'" + gestureId + "'}");
+            Log.info("Replaying gesture: " + gestureId + " - done");
         } catch (InterruptedException | IOException | EncodeException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

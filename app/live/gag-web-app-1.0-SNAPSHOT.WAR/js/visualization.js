@@ -377,8 +377,8 @@ angular.module('app').factory('VisTools', function () {
 
       vis.updateVisFromDataLine(mockDataLine);
     });
-  };
 
+  };
 
   return vis;
 });

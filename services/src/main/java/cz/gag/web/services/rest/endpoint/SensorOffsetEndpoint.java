@@ -61,7 +61,7 @@ public class SensorOffsetEndpoint {
         );
 
         if (sensorOffsets.isEmpty()) {
-            Response.status(Status.NOT_FOUND);
+            return Response.status(Status.NOT_FOUND).build();
         }
         return Response.ok(sensorOffsets.get(0)).build();
     }

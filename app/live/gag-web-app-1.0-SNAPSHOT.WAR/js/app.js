@@ -84,13 +84,14 @@ angular.module('app', [
       });
     },
     getSensorOffset: function (handDevice, position, sensorType) {
-      return $http.get("/gagweb/api/sensoroffsets/specific/" + handDevice + "/" + position + "/" + sensorType
+      return $http.get("/gagweb/api/sensoroffset/specific/" + handDevice + "/" + position + "/" + sensorType
+      // return $http.get("/gagweb/api/sensoroffset/specific/" + 'proto_3_right' + "/" + position + "/" + sensorType
       ).then(function (response) {
         return response.data;
       });
     },
     setSensorOffset: function (handDevice, position, sensorType, value) {
-      return $http.post("/gagweb/api/sensoroffsets/specific/" + handDevice + "/" + position + "/" + sensorType, value
+      return $http.post("/gagweb/api/sensoroffset/specific/" + handDevice + "/" + position + "/" + sensorType, value
       ).then(function (response) {
         return response.data;
       });

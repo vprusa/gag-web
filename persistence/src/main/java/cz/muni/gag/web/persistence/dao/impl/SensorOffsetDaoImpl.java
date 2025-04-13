@@ -25,13 +25,35 @@ public class SensorOffsetDaoImpl extends AbstractGenericDao<SensorOffset> implem
     public List<SensorOffset> findByOffsetsAndPosition(
             Long handDeviceId, Long position, Long sensorType
     ) {
+        /*
         TypedQuery<SensorOffset> q = em.createQuery("SELECT so FROM SensorOffset so " +
                         "WHERE device = :handDevice AND position = :position AND sensorType = :sensorType",
                         SensorOffset.class)
                 .setParameter("handDevice", handDeviceId)
                 .setParameter("position", position)
                 .setParameter("sensorType", sensorType);
+
         List<SensorOffset> results = q.getResultList();
         return results;
+        */
+        /*
+        return em.createNativeQuery(
+                    "SELECT * FROM SensorOffset WHERE offsets = :handDeviceId AND position = :position AND sensorType = :sensorType",
+                    SensorOffset.class)
+            .setParameter("handDeviceId", handDeviceId)
+            .setParameter("position", position)
+            .setParameter("sensorType", sensorType)
+            .getResultList();
+        */
+        TypedQuery<SensorOffset> q = em.createQuery("SELECT so FROM SensorOffset so " +
+                                "WHERE so.device.id = :handDeviceId AND so.position = :position AND so.sensorType = :sensorType",
+                        SensorOffset.class)
+                .setParameter("handDeviceId", handDeviceId)
+                .setParameter("position", cz.gag.web.persistence.entity.Sensor.values()[position.intValue()])
+                .setParameter("sensorType", cz.gag.web.persistence.entity.SensorType.values()[sensorType.intValue()]);
+
+        List<SensorOffset> results = q.getResultList();
+        return results;
+
     };
 }
