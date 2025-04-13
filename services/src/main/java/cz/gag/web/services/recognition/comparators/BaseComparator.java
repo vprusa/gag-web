@@ -118,16 +118,6 @@ public abstract class BaseComparator<T extends FingerDataLine> implements Gestur
 
             if (doesMatch(fdlRef1, fdl)) {
                 // Wee match, lets continue
-
-                float currentTimeSpent = (System.currentTimeMillis() - time ) / 1000f;
-                if (gRef.getDelay() > currentTimeSpent) {
-                    Log.info("Skipping rec after: " +currentTimeSpent+ " for gesture: "  + gRef.toString());
-                    return null;
-                } else {
-                    Log.info("Continue rec after: " +currentTimeSpent+ " for gesture: " + gRef.toString());
-                    time = System.currentTimeMillis();
-                }
-
                 matcher.incIndex();
                 log.info("BaseComparator.compare.matcher inc-index: " + matcher.toString() + " dl: " + fdl.toString());
             } else {
@@ -173,6 +163,14 @@ public abstract class BaseComparator<T extends FingerDataLine> implements Gestur
         // there may happen a skip for match here when |list<DL>|==1 because matched is skipped here on purpose
         // but that should not be allowed
 
+        float currentTimeSpent = (System.currentTimeMillis() - time ) / 1000f;
+        if (gRef.getDelay() >= currentTimeSpent) {
+            Log.info("Skipping rec after: " + currentTimeSpent+ " for gesture: "  + gRef.toString());
+            return null;
+        } else {
+            Log.info("Continue rec after: " + currentTimeSpent+ " for gesture: " + gRef.toString());
+            time = System.currentTimeMillis();
+        }
         if (first != null && doesMatch(first, fdl)) {
             SingleSensorGestureMatcher matcher = new SingleSensorGestureMatcher(1, gRef);
             if (matcher.getIndex() >= getRefTotalSize()) {

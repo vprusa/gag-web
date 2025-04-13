@@ -29,89 +29,96 @@ angular.module('app').controller(
 
 
 
+        $scope.lastRecognizedGestureId = null;
 
-          $scope.vis.loadOffsets = function(handDeviceId) {
-            const sensors = ['wrist', 'thumb', 'index', 'middle', 'ring', 'little'];
-            const axes = ['x', 'y', 'z'];
+        $scope.captureRecognizedGesture = function(recognizedGesture) {
+          $scope.lastRecognizedGestureId = recognizedGesture.gest.id;
+          console.log("Recognized gesture captured: id: " + recognizedGesture.gest.id + ", alias: '" + recognizedGesture.gest.userAlias + "'");
+        };
 
-            // let promises = [];
 
-            ['left', 'right'].forEach(hand => {
-              sensors.forEach((sensor, position) => {
-                // promises.push(
-                    commonTools.getSensorOffset(handDeviceId[hand], position, 0).then(function (response) {
-                      axes.forEach(axis => {
-                        const key = `${hand}-${sensor}-${axis}-num`;
-                        $scope.vis.visualizationOffsets[key] = response[axis];
-                      });
-                    }, function (response) {
-                      $scope.alerts.push({
-                        type: 'danger',
-                        title: 'Error ' + response.status,
-                        msg: response.statusText
-                      });
-                    })
-                // );
-              });
+        $scope.vis.loadOffsets = function(handDeviceId) {
+          const sensors = ['wrist', 'thumb', 'index', 'middle', 'ring', 'little'];
+          const axes = ['x', 'y', 'z'];
+
+          // let promises = [];
+
+          ['left', 'right'].forEach(hand => {
+            sensors.forEach((sensor, position) => {
+              // promises.push(
+                  commonTools.getSensorOffset(handDeviceId[hand], position, 0).then(function (response) {
+                    axes.forEach(axis => {
+                      const key = `${hand}-${sensor}-${axis}-num`;
+                      $scope.vis.visualizationOffsets[key] = response[axis];
+                    });
+                  }, function (response) {
+                    $scope.alerts.push({
+                      type: 'danger',
+                      title: 'Error ' + response.status,
+                      msg: response.statusText
+                    });
+                  })
+              // );
             });
-
-            // return $q.all(promises);
-          };
-
-          $scope.vis.storeOffsets = function(handDeviceId, offsets) {
-            const sensors = ['wrist', 'thumb', 'index', 'middle', 'ring', 'little'];
-            const axes = ['x', 'y', 'z'];
-
-            // let promises = [];
-
-            ['left', 'right'].forEach(hand => {
-              sensors.forEach((sensor, position) => {
-                let values = axes.map(axis => offsets[`${hand}-${sensor}-${axis}-num`]);
-                // promises.push(
-                    commonTools.setSensorOffset(handDeviceId[hand], position, 0, values).then(function (response) {
-                      axes.forEach((axis, index) => {
-                        const key = `${hand}-${sensor}-${axis}-num`;
-                        $scope.vis.visualizationOffsets[key] = response[index];
-                      });
-                    }, function (response) {
-                      $scope.alerts.push({
-                        type: 'danger',
-                        title: 'Error ' + response.status,
-                        msg: response.statusText
-                      });
-                    })
-                // );
-              });
-            });
-
-            // return $q.all(promises);
-          };
-
-
-          // Controller function example in visualizationCard
-          $scope.vis.storeCurrentOffsets = function() {
-            const handDeviceId = {
-              left: 2,  // Replace these with dynamic values as necessary
-              right: 1
-            };
-
-            $scope.vis.storeOffsets(handDeviceId, $scope.vis.visualizationOffsets)
-                .then(() => alert('Offsets stored successfully'))
-                .catch(err => alert('Failed to store offsets: ' + err));
-          };
-
-          // Call loadOffsets during initialization to fetch existing data
-          const handDeviceId = { left: 2, right: 1 };
-          // $scope.vis.loadOffsets(handDeviceId);
-
-          // $scope.gestures = response;
-          // console.log("response");
-          // console.log(response);
-          $scope.gestures = response.map(function (e) {
-            // e.recognized = true;
-            e.recognized = false;
-            return e;
           });
+
+          // return $q.all(promises);
+        };
+
+        $scope.vis.storeOffsets = function(handDeviceId, offsets) {
+          const sensors = ['wrist', 'thumb', 'index', 'middle', 'ring', 'little'];
+          const axes = ['x', 'y', 'z'];
+
+          // let promises = [];
+
+          ['left', 'right'].forEach(hand => {
+            sensors.forEach((sensor, position) => {
+              let values = axes.map(axis => offsets[`${hand}-${sensor}-${axis}-num`]);
+              // promises.push(
+                  commonTools.setSensorOffset(handDeviceId[hand], position, 0, values).then(function (response) {
+                    axes.forEach((axis, index) => {
+                      const key = `${hand}-${sensor}-${axis}-num`;
+                      $scope.vis.visualizationOffsets[key] = response[index];
+                    });
+                  }, function (response) {
+                    $scope.alerts.push({
+                      type: 'danger',
+                      title: 'Error ' + response.status,
+                      msg: response.statusText
+                    });
+                  })
+              // );
+            });
+          });
+
+          // return $q.all(promises);
+        };
+
+
+        // Controller function example in visualizationCard
+        $scope.vis.storeCurrentOffsets = function() {
+          const handDeviceId = {
+            left: 2,  // Replace these with dynamic values as necessary
+            right: 1
+          };
+
+          $scope.vis.storeOffsets(handDeviceId, $scope.vis.visualizationOffsets)
+              .then(() => alert('Offsets stored successfully'))
+              .catch(err => alert('Failed to store offsets: ' + err));
+        };
+
+        // Call loadOffsets during initialization to fetch existing data
+        const handDeviceId = { left: 2, right: 1 };
+        // $scope.vis.loadOffsets(handDeviceId);
+
+        // $scope.gestures = response;
+        // console.log("response");
+        // console.log(response);
+        $scope.gestures = response.map(function (e) {
+          // e.recognized = true;
+          e.recognized = false;
+          return e;
+        });
 
           // console.log(response);
           // response
@@ -199,6 +206,15 @@ angular.module('app').controller(
           });
         };
 
+        $scope.setActivateGesture = function (id, active) {
+          commonTools.setGestureActive(id, active).then(function () {
+            var index = $scope.gestures.map(function (e) {
+              return e.id;
+            }).indexOf(id);
+            $scope.gestures[index].active = active;
+          });
+        };
+
         $scope.onSendMessage = function (data) {
           var dataLine = JSON.parse(data);
           if (typeof dataLine.REPLAYER !== "undefined") {
@@ -267,26 +283,28 @@ angular.module('app').controller(
           }
           var first = $scope.fakeData[curIndex];
           // console.log(first);
+          if (curIndex == $scope.fakeData.length - 1) {
+            $scope.fakingState = fakingStates.DONE;
+          }
+          $scope.vis.updateVisFromDataLine(first);
+          $scope.ws.sendMessage(JSON.stringify(first));
+
           if (typeof $scope.fakeData[curIndex + 1] !== "undefined") {
             var second = $scope.fakeData[curIndex + 1];
             var delay = second.t - first.t;
             var res = setTimeout($scope.fakingLoop, delay, curIndex + 1);
           }
-          $scope.vis.updateVisFromDataLine(first);
-          $scope.ws.sendMessage(JSON.stringify(first));
-          if (curIndex == $scope.fakeData.length - 1) {
-            $scope.fakingState = fakingStates.DONE;
-          }
+
         };
 
         $scope.startFakingBLE = function () {
+          $scope.fakingState = fakingStates.FAKING;
           commonTools.getGestureDetailData($scope.fakeSelectedGestureId)
               .then(function (resp) {
                 $scope.fakeData = resp;
-                $scope.fakingLoop(0);
                 console.log($scope.fakeData);
+                $scope.fakingLoop(0);
               });
-          $scope.fakingState = fakingStates.FAKING;
         };
 
         // $scope.stopFakingBLE = function () {
@@ -370,17 +388,21 @@ angular.module('app').controller(
                 if (e.id == recognizedGesture.gest.id) {
                   console.log("recognizedGesture");
                   console.log(recognizedGesture);
-                  WSTools.log(" Recognized gesture: id: " + recognizedGesture.gest.id + ", alias: '" + recognizedGesture.gest.userAlias + "', threshold: " + recognizedGesture.gest.shouldMatch);
+
+                  console.log("recognizedGesture - adding to confusion matrix...");
+                  $scope.captureRecognizedGesture(recognizedGesture);
+
+                  WSTools.log("Recognized gesture: id: " + recognizedGesture.gest.id + ", alias: '" + recognizedGesture.gest.userAlias + "', threshold: " + recognizedGesture.gest.shouldMatch);
+
                   if (!e.recognized) {
                     changed = true;
                   }
                   // e.recognized = new Date().getTime();
                   e.recognized = true;
-                  // TODO will this (setTimeout{$scope.$apply();}) not make a double trouble later?
                   setTimeout(function(){
                     e.recognized = false;
                     $scope.$apply();
-                  }, 1000);
+                  }, 500);
                 } else {
                   if (e.recognized) {
                     changed = true;
@@ -448,9 +470,11 @@ angular.module('app').controller(
 
           // Deactivate all currently active gestures
           console.log("Deactivating active gestures...");
-          const deactivatePromises = $scope.gestures
-              .filter(g => g.active)
-              .map(g => $scope.switchActivateGesture(g.id, true));
+          const deactivatePromises = $scope.recognitionConfig.refGestureIds
+              .map(g => {
+                console.log("Deactivating gesture: " + g);
+                $scope.setActivateGesture(g, false);
+              });
           console.log("Deactivating active gestures... - done");
 
           await delay(1000);
@@ -463,7 +487,8 @@ angular.module('app').controller(
           await Promise.all(deactivatePromises);
           for (let refGestureId of $scope.recognitionConfig.refGestureIds) {
             log("Recognizing gesture: " + refGestureId);
-            await $scope.switchActivateGesture(refGestureId, false);
+            await $scope.setActivateGesture(refGestureId, true);
+            await delay(1000);
             console.log($scope.recognitionConfig.inputGestureIds);
             for (let inputGestureId of $scope.recognitionConfig.inputGestureIds) {
               log("Recognizing at gesture: " + inputGestureId);
@@ -473,9 +498,7 @@ angular.module('app').controller(
               $scope.startRecognizing();
               await delay(1000);
               // console.log("1");
-
               $scope.startFakingBLE();
-
               // console.log("2");
               while ($scope.isBLEFaking()) {
                 // console.log("2.1");
@@ -483,24 +506,27 @@ angular.module('app').controller(
                 // console.log("2.2");
               }
               // console.log("3");
-
               await delay(1000);
               $scope.stopRecognizing();
               await delay(1000);
               // console.log("4");
               // $scope.recognitionResults[refGestureId][inputGestureId] = $scope.recognitionResults[refGestureId][inputGestureId] || [];
               // $scope.recognitionResults[refGestureId][inputGestureId].push($scope.lastRecognizedGestureId || null);
-
               $scope.recognitionResults[refGestureId][inputGestureId] = $scope.recognitionResults[refGestureId][inputGestureId] || [];
               $scope.recognitionResults[refGestureId][inputGestureId].push($scope.lastRecognizedGestureId || null);
             }
+            // $scope.stopRecognizing();
+            // await delay(2000);
+            // $scope.startRecognizing();
+            await delay(1000);
             $scope.stopRecognizing();
-            await delay(2000);
-            $scope.startRecognizing();
-            await delay(2000);
-            $scope.stopRecognizing();
-            await delay(2000);
-            await $scope.switchActivateGesture(refGestureId, true);
+            await delay(1000);
+            console.log("Last recognized ID:", $scope.lastRecognizedGestureId); // <- add this log
+            await $scope.setActivateGesture(refGestureId, false);
+            await delay(1000);
+            await Promise.all(deactivatePromises);
+            await delay(1000);
+            //  await $scope.switchActivateGesture(refGestureId, true);
           }
 
           console.log("Recognition Results:", $scope.recognitionResults);
@@ -508,12 +534,6 @@ angular.module('app').controller(
           generateConfusionMatrix();
         };
 
-        $scope.lastRecognizedGestureId = null;
-
-        $scope.captureRecognizedGesture = function(recognizedGesture) {
-          $scope.lastRecognizedGestureId = recognizedGesture.gest.id;
-          console.log(" Recognized gesture captured: id: " + recognizedGesture.gest.id + ", alias: '" + recognizedGesture.gest.userAlias + "'");
-        };
 
      /*   function generateConfusionMatrix() {
           const matrix = {};
@@ -552,6 +572,5 @@ angular.module('app').controller(
 
           $scope.log('Confusion matrix generated: ' + html);
         }
-
 
       }]);
