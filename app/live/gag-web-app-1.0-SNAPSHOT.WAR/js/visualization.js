@@ -65,8 +65,6 @@ angular.module('app').factory('VisTools', function () {
   vis.updateVisFromDataLineWristDone = false;
   // TODO move parseFloat somewhere else, e.g. inside THREE.Quaternion ?
   vis.updateVisFromDataLine = function (dl) {
-    //console.log("updateVisFromDataLine");
-    //console.log(dl);
     vis.updateVisFromDataLineWristDone = false;
     vis.currentGesture.currentTime = dl.t;
     vis.currentGesture.currentTimeHuman = formatTimestamp(dl.t); // new Date(dl.t).toLocaleTimeString()
@@ -95,22 +93,11 @@ angular.module('app').factory('VisTools', function () {
       case "MIDDLE":{
         let ar = new THREE.Quaternion(parseFloat(dl.qX), parseFloat(dl.qY), parseFloat(dl.qZ), parseFloat(dl.qA));
         vis.currentGesture.data.rqm = ar;
-        // console.log("MIDDLE: data.rql");
-        // console.log(vis.currentGesture.data.rql);
-
-        // console.log("data.rqr");
-        // console.log(vis.currentGesture.data.rqr);
         vis.updateVisualization();
       }break;
       case "RING":{
         let ar = new THREE.Quaternion(parseFloat(dl.qX), parseFloat(dl.qY), parseFloat(dl.qZ), parseFloat(dl.qA));
-
         vis.currentGesture.data.rqr = ar;
-        // console.log("RING: data.rql");
-        // console.log(vis.currentGesture.data.rql);
-
-        // console.log("data.rqr");
-        // console.log(vis.currentGesture.data.rqr);
         vis.updateVisualization();
       }break;
       case "LITTLE":{
@@ -121,23 +108,6 @@ angular.module('app').factory('VisTools', function () {
       default:
     }
   };
-
-  /*
-  handVisualization.scene.renderAll();
-  <th>ID</th>
-  <th>Time</th>
-  <th>Position</th>
-  <th>quatA</th>
-  <th>quatX</th>
-  <th>quatY</th>
-  <th>quatZ</th>
-  <th>accX</th>
-  <th>accY</th>
-  <th>accZ</th>
-  <th>magX</th>
-  <th>magY</th>
-  <th>magZ</th>
-  */
 
   vis.updateVisualization = function () {
     var data = JSON.parse(JSON.stringify(vis.currentGesture.data));
@@ -165,12 +135,10 @@ angular.module('app').factory('VisTools', function () {
       const rightWristQuaternion = new THREE.Quaternion(data.rq._x, data.rq._y, data.rq._z, data.rq._w);
 
       // Read wrist-x input and convert degrees to radians
-      // const wristXOffset = parseFloat(document.getElementById("right-wrist-x-num").value) * (Math.PI / 180);
       const wristXOffset = parseFloat(vis.visualizationOffsets["right-wrist-x-num"]) * (Math.PI / 180);
       const wristYOffset = parseFloat(vis.visualizationOffsets["right-wrist-y-num"]) * (Math.PI / 180);
       const wristZOffset = parseFloat(vis.visualizationOffsets["right-wrist-z-num"]) * (Math.PI / 180);
       const wristOffsetQuaternion = new THREE.Quaternion().setFromEuler(new THREE.Euler(wristXOffset, wristYOffset, wristZOffset));
-      // leftWristQuaternion.multiply(offsetQuaternion); // should be inverted
 
       // Define correction quaternion to rotate -90° around X-axis
       const correctionQuaternion = new THREE.Quaternion();
@@ -179,15 +147,11 @@ angular.module('app').factory('VisTools', function () {
       correctionQuaternion2.setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI);
       // rightWristQuaternion.premultiply(correctionQuaternion);
 
-  // Correct right wrist orientation
-  //     rightWristQuaternion.premultiply(correctionQuaternion);
-      // rightWristQuaternion.premultiply(correctionQuaternion2);
+      // Correct right wrist orientation
       rightWristQuaternion.premultiply(wristOffsetQuaternion);
       // rightWristQuaternion.invert();
       window.rightHandSkeleton.wristJoint.setRotationFromQuaternion(rightWristQuaternion.invert());
 
-
-      // window.rightHandSkeleton.wristJoint.setRotationFromQuaternion(rightWristQuaternion);
       window.leftHandSkeleton.wristJoint.setRotationFromQuaternion(leftWristQuaternion);
 
       // Update fingers relative to wrist
@@ -248,8 +212,6 @@ angular.module('app').factory('VisTools', function () {
       }
 
       // Update wrist rotations
-      // const leftWristQuaternion = new THREE.Quaternion(data.lq._x, data.lq._y, data.lq._z, data.lq._w);
-      // const rightWristQuaternion = new THREE.Quaternion(data.rq._x, data.rq._y, data.rq._z, data.rq._w);
 
       const leftWristQuaternion = (data.lq && data.lq._x !== undefined)
           ? new THREE.Quaternion(data.lq._x, data.lq._y, data.lq._z, data.lq._w)
@@ -260,40 +222,17 @@ angular.module('app').factory('VisTools', function () {
       && (data.rq._x != 0 && data.rq._z != 0 && data.rq._y != 0 && data.rq._w != 1 ))
           ? new THREE.Quaternion(data.rq._x, data.rq._y, data.rq._z, data.rq._w)
           : getRotatedQuaternion("right");
-      // console.log("rightWristQuaternion: " );
-      // console.log(rightWristQuaternion);
-
-      // Update wrist rotations
-      // const leftWristQuaternion = new THREE.Quaternion(data.lq._x, data.lq._y, data.lq._z, data.lq._w);
-      // const rightWristQuaternion = new THREE.Quaternion(data.rql._x, data.rql._y, data.rql._z, data.rql._w);
-      // const rightWristQuaternion = new THREE.Quaternion(data.rq._x, data.rq._y, data.rq._z, data.rq._w);
-
-
       // Read wrist-x input and convert degrees to radians
       // const wristXOffset = parseFloat(document.getElementById("right-wrist-x-num").value) * (Math.PI / 180);
       const wristXOffset = parseFloat(vis.visualizationOffsets["right-wrist-x-num"]) * (Math.PI / 180);
       const wristYOffset = parseFloat(vis.visualizationOffsets["right-wrist-y-num"]) * (Math.PI / 180);
       const wristZOffset = parseFloat(vis.visualizationOffsets["right-wrist-z-num"]) * (Math.PI / 180);
       const offsetQuaternion = new THREE.Quaternion().setFromEuler(new THREE.Euler(wristXOffset, wristYOffset, wristZOffset));
-      // leftWristQuaternion.multiply(offsetQuaternion); // should be inverted
-
-      // Define correction quaternion to rotate -90° around X-axis
-      const correctionQuaternion = new THREE.Quaternion();
-      const correctionQuaternion2 = new THREE.Quaternion();
-      const correctionQuaternion3 = new THREE.Quaternion();
-      correctionQuaternion.setFromAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI );
-      correctionQuaternion2.setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI);
-      correctionQuaternion3.setFromAxisAngle(new THREE.Vector3(0, 0, 1), Math.PI);
-      // rightWristQuaternion.premultiply(correctionQuaternion);
 
       // Correct right wrist orientation
-      rightWristQuaternion.multiply(correctionQuaternion);
-      rightWristQuaternion.multiply(correctionQuaternion2);
       rightWristQuaternion.multiply(offsetQuaternion);
       window.rightHandSkeleton.wristJoint.setRotationFromQuaternion(rightWristQuaternion.invert());
 
-
-      // window.rightHandSkeleton.wristJoint.setRotationFromQuaternion(rightWristQuaternion);
       window.leftHandSkeleton.wristJoint.setRotationFromQuaternion(leftWristQuaternion);
 
       // Update fingers relative to wrist
@@ -313,27 +252,12 @@ angular.module('app').factory('VisTools', function () {
             const fingerYOffset = parseFloat(vis.visualizationOffsets["right-" + finger + "-y-num"]) * (Math.PI / 180);
             const fingerZOffset = parseFloat(vis.visualizationOffsets["right-" + finger + "-z-num"]) * (Math.PI / 180);
             const offsetQuaternion = new THREE.Quaternion().setFromEuler(new THREE.Euler(fingerXOffset, fingerYOffset, fingerZOffset));
-            // console.log(finger);
-            // console.log(offsetQuaternion);
             const rightQuat = new THREE.Quaternion(rightFingerData[index]._x, rightFingerData[index]._y, rightFingerData[index]._z, rightFingerData[index]._w);
-            // window.rightHandSkeleton.wristJoint.fingers[finger].tipJoint.quaternion
-            //     .multiplyQuaternions(rightWristQuaternion.clone().invert(), rightQuat)
-            //     .multiply(offsetQuaternion).invert();
-            // rightQuat.premultiply(correctionQuaternion.invert());
-            // rightQuat.premultiply(correctionQuaternion2.invert());
 
             var wqback = rightWristQuaternion.clone();
             window.rightHandSkeleton.wristJoint.fingers[finger].tipJoint.quaternion
                 .multiplyQuaternions(wqback.invert(), rightQuat.invert())
                 .multiply(offsetQuaternion);
-            // .multiplyQuaternions(rightWristQuaternion.clone().invert(), rightQuat)
-            // .multiplyQuaternions(rightWristQuaternion.clone().invert(), rightQuat);
-            // .multiplyQuaternions(wqback, rightQuat);
-            // .multiplyQuaternions(wqback.invert(), rightQuat.invert());
-            // .multiplyQuaternions(wqback.invert(), rightQuat.invert());
-            //       .multiplyQuaternions(offsetQuaternion.invert(), rightQuat);
-            // .multiplyQuaternions(offsetQuaternion, rightQuat);
-            // .multiply(offsetQuaternion).invert();
         }
 
       });

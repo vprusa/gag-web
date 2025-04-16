@@ -70,15 +70,6 @@ angular
               console.log(response);
               $scope.selectedGestureList.data = response;
               $scope.selectedGestureList.gestureId = id;
-              /*if (!$scope.$$phase) {
-              $scope.$apply();}
-              $timeout(function () {
-                $scope.selectedGestureList.data = response.data;
-                $scope.selectedGestureList.gestureId = id;
-                if (!$scope.$$phase) {
-                  $scope.$apply();}
-              }, 0);
-*/
             }, function (response) {
               $scope.alerts.push({
                 type: 'danger',
@@ -95,10 +86,6 @@ angular
           console.log("selectGesture: " + id);
           $scope.selectedGestureDetail.play = !$scope.selectedGestureDetail.play;
           $scope.selectedGestureDetail.selectedGesture = id;
-          // [{"id":13687,"handPosition":"RIGHT","t":1583278939926,"p":"LITTLE","h":"RIGHT",
-          // "qA":0.999939,"qX":0.00213623,"qY":-0.00164795,"qZ":0.00811768,"aX":1,"aY":1,"aZ":1},
-          // {"id":14692,"handPosition":"RIGHT","t":1583278956377,"p":"LITTLE","h":"RIGHT",
-          // "qA":0.997742,"qX":0.00323486,"qY":-8.54492E-4,"qZ":-0.0666504,"aX":1,"aY":1,"aZ":1}]
         };
 
         $scope.clearGesture = function (id) {
@@ -173,20 +160,8 @@ angular
           console.log($scope.selectedGestureList.gestureId);
           var selectedDataLineIds = $scope.selectedGestureList.data.filter(item => item.selected).map(item=>item.id);
           console.log(selectedDataLineIds);
-          // TODO
           commonTools.createGestureFrom($scope.selectedGestureList.gestureId, $scope.saveSelectedAsNewGestureAlias, selectedDataLineIds).then(function(){
-           /* $scope.gestures = $scope.gestures.filter(function(item) {
-              return item.id !== id;
-            });*/
-           /* commonTools.getGestures().then(function (response) {
-              $scope.gestures = response;
-            }, function (response) {
-              $scope.alerts.push({
-                type: 'danger',
-                title: 'Error ' + response.status,
-                msg: response.statusText
-              });
-            });*/
+            // TODO custom feedback
             console.log("createGestureFrom");
           });
         };
@@ -194,6 +169,7 @@ angular
 
         $scope.onMessage = function (evt) {
           // TODO move to websocket.js
+          console.log(evt.data);
           var message = JSON.parse(evt.data);
           if($scope.ws.isMessageDataLine(message)){
             $scope.vis.updateVisFromDataLine(message);
@@ -253,8 +229,9 @@ angular
         };
 
         $scope.ws.pausePlayer = function () {
+          // TODO
           // if($scope.ws.isPlaying){
-            //$scope.ws.stopPlaying();
+          //   $scope.ws.stopPlaying();
             $scope.ws.websocketSession.send('{"type":0, "action":1, "gestureId": '
               + $scope.selectedGestureDetail.selectedGesture + '}');
           // }
@@ -262,6 +239,7 @@ angular
         };
 
         $scope.ws.continuePlayer = function () {
+          // TODO
           // if($scope.ws.isPlaying){
             //$scope.ws.stopPlaying();
             $scope.ws.websocketSession.send('{"type":0, "action":2, "gestureId": '

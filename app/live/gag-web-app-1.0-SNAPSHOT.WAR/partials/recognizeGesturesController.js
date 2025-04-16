@@ -526,6 +526,7 @@ angular.module('app').controller(
             await delay(1000);
             await Promise.all(deactivatePromises);
             await delay(1000);
+            $scope.lastRecognizedGestureId = null;
             //  await $scope.switchActivateGesture(refGestureId, true);
           }
 

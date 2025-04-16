@@ -68,11 +68,6 @@ public class GestureCollector {
         // - gm.setSingle(true);
         // -- because of distinguishing between single sensor, multiple sensor or whole hand gesture
 
-        if(gestureContainsSensorsRet == 0x00 && !mgm.isEmpty()) {
-//            log.info("HandComparator.collect.mgm.clear()");
-//            log.info("mgm 1. " + mgm.toString());
-//            mgm.clear();
-        }
         for (Iterator<SingleSensorGestureMatcher> gmi = gmlPos.iterator(); gmi.hasNext(); ) {
             SingleSensorGestureMatcher gm = gmi.next();
             Sensor posP = gm.getAtDataLine().getPosition();
@@ -88,7 +83,6 @@ public class GestureCollector {
             }
         }
         return null;
-//        return Collections.emptyMap();
     }
 
 }

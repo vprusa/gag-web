@@ -65,6 +65,7 @@ angular.module('app').factory('WSTools', function (/*$rootScope*/) {
         ws.state = ws.innerStates.RECORDING;
         break;
       case ws.reqStates.REPLAY:
+
         break;
       case ws.reqStates.STOP:
         ws.state = ws.innerStates.IDLE;

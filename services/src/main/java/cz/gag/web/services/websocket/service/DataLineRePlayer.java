@@ -90,14 +90,6 @@ public class DataLineRePlayer implements Runnable, Serializable {
 
     volatile private long gestureId;
 
-    /*
-    public DataLineRePlayer(Session session, DataLineService dataLineService, long gestureId) {
-        //public DataLineRePlayer(Session session, long gestureId) {
-        this.dataLineService = dataLineService;
-        this.session = session;
-        this.gestureId = gestureId;
-    }*/
-
     public void prepare() {
         prepare(false);
     }
@@ -172,8 +164,7 @@ public class DataLineRePlayer implements Runnable, Serializable {
                 }
                 before = now;
             }
-//            dl.setTimestamp(null);
-            session.getBasicRemote().sendObject("{'REPLAYER':'DONE', 'g':'" + gestureId + "'}");
+            session.getBasicRemote().sendObject("{\"REPLAYER\":\"DONE\", \"g\":\"" + gestureId + "\"}");
             Log.info("Replaying gesture: " + gestureId + " - done");
         } catch (InterruptedException | IOException | EncodeException e) {
             // TODO Auto-generated catch block
