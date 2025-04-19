@@ -223,5 +223,7 @@ http://localhost:8080/gagweb/#!/recognize?refGestureIds=85,86&inputGestureIds=41
 
 http://localhost:8080/gagweb/#!/recognize?refGestureIds=85,86&inputGestureIds=41,61,357,358,368,376
 
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=85,86,87&inputGestureIds=41,42,43,44,45,46,47,48,49,50,61,62,63,64,65,66,67,68,69,70,71,357,358,359,360,361,362,363,364,365,366,367,368,369,370,371,372,373,374,375,376,377,378,379,380,381,382,383,384,385,386,387
+
 
 

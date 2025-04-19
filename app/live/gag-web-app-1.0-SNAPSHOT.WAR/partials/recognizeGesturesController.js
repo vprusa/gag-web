@@ -579,10 +579,9 @@ angular.module('app').controller(
                   || typeof $scope.recognitionResults[refGestureId] === 'undefined'
                   || typeof $scope.recognitionResults[refGestureId][inputGestureId] === 'undefined'
                   || typeof $scope.recognitionResults[refGestureId][inputGestureId] === 'undefined'
-                  || $scope.recognitionResults[refGestureId][inputGestureId] === 0) {
+                  || typeof $scope.recognitionResults[refGestureId][inputGestureId].count === 'undefined' ) {
                 $scope.cellStatus[`${refGestureId}_${inputGestureId}`] = 'completed_0';
-              } else if ($scope.recognitionResults[refGestureId][inputGestureId] > 0) {
-
+              } else if ($scope.recognitionResults[refGestureId][inputGestureId].count > 0) {
                 $scope.cellStatus[`${refGestureId}_${inputGestureId}`] = 'completed_ok';
               } else {
                 console.log("idk wtf");
