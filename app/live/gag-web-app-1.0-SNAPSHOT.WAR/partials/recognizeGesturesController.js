@@ -31,16 +31,29 @@ angular.module('app').controller(
 
         $scope.lastRecognizedGesture = {id: null, count: 0};
 
-        $scope.captureRecognizedGesture = function(recognizedGesture) {
-          // $scope.lastRecognizedGestureId = recognizedGesture.gest.id;
-          let gestureId = recognizedGesture.gest.id;
-          if ($scope.lastRecognizedGesture.id === gestureId) {
-            $scope.lastRecognizedGesture.count += 1;
-          } else {
-            $scope.lastRecognizedGesture = { id: gestureId, count: 1 };
-          }
-          console.log("Recognized gesture captured: id: " + recognizedGesture.gest.id + ", alias: '" + recognizedGesture.gest.userAlias + "'");
-        };
+          $scope.recognitionResults = {};
+
+          $scope.captureRecognizedGesture = function(recognizedGesture) {
+            let inputGestureId = $scope.fakeSelectedGestureId;
+            let gestureId = recognizedGesture.gest.id;
+            let recogGestureId = gestureId;
+
+            // Initialize structure if necessary
+            $scope.recognitionResults[recogGestureId] = $scope.recognitionResults[recogGestureId] || {};
+            $scope.recognitionResults[recogGestureId][inputGestureId] = $scope.recognitionResults[recogGestureId][inputGestureId] || { count: 0 };
+
+            // Increment count for recognized gesture
+            $scope.recognitionResults[recogGestureId][inputGestureId].count += 1;
+
+            // Update last recognized gesture state
+            if ($scope.lastRecognizedGesture.id === gestureId) {
+              $scope.lastRecognizedGesture.count += 1;
+            } else {
+              $scope.lastRecognizedGesture = { id: gestureId, count: 1 };
+            }
+
+            console.log("Recognized gesture captured: id: " + gestureId + ", alias: '" + recognizedGesture.gest.userAlias + "'" + " counter: " + $scope.lastRecognizedGesture.count);
+          };
 
 
         $scope.vis.loadOffsets = function(handDeviceId) {
@@ -123,8 +136,12 @@ angular.module('app').controller(
         $scope.gestures = response.map(function (e) {
           // e.recognized = true;
           e.recognized = false;
+
           return e;
         });
+
+// Generate confusion matrix immediately after initialization
+          $scope.generateConfusionMatrix();
 
           // console.log(response);
           // response
@@ -524,13 +541,17 @@ angular.module('app').controller(
               // console.log("3");
               await delay(1000);
               $scope.stopRecognizing();
-              $scope.recognitionResults[refGestureId][inputGestureId] = $scope.recognitionResults[refGestureId][inputGestureId] || [];
-              $scope.recognitionResults[refGestureId][inputGestureId].push($scope.lastRecognizedGestureId || null);
+              // $scope.recognitionResults[refGestureId][inputGestureId] = $scope.recognitionResults[refGestureId][inputGestureId] || [];
+              // $scope.recognitionResults[refGestureId][inputGestureId].push($scope.lastRecognizedGestureId || null);
+              // $scope.recognitionResults[refGestureId][inputGestureId] = $scope.recognitionResults[refGestureId][inputGestureId] || [];
+              // $scope.recognitionResults[refGestureId][inputGestureId].push($scope.lastRecognizedGesture.id || null);
+              // $scope.recognitionResults[refGestureId][inputGestureId]($scope.lastRecognizedGesture.id || null);
               await delay(1000);
               // console.log("4");
               // $scope.recognitionResults[refGestureId][inputGestureId] = $scope.recognitionResults[refGestureId][inputGestureId] || [];
               // $scope.recognitionResults[refGestureId][inputGestureId].push($scope.lastRecognizedGestureId || null);
-              $scope.lastRecognizedGestureId = null;
+              // $scope.lastRecognizedGestureId = null;
+              $scope.lastRecognizedGesture.id = null;
             }
             // $scope.stopRecognizing();
             // await delay(2000);
@@ -538,56 +559,46 @@ angular.module('app').controller(
             await delay(1000);
             $scope.stopRecognizing();
             await delay(1000);
-            console.log("Last recognized ID:", $scope.lastRecognizedGestureId); // <- add this log
+            console.log("Last recognized ID:", $scope.lastRecognizedGestureId);
+            console.log("Last recognized ID:", $scope.lastRecognizedGesture.id);
+            console.log("Last recognized ID:", $scope.lastRecognizedGesture.count);
             await $scope.setActivateGesture(refGestureId, false);
             await delay(1000);
             await Promise.all(deactivatePromises);
             await delay(1000);
-            $scope.lastRecognizedGestureId = null;
+            // $scope.lastRecognizedGestureId = null;
+            $scope.lastRecognizedGesture.id = null;
             //  await $scope.switchActivateGesture(refGestureId, true);
+            $scope.generateConfusionMatrix();
           }
 
           console.log("Recognition Results:", $scope.recognitionResults);
-
           $scope.generateConfusionMatrix();
         };
 
-/*
-        function generateConfusionMatrix() {
-          let html = '<table border="1" cellpadding="5"><tr><th>Reference/Input</th>';
-          $scope.recognitionConfig.inputGestureIds.forEach(inputId => html += '<th>' + inputId + '</th>');
-          html += '</tr>';
 
-          $scope.recognitionConfig.refGestureIds.forEach(refId => {
-            html += '<tr><td>' + refId + '</td>';
-            $scope.recognitionConfig.inputGestureIds.forEach(inputId => {
-              const count = ($scope.recognitionResults[refId] && $scope.recognitionResults[refId][inputId]) ?
-                  $scope.recognitionResults[refId][inputId].filter(x => x == refId).length : 0;
-              html += '<td>' + count + '</td>';
-            });
-            html += '</tr>';
-          });
+// Watch for changes in input configuration to regenerate confusion matrix
+        $scope.$watch('recognitionConfig', function(newVal, oldVal) {
+          if (newVal !== oldVal) {
+            $scope.generateConfusionMatrix();
+          }
+        }, true);
 
-          html += '</table><br>';
-
-          $scope.log('Confusion matrix generated: ' + html);
-        }
-*/
-
+// Generate Confusion Matrix
         $scope.generateConfusionMatrix = function() {
 
-          // Prepare headers with alias
-          const headers = ['Expected / Recognized'];
-          $scope.recognitionConfig.inputGestureIds.forEach(id => {
-            const gesture = $scope.gestures.find(g => g.id === id);
-            headers.push(`${id}: ${gesture.userAlias}`);
+          // Prepare headers from inputGestureIds with gesture aliases
+          const headers = [];
+          $scope.recognitionConfig.inputGestureIds.forEach(inputId => {
+            const gesture = $scope.gestures.find(g => g.id === inputId);
+            headers.push(`${gesture.id}: ${gesture.userAlias}`);
           });
 
           const matrix = [headers];
 
           $scope.recognitionConfig.refGestureIds.forEach(refId => {
-            const rowGesture = $scope.gestures.find(g => g.id === refId);
-            const row = [`${refId}: ${rowGesture.userAlias}`];
+            const gesture = $scope.gestures.find(g => g.id === refId);
+            const row = [`${gesture.id}: ${gesture.userAlias}`];
 
             $scope.recognitionConfig.inputGestureIds.forEach(inputId => {
               const count = $scope.calculateGestureMatchCount(refId, inputId);
@@ -599,15 +610,13 @@ angular.module('app').controller(
 
           $scope.confusionMatrix = matrix;
           $scope.$apply();
-
         };
 
+// Corrected function to calculate matches from stored results
         $scope.calculateGestureMatchCount = function(expectedId, recognizedId) {
-          // Implement your logic here
-          if ($scope.lastRecognizedGesture.id === recognizedId) {
-            return $scope.lastRecognizedGesture.count;
-          }
-          return 0;
+          return ($scope.recognitionResults[expectedId] &&
+              $scope.recognitionResults[expectedId][recognizedId]) ?
+              $scope.recognitionResults[expectedId][recognizedId].count : 0;
         };
 
       }]);

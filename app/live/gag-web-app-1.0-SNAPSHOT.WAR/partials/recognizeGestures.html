@@ -138,18 +138,20 @@
         </div>
         <div class="card-body">
             <table class="table table-hover">
-                <tbody>
+                <thead>
                 <tr>
                     <td>Reference Gestures</td>
+                    <td>Input Gestures</td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
                     <td>
                         <select class="form-control" multiple ng-model="recognitionConfig.refGestureIds"
                                 ng-options="gesture.id as (gesture.id + ': ' + gesture.userAlias) for gesture in gestures"
                                 style="min-height:200px;">
                         </select>
                     </td>
-                </tr>
-                <tr>
-                    <td>Input Gestures</td>
                     <td>
                         <select class="form-control" multiple ng-model="recognitionConfig.inputGestureIds"
                                 ng-options="gesture.id as (gesture.id + ': ' + gesture.userAlias) for gesture in gestures"
@@ -165,18 +167,27 @@
         </div>
 
         <style>
-            .confusion-matrix-header {
-                transform: rotate(-90deg);
+            .confusion-matrix-header div {
+                /*transform: rotate(-90deg);*/
+                /*white-space: nowrap;*/
+                /*transform-origin: bottom left;*/
+                /*padding-top: 300px;*/
+                writing-mode: vertical-lr;
                 white-space: nowrap;
-                transform-origin: bottom left;
-                padding-top: 300px;
+                text-align: left;
+                padding: 5px;
             }
         </style>
         <table class="table table-bordered">
             <thead>
             <tr>
+                <th>
+                    Expected / Recognized
+                </th>
                 <th ng-repeat="header in confusionMatrix[0]" class="confusion-matrix-header">
+                    <div>
                     {{header}}
+                    </div>
                 </th>
             </tr>
             </thead>
