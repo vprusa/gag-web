@@ -595,7 +595,9 @@ angular.module('app').controller(
           const headers = [];
           $scope.recognitionConfig.inputGestureIds.forEach(inputId => {
             const gesture = $scope.gestures.find(g => g.id === inputId);
-            headers.push(`${gesture.id}: ${gesture.userAlias}`);
+            if(typeof gesture !== "undefined") {
+              headers.push(`${gesture.id}: ${gesture.userAlias}`);
+            }
           });
 
           const matrix = [headers];
