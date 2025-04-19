@@ -192,8 +192,8 @@
             </tr>
             </thead>
             <tbody>
-            <tr ng-repeat="row in confusionMatrix.slice(1)">
-                <td ng-repeat="cell in row">
+            <tr ng-repeat="row in confusionMatrix.slice(1) track by $index">
+                <td ng-repeat="cell in row track by $index">
                     {{cell}}
                 </td>
             </tr>

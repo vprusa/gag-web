@@ -424,7 +424,11 @@ angular.module('app').controller(
                   console.log("recognizedGesture - adding to confusion matrix...");
                   $scope.captureRecognizedGesture(recognizedGesture);
 
-                  WSTools.log("Recognized gesture: id: " + recognizedGesture.gest.id + ", alias: '" + recognizedGesture.gest.userAlias + "', threshold: " + recognizedGesture.gest.shouldMatch);
+                  WSTools.log("Recognized gesture: id: " + recognizedGesture.gest.id
+                      + ", alias: '" + recognizedGesture.gest.userAlias
+                      + "', threshold: " + recognizedGesture.gest.shouldMatch
+                      + "', delay : " + recognizedGesture.gest.delay
+                  );
 
                   if (!e.recognized) {
                     changed = true;
@@ -495,6 +499,7 @@ angular.module('app').controller(
         const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
         $scope.runMultipleAutomatedTests = async function () {
+          log("Starting recognition: " + $location.search().refGestureIds + " against " + $location.search().inputGestureIds);
           if (!$scope.recognitionConfig.refGestureIds.length || !$scope.recognitionConfig.inputGestureIds.length) {
             alert('Please provide reference and input gestures.');
             return;
@@ -514,8 +519,6 @@ angular.module('app').controller(
           await delay(1000);
           $scope.startRecognizing();
           await delay(1000);
-          // $scope.stopRecognizing();
-
           await Promise.all(deactivatePromises);
           for (let refGestureId of $scope.recognitionConfig.refGestureIds) {
             log("Recognizing gesture: " + refGestureId);
@@ -573,6 +576,7 @@ angular.module('app').controller(
           }
 
           console.log("Recognition Results:", $scope.recognitionResults);
+          log("Done recognition: " + $location.search().refGestureIds + " against " + $location.search().inputGestureIds);
           $scope.generateConfusionMatrix();
         };
 
@@ -609,7 +613,9 @@ angular.module('app').controller(
           });
 
           $scope.confusionMatrix = matrix;
-          $scope.$apply();
+          if (!$scope.$$phase) {
+            $scope.$apply();
+          }
         };
 
 // Corrected function to calculate matches from stored results
