@@ -178,28 +178,31 @@
                 padding: 5px;
             }
         </style>
-        <table class="table table-bordered">
-            <thead>
-            <tr>
-                <th>
-                    Expected / Recognized
-                </th>
-                <th ng-repeat="header in confusionMatrix[0]" class="confusion-matrix-header">
-                    <div>
-                    {{header}}
-                    </div>
-                </th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr ng-repeat="row in confusionMatrix.slice(1) track by $index">
-                <td ng-repeat="cell in row track by $index">
+        <div style="overflow:auto; max-height:500px; max-width: auto;">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>
+                        Expected / Recognized
+                    </th>
+                    <th ng-repeat="header in confusionMatrix[0]" class="confusion-matrix-header">
+                        <div>
+                        {{header}}
+                        </div>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="row in confusionMatrix.slice(1) track by $index">
+                    <td ng-repeat="cell in row track by $index"
+                        ng-style="getCellStyle($parent.$index + 1, $index - 1 )">
                     {{cell}}
-                </td>
-            </tr>
-            </tbody>
-        </table>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
 
+        </div>
     </div>
 
 

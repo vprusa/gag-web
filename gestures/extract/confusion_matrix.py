@@ -297,7 +297,7 @@ if __name__ == "__main__":
         matrix_df = pd.DataFrame.from_dict(matrix_data, orient='index')[all_cols]
         matrix_df = matrix_df.transpose()
         matrix_df['Total'] = matrix_df.apply(lambda row: sum(val == 1 for val in row), axis=1)
- 
+
         trust_scores = []
         ref_counts = []
         for row_label in matrix_df.index:
