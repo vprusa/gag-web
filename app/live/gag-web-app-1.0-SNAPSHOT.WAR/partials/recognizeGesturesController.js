@@ -516,7 +516,8 @@ angular.module('app').controller(
           const inputId = $scope.confusionMatrix[0][colIndex].split(':')[0];
           const status = $scope.cellStatus[`${refId}_${inputId}`];
 
-          if (status === 'completed') return {'background-color': 'lightgreen'};
+          if (status === 'completed_ok') return {'background-color': 'lightgreen'};
+          if (status === 'completed_0') return {'background-color': 'lightgrey'};
           if (status === 'processing') return {'background-color': 'lightorange'};
           return {};
         };
@@ -556,7 +557,7 @@ angular.module('app').controller(
               $scope.generateConfusionMatrix();
 
               $scope.fakeSelectedGestureId = inputGestureId;
-              $scope.recognitionResults[refGestureId] = $scope.recognitionResults[refGestureId] || {};
+              // $scope.recognitionResults[refGestureId] = $scope.recognitionResults[refGestureId] || {};
 
               $scope.startRecognizing();
               await delay(1000);
@@ -574,7 +575,19 @@ angular.module('app').controller(
               $scope.stopRecognizing();
               await delay(1000);
               $scope.lastRecognizedGesture.id = null;
-              $scope.cellStatus[`${refGestureId}_${inputGestureId}`] = 'completed';
+              if (typeof $scope.recognitionResults === 'undefined'
+                  || typeof $scope.recognitionResults[refGestureId] === 'undefined'
+                  || typeof $scope.recognitionResults[refGestureId][inputGestureId] === 'undefined'
+                  || typeof $scope.recognitionResults[refGestureId][inputGestureId] === 'undefined'
+                  || $scope.recognitionResults[refGestureId][inputGestureId] === 0) {
+                $scope.cellStatus[`${refGestureId}_${inputGestureId}`] = 'completed_0';
+              } else if ($scope.recognitionResults[refGestureId][inputGestureId] > 0) {
+
+                $scope.cellStatus[`${refGestureId}_${inputGestureId}`] = 'completed_ok';
+              } else {
+                console.log("idk wtf");
+                console.log($scope.recognitionResults);
+              }
               $scope.generateConfusionMatrix();
             }
             await delay(1000);
@@ -622,6 +635,9 @@ angular.module('app').controller(
 
           $scope.recognitionConfig.refGestureIds.forEach(refId => {
             const gesture = $scope.gestures.find(g => g.id === refId);
+            if (typeof gesture === "undefined") {
+              return;
+            }
             const row = [`${gesture.id}: ${gesture.userAlias}`];
             $scope.recognitionConfig.inputGestureIds.forEach(inputId => {
               const count = $scope.calculateGestureMatchCount(refId, inputId);

@@ -167,6 +167,14 @@
         </div>
 
         <style>
+            .confusion-matrix table>thead>tr>th, .confusion-matrix table>thead>tr>td {
+                padding: 1px;
+            }
+            .confusion-matrix table>thead>tr>th, .confusion-matrix table>thead>tr>td {
+                padding: 1px;
+            }
+            .confusion-matrix-cell {
+            }
             .confusion-matrix-header div {
                 /*transform: rotate(-90deg);*/
                 /*white-space: nowrap;*/
@@ -175,10 +183,13 @@
                 writing-mode: vertical-lr;
                 white-space: nowrap;
                 text-align: left;
-                padding: 5px;
+                padding: 0px;
+            }
+            .confusion-matrix-data-row {
+                height: 2em;
             }
         </style>
-        <div style="overflow:auto; max-height:500px; max-width: auto;">
+        <div style="overflow:auto; max-height:500px; max-width: auto;" class="confusion-matrix">
             <table class="table table-bordered">
                 <thead>
                 <tr>
@@ -193,8 +204,8 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr ng-repeat="row in confusionMatrix.slice(1) track by $index">
-                    <td ng-repeat="cell in row track by $index"
+                <tr class="confusion-matrix-data-row" ng-repeat="row in confusionMatrix.slice(1) track by $index">
+                    <td  class="confusion-matrix-cell" ng-repeat="cell in row track by $index"
                         ng-style="getCellStyle($parent.$index + 1, $index - 1 )">
                     {{cell}}
                     </td>
