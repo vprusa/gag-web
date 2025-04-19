@@ -128,41 +128,69 @@
             </div>
         </div>
 
-        <!-- Automated Recognition Test Interface -->
-        <div class="card mt-3">
-            <div class="card-header card-header-primary">
-                <h4 class="card-title">Automated Gesture Recognition</h4>
-            </div>
-            <div class="card-body">
-                <table class="table table-hover">
-                    <tbody>
-                    <tr>
-                        <td>Reference Gestures</td>
-                        <td>
-                            <select class="form-control" multiple ng-model="recognitionConfig.refGestureIds"
-                                    ng-options="gesture.id as (gesture.id + ': ' + gesture.userAlias) for gesture in gestures"
-                                    style="min-height:200px;">
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Input Gestures</td>
-                        <td>
-                            <select class="form-control" multiple ng-model="recognitionConfig.inputGestureIds"
-                                    ng-options="gesture.id as (gesture.id + ': ' + gesture.userAlias) for gesture in gestures"
-                            style="min-height:200px;">
-                            </select>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-                <button class="btn btn-success" ng-click="runMultipleAutomatedTests()">
-                    Run Automated Recognition Tests
-                </button>
-            </div>
+    </div>
+
+
+    <!-- Automated Recognition Test Interface -->
+    <div class="card mt-3">
+        <div class="card-header card-header-primary">
+            <h4 class="card-title">Automated Gesture Recognition</h4>
+        </div>
+        <div class="card-body">
+            <table class="table table-hover">
+                <tbody>
+                <tr>
+                    <td>Reference Gestures</td>
+                    <td>
+                        <select class="form-control" multiple ng-model="recognitionConfig.refGestureIds"
+                                ng-options="gesture.id as (gesture.id + ': ' + gesture.userAlias) for gesture in gestures"
+                                style="min-height:200px;">
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Input Gestures</td>
+                    <td>
+                        <select class="form-control" multiple ng-model="recognitionConfig.inputGestureIds"
+                                ng-options="gesture.id as (gesture.id + ': ' + gesture.userAlias) for gesture in gestures"
+                                style="min-height:200px;">
+                        </select>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <button class="btn btn-success" ng-click="runMultipleAutomatedTests()">
+                Run Automated Recognition Tests
+            </button>
         </div>
 
+        <style>
+            .confusion-matrix-header {
+                transform: rotate(-90deg);
+                white-space: nowrap;
+                transform-origin: bottom left;
+                padding-top: 300px;
+            }
+        </style>
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th ng-repeat="header in confusionMatrix[0]" class="confusion-matrix-header">
+                    {{header}}
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="row in confusionMatrix.slice(1)">
+                <td ng-repeat="cell in row">
+                    {{cell}}
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
     </div>
+
 
 
     <div class="row">
@@ -214,5 +242,6 @@
     </div>
 
 </div>
+
 
 <div ng-include="'partials/logMessages.html'"></div>

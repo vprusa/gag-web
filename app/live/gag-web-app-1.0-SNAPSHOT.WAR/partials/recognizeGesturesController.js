@@ -29,10 +29,16 @@ angular.module('app').controller(
 
 
 
-        $scope.lastRecognizedGestureId = null;
+        $scope.lastRecognizedGesture = {id: null, count: 0};
 
         $scope.captureRecognizedGesture = function(recognizedGesture) {
-          $scope.lastRecognizedGestureId = recognizedGesture.gest.id;
+          // $scope.lastRecognizedGestureId = recognizedGesture.gest.id;
+          let gestureId = recognizedGesture.gest.id;
+          if ($scope.lastRecognizedGesture.id === gestureId) {
+            $scope.lastRecognizedGesture.count += 1;
+          } else {
+            $scope.lastRecognizedGesture = { id: gestureId, count: 1 };
+          }
           console.log("Recognized gesture captured: id: " + recognizedGesture.gest.id + ", alias: '" + recognizedGesture.gest.userAlias + "'");
         };
 
@@ -216,19 +222,22 @@ angular.module('app').controller(
         };
 
         $scope.onSendMessage = function (data) {
+          if (typeof data === "undefined") {
+            return;
+          }
           var dataLine = JSON.parse(data);
           if (typeof dataLine.REPLAYER !== "undefined") {
             if ($scope.isBLEFaking()) {
               console.log("Ble done: ", dataLine)
-              dataLine.timestamp == null;
-              $scope.fakingState = fakingStates.DONE;
+              // dataLine.timestamp == null;
+              // $scope.fakingState = fakingStates.DONE;
             }
           } else {
-            if ($scope.isBLEFaking()) {
-              console.log("Ble done: ", dataLine)
-              dataLine.timestamp == null;
-              $scope.fakingState = fakingStates.DONE;
-            }
+            // if ($scope.isBLEFaking()) {
+              // console.log("Ble done: ", dataLine)
+              // dataLine.timestamp == null;
+              // $scope.fakingState = fakingStates.DONE;
+            // }
             // console.log(dataLine);
             $scope.vis.updateVisFromDataLine(dataLine);
             if (!$scope.$$phase) {
@@ -241,11 +250,12 @@ angular.module('app').controller(
         // var startAction = '{type:"RECOGNITION",action:"START"}';
         var startAction = {type: "RECOGNITION", action: "START"};
         var startActionStr = JSON.stringify(startAction);
-        $scope.startRecognizing = function () {
+        $scope.startRecognizing = async function () {
           WSTools.init();
           console.log("startRecognizing");
+          const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+          await delay(500);
           WSTools.sendMessage(startActionStr);
-
           // $scope.$apply();
           //'{type:"RECOGNITION",action:"START"}';
           // var ACTIONS = '{type:"RECOGNITION",action:"START"}';
@@ -283,10 +293,14 @@ angular.module('app').controller(
           }
           var first = $scope.fakeData[curIndex];
           // console.log(first);
-          if (curIndex == $scope.fakeData.length - 1) {
+          if (curIndex >= $scope.fakeData.length - 1) {
             $scope.fakingState = fakingStates.DONE;
+            console.log("Done faking..." + curIndex + ">=" + $scope.fakeData.length);
+            return;
           }
           $scope.vis.updateVisFromDataLine(first);
+          // console.log(curIndex);
+          // console.log(first);
           $scope.ws.sendMessage(JSON.stringify(first));
 
           if (typeof $scope.fakeData[curIndex + 1] !== "undefined") {
@@ -344,8 +358,9 @@ angular.module('app').controller(
         let log = function (msg) {
           //console.log("msg");
           //    console.log(msg);
-          $('#LogMessages table tr:last').after(
-              "<tr><td>" + new Date().toLocaleTimeString() + "</td><td>" + msg + "</td></tr>"
+          // $('#LogMessages table tr:last').after(
+          $('#LogMessages span').after(
+              "" + new Date().toLocaleTimeString() + " " + msg + "<br>"
           );
         };
         WSTools.log = log;
@@ -503,17 +518,19 @@ angular.module('app').controller(
               while ($scope.isBLEFaking()) {
                 // console.log("2.1");
                 await delay(1000);
-                // console.log("2.2");
+                console.log("2.2");
               }
+
               // console.log("3");
               await delay(1000);
               $scope.stopRecognizing();
+              $scope.recognitionResults[refGestureId][inputGestureId] = $scope.recognitionResults[refGestureId][inputGestureId] || [];
+              $scope.recognitionResults[refGestureId][inputGestureId].push($scope.lastRecognizedGestureId || null);
               await delay(1000);
               // console.log("4");
               // $scope.recognitionResults[refGestureId][inputGestureId] = $scope.recognitionResults[refGestureId][inputGestureId] || [];
               // $scope.recognitionResults[refGestureId][inputGestureId].push($scope.lastRecognizedGestureId || null);
-              $scope.recognitionResults[refGestureId][inputGestureId] = $scope.recognitionResults[refGestureId][inputGestureId] || [];
-              $scope.recognitionResults[refGestureId][inputGestureId].push($scope.lastRecognizedGestureId || null);
+              $scope.lastRecognizedGestureId = null;
             }
             // $scope.stopRecognizing();
             // await delay(2000);
@@ -532,28 +549,10 @@ angular.module('app').controller(
 
           console.log("Recognition Results:", $scope.recognitionResults);
 
-          generateConfusionMatrix();
+          $scope.generateConfusionMatrix();
         };
 
-
-     /*   function generateConfusionMatrix() {
-          const matrix = {};
-          for (const refId of Object.keys($scope.recognitionResults)) {
-            matrix[refId] = {};
-            for (const inputId of Object.keys($scope.recognitionResults[refId])) {
-              const recognizedIds = $scope.recognitionResults[refId][inputId];
-              recognizedIds.forEach(recognizedId => {
-                if (recognizedId) {
-                  matrix[refId][recognizedId] = (matrix[refId][recognizedId] || 0) + 1;
-                }
-              });
-            }
-          }
-          console.table(matrix);
-          $scope.log('Confusion matrix generated and logged to console.');
-        }*/
-
-
+/*
         function generateConfusionMatrix() {
           let html = '<table border="1" cellpadding="5"><tr><th>Reference/Input</th>';
           $scope.recognitionConfig.inputGestureIds.forEach(inputId => html += '<th>' + inputId + '</th>');
@@ -569,9 +568,46 @@ angular.module('app').controller(
             html += '</tr>';
           });
 
-          html += '</table>';
+          html += '</table><br>';
 
           $scope.log('Confusion matrix generated: ' + html);
         }
+*/
+
+        $scope.generateConfusionMatrix = function() {
+
+          // Prepare headers with alias
+          const headers = ['Expected / Recognized'];
+          $scope.recognitionConfig.inputGestureIds.forEach(id => {
+            const gesture = $scope.gestures.find(g => g.id === id);
+            headers.push(`${id}: ${gesture.userAlias}`);
+          });
+
+          const matrix = [headers];
+
+          $scope.recognitionConfig.refGestureIds.forEach(refId => {
+            const rowGesture = $scope.gestures.find(g => g.id === refId);
+            const row = [`${refId}: ${rowGesture.userAlias}`];
+
+            $scope.recognitionConfig.inputGestureIds.forEach(inputId => {
+              const count = $scope.calculateGestureMatchCount(refId, inputId);
+              row.push(count);
+            });
+
+            matrix.push(row);
+          });
+
+          $scope.confusionMatrix = matrix;
+          $scope.$apply();
+
+        };
+
+        $scope.calculateGestureMatchCount = function(expectedId, recognizedId) {
+          // Implement your logic here
+          if ($scope.lastRecognizedGesture.id === recognizedId) {
+            return $scope.lastRecognizedGesture.count;
+          }
+          return 0;
+        };
 
       }]);

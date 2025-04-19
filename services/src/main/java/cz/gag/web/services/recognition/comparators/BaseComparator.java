@@ -92,17 +92,16 @@ public abstract class BaseComparator<T extends FingerDataLine> implements Gestur
         }
         log.info("BaseComparator.compare");
 
-
-        if (first != null) {
+/*        if (first != null) {
             float currentTimeSpent = (System.currentTimeMillis() - time ) / 1000f;
-            if (gRef.getDelay() >= currentTimeSpent) {
+            if (gRef.getDelay() != 0 && gRef.getDelay() >= currentTimeSpent) {
                 Log.info("Skipping rec after: " + currentTimeSpent+ " for gesture: "  + gRef.toString());
                 return null;
             } else {
                 Log.info("Continue rec after: " + currentTimeSpent+ " for gesture: " + gRef.toString());
                 time = System.currentTimeMillis();
             }
-        }
+        }*/
 
         // TODO brainstorm 'matched = new List<GestureMatcher>()' so multiple gestures could be matched?
         // most likely not necessary and waste of CPU
@@ -155,7 +154,6 @@ public abstract class BaseComparator<T extends FingerDataLine> implements Gestur
         // but that should not be allowed
 
         if (first != null && doesMatch(first, fdl)) {
-
 
             SingleSensorGestureMatcher matcher = new SingleSensorGestureMatcher(1, gRef);
             if (matcher.getIndex() >= getRefTotalSize()) {

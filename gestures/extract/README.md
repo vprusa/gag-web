@@ -110,3 +110,118 @@ python generate_latex_dataline_table.py --host "localhost" --user "gagweb" --pas
 python generate_latex_dataline_table.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gestures 41 --positions 0 1 2 3 4 5 --bold 9359 9383 9419 9437 --split 3 --cursive_position 1 --info "9359:83-1.1" "9365:83-1.2" "9371:83-2.1" "9377:83-3.1" "9389:83-1.3" "9419:83-3" "9425:83-1.4"
 
 ```
+
+# WEB automation
+
+```
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=75,76,77&inputGestureIds=41,42,43,44,45,46,47,48,49,50
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=85,86,87&inputGestureIds=41,42,43,44,45,46,47,48,49,50
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=85,86,87&inputGestureIds=41,42,43
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=301,338,339&inputGestureIds=61,62,63,64,65,66,67,68,69,70,71
+
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=266,267,268,269,270,271,272,273,274,275&inputGestureIds=61,62,63,64,65,66,67,68,69,70,71
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=268&inputGestureIds=61
+
+```
+@misc{kim2019imu,
+  author = {Minwoo Kim, Jaechan Cho, Seongjoo Lee, Yunho Jung},
+  title = {IMU Sensor-Based Hand Gesture Recognition for Human-Machine Interfaces},
+  url = {https://doi.org/10.3390/s19183827}
+}
+
+@misc{saggio2020sign,
+  author = {Giovanni Saggio, Pietro Cavallo, Mariachiara Ricci, Vito Errico, Jonathan Zea, Marco E. Benalcázar},
+  title = {Sign Language Recognition Using Wearable Electronics: Implementing k-Nearest Neighbors with Dynamic Time Warping and Convolutional Neural Network Algorithms},
+  url = {https://doi.org/10.3390/s20143879}
+}
+
+@misc{maharani2018hand,
+  author = {Devira Anggi Maharani, Hanif Fakhrurroja, Riyanto, C. Machbub},
+  title = {Hand gesture recognition using K-means clustering and Support Vector Machine},
+  url = {https://doi.org/10.1109/ISCAIE.2018.8405435}
+}
+
+@misc{ameliasari2021evaluation,
+  author = {Maya Ameliasari, Aji Gautama Putrada, Rizka Reza Pahlevi},
+  title = {An Evaluation of SVM in Hand Gesture Detection Using IMU-Based Smartwatches for Smart Lighting Control},
+  url = {https://doi.org/10.20895/infotel.v13i2.656}
+}
+
+@misc{wang2023hmm,
+  author = {Danping Wang, Jina Wang, Yang Liu, Xianming Meng},
+  title = {HMM-based IMU data processing for arm gesture classification and motion tracking},
+  url = {https://doi.org/10.1504/IJMIC.2023.128767}
+}
+
+@misc{jiang2022multi,
+  author = {Yujian Jiang, Lin Song, Junming Zhang, Yang Song, Ming Yan},
+  title = {Multi-Category Gesture Recognition Modeling Based on sEMG and IMU Signals},
+  url = {https://doi.org/10.3390/s22155855}
+}
+
+X-R-INDE-CLICK__41-50
+
+X-R-SWITCH__61-71
+
+
+T-R-OK-3S__357-367 
+
+
+T-R-WARE-UP-M-L-M-R-M_5S__368-377
+
+
+T-R-BYE-UP-DOWN-UP_3S__378-387
+
+
+
+for range in "1..5" "10..15"; do
+    for num in $(eval echo {$range}); do
+        echo "$num"
+    done
+done
+
+
+REF_GESTS="85,,86,87"
+echo -e "http://localhost:8080/gagweb/#!/recognize?refGestureIds=$REF_GESTS&inputGestureIds"
+for range in "41..50" "61..71" "357..367" "368..377" "378..387" ; do
+  #echo -e "http://localhost:8080/gagweb/#!/recognize?refGestureIds=266,267,268,269,270,271,272,273,274,275&inputGestureIds=61,62,63,64,65,66,67,68,69,70,71"
+  for num in $(eval echo {$range}); do
+    echo -n $num
+  done
+done
+
+
+REF_GESTS="85,,86,87"
+echo -e "http://localhost:8080/gagweb/#!/recognize?refGestureIds=$REF_GESTS&inputGestureIds"
+for range in "41..50" "61..71" "357..367" "368..377" "378..387" ; do
+  for num in $(eval echo {$range}); do
+    echo -n $num
+  done
+done
+
+
+
+REF_GESTS="85,86,87" ; echo -e "http://localhost:8080/gagweb/#!/recognize?refGestureIds=$REF_GESTS&inputGestureIds" for range in "41..50" "61..71" "357..367" "368..377" "378..387" ; do for num in $(eval echo {$range}); do echo -n $num ; done ; done
+
+
+REF_GESTS="85,86,87" ; echo -e 'http://localhost:8080/gagweb/#!/recognize?refGestureIds='$REF_GESTS'&inputGestureIds' ; for range in "41..50" "61..71" "357..367" "368..377" "378..387" ; do for num in $(eval echo {$range}); do echo -e $num ; done ; done
+REF_GESTS="85,86,87" ; echo -n 'http://localhost:8080/gagweb/#!/recognize?refGestureIds='$REF_GESTS'&inputGestureIds' ; for range in "41..50" "61..71" "357..367" "368..377" "378..387" ; do for num in $(eval echo {$range}); do echo -n "${num}," ; done ; done
+
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=85,86,87&inputGestureIds41,42,43,44,45,46,47,48,49,50,61,62,63,64,65,66,67,68,69,70,71,357,358,359,360,361,362,363,364,365,366,367,368,369,370,371,372,373,374,375,376,377,378,379,380,381,382,383,384,385,386,387
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=85,86,87&inputGestureIds41,42,43,44,45,46,47,48,49,50,61,62,63,64,65,66,67,68,69,70,71,357,358,359,360,361,362,363,364,365,366,367,368,369,370,371,372,373,374,375,376,377,378,379,380,381,382,383,384,385,386,387
+
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=85,86&inputGestureIds=41,42,43,44,45,46,47,48,49,50,61,62,63,64,65,66,67,68,69,70,71,357,358,359,360,361,362,363,364,365,366,367,368,369,370,371,372,373,374,375,376,377,378,379,380,381,382,383,384,385,386,387
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=85,86&inputGestureIds=41,61,357,358,368,376
+
+
+

@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.gag.web.persistence.entity.DataLine;
 import cz.gag.web.persistence.entity.User;
 import cz.gag.web.services.logging.Log;
+import cz.gag.web.services.mapped.MFingerDataLine;
+import cz.gag.web.services.mapped.MWristDataLine;
 import cz.gag.web.services.recognition.matchers.MultiSensorGestureMatcher;
 import cz.gag.web.services.rest.endpoint.BaseEndpoint;
 import cz.gag.web.services.service.DataLineService;
@@ -92,15 +94,19 @@ public class RecognizerWSEndpoint /*extends BaseWSEndpoint*/ {
     public void onMessage(String msg, Session session) {
         log.info("RecognizerWSEndpoint.onMessage");
         log.info(msg.toString());
-
+        if (msg == "undefined") {
+            return;
+        }
         DataLine dl = null;
         if (rec.isRecognizing()) {
             if (fdlDecoder.willDecode(msg)) {
 //                MFingerDataLine dl = fdld.decode(msg);
                 dl = fdlDecoder.decode(msg);
+                log.info("Incoming fdl: " + ((MFingerDataLine)dl).toString());
             } else if (wdlDecoder.willDecode(msg)) {
 //                MWristDataLine dl = wdld.decode(msg);
                 dl = wdlDecoder.decode(msg);
+                log.info("Incoming wdl: " + ((MWristDataLine)dl).toString());
             } else if (bdlDecoder.willDecode(msg)) {
 //                MDataLine dl = dld.decode(msg);
                 dl = bdlDecoder.decode(msg);

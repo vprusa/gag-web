@@ -65,8 +65,14 @@ angular.module('app').factory('VisTools', function () {
   vis.updateVisFromDataLineWristDone = false;
   // TODO move parseFloat somewhere else, e.g. inside THREE.Quaternion ?
   vis.updateVisFromDataLine = function (dl) {
+    if ( typeof dl == 'undefined' ) {
+      return;
+    }
     vis.updateVisFromDataLineWristDone = false;
-    vis.currentGesture.currentTime = dl.t;
+    // vis.currentGesture.currentTime = dl.t;
+    if ( typeof dl.t !== 'undefined' ) {
+      vis.currentGesture.currentTime = dl.t;
+    }
     vis.currentGesture.currentTimeHuman = formatTimestamp(dl.t); // new Date(dl.t).toLocaleTimeString()
     vis.currentGesture.currentDLId = dl.id;
 
