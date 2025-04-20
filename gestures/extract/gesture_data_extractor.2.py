@@ -26,7 +26,8 @@ def parse_arguments():
     parser.add_argument("--start", action="store_true")
     parser.add_argument("--end", action="store_true")
     parser.add_argument("-v", action="store_true", help="Verbose: print all extracted datalines")
-    parser.add_argument("--align", type=str, help="Trim per-position data using format top:n or bottom:n")
+    parser.add_argument("--align", type=str, help="Trim per-position data using format top or bottom or n")
+    parser.add_argument("--align-find", type=str, help="Trim per-position data using format top:n or bottom:n")
     parser.add_argument("--min-points", type=int, default=5, help="Minimum points per sensor to aim for when estimating threshold")
 
     return parser.parse_args()
@@ -451,11 +452,11 @@ def main():
     # Assuming df_with_velocity is already computed and contains angular_velocity
     store_extreme_rotation_points_with_velocities(df_with_velocity)
     print(f"✅ df_with_velocity size: {len(df_with_velocity)} samples ")
-    df_extremes = find_rotation_extremes(df_with_velocity, order=3, threshold=args.threshold_extraction,
-                                         align=args.align)
+    df_extremes = find_rotation_extremes(df_with_velocity, order=3, threshold=args.threshold_extraction, align=args.align_find)
 
     threshold = estimate_threshold(df_quaternions, min_required=min_points) if args.threshold_extraction is None else args.threshold_extraction * 180
-    print(f" threshold: {threshold}")
+    threshold_rad = (threshold/180) * math.pi
+    print(f" threshold: {threshold}, threshold_rad: {threshold_rad}")
     df_final = detect_rotation_extremes_datalines(
         df_quaternions,
         df_extremes,
@@ -465,6 +466,8 @@ def main():
         align=args.align
     )
 
+    df_final = df_final.sort_values(by='timestamp').reset_index(drop=True)
+
     print(f"✅ Extracted {len(df_final)} important quaternion datalines.")
     if args.v and not df_final.empty:
         print("📋 Extracted Datalines:")
@@ -473,7 +476,8 @@ def main():
     if args.suffix:
         new_gesture_id = create_new_gesture(conn, df_quaternions.iloc[0]['userAlias'],
                                             int(df_quaternions.iloc[0]['user_id']), args.suffix,
-                                            args.threshold_recognition)
+                                            # args.threshold_recognition)
+                                            threshold_rad)
         store_extracted_datalines(conn, df_final, new_gesture_id)
         print(f"✅ Stored {len(df_final)} extracted points under new gesture ID: {new_gesture_id}")
 
