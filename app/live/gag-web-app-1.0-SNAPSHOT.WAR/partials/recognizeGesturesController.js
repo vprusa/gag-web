@@ -304,6 +304,11 @@ angular.module('app').controller(
         $scope.fakingState = fakingStates.IDLE;
         $scope.fakeData = {};
 
+        // $scope.fakeLoopModifier = 1.0;
+        // $scope.fakeLoopModifier = 0.5;
+        // $scope.fakeLoopModifier = 0.25;
+        $scope.fakeLoopModifier = 0.1;
+
         $scope.fakingLoop = function (curIndex) {
           if ($scope.isBLEIdle()) {
             return;
@@ -322,7 +327,7 @@ angular.module('app').controller(
 
           if (typeof $scope.fakeData[curIndex + 1] !== "undefined") {
             var second = $scope.fakeData[curIndex + 1];
-            var delay = second.t - first.t;
+            var delay = (second.t - first.t) * $scope.fakeLoopModifier;
             var res = setTimeout($scope.fakingLoop, delay, curIndex + 1);
           }
 
@@ -574,7 +579,6 @@ angular.module('app').controller(
               await delay(1000);
               $scope.stopRecognizing();
               await delay(1000);
-              $scope.lastRecognizedGesture.id = null;
               if (typeof $scope.recognitionResults === 'undefined'
                   || typeof $scope.recognitionResults[refGestureId] === 'undefined'
                   || typeof $scope.recognitionResults[refGestureId][inputGestureId] === 'undefined'
@@ -587,7 +591,11 @@ angular.module('app').controller(
                 console.log("idk wtf");
                 console.log($scope.recognitionResults);
               }
+              await delay(1000);
+              $scope.lastRecognizedGesture.id = null;
               $scope.generateConfusionMatrix();
+              await delay(1000);
+
             }
             await delay(1000);
             $scope.stopRecognizing();
@@ -598,11 +606,11 @@ angular.module('app').controller(
             await $scope.setActivateGesture(refGestureId, false);
             await delay(1000);
             await Promise.all(deactivatePromises);
-            await delay(1000);
+            await delay(1500);
             // $scope.lastRecognizedGestureId = null;
-            $scope.lastRecognizedGesture.id = null;
             //  await $scope.switchActivateGesture(refGestureId, true);
             $scope.generateConfusionMatrix();
+            $scope.lastRecognizedGesture.id = null;
           }
 
           console.log("Recognition Results:", $scope.recognitionResults);
@@ -610,15 +618,14 @@ angular.module('app').controller(
           $scope.generateConfusionMatrix();
         };
 
-
-// Watch for changes in input configuration to regenerate confusion matrix
+        // Watch for changes in input configuration to regenerate confusion matrix
         $scope.$watch('recognitionConfig', function(newVal, oldVal) {
           if (newVal !== oldVal) {
             $scope.generateConfusionMatrix();
           }
         }, true);
 
-// Generate Confusion Matrix
+        // Generate Confusion Matrix
         $scope.generateConfusionMatrix = function() {
 
           // Prepare headers from inputGestureIds with gesture aliases
@@ -646,16 +653,164 @@ angular.module('app').controller(
           });
 
           $scope.confusionMatrix = matrix;
+
+          const counts = [].concat(...matrix.slice(1).map(r => r.slice(1)));
+          $scope.min_count = Math.min(...counts.filter(c => c > 0));
+          $scope.max_count = Math.max(...counts);
+
+          $scope.generateGroupedConfusionMatrix();
           if (!$scope.$$phase) {
             $scope.$apply();
           }
         };
 
-// Corrected function to calculate matches from stored results
+        // Corrected function to calculate matches from stored results
         $scope.calculateGestureMatchCount = function(expectedId, recognizedId) {
           return ($scope.recognitionResults[expectedId] &&
               $scope.recognitionResults[expectedId][recognizedId]) ?
               $scope.recognitionResults[expectedId][recognizedId].count : 0;
         };
+
+        // $scope.group_regex = ".*-(?:click|switch|\\w+)_?(\\d+)$";
+        // $scope.group_regex = ".*-(?:\w+)?(\d+)$";
+        $scope.group_regex = "^(.+)_(\\d+)$";
+        // $scope.group_regex = /^(.*?)[-_]\d+$/;
+
+
+        $scope.cm_selector = "matched_count"; // Default to 'all'
+        $scope.cm_count_limit = 1;
+        $scope.min_count = 0;
+        $scope.max_count = 0;
+        $scope.groupedConfusionMatrix = [];
+
+/*
+
+        $scope.generateGroupedConfusionMatrix = function () {
+          console.log("generateGroupedConfusionMatrix");
+          if (!$scope.group_regex) {
+            $scope.groupedConfusionMatrix = [];
+            return;
+          }
+
+          const regex = new RegExp($scope.group_regex);
+          const inputGroups = {};
+          // Group input gestures by regex
+          $scope.recognitionConfig.inputGestureIds.forEach(id => {
+            const gesture = $scope.gestures.find(g => g.id === id);
+            const match = gesture.userAlias.match(regex);
+            if (match) {
+              const key = match[1];
+              inputGroups[key] = inputGroups[key] || [];
+              inputGroups[key].push(id);
+            }
+          });
+          console.log(inputGroups);
+          const headers = [].concat(Object.keys(inputGroups));
+          const matrix = [headers];
+
+          $scope.recognitionConfig.refGestureIds.forEach(refId => {
+            const refGesture = $scope.gestures.find(g => g.id === refId);
+            const row = [`${refGesture.id}: ${refGesture.userAlias}`];
+
+            Object.keys(inputGroups).forEach(groupKey => {
+              const gestureIds = inputGroups[groupKey];
+              const counts = gestureIds.map(inputId =>
+                  ($scope.recognitionResults[refId] && $scope.recognitionResults[refId][inputId])
+                      ? $scope.recognitionResults[refId][inputId].count
+                      : 0
+              );
+
+              let aggregatedCount = 0;
+              if ($scope.cm_selector === "all") {
+                aggregatedCount = counts.every(c => c >= $scope.cm_count_limit) ? 1 : 0;
+              } else if ($scope.cm_selector === "any") {
+                aggregatedCount = counts.some(c => c >= $scope.cm_count_limit) ? 1 : 0;
+              } else if ($scope.cm_selector === "none") {
+                aggregatedCount = counts.every(c => c < $scope.cm_count_limit) ? 1 : 0;
+              }
+
+              row.push(aggregatedCount);
+            });
+
+            matrix.push(row);
+          });
+
+          console.log(matrix);
+
+          $scope.groupedConfusionMatrix = matrix;
+        };
+*/
+
+
+        $scope.generateGroupedConfusionMatrix = function () {
+          if (!$scope.group_regex) {
+            $scope.groupedConfusionMatrix = [];
+            return;
+          }
+
+          let regex;
+          try {
+            regex = new RegExp($scope.group_regex);
+          } catch(e) {
+            console.error("Invalid regex:", e);
+            $scope.groupedConfusionMatrix = [];
+            return;
+          }
+
+          const inputGroups = {};
+
+          // Group input gestures by regex (correctly using capturing groups)
+          $scope.recognitionConfig.inputGestureIds.forEach(id => {
+            const gesture = $scope.gestures.find(g => g.id === id);
+            const alias = gesture.userAlias.trim();
+            const match = alias.match(regex);
+            const key = match ? (match[1] || alias) : alias; // match[1] if subgroup exists, else alias
+
+            inputGroups[key] = inputGroups[key] || [];
+            inputGroups[key].push(id);
+          });
+
+          const headers = [].concat(Object.keys(inputGroups));
+          const matrix = [headers];
+
+          $scope.recognitionConfig.refGestureIds.forEach(refId => {
+            const refGesture = $scope.gestures.find(g => g.id === refId);
+            const row = [`${refGesture.id}: ${refGesture.userAlias}`];
+
+            Object.keys(inputGroups).forEach(groupKey => {
+              const gestureIds = inputGroups[groupKey];
+              const counts = gestureIds.map(inputId =>
+                  ($scope.recognitionResults[refId] && $scope.recognitionResults[refId][inputId])
+                      ? $scope.recognitionResults[refId][inputId].count
+                      : 0
+              );
+
+              let aggregatedCount = 0;
+
+              switch($scope.cm_selector) {
+                case "all":
+                  aggregatedCount = counts.every(c => c >= $scope.cm_count_limit) ? 1 : 0;
+                  break;
+                case "any":
+                  aggregatedCount = counts.some(c => c >= $scope.cm_count_limit) ? 1 : 0;
+                  break;
+                case "none":
+                  aggregatedCount = counts.every(c => c < $scope.cm_count_limit) ? 1 : 0;
+                  break;
+                case "matched_count":
+                  aggregatedCount = counts.reduce((sum, c) => sum + (c >= $scope.cm_count_limit ? 1 : 0), 0);
+                  break;
+              }
+
+              row.push(aggregatedCount);
+            });
+
+            matrix.push(row);
+          });
+
+          $scope.groupedConfusionMatrix = matrix;
+        };
+
+        $scope.$watchGroup(['group_regex', 'cm_selector', 'cm_count_limit', 'confusionMatrix'], $scope.generateGroupedConfusionMatrix, true);
 
       }]);

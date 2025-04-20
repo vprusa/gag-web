@@ -212,8 +212,51 @@
                 </tr>
                 </tbody>
             </table>
-
         </div>
+
+        <!-- Inputs for grouping and aggregation -->
+        <div>
+            <label>Group Regex: <input type="text" ng-model="group_regex"/></label>
+            <label>
+                Aggregation Type:
+                <select ng-model="cm_selector">
+                    <option value="matched_count">Matched Count</option>
+                    <option value="all">All</option>
+                    <option value="any">Any</option>
+                    <option value="none">None</option>
+                </select>
+            </label>
+            <label>Count Limit: <input type="number" ng-model="cm_count_limit" min="0" /></label>
+            <label>Min Count: <input type="number" ng-model="min_count" disabled /></label>
+            <label>Max Count: <input type="number" ng-model="max_count" disabled /></label>
+        </div>
+
+        <!-- Grouped Confusion Matrix -->
+        <div style="overflow:auto; max-height:400px; margin-top:20px;" ng-if="groupedConfusionMatrix.length">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>
+                        Expected / Recognized (Grouped)
+                    </th>
+                    <th ng-repeat="header in groupedConfusionMatrix[0]" class="confusion-matrix-header">
+                        <div>
+                            {{header}}
+                        </div>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="row in groupedConfusionMatrix.slice(1) track by $index">
+                    <td ng-repeat="cell in row track by $index"
+                        ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}">
+                        {{cell}}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
     </div>
 
 

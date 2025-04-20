@@ -226,4 +226,146 @@ http://localhost:8080/gagweb/#!/recognize?refGestureIds=85,86&inputGestureIds=41
 http://localhost:8080/gagweb/#!/recognize?refGestureIds=85,86,87&inputGestureIds=41,42,43,44,45,46,47,48,49,50,61,62,63,64,65,66,67,68,69,70,71,357,358,359,360,361,362,363,364,365,366,367,368,369,370,371,372,373,374,375,376,377,378,379,380,381,382,383,384,385,386,387
 
 
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=85,86,87&inputGestureIds=41,42,43,44,45,46,47,48,49,50,61,62,63,64,65,67,68,69,70,71,357,358,359,360,361,362,363,364,365,366,367,368,369,370,371,372,373,374,375,376,377,378,379,380,381,382,383,384,385,386,387
+
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=85,86,87&inputGestureIds=41,42,43,44,45,46,47,48,49,50,61,62,63,64,65,67,68,69,70,71,358,359,360,361,362,363,364,365,366,367,368,369,370,371,372,373,374,375,376,377,378,379,380,381,382,383,384,385,386,387
+
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=85,86,87&inputGestureIds=41,42,43,44,45,46,47,48,49,50,61,62,63,64,65,67,68,69,70,71,358,359,360,361,362,363,364,365,366,367,368,369,370,371,372,373,374,375,376,377,378,379,380,381,382,383,384,385,386,387,390,391,392,393,394,395,396,397,398,399,400,401,402,403,404,405,406,407,408,409,410,411
+
+
+
+
+
+
+T-R-INDEX-U-D-3s
+
+T-R-SWITCH-3s
+
+T-R-SWITCH-BACK-3s
+
+T-R-OK-3s
+
+
+
+
+
+
+T-R-INDEX-U-D-3s
+
+T-R-SWITCH-3s
+
+T-R-SWITCH-BACK-3s
+
+T-R-OK-3s
+
+
+T-R-MAYEBE-M-L-M-R-M-3s
+
+T-R-SWITCH-FIST-RLS-SWITCH-3s
+
+t-r-bye-up-down-up-3s
+
+t-r-wave-up-m-l-m-r-m-3s
+
+
+
+python gesture_data_extractor.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id 50 --threshold-extraction 0.01 --threshold-recognition 0.8 --position 1 --start --end --suffix p_1_wswe_te_0.01 | tee logs/gesture_data_extractor.py.`now_str`.log
+
+
+
+
+
+mysql -u gagweb --password=password gagweb -se "SELECT id FROM Gesture WHERE userAlias REGEXP '^T-R-INDEX-U-D-3s_[1-9]$|^T-R-INDEX-U-D-3s_10$';"
+
+
+
+
+T-R-INDEX-U-D-3s
+
+T-R-SWITCH-3s
+
+T-R-SWITCH-BACK-3s
+
+T-R-OK-3s
+
+T-R-MAYEBE-M-L-M-R-M-3s
+
+T-R-SWITCH-FIST-RLS-SWITCH-3s
+
+t-r-bye-up-down-up-3s
+
+t-r-wave-up-m-l-m-r-m-3s
+
+
+python gesture_data_extractor.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id 50 --threshold-extraction 0.01 --threshold-recognition 0.8 --position 1 --start --end | tee logs/gesture_data_extractor.py.`now_str`.log
+
+
+
+T-R-OK-3s
+
+453,452,541,540,449,448,447,446,445,444
+
+
+
+
+# T-R-INDEX-U-D-3s
+mysql -u gagweb --password=password gagweb -se "SELECT id FROM Gesture WHERE userAlias REGEXP '^T-R-INDEX-U-D-3s_[1-9]$|^T-R-INDEX-U-D-3s_10$';"
+
+# T-R-SWITCH-3s
+mysql -u gagweb --password=password gagweb -se "SELECT id FROM Gesture WHERE userAlias REGEXP '^T-R-SWITCH-3s_[1-9]$|^T-R-SWITCH-3s_10$';"
+
+# T-R-SWITCH-BACK-3s
+mysql -u gagweb --password=password gagweb -se "SELECT id FROM Gesture WHERE userAlias REGEXP '^T-R-SWITCH-BACK-3s_[1-9]$|^T-R-SWITCH-BACK-3s_10$';"
+
+# T-R-OK-3s
+mysql -u gagweb --password=password gagweb -se "SELECT id FROM Gesture WHERE userAlias REGEXP '^T-R-OK-3s_[1-9]$|^T-R-OK-3s_10$';"
+
+# T-R-MAYEBE-M-L-M-R-M-3s
+mysql -u gagweb --password=password gagweb -se "SELECT id FROM Gesture WHERE userAlias REGEXP '^T-R-MAYEBE-M-L-M-R-M-3s_[1-9]$|^T-R-MAYEBE-M-L-M-R-M-3s_10$';"
+
+# T-R-SWITCH-FIST-RLS-SWITCH-3s
+mysql -u gagweb --password=password gagweb -se "SELECT id FROM Gesture WHERE userAlias REGEXP '^T-R-SWITCH-FIST-RLS-SWITCH-3s_[1-9]$|^T-R-SWITCH-FIST-RLS-SWITCH-3s_10$';"
+
+# t-r-bye-up-down-up-3s
+mysql -u gagweb --password=password gagweb -se "SELECT id FROM Gesture WHERE userAlias REGEXP '^t-r-bye-up-down-up-3s_[1-9]$|^t-r-bye-up-down-up-3s_10$';"
+# t-r-wave-up-m-l-m-r-m-3s
+mysql -u gagweb --password=password gagweb -se "SELECT id FROM Gesture WHERE userAlias REGEXP '^t-r-wave-up-m-l-m-r-m-3s_[1-9]$|^t-r-wave-up-m-l-m-r-m-3s_10$';"
+
+
+
+
+echo T-R-INDEX-U-D-3s
+mysql -u gagweb --password=password gagweb -se "SELECT id FROM Gesture WHERE userAlias REGEXP '^T-R-INDEX-U-D-3s_[1-9]$|^T-R-INDEX-U-D-3s_10$';"
+echo T-R-SWITCH-3s
+mysql -u gagweb --password=password gagweb -se "SELECT id FROM Gesture WHERE userAlias REGEXP '^T-R-SWITCH-3s_[1-9]$|^T-R-SWITCH-3s_10$';"
+echo T-R-SWITCH-BACK-3s
+mysql -u gagweb --password=password gagweb -se "SELECT id FROM Gesture WHERE userAlias REGEXP '^T-R-SWITCH-BACK-3s_[1-9]$|^T-R-SWITCH-BACK-3s_10$';"
+echo T-R-OK-3s
+mysql -u gagweb --password=password gagweb -se "SELECT id FROM Gesture WHERE userAlias REGEXP '^T-R-OK-3s_[1-9]$|^T-R-OK-3s_10$';"
+echo T-R-MAYEBE-M-L-M-R-M-3s
+mysql -u gagweb --password=password gagweb -se "SELECT id FROM Gesture WHERE userAlias REGEXP '^T-R-MAYEBE-M-L-M-R-M-3s_[1-9]$|^T-R-MAYEBE-M-L-M-R-M-3s_10$';"
+echo T-R-SWITCH-FIST-RLS-SWITCH-3s
+mysql -u gagweb --password=password gagweb -se "SELECT id FROM Gesture WHERE userAlias REGEXP '^T-R-SWITCH-FIST-RLS-SWITCH-3s_[1-9]$|^T-R-SWITCH-FIST-RLS-SWITCH-3s_10$';"
+echo t-r-bye-up-down-up-3s
+mysql -u gagweb --password=password gagweb -se "SELECT id FROM Gesture WHERE userAlias REGEXP '^t-r-bye-up-down-up-3s_[1-9]$|^t-r-bye-up-down-up-3s_10$';"
+echo t-r-wave-up-m-l-m-r-m-3s
+mysql -u gagweb --password=password gagweb -se "SELECT id FROM Gesture WHERE userAlias REGEXP '^t-r-wave-up-m-l-m-r-m-3s_[1-9]$|^t-r-wave-up-m-l-m-r-m-3s_10$';"
+
+
+
+
+
+
+for id in 61 62 63 ; do python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id $id --min-points 1 -v --threshold-recognition 0.9 --position 1 --start --end --align middle:1 --suffix p_1_wswe_te_calc_tr_0.9_middle_1  | tee logs-2025-03-28_17-11-15/gesture_data_extractor.2.py.`now_str`.log ; done
+
+
+
+python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id $id --min-points 1 -v --threshold-recognition 0.9 --position 1 --start --end --align middle:1 --suffix p_1_wswe_te_calc_tr_0.9_middle_1  | tee logs-2025-03-28_17-11-15/gesture_data_extractor.2.py.`now_str`.log
+
+
+
+python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id  --min-points 1 -v --threshold-recognition 0.9 --position 1 --start --end --align middle:1 | tee logs/gesture_data_extractor.2.py.`now_str`.log
+
 
