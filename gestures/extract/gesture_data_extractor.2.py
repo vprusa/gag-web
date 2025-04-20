@@ -22,6 +22,7 @@ def parse_arguments():
                         help="List of sensor positions to use")
     parser.add_argument("--threshold-extraction", type=float, default=0.1)
     parser.add_argument("--threshold-recognition", type=float, default=0.2)
+    parser.add_argument("--delay", type=float, default=0.1)
     parser.add_argument("--suffix", type=str, required=False)
     parser.add_argument("--start", action="store_true")
     parser.add_argument("--end", action="store_true")
@@ -88,106 +89,180 @@ def fetch_quaternion_data(conn, gesture_id, hand, positions, num_to_show=6):
 
     return df
 
-def detect_rotation_extremes_datalines(df, df_extremes, angle_threshold_deg=10.0, include_start=False, include_end=False, align=False):
+# def filter_datalines(df, df_extremes, angle_threshold_deg=10.0, include_start=False, include_end=False, align=False):
+#     if df is None or df.empty:
+#         return pd.DataFrame()
+# 
+#     angle_threshold_rad = np.radians(angle_threshold_deg)
+#     all_extremes = []
+# 
+#     # Step 1: detect extremes per position
+#     for pos in df['position'].unique():
+#         df_pos = df[df['position'] == pos].reset_index()
+#         quats = df_pos[['qx', 'qy', 'qz', 'qw']].values
+#         n = len(quats)
+#         extremes = []
+# 
+#         if n > 1:
+#             rot = R.from_quat(quats)
+#             for i in range(1, n):
+#                 dq = rot[i - 1].inv() * rot[i]
+#                 if np.linalg.norm(dq.as_rotvec()) > angle_threshold_rad:
+#                     extremes.append(i)
+# 
+#         if extremes:
+#             all_extremes.append(df_pos.loc[sorted(set(extremes))])
+# 
+#     if not all_extremes:
+#         return pd.DataFrame()
+#     else:
+#         # Step 2: combine extremes
+#         semiresult = pd.concat(all_extremes).sort_values(by=['position', 'timestamp']).reset_index(drop=True)
+# 
+#         # Step 3: apply --align to extremes
+#         if isinstance(align, str):
+#             if align.startswith(':'):
+#                 semiresult = pd.concat(df_extremes).sort_values(by=['position', 'timestamp']).reset_index(drop=True)
+#             else:
+#                 trimmed = []
+#                 for pos in semiresult['position'].unique():
+#                     df_pos = semiresult[semiresult['position'] == pos]
+#                     if align.startswith('top:'):
+#                         n = int(align.split(':')[1])
+#                         trimmed.append(df_pos.head(n))
+#                     elif align.startswith('bottom:'):
+#                         n = int(align.split(':')[1])
+#                         trimmed.append(df_pos.tail(n))
+#                     elif align.startswith('middle:'):
+#                         n = int(align.split(':')[1])
+#                         mid = len(df_pos) // 2
+#                         half = n // 2
+#                         start = max(mid - half, 0)
+#                         trimmed.append(df_pos.iloc[start:start + n])
+#                     elif align.startswith('nth:'):
+#                         nth = int(align.split(':')[1])
+#                         grouped = semiresult.groupby('position')
+#                         for pos_value, group in grouped:
+#                             sampled = group.reset_index(drop=True).iloc[[i for i in range(len(group)) if i % nth == 0]]
+#                             trimmed.append(sampled)
+#                     elif align.startswith('xnth:'):
+#                         nth = int(align.split(':')[1])
+#                         grouped = semiresult.groupby('position')
+#                         for pos_value, group in grouped:
+#                             sampled = group.reset_index(drop=True).iloc[[i for i in range(len(group)) if (i % math.ceil(len(group) / nth) == 0)]]
+#                             trimmed.append(sampled)
+#                     elif align.startswith('xnth-top:'):
+#                         nth = int(align.split(':')[1])
+#                         grouped = semiresult.groupby('position')
+#                         min_size = min(len(group) for _, group in grouped)
+#                         for pos_value, group in grouped:
+#                             trimmed_group = group.reset_index(drop=True).iloc[:min_size]
+#                             sampled = trimmed_group.iloc[
+#                                 [i for i in range(len(trimmed_group)) if i % max(1, math.ceil(min_size / nth)) == 0]]
+#                             trimmed.append(sampled)
+#                 semiresult = pd.concat(trimmed).sort_values(by=['position', 'timestamp']).reset_index(drop=True)
+# 
+#     # Step 4: add --start and --end if requested
+#     result = []
+#     for pos in df['position'].unique():
+#         df_pos = df[df['position'] == pos].sort_values(by='timestamp').reset_index()
+#         df_ext = semiresult[semiresult['position'] == pos]
+#         rows = []
+# 
+#         if include_start and not df_pos.empty:
+#             rows.append(df_pos.iloc[0])
+#         rows += [r for _, r in df_ext.iterrows()]
+#         if include_end and not df_pos.empty:
+#             rows.append(df_pos.iloc[-1])
+# 
+#         result.append(pd.DataFrame(rows))
+# 
+#     return pd.concat(result).drop_duplicates().sort_values(by=['position', 'timestamp']).reset_index(drop=True)
+# 
+# def filter_datalines(df, df_extremes, angle_threshold_deg=10.0, include_start=False, include_end=False, align=False):
+
+def filter_datalines(df, angle_threshold_deg=10.0, include_start=False, include_end=False, align=False):
     if df is None or df.empty:
         return pd.DataFrame()
 
-    angle_threshold_rad = np.radians(angle_threshold_deg)
-    all_extremes = []
+        # Ensure a consistent empty DataFrame with expected columns
+    semiresult = df.copy().iloc[0:0]
 
-    # Step 1: detect extremes per position
-    for pos in df['position'].unique():
-        df_pos = df[df['position'] == pos].reset_index()
-        quats = df_pos[['qx', 'qy', 'qz', 'qw']].values
-        n = len(quats)
-        extremes = []
-
-        if n > 1:
-            rot = R.from_quat(quats)
-            for i in range(1, n):
-                dq = rot[i - 1].inv() * rot[i]
-                if np.linalg.norm(dq.as_rotvec()) > angle_threshold_rad:
-                    extremes.append(i)
-
-        if extremes:
-            all_extremes.append(df_pos.loc[sorted(set(extremes))])
-
-    if not all_extremes:
-        return pd.DataFrame()
-
-    # Step 2: combine extremes
-    semiresult = pd.concat(all_extremes).sort_values(by=['position', 'timestamp']).reset_index(drop=True)
-
-    # Step 3: apply --align to extremes
+    # Apply --align filtering directly to the input DataFrame
     if isinstance(align, str):
-        if align.startswith(':'):
-            semiresult = pd.concat(df_extremes).sort_values(by=['position', 'timestamp']).reset_index(drop=True)
-        else:
-            trimmed = []
-            for pos in semiresult['position'].unique():
-                df_pos = semiresult[semiresult['position'] == pos]
-                if align.startswith('top:'):
-                    n = int(align.split(':')[1])
-                    trimmed.append(df_pos.head(n))
-                elif align.startswith('bottom:'):
-                    n = int(align.split(':')[1])
-                    trimmed.append(df_pos.tail(n))
-                elif align.startswith('middle:'):
-                    n = int(align.split(':')[1])
-                    mid = len(df_pos) // 2
-                    half = n // 2
-                    start = max(mid - half, 0)
-                    trimmed.append(df_pos.iloc[start:start + n])
-                elif align.startswith('nth:'):
-                    nth = int(align.split(':')[1])
-                    grouped = semiresult.groupby('position')
-                    for pos_value, group in grouped:
-                        sampled = group.reset_index(drop=True).iloc[[i for i in range(len(group)) if i % nth == 0]]
-                        trimmed.append(sampled)
-                elif align.startswith('xnth:'):
-                    nth = int(align.split(':')[1])
-                    grouped = semiresult.groupby('position')
-                    for pos_value, group in grouped:
-                        sampled = group.reset_index(drop=True).iloc[[i for i in range(len(group)) if (i % math.ceil(len(group) / nth) == 0)]]
-                        trimmed.append(sampled)
-                elif align.startswith('xnth-top:'):
-                    nth = int(align.split(':')[1])
-                    grouped = semiresult.groupby('position')
-                    min_size = min(len(group) for _, group in grouped)
-                    for pos_value, group in grouped:
-                        trimmed_group = group.reset_index(drop=True).iloc[:min_size]
-                        sampled = trimmed_group.iloc[
-                            [i for i in range(len(trimmed_group)) if i % max(1, math.ceil(min_size / nth)) == 0]]
-                        trimmed.append(sampled)
-            semiresult = pd.concat(trimmed).sort_values(by=['position', 'timestamp']).reset_index(drop=True)
+        trimmed = []
+        for pos in df['position'].unique():
+            df_pos = df[df['position'] == pos].sort_values(by='timestamp')
 
-    # Step 4: add --start and --end if requested
+            if align.startswith('top:'):
+                n = int(align.split(':')[1])
+                trimmed.append(df_pos.head(n))
+
+            elif align.startswith('bottom:'):
+                n = int(align.split(':')[1])
+                trimmed.append(df_pos.tail(n))
+
+            elif align.startswith('middle:'):
+                n = int(align.split(':')[1])
+                mid = len(df_pos) // 2
+                half = n // 2
+                start = max(mid - half, 0)
+                trimmed.append(df_pos.iloc[start:start + n])
+
+            elif align.startswith('nth:'):
+                nth = int(align.split(':')[1])
+                sampled = df_pos.iloc[::nth]
+                trimmed.append(sampled)
+
+            elif align.startswith('xnth:'):
+                nth = int(align.split(':')[1])
+                step = max(1, math.ceil(len(df_pos) / nth))
+                sampled = df_pos.iloc[::step]
+                trimmed.append(sampled)
+
+            elif align.startswith('xnth-top:'):
+                nth = int(align.split(':')[1])
+                min_size = min(len(group) for _, group in df.groupby('position'))
+                trimmed_group = df_pos.head(min_size)
+                step = max(1, math.ceil(min_size / nth))
+                sampled = trimmed_group.iloc[::step]
+                trimmed.append(sampled)
+
+        semiresult = pd.concat(trimmed).sort_values(by=['position', 'timestamp']).reset_index(drop=True)
+
+    # Always add --start and --end even if semiresult is empty
     result = []
     for pos in df['position'].unique():
-        df_pos = df[df['position'] == pos].sort_values(by='timestamp').reset_index()
-        df_ext = semiresult[semiresult['position'] == pos]
+        df_pos = df[df['position'] == pos].sort_values(by='timestamp').reset_index(drop=True)
         rows = []
 
         if include_start and not df_pos.empty:
             rows.append(df_pos.iloc[0])
-        rows += [r for _, r in df_ext.iterrows()]
+
+        if not semiresult.empty:
+            df_ext = semiresult[semiresult['position'] == pos]
+            rows += [r for _, r in df_ext.iterrows()]
+
         if include_end and not df_pos.empty:
             rows.append(df_pos.iloc[-1])
 
-        result.append(pd.DataFrame(rows))
+        if rows:  # Only append non-empty sets of rows
+            result.append(pd.DataFrame(rows))
 
-    return pd.concat(result).drop_duplicates().sort_values(by=['position', 'timestamp']).reset_index(drop=True)
+    if result:
+        return pd.concat(result).drop_duplicates().sort_values(by=['position', 'timestamp']).reset_index(drop=True)
+    else:
+        return pd.DataFrame(columns=df.columns)
 
 
-
-def create_new_gesture(conn, old_gesture_name, user_id, suffix, threshold_recognition):
+def create_new_gesture(conn, old_gesture_name, user_id, suffix, threshold_recognition, delay = 0.1):
     new_gesture_name = f"{old_gesture_name}-{suffix}"
     query = """
     INSERT INTO Gesture (dateCreated, delay, exec, isActive, isFiltered, shouldMatch, userAlias, user_id)
-    VALUES (NOW(), 1, NULL, 1, 1, %s, %s, %s);
+    VALUES (NOW(), %s, NULL, 1, 1, %s, %s, %s);
     """
     cursor = conn.cursor()
-    cursor.execute(query, (threshold_recognition, new_gesture_name, user_id))
+    cursor.execute(query, (delay, threshold_recognition, new_gesture_name, user_id))
     conn.commit()
     return cursor.lastrowid
 
@@ -250,7 +325,7 @@ def tests():
 
     def run_test_case(name, df, expected_len, include_start=False, include_end=False, align=False):
         try:
-            result = detect_rotation_extremes_datalines(df, angle_threshold_deg=10.0,
+            result = filter_datalines(df, angle_threshold_deg=10.0,
                                                         include_start=include_start,
                                                         include_end=include_end,
                                                         align=align)
@@ -295,7 +370,7 @@ def estimate_threshold(df, min_required=5, start=None, end=None, tol=0.1):
     while high - low > tol:
         mid = (high + low) / 2.0
         print(f"  Trying threshold: {round(mid, 3)}°")
-        result = detect_rotation_extremes_datalines(df, angle_threshold_deg=mid)
+        result = filter_datalines(df, angle_threshold_deg=mid)
         if result.empty or 'position' not in result.columns:
             break
         counts = result['position'].value_counts()
@@ -452,20 +527,20 @@ def main():
     # Assuming df_with_velocity is already computed and contains angular_velocity
     store_extreme_rotation_points_with_velocities(df_with_velocity)
     print(f"✅ df_with_velocity size: {len(df_with_velocity)} samples ")
-    df_extremes = find_rotation_extremes(df_with_velocity, order=3, threshold=args.threshold_extraction, align=args.align_find)
+    # df_extremes = find_rotation_extremes(df_with_velocity, order=3, threshold=args.threshold_extraction, align=args.align_find)
 
     threshold = estimate_threshold(df_quaternions, min_required=min_points) if args.threshold_extraction is None else args.threshold_extraction * 180
     threshold_rad = (threshold/180) * math.pi
     print(f" threshold: {threshold}, threshold_rad: {threshold_rad}")
-    df_final = detect_rotation_extremes_datalines(
+    df_final = filter_datalines(
         df_quaternions,
-        df_extremes,
+        # df_extremes,
         angle_threshold_deg=threshold,
         include_start=args.start,
         include_end=args.end,
         align=args.align
     )
-
+    print("Available columns in df_final:", df_final.columns.tolist())
     df_final = df_final.sort_values(by='timestamp').reset_index(drop=True)
 
     print(f"✅ Extracted {len(df_final)} important quaternion datalines.")
@@ -476,8 +551,10 @@ def main():
     if args.suffix:
         new_gesture_id = create_new_gesture(conn, df_quaternions.iloc[0]['userAlias'],
                                             int(df_quaternions.iloc[0]['user_id']), args.suffix,
-                                            # args.threshold_recognition)
-                                            threshold_rad)
+                                            args.threshold_recognition,
+                                            args.delay
+                                            )
+                                            # threshold_rad)
         store_extracted_datalines(conn, df_final, new_gesture_id)
         print(f"✅ Stored {len(df_final)} extracted points under new gesture ID: {new_gesture_id}")
 

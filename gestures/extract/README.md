@@ -358,6 +358,86 @@ mysql -u gagweb --password=password gagweb -se "SELECT id FROM Gesture WHERE use
 
 
 
+alias_list=(
+  "T-R-INDEX-U-D-3s"
+  "T-R-SWITCH-3s"
+  "T-R-SWITCH-BACK-3s"
+  "T-R-OK-3s"
+  "T-R-MAYEBE-M-L-M-R-M-3s"
+  "T-R-SWITCH-FIST-RLS-SWITCH-3s"
+  "t-r-bye-up-down-up-3s"
+  "t-r-wave-up-m-l-m-r-m-3s"
+)
+
+for alias in "${alias_list[@]}"; do
+  echo "Gesture userAlias: $alias"
+  ids=$(mysql -u gagweb --password=password gagweb -se "
+    SELECT GROUP_CONCAT(id SEPARATOR ',') FROM Gesture 
+    WHERE userAlias REGEXP '^${alias}_[1-9]$|^${alias}_10$';
+  ")
+  echo "$ids"
+  echo "-------------------------"
+done
+
+
+442,443,444,445,446,447,448,449,450,451,452,453
+
+
+
+Gesture userAlias: T-R-INDEX-U-D-3s
+412,413,414,415,416,417,418,419,420,421
+-------------------------
+Gesture userAlias: T-R-SWITCH-3s
+422,423,424,425,426,427,428,429,430,431
+-------------------------
+Gesture userAlias: T-R-SWITCH-BACK-3s
+432,433,434,435,436,437,438,439,440,441
+-------------------------
+
+Gesture userAlias: T-R-OK-3s
+444,445,446,447,448,449,450,451,452,453
+-------------------------
+Gesture userAlias: T-R-MAYEBE-M-L-M-R-M-3s
+402,403,404,405,406,407,408,409,410,411
+-------------------------
+Gesture userAlias: T-R-SWITCH-FIST-RLS-SWITCH-3s
+388,389,390,391,392,393,394,395,396,397,398,399,400,401
+-------------------------
+Gesture userAlias: t-r-bye-up-down-up-3s
+378,379,380,381,382,383,384,385,386,387
+-------------------------
+Gesture userAlias: t-r-wave-up-m-l-m-r-m-3s
+368,369,370,371,372,373,374,375,376,377
+-------------------------
+
+
+
+
+Gesture userAlias: T-R-INDEX-U-D-3s
+412,413,414,415,416,417,418,419,420,421
+-------------------------
+Gesture userAlias: T-R-SWITCH-3s
+422,423,424,425,426,427,428,429,430,431
+-------------------------
+Gesture userAlias: T-R-SWITCH-BACK-3s
+432,433,434,435,436,437,438,439,440,441
+-------------------------
+
+Gesture userAlias: T-R-OK-3s
+444,445,446,447,448,449,450,451,452,453
+-------------------------
+Gesture userAlias: T-R-MAYEBE-M-L-M-R-M-3s
+402,403,404,405,406,407,408,409,410,411
+-------------------------
+Gesture userAlias: t-r-bye-up-down-up-3s
+378,379,380,381,382,383,384,385,386,387
+-------------------------
+Gesture userAlias: t-r-wave-up-m-l-m-r-m-3s
+368,369,370,371,372,373,374,375,376,377
+-------------------------
+
+
+
 for id in 61 62 63 ; do python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id $id --min-points 1 -v --threshold-recognition 0.9 --position 1 --start --end --align middle:1 --suffix p_1_wswe_te_calc_tr_0.9_middle_1  | tee logs-2025-03-28_17-11-15/gesture_data_extractor.2.py.`now_str`.log ; done
 
 
@@ -367,5 +447,224 @@ python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password
 
 
 python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id  --min-points 1 -v --threshold-recognition 0.9 --position 1 --start --end --align middle:1 | tee logs/gesture_data_extractor.2.py.`now_str`.log
+
+
+
+python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id  --min-points 1 -v --threshold-recognition 0.9 --position 1 --start --end --align middle:1 | tee logs/gesture_data_extractor.2.py.`now_str`.log
+
+
+
+
+
+for alias in "${alias_list[@]}"; do
+  echo "Gesture userAlias: $alias"
+  ids=$(mysql -u gagweb --password=password gagweb -se "
+    SELECT GROUP_CONCAT(id SEPARATOR ',') FROM Gesture 
+    WHERE userAlias REGEXP '^${alias}_[1-9]$|^${alias}_10$';
+  ")
+  echo "$ids"
+
+  first_id=$(echo "$ids" | cut -d',' -f1)
+
+
+
+  if [ -z "$first_id" ]; then
+    echo "No IDs found for alias: $alias. Skipping script execution."
+  else
+    echo "Executing gesture_data_extractor.2.py with gesture_id: $first_id"
+    now_str=$(date '+%Y%m%d_%H%M%S')
+
+    python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id "$first_id" --min-points 1 -v --threshold-recognition 0.9 --position 1 --start --end --align xnth:1 | tee "logs/gesture_data_extractor.2.py.$now_str.log"
+  fi
+
+  echo "-------------------------"
+  
+done
+
+
+
+python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id "$first_id" --min-points 1 -v --threshold-recognition 0.9 --position 1 --start --end --align xnth:1 | tee "logs/gesture_data_extractor.2.py.$now_str.log"
+
+
+python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id "412" --min-points 1 -v --threshold-recognition 0.9 --position 1 --start --end --align xnth:1 | tee "logs/gesture_data_extractor.2.py.$now_str.log"
+
+
+
+
+
+python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id "444" --threshold-recognition 0.9 --position 0 1 2 3 4 5 --start --end --align xnth:1 --align-find top -v | tee logs/gesture_data_extractor.2.py.`now_str`.log
+
+
+python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id "402" --threshold-recognition 0.9 --position 0 1 2 3 4 5 --start --end --align xnth:1 --align-find top -v | tee logs/gesture_data_extractor.2.py.`now_str`.log
+
+
+python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id "388" --threshold-recognition 0.9 --position 0 1 2 3 4 5 --start --end --align xnth:1 --align-find top -v | tee logs/gesture_data_extractor.2.py.`now_str`.log
+
+python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id "378" --threshold-recognition 0.9 --position 0 1 2 3 4 5 --start --end --align xnth:1 --align-find top -v | tee logs/gesture_data_extractor.2.py.`now_str`.log
+
+python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id "368" --threshold-recognition 0.9 --position 0 1 2 3 4 5 --start --end --align xnth:1 --align-find top -v | tee logs/gesture_data_extractor.2.py.`now_str`.log
+
+
+
+
+
+python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id "444" --threshold-extraction 0.05 --position 0 1 2 3 4 5 --start --end --align xnth:4 --align-find top -v | tee logs/gesture_data_extractor.2.py.`now_str`.log
+
+python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id "402" --threshold-extraction 0.05 --position 0 1 2 3 4 5 --start --end --align xnth:4 --align-find top -v | tee logs/gesture_data_extractor.2.py.`now_str`.log
+
+python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id "392" --threshold-extraction 0.05 --position 0 1 2 3 4 5 --start --end --align xnth:4 --align-find top -v | tee logs/gesture_data_extractor.2.py.`now_str`.log
+
+python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id "378" --threshold-extraction 0.05 --position 0 1 2 3 4 5 --start --end --align xnth:4 --align-find top -v | tee logs/gesture_data_extractor.2.py.`now_str`.log
+
+python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id "368" --threshold-extraction 0.05 --position 0 1 2 3 4 5 --start --end --align xnth:4 --align-find top -v | tee logs/gesture_data_extractor.2.py.`now_str`.log
+
+
+
+
+python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id "444" --threshold-extraction 0.05 --position 0 1 2 3 4 5 --start --end --align xnth:4 --align-find top -v --suffix p_012345_wswe_xnth3_te_calc_tr_0.9 | tee logs/gesture_data_extractor.2.py.`now_str`.log
+
+python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id "402" --threshold-extraction 0.05 --position 0 1 2 3 4 5 --start --end --align xnth:4 --align-find top -v --suffix p_012345_wswe_xnth3_te_calc_tr_0.9 | tee logs/gesture_data_extractor.2.py.`now_str`.log
+
+python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id "392" --threshold-extraction 0.05 --position 0 1 2 3 4 5 --start --end --align xnth:4 --align-find top -v --suffix p_012345_wswe_xnth3_te_calc_tr_0.9 | tee logs/gesture_data_extractor.2.py.`now_str`.log
+
+python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id "378" --threshold-extraction 0.05 --position 0 1 2 3 4 5 --start --end --align xnth:4 --align-find top -v --suffix p_012345_wswe_xnth3_te_calc_tr_0.9 | tee logs/gesture_data_extractor.2.py.`now_str`.log
+
+python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id "368" --threshold-extraction 0.05 --position 0 1 2 3 4 5 --start --end --align xnth:4 --align-find top -v --suffix p_012345_wswe_xnth3_te_calc_tr_0.9 | tee logs/gesture_data_extractor.2.py.`now_str`.log
+
+
+python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id "444" --threshold-recognition 0.3 --position 0 1 2 3 4 5 --start --end --align xnth:4 --align-find top -v --suffix p_012345_wswe_xnth3_te_calc_tr_0.3 | tee logs/gesture_data_extractor.2.py.`now_str`.log
+
+python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id "402" --threshold-recognition 0.3 --position 0 1 2 3 4 5 --start --end --align xnth:4 --align-find top -v --suffix p_012345_wswe_xnth3_te_calc_tr_0.3 | tee logs/gesture_data_extractor.2.py.`now_str`.log
+
+python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id "392" --threshold-recognition 0.3 --position 0 1 2 3 4 5 --start --end --align xnth:4 --align-find top -v --suffix p_012345_wswe_xnth3_te_calc_tr_0.3 | tee logs/gesture_data_extractor.2.py.`now_str`.log
+
+python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id "378" --threshold-recognition 0.3 --position 0 1 2 3 4 5 --start --end --align xnth:4 --align-find top -v --suffix p_012345_wswe_xnth3_te_calc_tr_0.3 | tee logs/gesture_data_extractor.2.py.`now_str`.log
+
+python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id "368" --threshold-recognition 0.3 --position 0 1 2 3 4 5 --start --end --align xnth:4 --align-find top -v --suffix p_012345_wswe_xnth3_te_calc_tr_0.3 | tee logs/gesture_data_extractor.2.py.`now_str`.log
+
+
+
+
+
+Gesture userAlias: T-R-OK-3s
+444,445,446,447,448,449,450,451,452,453
+-------------------------
+Gesture userAlias: T-R-MAYEBE-M-L-M-R-M-3s
+402,403,404,405,406,407,408,409,410,411
+-------------------------
+Gesture userAlias: t-r-bye-up-down-up-3s
+378,379,380,381,382,383,384,385,386,387
+-------------------------
+Gesture userAlias: t-r-wave-up-m-l-m-r-m-3s
+368,369,370,371,372,373,374,375,376,377
+-------------------------
+
+
+
+
+python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id "444" --threshold-recognition 0.3 --position 0 1 2 3 4 5 --start --end --align xnth:4 --align-find top -v --suffix p_012345_wswe_xnth3_te_calc_tr_0.3 | tee logs/gesture_data_extractor.2.py.`now_str`.log
+
+python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id "402" --threshold-recognition 0.3 --position 0 1 2 3 4 5 --start --end --align xnth:4 --align-find top -v --suffix p_012345_wswe_xnth3_te_calc_tr_0.3 | tee logs/gesture_data_extractor.2.py.`now_str`.log
+
+python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id "392" --threshold-recognition 0.3 --position 0 1 2 3 4 5 --start --end --align xnth:4 --align-find top -v --suffix p_012345_wswe_xnth3_te_calc_tr_0.3 | tee logs/gesture_data_extractor.2.py.`now_str`.log
+
+python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id "378" --threshold-recognition 0.3 --position 0 1 2 3 4 5 --start --end --align xnth:4 --align-find top -v --suffix p_012345_wswe_xnth3_te_calc_tr_0.3 | tee logs/gesture_data_extractor.2.py.`now_str`.log
+
+python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id "368" --threshold-recognition 0.3 --position 0 1 2 3 4 5 --start --end --align xnth:4 --align-find top -v --suffix p_012345_wswe_xnth3_te_calc_tr_0.3 | tee logs/gesture_data_extractor.2.py.`now_str`.log
+
+
+
+
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=85,86,87&inputGestureIds=41,42,43,44,45,46,47,48,49,50,61,62,63,64,65,67,68,69,70,71,358,359,360,361,362,363,364,365,366,367,368,369,370,371,372,373,374,375,376,377,378,379,380,381,382,383,384,385,386,387,390,391,392,393,394,395,396,397,398,399,400,401,402,403,404,405,406,407,408,409,410,411
+
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=455,456,457&inputGestureIds=
+
+
+444,445,446,447,448,449,450,451,452,453
+402,403,404,405,406,407,408,409,410,411
+392,393,394,395,396,397,398,399,400,401
+378,379,380,381,382,383,384,385,386,387
+368,369,370,371,372,373,374,375,376,377
+
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=85,86,87&inputGestureIds=444,445,446,447,448,449,450,451,452,453,402,403,404,405,406,407,408,409,410,411,392,393,394,395,396,397,398,399,400,401,378,379,380,381,382,383,384,385,386,387,368,369,370,371,372,373,374,375,376,377
+
+
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=455,456,457&inputGestureIds=444,453,402,411,392,401,378,387,368,377
+
+
+
+444,453,402,411,392,401,378,387,368,377
+
+
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=455,456,457&inputGestureIds=444,453,402,411,392,401,378,387,368,377
+
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=455,456,457&inputGestureIds=444,453,402,411,392,401,378,387,368,377
+
+
+
+
+
+
+
+Gesture userAlias: T-R-OK-3s
+444,445,446,447,448,449,450,451,452,453
+-------------------------
+Gesture userAlias: T-R-MAYEBE-M-L-M-R-M-3s
+402,403,404,405,406,407,408,409,410,411
+-------------------------
+Gesture userAlias: t-r-bye-up-down-up-3s
+378,379,380,381,382,383,384,385,386,387
+-------------------------
+Gesture userAlias: t-r-wave-up-m-l-m-r-m-3s
+368,369,370,371,372,373,374,375,376,377
+-------------------------
+
+
+
+
+python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id "444" --threshold-recognition 0.3 --position 0 1 2 3 4 5 --start --end --align xnth:4 --align-find top -v --suffix p_012345_wswe_xnth3_te_calc_tr_0.3 | tee logs/gesture_data_extractor.2.py.`now_str`.log
+
+python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id "402" --threshold-recognition 0.3 --position 0 1 2 3 4 5 --start --end --align xnth:4 --align-find top -v --suffix p_012345_wswe_xnth3_te_calc_tr_0.3 | tee logs/gesture_data_extractor.2.py.`now_str`.log
+
+python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id "378" --threshold-recognition 0.3 --position 0 1 2 3 4 5 --start --end --align xnth:4 --align-find top -v --suffix p_012345_wswe_xnth3_te_calc_tr_0.3 | tee logs/gesture_data_extractor.2.py.`now_str`.log
+
+python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id "368" --threshold-recognition 0.3 --position 0 1 2 3 4 5 --start --end --align xnth:4 --align-find top -v --suffix p_012345_wswe_xnth3_te_calc_tr_0.3 | tee logs/gesture_data_extractor.2.py.`now_str`.log
+
+
+
+
+
+
+localhost:8080/gagweb/#!/recognize?refGestureIds=455,456,457,458&inputGestureIds=444,453,402,411,378,387,368,377
+
+
+localhost:8080/gagweb/#!/recognize?refGestureIds=455,456,457,458&inputGestureIds=444,453,402,411,378,387,368,377
+
+
+
+
+python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id "444" --threshold-recognition 0.5 --position 0 1 2 3 4 5 --start --end --align xnth:4 --align-find top -v --suffix p_012345_wswe_xnth3_te_calc_tr_0.5 | tee logs/gesture_data_extractor.2.py.`now_str`.log
+
+python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id "402" --threshold-recognition 0.5 --position 0 1 2 3 4 5 --start --end --align xnth:4 --align-find top -v --suffix p_012345_wswe_xnth3_te_calc_tr_0.5 | tee logs/gesture_data_extractor.2.py.`now_str`.log
+
+python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id "378" --threshold-recognition 0.5 --position 0 1 2 3 4 5 --start --end --align xnth:4 --align-find top -v --suffix p_012345_wswe_xnth3_te_calc_tr_0.5 | tee logs/gesture_data_extractor.2.py.`now_str`.log
+
+python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id "368" --threshold-recognition 0.5 --position 0 1 2 3 4 5 --start --end --align xnth:4 --align-find top -v --suffix p_012345_wswe_xnth3_te_calc_tr_0.5 | tee logs/gesture_data_extractor.2.py.`now_str`.log
+
+
+
+
+
+localhost:8080/gagweb/#!/recognize?refGestureIds=455,456,458,459&inputGestureIds=444,453,402,411,378,387,368,377
+
+460,461,462,463
+
+
 
 
