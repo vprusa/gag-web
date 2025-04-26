@@ -1,0 +1,78 @@
+<div class="card">
+<!--	<script src="./js/gag-web-scala-fastopt.js"></script>-->
+	<script src="./public/gag-web-scala-fastopt.js"></script>
+	<style>
+		#container canvas {position: relative;}
+		#container {text-align: center;}
+		.ui.inverted.green.segment { background: linear-gradient(60deg, #ab47bc, #8e24aa) !important;}
+	</style>
+
+	<script>
+		// old visualization
+		/*
+		var handVisualization;
+		$( document ).ready(function() {
+			$('#container').hover(function() {
+				$('body').css('overflow','hidden');
+			}, function() {
+				$('body').css('overflow','visible');
+			});
+			//if(handVisualization == null){
+				handVisualization = HandsVisualization();
+				//handVisualization.numberOfHandsPairs$2 = $('#vis-numberOfHandsPairs').val();
+				console.log("handVisualization.numberOfHandsPairs");
+				console.log(handVisualization.numberOfHandsPairs);
+				//handVisualization.scene$2.setNumberOfHandsPairs($('#vis-numberOfHandsPairs').val());
+				console.log("$('#vis-numberOfHandsPairs').val()");
+				var numberOfHandsPairs = $('#vis-numberOfHandsPairs').val();
+				console.log(numberOfHandsPairs);
+				handVisualization.setNumberOfHandsPairs(parseInt(numberOfHandsPairs));
+				handVisualization.main(); //activate ScalaJS main class
+
+			//}
+	    });
+	    */
+		// TODO new visualization
+	</script>
+
+	<div class="card-header card-header-primary">
+		<h4 class="card-title ">Live</h4>
+		<p class="card-category">{{selectedGestureDetail.info}}</p>
+	</div>
+	<div class="card-body">
+		<div class="" ng-if="ble.isConnected"></div>
+
+		<div  class="pusher"> <!--it will be pushed by a sidebar-->
+			<main id="main" class="ui green tertiary inverted segment">
+				<section class="ui blue pilled message">
+					Vis
+				</section>
+				<section id="container"></section>
+			</main>
+		</div>
+		<style>
+			progress::-webkit-progress-value { background: #ab47bc; }
+			progress[value]::-webkit-progress-bar {
+				background-color: #eee;
+				border-radius: 2px;
+				box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25) inset;
+			}
+		</style>
+		<progress style="background: #ab47bc; width: 100%; height: 5px;" id="player-progress" max="100" value="{{vis.currentGesture.progressPercentage*100.0}}"></progress>
+
+		<table class="table">
+				<thead class="text-primary">
+					<th>ID</th>
+					<th>Time</th>
+					<th>Position</th>
+				</thead>
+				<tbody>
+					<tr ng-repeat="item in selectedGestureList.data">
+						<td>{{item.id}}</td>
+						<td>{{item.t | date: 'yyyy-MM-dd HH:MM'}}</td>
+						<td>{{item.p}}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>

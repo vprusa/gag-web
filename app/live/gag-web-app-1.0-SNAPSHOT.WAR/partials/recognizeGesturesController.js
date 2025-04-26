@@ -306,8 +306,8 @@ angular.module('app').controller(
 
         // $scope.fakeLoopModifier = 1.0;
         // $scope.fakeLoopModifier = 0.5;
-        // $scope.fakeLoopModifier = 0.25;
-        $scope.fakeLoopModifier = 0.1;
+        $scope.fakeLoopModifier = 0.25;
+        // $scope.fakeLoopModifier = 0.1;
 
         $scope.fakingLoop = function (curIndex) {
           if ($scope.isBLEIdle()) {
@@ -527,6 +527,8 @@ angular.module('app').controller(
           return {};
         };
 
+        let defaultDelay = 500;
+
         $scope.runMultipleAutomatedTests = async function () {
           log("Starting recognition: " + $location.search().refGestureIds + " against " + $location.search().inputGestureIds);
           $scope.resetCellStatus();
@@ -545,16 +547,16 @@ angular.module('app').controller(
               });
           console.log("Deactivating active gestures... - done");
 
-          await delay(1000);
+          await delay(defaultDelay);
           $scope.stopRecognizing();
-          await delay(1000);
+          await delay(defaultDelay);
           $scope.startRecognizing();
-          await delay(1000);
+          await delay(defaultDelay);
           await Promise.all(deactivatePromises);
           for (let refGestureId of $scope.recognitionConfig.refGestureIds) {
             log("Recognizing gesture: " + refGestureId);
             await $scope.setActivateGesture(refGestureId, true);
-            await delay(1000);
+            await delay(defaultDelay);
             console.log($scope.recognitionConfig.inputGestureIds);
             for (let inputGestureId of $scope.recognitionConfig.inputGestureIds) {
               log("Recognizing at gesture: " + inputGestureId);
@@ -565,20 +567,20 @@ angular.module('app').controller(
               // $scope.recognitionResults[refGestureId] = $scope.recognitionResults[refGestureId] || {};
 
               $scope.startRecognizing();
-              await delay(1000);
+              await delay(defaultDelay);
               // console.log("1");
               $scope.startFakingBLE();
               // console.log("2");
               while ($scope.isBLEFaking()) {
                 // console.log("2.1");
-                await delay(1000);
+                await delay(defaultDelay);
                 console.log("2.2");
               }
 
               // console.log("3");
-              await delay(1000);
+              await delay(defaultDelay);
               $scope.stopRecognizing();
-              await delay(1000);
+              await delay(defaultDelay);
               if (typeof $scope.recognitionResults === 'undefined'
                   || typeof $scope.recognitionResults[refGestureId] === 'undefined'
                   || typeof $scope.recognitionResults[refGestureId][inputGestureId] === 'undefined'
@@ -591,22 +593,22 @@ angular.module('app').controller(
                 console.log("idk wtf");
                 console.log($scope.recognitionResults);
               }
-              await delay(1000);
+              await delay(defaultDelay);
               $scope.lastRecognizedGesture.id = null;
               $scope.generateConfusionMatrix();
-              await delay(1000);
+              await delay(defaultDelay);
 
             }
-            await delay(1000);
+            await delay(defaultDelay);
             $scope.stopRecognizing();
-            await delay(1000);
+            await delay(defaultDelay);
             console.log("Last recognized ID:", $scope.lastRecognizedGestureId);
             console.log("Last recognized ID:", $scope.lastRecognizedGesture.id);
             console.log("Last recognized ID:", $scope.lastRecognizedGesture.count);
             await $scope.setActivateGesture(refGestureId, false);
-            await delay(1000);
+            await delay(defaultDelay);
             await Promise.all(deactivatePromises);
-            await delay(1500);
+            await delay(defaultDelay + 500);
             // $scope.lastRecognizedGestureId = null;
             //  await $scope.switchActivateGesture(refGestureId, true);
             $scope.generateConfusionMatrix();

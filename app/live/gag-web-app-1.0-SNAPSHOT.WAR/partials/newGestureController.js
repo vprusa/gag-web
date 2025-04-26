@@ -84,7 +84,11 @@ angular
           hand: "1"
         };
 
-        // Warning ... idk it is broken using ng-model displays additional broken option...
+        if (typeof $location.search().userAlias !== 'undefined') {
+          $scope.data.currentGesture.userAlias = $location.search().userAlias;
+        }
+
+          // Warning ... idk it is broken using ng-model displays additional broken option...
         $scope.onSelectChange = function () {
           // $scope.data.selectedGesture = $("#toSelectGesture option:selected").value();
           $scope.data.currentGesture = $scope.data.gesturesList[$scope.data.selectedGesture - 1];
@@ -133,7 +137,7 @@ angular
 
 
         $scope.autoRecordConfig = {
-          expectedTime: 5000,
+          expectedTime: 3000,
           countTo: 10,
           indexFrom: 1,
           delay: 2000,

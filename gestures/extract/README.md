@@ -663,8 +663,627 @@ python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password
 
 localhost:8080/gagweb/#!/recognize?refGestureIds=455,456,458,459&inputGestureIds=444,453,402,411,378,387,368,377
 
-460,461,462,463
+
+localhost:8080/gagweb/#!/recognize?refGestureIds=455,456,458,459&inputGestureIds=444,453,402,411,378,387,368,377
+
+localhost:8080/gagweb/#!/recognize?refGestureIds=455,456,458,459,460,461,462,463&inputGestureIds=444,453,402,411,378,387,368,377
+
+
+Gesture userAlias: T-R-OK-3s
+444,445,446,447,448,449,450,451,452,453
+-------------------------
+Gesture userAlias: T-R-MAYEBE-M-L-M-R-M-3s
+402,403,404,405,406,407,408,409,410,411
+-------------------------
+Gesture userAlias: t-r-bye-up-down-up-3s
+378,379,380,381,382,383,384,385,386,387
+-------------------------
+Gesture userAlias: t-r-wave-up-m-l-m-r-m-3s
+368,369,370,371,372,373,374,375,376,377
+-------------------------
+
+localhost:8080/gagweb/#!/recognize?refGestureIds=455,456,458,459,460,461,462,463&inputGestureIds=444,445,446,447,448,449,450,451,452,453,402,403,404,405,406,407,408,409,410,411,378,379,380,381,382,383,384,385,386,387,368,369,370,371,372,373,374,375,376,377
 
 
 
 
+
+
+
+| 454 | 2025-04-20 21:49:23.000000 |     1 | NULL |        1 |          1 |         0.3 | T-R-OK-3s_1-p_012345_wswe_xnth3_te_calc_tr_0.3                     |       1 |
+| 455 | 2025-04-20 21:51:37.000000 |   0.1 | NULL |        0 |          1 |         0.3 | T-R-OK-3s_1-p_012345_wswe_xnth3_te_calc_tr_0.3                     |       1 |
+| 456 | 2025-04-20 21:51:56.000000 |   0.1 | NULL |        0 |          1 |         0.3 | T-R-MAYEBE-M-L-M-R-M-3s_1-p_012345_wswe_xnth3_te_calc_tr_0.3       |       1 |
+| 457 | 2025-04-20 21:52:04.000000 |   0.1 | NULL |        0 |          1 |         0.3 | T-R-SWITCH-FIST-RLS-SWITCH-3s_1-p_012345_wswe_xnth3_te_calc_tr_0.3 |       1 |
+| 458 | 2025-04-20 21:52:06.000000 |   0.1 | NULL |        0 |          1 |         0.3 | t-r-bye-up-down-up-3s_1-p_012345_wswe_xnth3_te_calc_tr_0.3         |       1 |
+| 459 | 2025-04-20 21:52:09.000000 |   0.1 | NULL |        0 |          1 |         0.3 | t-r-wave-up-m-l-m-r-m-3s_1-p_012345_wswe_xnth3_te_calc_tr_0.3      |       1 |
+| 460 | 2025-04-20 22:13:50.000000 |   0.1 | NULL |        0 |          1 |         0.5 | T-R-OK-3s_1-p_012345_wswe_xnth3_te_calc_tr_0.5                     |       1 |
+| 461 | 2025-04-20 22:13:52.000000 |   0.1 | NULL |        0 |          1 |         0.5 | T-R-MAYEBE-M-L-M-R-M-3s_1-p_012345_wswe_xnth3_te_calc_tr_0.5       |       1 |
+| 462 | 2025-04-20 22:13:54.000000 |   0.1 | NULL |        1 |          1 |         0.5 | t-r-bye-up-down-up-3s_1-p_012345_wswe_xnth3_te_calc_tr_0.5         |       1 |
+| 463 | 2025-04-20 22:13:57.000000 |   0.1 | NULL |        0 |          1 |         0.5 | t-r-wave-up-m-l-m-r-m-3s_1-p_012345_wswe_xnth3_te_calc_tr_0.5      |       1 |
+
+
+
+
+
+| 455 | 2025-04-20 21:51:37.000000 |   0.1 | NULL |        0 |          1 |         0.3 | T-R-OK-3s_1-p_012345_wswe_xnth3_te_calc_tr_0.3                     |       1 |
+| 456 | 2025-04-20 21:51:56.000000 |   0.1 | NULL |        0 |          1 |         0.3 | T-R-MAYEBE-M-L-M-R-M-3s_1-p_012345_wswe_xnth3_te_calc_tr_0.3       |       1 |
+| 458 | 2025-04-20 21:52:06.000000 |   0.1 | NULL |        0 |          1 |         0.3 | t-r-bye-up-down-up-3s_1-p_012345_wswe_xnth3_te_calc_tr_0.3         |       1 |
+| 459 | 2025-04-20 21:52:09.000000 |   0.1 | NULL |        0 |          1 |         0.3 | t-r-wave-up-m-l-m-r-m-3s_1-p_012345_wswe_xnth3_te_calc_tr_0.3      |       1 |
+| 460 | 2025-04-20 22:13:50.000000 |   0.1 | NULL |        0 |          1 |         0.5 | T-R-OK-3s_1-p_012345_wswe_xnth3_te_calc_tr_0.5                     |       1 |
+| 461 | 2025-04-20 22:13:52.000000 |   0.1 | NULL |        0 |          1 |         0.5 | T-R-MAYEBE-M-L-M-R-M-3s_1-p_012345_wswe_xnth3_te_calc_tr_0.5       |       1 |
+| 462 | 2025-04-20 22:13:54.000000 |   0.1 | NULL |        1 |          1 |         0.5 | t-r-bye-up-down-up-3s_1-p_012345_wswe_xnth3_te_calc_tr_0.5         |       1 |
+| 463 | 2025-04-20 22:13:57.000000 |   0.1 | NULL |        0 |          1 |         0.5 | t-r-wave-up-m-l-m-r-m-3s_1-p_012345_wswe_xnth3_te_calc_tr_0.5      |       1 |
+
+
+'T-R-OK-3s_1-p_012345_wswe_xnth3_te_calc_tr_0.3' ('id' 455)
+'T-R-MAYEBE-M-L-M-R-M-3s_1-p_012345_wswe_xnth3_te_calc_tr_0.3' ('id' 456)
+'t-r-bye-up-down-up-3s_1-p_012345_wswe_xnth3_te_calc_tr_0.3' ('id' 458)
+'t-r-wave-up-m-l-m-r-m-3s_1-p_012345_wswe_xnth3_te_calc_tr_0.3' ('id' 459)
+'T-R-OK-3s_1-p_012345_wswe_xnth3_te_calc_tr_0.5' ('id' 460)
+'T-R-MAYEBE-M-L-M-R-M-3s_1-p_012345_wswe_xnth3_te_calc_tr_0.5' ('id' 461)
+'t-r-bye-up-down-up-3s_1-p_012345_wswe_xnth3_te_calc_tr_0.5' ('id' 462)
+'t-r-wave-up-m-l-m-r-m-3s_1-p_012345_wswe_xnth3_te_calc_tr_0.5' ('id' 463)
+
+
+
+
+T-R-OK-3s_1-p_012345_wswe_xnth3_te_calc_tr_0.3               
+T-R-MAYEBE-M-L-M-R-M-3s_1-p_012345_wswe_xnth3_te_calc_tr_0.3 
+t-r-bye-up-down-up-3s_1-p_012345_wswe_xnth3_te_calc_tr_0.3   
+t-r-wave-up-m-l-m-r-m-3s_1-p_012345_wswe_xnth3_te_calc_tr_0.3
+T-R-OK-3s_1-p_012345_wswe_xnth3_te_calc_tr_0.5               
+T-R-MAYEBE-M-L-M-R-M-3s_1-p_012345_wswe_xnth3_te_calc_tr_0.5 
+t-r-bye-up-down-up-3s_1-p_012345_wswe_xnth3_te_calc_tr_0.5   
+t-r-wave-up-m-l-m-r-m-3s_1-p_012345_wswe_xnth3_te_calc_tr_0.5
+
+
+
+
+# Z
+
+
+
+python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id "444" --threshold-recognition 0.3 --position 0 1 2 3 4 5 --start --end --align xnth:4 --align-find top -v --suffix p_012345_wswe_xnth3_te_calc_tr_0.3 | tee logs/gesture_data_extractor.2.py.`now_str`.log
+
+python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id "444" --threshold-recognition 0.3 --position 0 1 2 3 4 5 --start --end --align xnth:4 --align-find top -v --suffix p_012345_wswe_xnth3_te_calc_tr_0.3 | tee logs/gesture_data_extractor.2.py.`now_str`.log
+
+|  465 | 2025-04-25 18:01:28.641000 |     0 | NULL |     NULL |          0 |           0 | T-R-INDEX-U-D_1                                                    |       1 |          164 |
+
+|  515 | 2025-04-25 19:16:19.931000 |     0 | NULL |     NULL |          0 |           0 | T-R-EACH-FINGER-U-D_1                                              |       1 |          168 |
+
+|  566 | 2025-04-25 22:22:55.892000 |     0 | NULL |     NULL |          0 |           0 | Z-R-WAVE-L45-M-R45-M_1                                             |       1 |          148 |
+
+|  631 | 2025-04-25 23:16:23.180000 |     0 | NULL |     NULL |          0 |           0 | Z-R-SWITCH-Y180_1                                                  |       1 |          178 |
+
+|  689 | 2025-04-26 12:58:09.537000 |     0 | NULL |     NULL |          0 |           0 | Z-R-OK_1                                                           |       1 |          165 |
+
+|  739 | 2025-04-26 13:07:43.125000 |     0 | NULL |     NULL |          0 |           0 | Z-R-SWITCH-AND-BACK_1                                              |       1 |          166 |
+
+|  806 | 2025-04-26 14:59:04.770000 |     0 | NULL |     NULL |          0 |           0 | Z-R-FIST_1                                                         |       1 |          189 |
+
+|  866 | 2025-04-26 15:35:01.047000 |     0 | NULL |     NULL |          0 |           0 | Z-R-SWITCH-FIST_1                                                  |       1 |          191 |
+
+|  916 | 2025-04-26 16:40:17.186000 |     0 | NULL |     NULL |          0 |           0 | Z-R-MAYBE-L-M-R-M_1                                                |       1 |          189 |
+
+|  968 | 2025-04-26 16:48:06.512000 |     0 | NULL |     NULL |          0 |           0 | Z-R-VICTORIA_1                                                     |       1 |          180 
+
+
+
+
+|  465 | 2025-04-25 18:01:28.641000 |     0 | NULL |     NULL |          0 |           0 | T-R-INDEX-U-D_1                                                    |       1 |          164 |
+|  515 | 2025-04-25 19:16:19.931000 |     0 | NULL |     NULL |          0 |           0 | T-R-EACH-FINGER-U-D_1                                              |       1 |          168 |
+|  566 | 2025-04-25 22:22:55.892000 |     0 | NULL |     NULL |          0 |           0 | Z-R-WAVE-L45-M-R45-M_1                                             |       1 |          148 |
+|  631 | 2025-04-25 23:16:23.180000 |     0 | NULL |     NULL |          0 |           0 | Z-R-SWITCH-Y180_1                                                  |       1 |          178 |
+|  689 | 2025-04-26 12:58:09.537000 |     0 | NULL |     NULL |          0 |           0 | Z-R-OK_1                                                           |       1 |          165 |
+|  739 | 2025-04-26 13:07:43.125000 |     0 | NULL |     NULL |          0 |           0 | Z-R-SWITCH-AND-BACK_1                                              |       1 |          166 |
+|  806 | 2025-04-26 14:59:04.770000 |     0 | NULL |     NULL |          0 |           0 | Z-R-FIST_1                                                         |       1 |          189 |
+|  866 | 2025-04-26 15:35:01.047000 |     0 | NULL |     NULL |          0 |           0 | Z-R-SWITCH-FIST_1                                                  |       1 |          191 |
+|  916 | 2025-04-26 16:40:17.186000 |     0 | NULL |     NULL |          0 |           0 | Z-R-MAYBE-L-M-R-M_1                                                |       1 |          189 |
+|  968 | 2025-04-26 16:48:06.512000 |     0 | NULL |     NULL |          0 |           0 | Z-R-VICTORIA_1                                                     |       1 |          180 |
+
+
+|  465 | 2025-04-25 18:01:28.641000 |     0 | NULL |     NULL |          0 |           0 | T-R-INDEX-U-D_1                                                    |       1 |          164 |
+|  515 | 2025-04-25 19:16:19.931000 |     0 | NULL |     NULL |          0 |           0 | T-R-EACH-FINGER-U-D_1                                              |       1 |          168 |
+|  566 | 2025-04-25 22:22:55.892000 |     0 | NULL |     NULL |          0 |           0 | Z-R-WAVE-L45-M-R45-M_1                                             |       1 |          148 |
+|  631 | 2025-04-25 23:16:23.180000 |     0 | NULL |     NULL |          0 |           0 | Z-R-SWITCH-Y180_1                                                  |       1 |          178 |
+|  689 | 2025-04-26 12:58:09.537000 |     0 | NULL |     NULL |          0 |           0 | Z-R-OK_1                                                           |       1 |          165 |
+|  739 | 2025-04-26 13:07:43.125000 |     0 | NULL |     NULL |          0 |           0 | Z-R-SWITCH-AND-BACK_1                                              |       1 |          166 |
+|  806 | 2025-04-26 14:59:04.770000 |     0 | NULL |     NULL |          0 |           0 | Z-R-FIST_1                                                         |       1 |          189 |
+|  866 | 2025-04-26 15:35:01.047000 |     0 | NULL |     NULL |          0 |           0 | Z-R-SWITCH-FIST_1                                                  |       1 |          191 |
+|  916 | 2025-04-26 16:40:17.186000 |     0 | NULL |     NULL |          0 |           0 | Z-R-MAYBE-L-M-R-M_1                                                |       1 |          189 |
+|  968 | 2025-04-26 16:48:06.512000 |     0 | NULL |     NULL |          0 |           0 | Z-R-VICTORIA_1                                                     |       1 |          180 |
+
+
+
+
+
+
+465 | T-R-INDEX-U-D_1        | 164
+515 | T-R-EACH-FINGER-U-D_1  | 168
+566 | Z-R-WAVE-L45-M-R45-M_1 | 148
+631 | Z-R-SWITCH-Y180_1      | 178
+689 | Z-R-OK_1               | 165
+739 | Z-R-SWITCH-AND-BACK_1  | 166
+806 | Z-R-FIST_1             | 189
+866 | Z-R-SWITCH-FIST_1      | 191
+916 | Z-R-MAYBE-L-M-R-M_1    | 189
+968 | Z-R-VICTORIA_1         | 180
+
+
+
+
+T-R-INDEX-U-D,T-R-EACH-FINGER-U-D,Z-R-WAVE-L45-M-R45-M,Z-R-SWITCH-Y180,Z-R-OK,Z-R-SWITCH-AND-BACK,Z-R-FIST,Z-R-SWITCH-FIST,Z-R-MAYBE-L-M-R-M,Z-R-VICTORIA
+
+
+465 515 566 631 689 739 806 866 916 968
+
+for i in 465 515 566 631 689 739 806 866 916 968 ; do echo $i ; done
+
+python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id "444" --threshold-recognition 0.3 --position 0 1 2 3 4 5 --start --end --align xnth:4 --align-find top -v --suffix p_012345_wswe_xnth3_te_calc_tr_0.3 | tee logs/gesture_data_extractor.2.py.`now_str`.log
+
+
+for i in 465 515 566 631 689 739 806 866 916 968 ; do echo $i ; python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id "444" --threshold-recognition 0.3 --position 0 1 2 3 4 5 --start --end --align xnth:4 --align-find top -v --suffix p_012345_wswe_xnth3_te_calc_tr_0.3 | tee logs/gesture_data_extractor.2.py.`now_str`.log ; done
+
+
+for i in 465 515 566 631 689 739 806 866 916 968 ; do echo $i ; python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id "$i" --threshold-recognition 0.3 --position 0 1 2 3 4 5 --start --end --align xnth:4 --align-find top -v --suffix p_012345_xnth3_wswe_tr_0.3 | tee logs/gesture_data_extractor.2.py.`now_str`.log ; done
+
+
+for i in 465 515 566 631 689 739 806 866 916 968 ; do echo $i ; python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id "$i" --threshold-recognition 0.3 --position 0 1 2 3 4 5 --start --end --align xnth:4 --align-find top -v | tee logs/gesture_data_extractor.2.py.`now_str`.log ; done
+
+
+for i in 465 515 566 631 689 739 806 866 916 968 ; do echo $i ; python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id "$i" --threshold-recognition 0.4 --position 0 1 2 3 4 5 --start --end --align xnth:4 --align-find top -v | tee logs/gesture_data_extractor.2.py.`now_str`.log ; done
+
+
+
+
+
+1027
+
+for i in {1018..1027} ; do echo -n "$i," ; done
+
+1018,1019,1020,1021,1022,1023,1024,1025,1026,1027
+
+
+
+for i in 465 515 566 631 689 739 806 866 916 968 ; do echo $i ; python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id "$i" --threshold-recognition 0.4 --position 0 1 2 3 4 5 --start --end --align xnth:4 --align-find top -v --suffix p_012345_xnth3_wswe_tr_0.4 | tee logs/gesture_data_extractor.2.py.`now_str`.log ; done
+
+ for i in {1028..1037} ; do echo -n "$i," ; done
+
+1028,1029,1030,1031,1032,1033,1034,1035,1036,1037
+
+for i in 465 515 566 631 689 739 806 866 916 968 ; do echo $i ; python gesture_data_extractor.2.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id "$i" --threshold-recognition 0.5 --position 0 1 2 3 4 5 --start --end --align xnth:4 --align-find top -v --suffix p_012345_xnth3_wswe_tr_0.5 ; done | tee logs/gesture_data_extractor.2.py.`now_str`.log 
+
+ for i in {1038..1047} ; do echo -n "$i," ; done
+
+1038,1039,1040,1041,1042,1043,1044,1045,1046,1047
+
+
+#
+
+
+SELECT g.id
+FROM Gesture g
+INNER JOIN (
+    SELECT 
+        SUBSTRING_INDEX(userAlias, '_', 1) AS alias_prefix,
+        MAX(id) AS latest_id
+    FROM Gesture
+    WHERE SUBSTRING_INDEX(userAlias, '_', 1) IN (
+        'T-R-INDEX-U-D',
+        'T-R-EACH-FINGER-U-D',
+        'Z-R-WAVE-L45-M-R45-M',
+        'Z-R-SWITCH-Y180',
+        'Z-R-OK',
+        'Z-R-SWITCH-AND-BACK',
+        'Z-R-FIST',
+        'Z-R-SWITCH-FIST',
+        'Z-R-MAYBE-L-M-R-M',
+        'Z-R-VICTORIA'
+    )
+    GROUP BY alias_prefix, userAlias
+) latest ON g.id = latest.latest_id;
+
+
+
+SELECT g.id
+FROM Gesture g
+INNER JOIN (
+    SELECT 
+        SUBSTRING_INDEX(userAlias, '_', 1) AS alias_prefix,
+        MAX(id) AS latest_id
+    FROM Gesture
+    WHERE SUBSTRING_INDEX(userAlias, '_', 1) IN (
+        'T-R-INDEX-U-D'
+  
+    ) 
+    AND userAlias NOT LIKE '%xnth%'
+    AND userAlias REGEXP '_[0-9]+$' -- ensure numeric suffix exists
+    GROUP BY alias_prefix, userAlias
+) latest ON g.id = latest.latest_id;
+
+
+
+SELECT count(g.id)
+FROM Gesture g
+INNER JOIN (
+    SELECT 
+        SUBSTRING_INDEX(userAlias, '_', 1) AS alias_prefix,
+        MAX(id) AS latest_id
+    FROM Gesture
+    WHERE SUBSTRING_INDEX(userAlias, '_', 1) IN (
+        'T-R-INDEX-U-D'
+  
+    ) 
+    AND userAlias NOT LIKE '%xnth%'
+    AND userAlias REGEXP '_[0-9]+$' -- ensure numeric suffix exists
+    GROUP BY alias_prefix, userAlias
+) latest ON g.id = latest.latest_id;
+
+
+
+SELECT g.id
+FROM Gesture g
+INNER JOIN (
+    SELECT 
+        SUBSTRING_INDEX(userAlias, '_', 1) AS alias_prefix,
+        MAX(id) AS latest_id
+    FROM Gesture
+    WHERE SUBSTRING_INDEX(userAlias, '_', 1) IN (
+        'T-R-INDEX-U-D'
+  
+    ) 
+    AND userAlias NOT LIKE '%xnth%'
+    AND userAlias REGEXP '_[0-9]+$' -- ensure numeric suffix exists
+    GROUP BY alias_prefix, userAlias
+) latest ON g.id = latest.latest_id order by g.id;
+
+
+
+
+mysql -u gagweb --password=password gagweb -C "SELECT g.id
+FROM Gesture g
+INNER JOIN (
+    SELECT 
+        SUBSTRING_INDEX(userAlias, '_', 1) AS alias_prefix,
+        MAX(id) AS latest_id
+    FROM Gesture
+    WHERE SUBSTRING_INDEX(userAlias, '_', 1) IN (
+        'T-R-INDEX-U-D'
+  
+    ) 
+    AND userAlias NOT LIKE '%xnth%'
+    AND userAlias REGEXP '_[0-9]+$' -- ensure numeric suffix exists
+    GROUP BY alias_prefix, userAlias
+) latest ON g.id = latest.latest_id order by g.id;"
+
+
+
+
+
+
+
+mysql -u gagweb --password=password gagweb -c "SELECT g.id
+FROM Gesture g
+INNER JOIN (
+    SELECT 
+        SUBSTRING_INDEX(userAlias, '_', 1) AS alias_prefix,
+        MAX(id) AS latest_id
+    FROM Gesture
+    WHERE SUBSTRING_INDEX(userAlias, '_', 1) IN (
+        'T-R-INDEX-U-D'
+  
+    ) 
+    AND userAlias NOT LIKE '%xnth%'
+    AND userAlias REGEXP '_[0-9]+$' -- ensure numeric suffix exists
+    GROUP BY alias_prefix, userAlias
+) latest ON g.id = latest.latest_id order by g.id;"
+
+
+
+mysql -u gagweb --password=password gagweb -e "
+SELECT 
+    SUBSTRING_INDEX(userAlias, '_', 1) AS alias_prefix,
+    COUNT(*) AS gesture_count
+FROM Gesture
+WHERE SUBSTRING_INDEX(userAlias, '_', 1) IN (
+    'T-R-INDEX-U-D',
+    'T-R-EACH-FINGER-U-D',
+    'Z-R-WAVE-L45-M-R45-M',
+    'Z-R-SWITCH-Y180',
+    'Z-R-OK',
+    'Z-R-SWITCH-AND-BACK',
+    'Z-R-FIST',
+    'Z-R-SWITCH-FIST',
+    'Z-R-MAYBE-L-M-R-M',
+    'Z-R-VICTORIA'
+)
+AND userAlias NOT LIKE '%xnth%'
+AND userAlias REGEXP '_[0-9]+$'
+GROUP BY alias_prefix
+ORDER BY alias_prefix;
+"
+
+
+mysql -u gagweb --password=password gagweb -e "SELECT g.id
+FROM Gesture g
+INNER JOIN (
+    SELECT 
+        SUBSTRING_INDEX(userAlias, '_', 1) AS alias_prefix,
+        MAX(id) AS latest_id
+    FROM Gesture
+    WHERE SUBSTRING_INDEX(userAlias, '_', 1) IN (
+        'Z-R-FIST'
+    ) 
+    AND userAlias NOT LIKE '%xnth%'
+    AND userAlias REGEXP '_[0-9]+$' -- ensure numeric suffix exists
+    GROUP BY alias_prefix, userAlias
+) latest ON g.id = latest.latest_id order by g.id;"
+
+
+
+mysql -u gagweb --password=password gagweb -e "
+SELECT g.userAlias, g.id, COUNT(dl.id) AS dataline_count
+FROM Gesture g
+LEFT JOIN DataLine dl ON dl.gesture_id = g.id
+INNER JOIN (
+    SELECT 
+        SUBSTRING_INDEX(userAlias, '_', 1) AS alias_prefix,
+        MAX(id) AS latest_id
+    FROM Gesture
+    WHERE SUBSTRING_INDEX(userAlias, '_', 1) IN (
+          'T-R-INDEX-U-D',
+    'T-R-EACH-FINGER-U-D',
+    'Z-R-WAVE-L45-M-R45-M',
+    'Z-R-SWITCH-Y180',
+    'Z-R-OK',
+    'Z-R-SWITCH-AND-BACK',
+    'Z-R-FIST',
+    'Z-R-SWITCH-FIST',
+    'Z-R-MAYBE-L-M-R-M',
+    'Z-R-VICTORIA'
+      )
+      AND userAlias NOT LIKE '%xnth%'
+      AND userAlias REGEXP '_[0-9]+$'
+    GROUP BY alias_prefix, userAlias
+) latest ON g.id = latest.latest_id
+GROUP BY g.id
+ORDER BY g.id;
+"
+
+
+
+
+
+mysql -u gagweb --password=password gagweb -e "
+SELECT g.userAlias, g.id, COUNT(dl.id) AS dataline_count
+FROM Gesture g
+LEFT JOIN DataLine dl ON dl.gesture_id = g.id
+INNER JOIN (
+    SELECT 
+        SUBSTRING_INDEX(userAlias, '_', 1) AS alias_prefix,
+        MAX(id) AS latest_id
+    FROM Gesture
+    WHERE SUBSTRING_INDEX(userAlias, '_', 1) IN (
+          'T-R-INDEX-U-D',
+    'T-R-EACH-FINGER-U-D',
+    'Z-R-WAVE-L45-M-R45-M',
+    'Z-R-SWITCH-Y180',
+    'Z-R-OK',
+    'Z-R-SWITCH-AND-BACK',
+    'Z-R-FIST',
+    'Z-R-SWITCH-FIST',
+    'Z-R-MAYBE-L-M-R-M',
+    'Z-R-VICTORIA'
+      )
+      AND userAlias NOT LIKE '%xnth%'
+      AND userAlias REGEXP '_[0-9]+$'
+    GROUP BY alias_prefix, userAlias
+) latest ON g.id = latest.latest_id
+GROUP BY g.id
+ORDER BY g.id;
+"
+
+
+
+mysql -u gagweb --password=password gagweb -e "
+SELECT g.userAlias, g.id, COUNT(dl.id) AS dataline_count
+FROM Gesture g
+LEFT JOIN DataLine dl ON dl.gesture_id = g.id
+INNER JOIN (
+    SELECT 
+        SUBSTRING_INDEX(userAlias, '_', 1) AS alias_prefix,
+        MAX(id) AS latest_id
+    FROM Gesture
+    WHERE SUBSTRING_INDEX(userAlias, '_', 1) IN (
+          'T-R-INDEX-U-D',
+    'T-R-EACH-FINGER-U-D',
+    'Z-R-WAVE-L45-M-R45-M',
+    'Z-R-SWITCH-Y180',
+    'Z-R-OK',
+    'Z-R-SWITCH-AND-BACK',
+    'Z-R-FIST',
+    'Z-R-SWITCH-FIST',
+    'Z-R-MAYBE-L-M-R-M',
+    'Z-R-VICTORIA'
+      )
+      AND userAlias NOT LIKE '%xnth%'
+      AND userAlias REGEXP '_[0-9]+$'
+    GROUP BY alias_prefix, userAlias
+) latest ON g.id = latest.latest_id
+GROUP BY g.id
+ORDER BY g.id;
+" | grep -v '\----' | grep -v 'id' | awk '{print $2}' | tr '\n' ','
+465,466,467,468,469,470,471,472,473,474,475,476,477,478,479,480,481,482,483,484,485,486,487,488,489,490,491,492,493,494,495,496,497,498,499,500,501,502,503,504,505,506,507,508,509,510,511,512,513,514,515,516,517,518,519,520,521,522,523,524,525,526,527,528,529,530,531,532,533,534,535,536,537,538,539,540,541,542,543,544,545,546,547,548,549,550,551,552,553,554,555,556,557,558,559,560,561,562,563,564,566,567,570,571,572,573,577,578,581,582,583,584,585,586,587,588,589,593,594,595,596,597,598,599,600,601,605,606,607,610,611,612,613,614,615,616,617,618,619,620,621,622,623,624,625,626,627,628,629,630,635,636,637,638,639,640,641,642,643,644,645,646,647,648,649,650,651,652,653,654,659,660,661,662,663,664,665,666,667,668,669,670,671,672,673,674,675,676,677,678,679,680,681,682,683,684,685,686,687,688,689,690,691,692,693,694,695,696,697,698,699,700,701,702,703,704,705,706,707,708,709,710,711,712,713,714,715,716,717,718,719,720,721,722,723,724,725,726,727,728,729,730,731,732,733,734,735,736,737,738,739,740,741,742,743,744,745,746,747,748,749,750,751,752,753,754,755,756,757,758,766,767,768,769,770,771,772,773,774,775,776,777,778,779,780,781,782,783,784,785,786,787,788,789,790,791,792,793,794,795,806,807,808,809,810,811,812,813,814,815,816,817,818,819,820,821,822,823,824,825,826,827,828,829,830,831,832,833,834,835,836,837,838,839,840,841,842,843,844,845,846,847,848,849,850,851,852,853,854,855,866,867,868,869,870,871,872,873,874,875,876,877,878,879,880,881,882,883,884,885,886,887,888,889,890,891,892,893,894,895,896,897,898,899,900,901,902,903,904,905,906,907,908,909,910,911,912,913,914,915,916,917,918,919,920,921,922,923,924,925,926,927,928,929,930,931,932,933,934,935,936,937,938,939,940,941,942,943,944,945,946,947,948,949,950,951,952,953,954,955,956,957,958,959,960,961,962,963,964,965,968,969,970,971,972,973,974,975,976,977,978,979,980,981,982,983,984,985,986,987,988,989,990,991,992,993,994,995,996,997,998,999,1000,1001,1002,1003,1004,1005,1006,1007,1008,1009,1010,1011,1012,1013,1014,1015,1016,1017,
+
+
+
+
+
+mysql -u gagweb --password=password gagweb -e "
+WITH RankedGestures AS (
+    SELECT 
+        g.id,
+        SUBSTRING_INDEX(g.userAlias, '_', 1) AS alias_prefix,
+        COUNT(dl.id) AS dataline_count,
+        ROW_NUMBER() OVER (PARTITION BY SUBSTRING_INDEX(g.userAlias, '_', 1) ORDER BY g.id) AS row_num
+    FROM Gesture g
+    LEFT JOIN DataLine dl ON dl.gesture_id = g.id
+    WHERE SUBSTRING_INDEX(g.userAlias, '_', 1) IN (
+        'T-R-INDEX-U-D',
+        'T-R-EACH-FINGER-U-D',
+        'Z-R-WAVE-L45-M-R45-M',
+        'Z-R-SWITCH-Y180',
+        'Z-R-OK',
+        'Z-R-SWITCH-AND-BACK',
+        'Z-R-FIST',
+        'Z-R-SWITCH-FIST',
+        'Z-R-MAYBE-L-M-R-M',
+        'Z-R-VICTORIA'
+    )
+    AND g.userAlias NOT LIKE '%xnth%'
+    AND g.userAlias REGEXP '_[0-9]+$'
+    GROUP BY g.id
+)
+SELECT id, alias_prefix, dataline_count
+FROM RankedGestures
+WHERE row_num <= 5
+ORDER BY alias_prefix, id;
+"
+
+
+mysql -u gagweb --password=password gagweb -e "
+WITH LatestGestures AS (
+    SELECT 
+        SUBSTRING_INDEX(userAlias, '_', 1) AS alias_prefix,
+        userAlias,
+        MAX(id) AS latest_id
+    FROM Gesture
+    WHERE SUBSTRING_INDEX(userAlias, '_', 1) IN (
+        'T-R-INDEX-U-D',
+        'T-R-EACH-FINGER-U-D',
+        'Z-R-WAVE-L45-M-R45-M',
+        'Z-R-SWITCH-Y180',
+        'Z-R-OK',
+        'Z-R-SWITCH-AND-BACK',
+        'Z-R-FIST',
+        'Z-R-SWITCH-FIST',
+        'Z-R-MAYBE-L-M-R-M',
+        'Z-R-VICTORIA'
+    )
+    AND userAlias NOT LIKE '%xnth%'
+    AND userAlias REGEXP '_[0-9]+$'
+    GROUP BY alias_prefix, userAlias
+),
+RankedGestures AS (
+    SELECT 
+        g.id,
+        lg.alias_prefix,
+        COUNT(dl.id) AS dataline_count,
+        ROW_NUMBER() OVER (PARTITION BY lg.alias_prefix ORDER BY g.id) AS row_num
+    FROM LatestGestures lg
+    INNER JOIN Gesture g ON g.id = lg.latest_id
+    LEFT JOIN DataLine dl ON dl.gesture_id = g.id -- corrected column name
+    GROUP BY g.id
+)
+SELECT id, alias_prefix, dataline_count
+FROM RankedGestures
+WHERE row_num <= 5
+ORDER BY alias_prefix, id;
+" | grep -v '\----' | grep -v 'id' | awk '{print $1}' | tr '\n' ','
+
+515,516,517,518,519,465,466,467,468,469,806,807,808,809,810,916,917,918,919,920,689,690,691,692,693,739,740,741,742,743,866,867,868,869,870,635,636,637,638,639,968,969,970,971,972,566,567,570,571,572
+
+
+##
+
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=455,456,457&inputGestureIds=444,453,402,411,392,401,378,387,368,377
+
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=455,456,457&inputGestureIds=515,516,517,518,519,465,466,467,468,469,806,807,808,809,810,916,917,918,919,920,689,690,691,692,693,739,740,741,742,743,866,867,868,869,870,635,636,637,638,639,968,969,970,971,972,566,567,570,571,572
+
+
+
+
+
+
+mysql -u gagweb --password=password gagweb -e "
+WITH LatestGestures AS (
+    SELECT 
+        SUBSTRING_INDEX(userAlias, '_', 1) AS alias_prefix,
+        userAlias,
+        MAX(id) AS latest_id
+    FROM Gesture
+    WHERE SUBSTRING_INDEX(userAlias, '_', 1) IN (
+        'T-R-INDEX-U-D',
+        'T-R-EACH-FINGER-U-D',
+        'Z-R-WAVE-L45-M-R45-M',
+        'Z-R-SWITCH-Y180',
+        'Z-R-OK',
+        'Z-R-SWITCH-AND-BACK',
+        'Z-R-FIST',
+        'Z-R-SWITCH-FIST',
+        'Z-R-MAYBE-L-M-R-M',
+        'Z-R-VICTORIA'
+    )
+    AND userAlias NOT LIKE '%xnth%'
+    AND userAlias REGEXP '_[0-9]+$'
+    GROUP BY alias_prefix, userAlias
+),
+RankedGestures AS (
+    SELECT 
+        g.id,
+        lg.alias_prefix,
+        COUNT(dl.id) AS dataline_count,
+        ROW_NUMBER() OVER (PARTITION BY lg.alias_prefix ORDER BY g.id) AS row_num
+    FROM LatestGestures lg
+    INNER JOIN Gesture g ON g.id = lg.latest_id
+    LEFT JOIN DataLine dl ON dl.gesture_id = g.id -- corrected column name
+    GROUP BY g.id
+)
+SELECT id, alias_prefix, dataline_count
+FROM RankedGestures
+WHERE row_num <= 2
+ORDER BY alias_prefix, id;
+" | grep -v '\----' | grep -v 'id' | awk '{print $1}' | tr '\n' ','
+
+
+515,516,465,466,806,807,916,917,689,690,739,740,866,867,635,636,968,969,566,567
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=455,456,457&inputGestureIds=465,466,467,468,469,515,516,517,518,519,566,567,570,571,572,635,636,637,638,639,689,690,691,692,693,739,740,741,742,743,806,807,808,809,810,866,867,868,869,870,968,969,970,971,972,916,917,918,919,920
+
+
+
+
+1018,1019,1020,1021,1022,1023,1024,1025,1026,1027
+1028,1029,1030,1031,1032,1033,1034,1035,1036,1037
+1038,1039,1040,1041,1042,1043,1044,1045,1046,1047
+
+
+1018,1019,1020,1021,1022,1023,1024,1025,1026,1027
+1028,1029,1030,1031,1032,1033,1034,1035,1036,1037
+1038,1039,1040,1041,1042,1043,1044,1045,1046,1047
+
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=1018,1019,1020,1021,1022,1023,1024,1025,1026,1027&inputGestureIds=465,466,467,468,469,515,516,517,518,519,566,567,570,571,572,635,636,637,638,639,689,690,691,692,693,739,740,741,742,743,806,807,808,809,810,866,867,868,869,870,968,969,970,971,972,916,917,918,919,920
+
+
+1018,1019,1020,1021,1022,1023,1024,1025,1026,1027
+1028,1029,1030,1031,1032,1033,1034,1035,1036,1037
+1038,1039,1040,1041,1042,1043,1044,1045,1046,1047
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=1018,1019,1020,1021,1022,1023,1024,1025,1026,1027&inputGestureIds=515,516,465,466,806,807,916,917,689,690,739,740,866,867,635,636,968,969,566,567
+
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=1018,1019,1020&inputGestureIds=515,739,806
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=1018,1019&inputGestureIds=515,739
+
+
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=1028,1029,1030,1031,1032,1033,1034,1035,1036,1037&inputGestureIds=465,466,467,468,469,515,516,517,518,519,566,567,570,571,572,635,636,637,638,639,689,690,691,692,693,739,740,741,742,743,806,807,808,809,810,866,867,868,869,870,968,969,970,971,972,916,917,918,919,920
+
+
+
+
+#
