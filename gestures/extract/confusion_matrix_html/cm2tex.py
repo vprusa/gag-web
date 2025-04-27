@@ -25,7 +25,7 @@ def parse_confusion_matrix(table, use_ids=True):
 def apply_label_mapping(df, col_map, row_map):
     def map_labels(label, mapping):
         for pattern, new_label in mapping.items():
-            if re.match(f"^{pattern}$", label):
+            if re.match(pattern, label):
                 return new_label
         return label
 
@@ -35,10 +35,11 @@ def apply_label_mapping(df, col_map, row_map):
         df.iloc[:,0] = df.iloc[:,0].apply(lambda x: map_labels(x, row_map))
     return df
 
-# Corrected function to calculate evaluation metrics per row and global
 def calculate_metrics(df):
     df_indexed = df.set_index(df.columns[0])
-    df_indexed = df_indexed[df_indexed.index]  # ensure columns match rows
+    
+    # Explicitly align columns to match row indices (ensure correct alignment)
+    df_indexed = df_indexed.loc[:, df_indexed.index.intersection(df_indexed.columns)]
     matrix = df_indexed.astype(int).values
 
     assert matrix.shape[0] == matrix.shape[1], (
@@ -87,6 +88,9 @@ def calculate_metrics(df):
 
     return metrics_per_row, global_metrics
 
+
+
+
 # Convert DataFrame to LaTeX
 def dataframe_to_latex(df):
     return df.to_latex(index=False, escape=True)
@@ -126,13 +130,25 @@ latex_first = dataframe_to_latex(df_first)
 # Extract and aggregate second confusion matrix (grouped)
 second_matrix = soup.select('div[ng-if="groupedConfusionMatrix.length"] table')[0]
 df_second = parse_confusion_matrix(second_matrix, use_ids=False)
+
+# Remove ignored rows first
 if args.ignore_row:
     df_second = df_second[~df_second.iloc[:, 0].str.match(args.ignore_row)]
+
+# Remove IDs from labels
 df_second.iloc[:, 0] = df_second.iloc[:, 0].apply(lambda x: re.sub(r'.*?:\s*', '', x))
-df_second = apply_label_mapping(df_second, {}, row_map)
+
+# Apply mappings immediately to rows and columns
+df_second = apply_label_mapping(df_second, col_map, row_map)
+
+# Set index and aggregate duplicated rows
 df_second.set_index(df_second.columns[0], inplace=True)
-df_second = df_second.astype(int).groupby(df_second.index).sum().reset_index()
-df_second = apply_label_mapping(df_second, col_map, {})
+df_second = df_second.astype(int).groupby(df_second.index).sum()
+
+# Now explicitly reorder columns to match row labels
+common_labels = df_second.index.intersection(df_second.columns)
+df_second = df_second.loc[common_labels, common_labels].reset_index()
+
 latex_second = dataframe_to_latex(df_second)
 
 # Output LaTeX code
