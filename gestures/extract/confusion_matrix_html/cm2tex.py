@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import argparse
 import re
 import ast
+import numpy as np
 
 # Function to parse confusion matrices
 def parse_confusion_matrix(table, use_ids=True):
@@ -24,7 +25,7 @@ def parse_confusion_matrix(table, use_ids=True):
 def apply_label_mapping(df, col_map, row_map):
     def map_labels(label, mapping):
         for pattern, new_label in mapping.items():
-            if re.fullmatch(pattern, label):
+            if re.match(pattern, label):
                 return new_label
         return label
 
@@ -34,19 +35,42 @@ def apply_label_mapping(df, col_map, row_map):
         df.iloc[:,0] = df.iloc[:,0].apply(lambda x: map_labels(x, row_map))
     return df
 
-# Function to calculate evaluation metrics
+# Corrected function to calculate evaluation metrics
 def calculate_metrics(df):
-    TP = df.iloc[:, 1:].astype(int).values.diagonal().sum()
-    FP = df.iloc[:, 1:].astype(int).values.sum() - TP
-    FN = FP  # Simplified assumption
-    TN = df.shape[0] * df.shape[1] - (TP + FP + FN)
+    df_indexed = df.set_index(df.columns[0])
+    matrix = df_indexed.astype(int).values
 
-    accuracy = (TP + TN) / (TP + TN + FP + FN)
-    precision = TP / (TP + FP) if (TP + FP) else 0
-    recall = TP / (TP + FN) if (TP + FN) else 0
-    f1_score = (2 * precision * recall / (precision + recall)) if (precision + recall) else 0
+    assert matrix.shape[0] == matrix.shape[1], (
+        f"Confusion matrix must be square! Got shape {matrix.shape}"
+    )
 
-    return accuracy, precision, recall, f1_score
+    TP = np.trace(matrix)
+    total = matrix.sum()
+    accuracy = TP / total if total else 0
+
+    precision_per_class = []
+    recall_per_class = []
+
+    for i in range(matrix.shape[0]):
+        tp = matrix[i, i]
+        fp = matrix[:, i].sum() - tp
+        fn = matrix[i, :].sum() - tp
+
+        precision = tp / (tp + fp) if (tp + fp) else 0
+        recall = tp / (tp + fn) if (tp + fn) else 0
+
+        precision_per_class.append(precision)
+        recall_per_class.append(recall)
+
+    avg_precision = np.mean(precision_per_class)
+    avg_recall = np.mean(recall_per_class)
+    f1_score = (
+        (2 * avg_precision * avg_recall) / (avg_precision + avg_recall)
+        if (avg_precision + avg_recall)
+        else 0
+    )
+
+    return accuracy, avg_precision, avg_recall, f1_score
 
 # Convert DataFrame to LaTeX
 def dataframe_to_latex(df):
@@ -55,8 +79,8 @@ def dataframe_to_latex(df):
 # Main script
 parser = argparse.ArgumentParser(description='Convert HTML confusion matrices to LaTeX format.')
 parser.add_argument('--file', required=True, help='Path to the HTML file containing confusion matrices.')
-parser.add_argument('--col_map', default='{}', help='Column label mapping with regex support in format "{\"regex\": \"new_label\"}".')
-parser.add_argument('--row_map', default='{}', help='Row label mapping with regex support in format "{\"regex\": \"new_label\"}".')
+parser.add_argument('--col_map', default='{}', help='Column label mapping with regex support.')
+parser.add_argument('--row_map', default='{}', help='Row label mapping with regex support.')
 parser.add_argument('--calc', action='store_true', help='Calculate evaluation metrics from second matrix.')
 args = parser.parse_args()
 
@@ -68,16 +92,38 @@ html_path = args.file
 with open(html_path, 'r', encoding='utf-8') as file:
     soup = BeautifulSoup(file, 'html.parser')
 
-# Extract the first confusion matrix
+# Extract first confusion matrix
 first_matrix = soup.select('div.confusion-matrix table')[0]
 df_first = parse_confusion_matrix(first_matrix)
 df_first = apply_label_mapping(df_first, col_map, row_map)
 latex_first = dataframe_to_latex(df_first)
 
-# Extract the second confusion matrix (grouped)
+# # Extract and aggregate second confusion matrix (grouped)
+# second_matrix = soup.select('div[ng-if="groupedConfusionMatrix.length"] table')[0]
+# df_second = parse_confusion_matrix(second_matrix, use_ids=False)
+# df_second = apply_label_mapping(df_second, {}, row_map)
+# df_second.iloc[:, 0] = df_second.iloc[:, 0].apply(lambda x: re.sub(r'.*?:\\s*', '', x))
+# df_second.set_index(df_second.columns[0], inplace=True)
+# df_second = df_second.astype(int).groupby(df_second.index).sum().reset_index()
+# df_second = apply_label_mapping(df_second, col_map, {})
+# latex_second = dataframe_to_latex(df_second)
+
+# Extract second confusion matrix (grouped)
 second_matrix = soup.select('div[ng-if="groupedConfusionMatrix.length"] table')[0]
 df_second = parse_confusion_matrix(second_matrix, use_ids=False)
-df_second = apply_label_mapping(df_second, col_map, row_map)
+
+# First remove IDs from labels (everything before ':')
+df_second.iloc[:, 0] = df_second.iloc[:, 0].apply(lambda x: re.sub(r'^.*?:\s*', '', x))
+
+# Now apply row label mappings using regex
+df_second = apply_label_mapping(df_second, {}, row_map)
+
+# Aggregate rows with the same label
+df_second.set_index(df_second.columns[0], inplace=True)
+df_second = df_second.astype(int).groupby(df_second.index).sum().reset_index()
+
+# Apply column mappings
+df_second = apply_label_mapping(df_second, col_map, {})
 latex_second = dataframe_to_latex(df_second)
 
 # Output LaTeX code
