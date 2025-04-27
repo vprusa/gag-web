@@ -1726,3 +1726,38 @@ python cm2tex.py --file data/html.snippet.2025-04-27_20-12-36.10x50.2.html \
     "Z-R-WAVE-L45-M-R45-M.*": "WAVE"
 }' --calc
 
+
+###
+
+
+
+
+(.venv) vprusa@fedora:~/workspace/p/gag-web/gestures/extract/confusion_matrix_html$ python cm2tex.py --file data/html.snippet.2025-04-27_20-12-36.10x50.2.html \
+--col_map '{
+    "T-R-EACH-FINGER-U-D": "EACH",
+    "T-R-INDEX-U-D": "INDEX",
+    "Z-R-FIST": "FIST",
+    "Z-R-MAYBE-L-M-R-M": "MAYBE",
+    "Z-R-OK": "OK",
+    "Z-R-SWITCH-AND-BACK": "SW-BACK",
+    "Z-R-SWITCH-FIST": "SW-FIST",
+    "Z-R-SWITCH-Y180": "SW-Y180",
+    "Z-R-VICTORIA": "VICT",
+    "Z-R-WAVE-L45-M-R45-M": "WAVE"
+}' \
+--row_map '{
+    "T-R-INDEX-U-D.*": "INDEX",
+    ".*EACH.*":"EACH",
+    "Z-R-FIST.*": "FIST",
+    "Z-R-MAYBE-L-M-R-M.*": "MAYBE",
+    "Z-R-OK.*": "OK",
+    "Z-R-SWITCH-AND-BACK": "SW-BACK",
+    "Z-R-SWITCH-FIST": "SW-FIST",
+    "Z-R-SWITCH-Y180": "SW-Y180",
+    "Z-R-VICTORIA": "VICT",
+    "Z-R-WAVE-L45-M-R45-M": "WAVE"
+}' --calc --ignore_row '1041'
+
+
+
+####

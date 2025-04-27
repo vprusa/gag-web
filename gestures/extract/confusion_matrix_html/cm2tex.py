@@ -92,9 +92,9 @@ def dataframe_to_latex(df):
 
 # Convert metrics to LaTeX
 def metrics_to_latex(metrics_per_row, global_metrics):
-    rows = [{'Gesture': 'Global', **global_metrics}]
+    rows = [{'Gesto': 'Globální', 'Přesnost': global_metrics['accuracy'], 'Preciznost': global_metrics['precision'], 'Odezva': global_metrics['recall'], 'F1-skóre': global_metrics['f1-score']}]
     for gesture, metrics in metrics_per_row.items():
-        row = {'Gesture': gesture, 'accuracy': '-', **metrics}
+        row = {'Gesto': gesture, 'Přesnost': '-', 'Preciznost': metrics['precision'], 'Odezva': metrics['recall'], 'F1-skóre': metrics['f1-score']}
         rows.append(row)
     df_metrics = pd.DataFrame(rows)
     return df_metrics.to_latex(index=False, float_format="%.2f")
@@ -104,6 +104,7 @@ parser = argparse.ArgumentParser(description='Convert HTML confusion matrices to
 parser.add_argument('--file', required=True, help='Path to the HTML file containing confusion matrices.')
 parser.add_argument('--col_map', default='{}', help='Column label mapping with regex support.')
 parser.add_argument('--row_map', default='{}', help='Row label mapping with regex support.')
+parser.add_argument('--ignore_row', default=None, help='Regex to ignore rows based on row label including IDs.')
 parser.add_argument('--calc', action='store_true', help='Calculate evaluation metrics from second matrix.')
 args = parser.parse_args()
 
@@ -124,6 +125,8 @@ latex_first = dataframe_to_latex(df_first)
 # Extract and aggregate second confusion matrix (grouped)
 second_matrix = soup.select('div[ng-if="groupedConfusionMatrix.length"] table')[0]
 df_second = parse_confusion_matrix(second_matrix, use_ids=False)
+if args.ignore_row:
+    df_second = df_second[~df_second.iloc[:, 0].str.match(args.ignore_row)]
 df_second.iloc[:, 0] = df_second.iloc[:, 0].apply(lambda x: re.sub(r'.*?:\s*', '', x))
 df_second = apply_label_mapping(df_second, {}, row_map)
 df_second.set_index(df_second.columns[0], inplace=True)
