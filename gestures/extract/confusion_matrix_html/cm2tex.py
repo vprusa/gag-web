@@ -25,7 +25,7 @@ def parse_confusion_matrix(table, use_ids=True):
 def apply_label_mapping(df, col_map, row_map):
     def map_labels(label, mapping):
         for pattern, new_label in mapping.items():
-            if re.match(pattern, label):
+            if re.match(f"^{pattern}$", label):
                 return new_label
         return label
 
@@ -35,9 +35,10 @@ def apply_label_mapping(df, col_map, row_map):
         df.iloc[:,0] = df.iloc[:,0].apply(lambda x: map_labels(x, row_map))
     return df
 
-
+# Corrected function to calculate evaluation metrics per row and global
 def calculate_metrics(df):
     df_indexed = df.set_index(df.columns[0])
+    df_indexed = df_indexed[df_indexed.index]  # ensure columns match rows
     matrix = df_indexed.astype(int).values
 
     assert matrix.shape[0] == matrix.shape[1], (
@@ -85,9 +86,6 @@ def calculate_metrics(df):
     }
 
     return metrics_per_row, global_metrics
-
-
-
 
 # Convert DataFrame to LaTeX
 def dataframe_to_latex(df):
