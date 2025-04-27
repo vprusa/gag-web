@@ -306,8 +306,9 @@ angular.module('app').controller(
 
         // $scope.fakeLoopModifier = 1.0;
         // $scope.fakeLoopModifier = 0.5;
-        $scope.fakeLoopModifier = 0.25;
+        // $scope.fakeLoopModifier = 0.25;
         // $scope.fakeLoopModifier = 0.1;
+        $scope.fakeLoopModifier = 0.-5;
 
         $scope.fakingLoop = function (curIndex) {
           if ($scope.isBLEIdle()) {
@@ -527,7 +528,8 @@ angular.module('app').controller(
           return {};
         };
 
-        let defaultDelay = 500;
+        let defaultDelay = 250;
+        let defaultDelay2 = 500;
 
         $scope.runMultipleAutomatedTests = async function () {
           log("Starting recognition: " + $location.search().refGestureIds + " against " + $location.search().inputGestureIds);
@@ -551,12 +553,12 @@ angular.module('app').controller(
           $scope.stopRecognizing();
           await delay(defaultDelay);
           $scope.startRecognizing();
-          await delay(defaultDelay);
+          await delay(defaultDelay2);
           await Promise.all(deactivatePromises);
           for (let refGestureId of $scope.recognitionConfig.refGestureIds) {
             log("Recognizing gesture: " + refGestureId);
             await $scope.setActivateGesture(refGestureId, true);
-            await delay(defaultDelay);
+            await delay(defaultDelay2);
             console.log($scope.recognitionConfig.inputGestureIds);
             for (let inputGestureId of $scope.recognitionConfig.inputGestureIds) {
               log("Recognizing at gesture: " + inputGestureId);
@@ -567,7 +569,7 @@ angular.module('app').controller(
               // $scope.recognitionResults[refGestureId] = $scope.recognitionResults[refGestureId] || {};
 
               $scope.startRecognizing();
-              await delay(defaultDelay);
+              await delay(defaultDelay2);
               // console.log("1");
               $scope.startFakingBLE();
               // console.log("2");
@@ -578,9 +580,9 @@ angular.module('app').controller(
               }
 
               // console.log("3");
-              await delay(defaultDelay);
+              await delay(defaultDelay2);
               $scope.stopRecognizing();
-              await delay(defaultDelay);
+              await delay(defaultDelay2);
               if (typeof $scope.recognitionResults === 'undefined'
                   || typeof $scope.recognitionResults[refGestureId] === 'undefined'
                   || typeof $scope.recognitionResults[refGestureId][inputGestureId] === 'undefined'
@@ -593,22 +595,21 @@ angular.module('app').controller(
                 console.log("idk wtf");
                 console.log($scope.recognitionResults);
               }
-              await delay(defaultDelay);
+              // await delay(defaultDelay2);
               $scope.lastRecognizedGesture.id = null;
               $scope.generateConfusionMatrix();
-              await delay(defaultDelay);
-
+              await delay(defaultDelay2);
             }
-            await delay(defaultDelay);
+            // await delay(defaultDelay);
             $scope.stopRecognizing();
-            await delay(defaultDelay);
+            await delay(defaultDelay2);
             console.log("Last recognized ID:", $scope.lastRecognizedGestureId);
             console.log("Last recognized ID:", $scope.lastRecognizedGesture.id);
             console.log("Last recognized ID:", $scope.lastRecognizedGesture.count);
             await $scope.setActivateGesture(refGestureId, false);
             await delay(defaultDelay);
             await Promise.all(deactivatePromises);
-            await delay(defaultDelay + 500);
+            await delay(defaultDelay);
             // $scope.lastRecognizedGestureId = null;
             //  await $scope.switchActivateGesture(refGestureId, true);
             $scope.generateConfusionMatrix();
