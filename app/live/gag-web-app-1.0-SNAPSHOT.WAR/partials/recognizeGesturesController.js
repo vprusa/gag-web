@@ -576,7 +576,7 @@ angular.module('app').controller(
               while ($scope.isBLEFaking()) {
                 // console.log("2.1");
                 await delay(defaultDelay);
-                console.log("2.2");
+                // console.log("2.2");
               }
 
               // console.log("3");
