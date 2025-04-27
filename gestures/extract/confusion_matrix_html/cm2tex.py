@@ -35,7 +35,7 @@ def apply_label_mapping(df, col_map, row_map):
         df.iloc[:,0] = df.iloc[:,0].apply(lambda x: map_labels(x, row_map))
     return df
 
-# Corrected function to calculate evaluation metrics
+# Function to calculate evaluation metrics per row and global
 def calculate_metrics(df):
     df_indexed = df.set_index(df.columns[0])
     matrix = df_indexed.astype(int).values
@@ -44,37 +44,60 @@ def calculate_metrics(df):
         f"Confusion matrix must be square! Got shape {matrix.shape}"
     )
 
-    TP = np.trace(matrix)
     total = matrix.sum()
-    accuracy = TP / total if total else 0
+    accuracy = np.trace(matrix) / total if total else 0
 
+    metrics_per_row = {}
     precision_per_class = []
     recall_per_class = []
 
-    for i in range(matrix.shape[0]):
-        tp = matrix[i, i]
-        fp = matrix[:, i].sum() - tp
-        fn = matrix[i, :].sum() - tp
+    for idx, label in enumerate(df_indexed.index):
+        tp = matrix[idx, idx]
+        fp = matrix[:, idx].sum() - tp
+        fn = matrix[idx, :].sum() - tp
 
         precision = tp / (tp + fp) if (tp + fp) else 0
         recall = tp / (tp + fn) if (tp + fn) else 0
+        f1 = (2 * precision * recall) / (precision + recall) if (precision + recall) else 0
+
+        metrics_per_row[label] = {
+            'precision': precision,
+            'recall': recall,
+            'f1-score': f1
+        }
 
         precision_per_class.append(precision)
         recall_per_class.append(recall)
 
     avg_precision = np.mean(precision_per_class)
     avg_recall = np.mean(recall_per_class)
-    f1_score = (
+    global_f1_score = (
         (2 * avg_precision * avg_recall) / (avg_precision + avg_recall)
         if (avg_precision + avg_recall)
         else 0
     )
 
-    return accuracy, avg_precision, avg_recall, f1_score
+    global_metrics = {
+        'accuracy': accuracy,
+        'precision': avg_precision,
+        'recall': avg_recall,
+        'f1-score': global_f1_score
+    }
+
+    return metrics_per_row, global_metrics
 
 # Convert DataFrame to LaTeX
 def dataframe_to_latex(df):
     return df.to_latex(index=False, escape=True)
+
+# Convert metrics to LaTeX
+def metrics_to_latex(metrics_per_row, global_metrics):
+    rows = [{'Gesture': 'Global', **global_metrics}]
+    for gesture, metrics in metrics_per_row.items():
+        row = {'Gesture': gesture, 'accuracy': '-', **metrics}
+        rows.append(row)
+    df_metrics = pd.DataFrame(rows)
+    return df_metrics.to_latex(index=False, float_format="%.2f")
 
 # Main script
 parser = argparse.ArgumentParser(description='Convert HTML confusion matrices to LaTeX format.')
@@ -98,31 +121,13 @@ df_first = parse_confusion_matrix(first_matrix)
 df_first = apply_label_mapping(df_first, col_map, row_map)
 latex_first = dataframe_to_latex(df_first)
 
-# # Extract and aggregate second confusion matrix (grouped)
-# second_matrix = soup.select('div[ng-if="groupedConfusionMatrix.length"] table')[0]
-# df_second = parse_confusion_matrix(second_matrix, use_ids=False)
-# df_second = apply_label_mapping(df_second, {}, row_map)
-# df_second.iloc[:, 0] = df_second.iloc[:, 0].apply(lambda x: re.sub(r'.*?:\\s*', '', x))
-# df_second.set_index(df_second.columns[0], inplace=True)
-# df_second = df_second.astype(int).groupby(df_second.index).sum().reset_index()
-# df_second = apply_label_mapping(df_second, col_map, {})
-# latex_second = dataframe_to_latex(df_second)
-
-# Extract second confusion matrix (grouped)
+# Extract and aggregate second confusion matrix (grouped)
 second_matrix = soup.select('div[ng-if="groupedConfusionMatrix.length"] table')[0]
 df_second = parse_confusion_matrix(second_matrix, use_ids=False)
-
-# First remove IDs from labels (everything before ':')
-df_second.iloc[:, 0] = df_second.iloc[:, 0].apply(lambda x: re.sub(r'^.*?:\s*', '', x))
-
-# Now apply row label mappings using regex
+df_second.iloc[:, 0] = df_second.iloc[:, 0].apply(lambda x: re.sub(r'.*?:\s*', '', x))
 df_second = apply_label_mapping(df_second, {}, row_map)
-
-# Aggregate rows with the same label
 df_second.set_index(df_second.columns[0], inplace=True)
 df_second = df_second.astype(int).groupby(df_second.index).sum().reset_index()
-
-# Apply column mappings
 df_second = apply_label_mapping(df_second, col_map, {})
 latex_second = dataframe_to_latex(df_second)
 
@@ -137,8 +142,7 @@ print("\n\n")
 
 # Calculate and print metrics if requested
 if args.calc:
-    accuracy, precision, recall, f1_score = calculate_metrics(df_second)
-    print(f"Accuracy: {accuracy:.2f}")
-    print(f"Precision: {precision:.2f}")
-    print(f"Recall: {recall:.2f}")
-    print(f"F1-score: {f1_score:.2f}")
+    metrics_per_row, global_metrics = calculate_metrics(df_second)
+    latex_metrics = metrics_to_latex(metrics_per_row, global_metrics)
+    print("Metrics LaTeX Table:\n")
+    print(latex_metrics)
