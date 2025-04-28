@@ -307,8 +307,8 @@ angular.module('app').controller(
         // $scope.fakeLoopModifier = 1.0;
         // $scope.fakeLoopModifier = 0.5;
         // $scope.fakeLoopModifier = 0.25;
-        // $scope.fakeLoopModifier = 0.1;
-        $scope.fakeLoopModifier = 0.-5;
+        $scope.fakeLoopModifier = 0.1;
+        // $scope.fakeLoopModifier = 0.-5;
 
         $scope.fakingLoop = function (curIndex) {
           if ($scope.isBLEIdle()) {
@@ -329,6 +329,8 @@ angular.module('app').controller(
           if (typeof $scope.fakeData[curIndex + 1] !== "undefined") {
             var second = $scope.fakeData[curIndex + 1];
             var delay = (second.t - first.t) * $scope.fakeLoopModifier;
+            console.log("delay");
+            console.log(delay);
             var res = setTimeout($scope.fakingLoop, delay, curIndex + 1);
           }
 
