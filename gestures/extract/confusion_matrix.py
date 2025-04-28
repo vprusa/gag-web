@@ -22,7 +22,7 @@ def parse_arguments():
     parser.add_argument("--user", type=str, required=True)
     parser.add_argument("--password", type=str, required=True)
     parser.add_argument("--database", type=str, required=True)
-    parser.add_argument("--gestures", type=int, nargs='+', required=True)
+    parser.add_argument("--gestures", type=int, nargs='+', required=False)
     parser.add_argument("--positions", type=int, nargs='+', required=True)
     parser.add_argument("--ref-gestures", type=int, nargs='+', required=True)
     parser.add_argument("--output_prefix", type=str, default="quaternion_plot_out")
@@ -35,6 +35,7 @@ def parse_arguments():
     parser.add_argument("--gen-cm", default=False, action="store_true", help="Enables confusion matrix generation")
     parser.add_argument("--threshold", type=float)
     parser.add_argument("--angular-diff", action="store_true")
+    parser.add_argument("-v", default=False, action="store_true")
     parser.add_argument("--actual-matches", type=int, nargs='+', help="List of expected matches (1 or 0) for each input gesture")
     parser.add_argument("--save-ref-gesture", type=str, help="Name of new gesture to save averaged referential data")
     parser.add_argument("--calc-all", action="store_true", help="Enable brute-force gesture coverage evaluation")
@@ -420,6 +421,7 @@ def calc_all(args, conn):
     conn.close()
     sys.exit(0)
 
+
 def single(args, conn):
     method = None
     if args.row_max_col_max:
@@ -432,183 +434,97 @@ def single(args, conn):
         method = 'row-avg-col-avg'
 
     if method is None:
-        raise ValueError("No calculation method specified. Use --row-max-col-max, --row-max-col-avg, --row-avg-col-max, or --row-avg-col-avg")
+        raise ValueError("No calculation method specified.")
 
-    # aggregated_df = []
-    # agg_threshold = {}
-    # pprint(args.positions)
-    # # first_gest_df = fetch_gesture_data(conn, [args.ref_gestures[0]], args.positions)
-    #
-    # # Fetch all referential data
-    # ref_df = fetch_gesture_data(conn, args.ref_gestures, args.positions)
-    # # Filter only the first gesture
-    # first_gesture_df = ref_df[ref_df['gesture_id'] == args.ref_gestures[0]]
-    #
-    # for pos in args.positions:
-    #     ref_df = fetch_gesture_data(conn, args.ref_gestures, [pos])
-    #     if ref_df.empty:
-    #         print("❌ No referential gesture data at position", pos)
-    #         continue
-    #
-    #     grouped = ref_df.groupby('gesture_id')
-    #     min_len = grouped.size().min()
-    #     aligned_gestures = [g.iloc[:min_len][['qw', 'qx', 'qy', 'qz']].to_numpy() for _, g in grouped]
-    #
-    #     threshold = calculate_threshold(aligned_gestures, method)
-    #     print(f"📐 Using threshold ({method}): {threshold:.6f} at position {pos}")
-    #
-    #     input_df = fetch_gesture_data(conn, args.gestures, [pos])
-    #     if input_df.empty:
-    #         print("❌ No input gesture data at position", pos)
-    #         continue
-    #
-    #     avg_gesture = np.mean(aligned_gestures, axis=0)
-    #     categorized_df = categorize_by_angular_distance(input_df, avg_gesture, threshold)
-    #
-    #     if args.actual_matches:
-    #         categorized_df = assign_actual_matches(categorized_df, args.gestures, args.actual_matches)
-    #     else:
-    #         categorized_df['actual_match'] = 1
-    #
-    #     aggregated_df.append(categorized_df)
-    #
-    #     if args.gen_cm:
-    #         generate_angular_confusion_matrix(
-    #             categorized_df,
-    #             args.ref_gestures,
-    #             args.gestures,
-    #             pos,
-    #             args.output_prefix,
-    #             args.actual_matches if args.actual_matches else categorized_df['actual_match'].tolist(),
-    #             args,
-    #             threshold
-    #         )
-    #     agg_threshold[pos] = threshold
-    #
-    # pprint(agg_threshold)
-    # global_threshold = None
-    # if args.row_max_col_max:
-    #     global_threshold = np.max(agg_threshold, axis=0)
-    # elif args.row_max_col_avg:
-    #     global_threshold = np.mean(agg_threshold, axis=0)
-    # elif args.row_avg_col_max:
-    #     global_threshold = np.max(agg_threshold, axis=0)
-    # elif args.row_avg_col_avg:
-    #     # global_threshold = np.mean(agg_threshold.values())
-    #     global_threshold = np.mean(list(agg_threshold.values()))
-    #
-    # # if args.save_ref_gesture and avg_gesture_global is not None:
-    # #     gesture_name = f"{args.save_ref_gesture}_{method}"
-    # #     store_ref_gesture(conn, gesture_name, avg_gesture_global, first_gesture_df, threshold)
-    #
-    # if args.save_ref_gesture and global_threshold is not None:
-    #     gesture_name = f"{args.save_ref_gesture}_{method}"
-    #     pprint(aggregated_df)
-    #     store_ref_gesture(conn, gesture_name, aggregated_df, first_gesture_df, threshold)
-    #     # store_ref_gesture(conn, gesture_name, avg_gesture_global, first_gesture_df, threshold)
-    # # def store_ref_gesture(conn, name, avg_quats, ref_df, threshold):
+    agg_thresholds = {}
 
-    aggregated_df = []
-    agg_threshold = {}
-    gesture_global_threshold = None
+    # Load and filter reference gestures data once
+    full_ref_df = fetch_gesture_data(conn, args.ref_gestures, args.positions)
 
-    # Fetch all referential data once
-    ref_df = fetch_gesture_data(conn, args.ref_gestures, args.positions)
-    first_gesture_df = ref_df[ref_df['gesture_id'] == args.ref_gestures[0]]
-
+    new_gesture_data = []
     for pos in args.positions:
-        ref_pos_df = fetch_gesture_data(conn, args.ref_gestures, [pos])
-        if ref_pos_df.empty:
-            print("❌ No referential gesture data at position", pos)
+        pos_ref_df = full_ref_df[full_ref_df['position'] == pos]
+        if pos_ref_df.empty:
+            print(f"❌ No referential data for position {pos}")
             continue
 
-        grouped = ref_pos_df.groupby('gesture_id')
-        min_len = grouped.size().min()
-        aligned_gestures = [g.iloc[:min_len][['qw', 'qx', 'qy', 'qz']].to_numpy() for _, g in grouped]
+        # Group by gesture and sort each group by timestamp
+        gesture_groups = {gid: group.sort_values('timestamp').reset_index(drop=True)
+                          for gid, group in pos_ref_df.groupby('gesture_id')}
 
-        threshold = calculate_threshold(aligned_gestures, method)
-        print(f"📐 Using threshold ({method}): {threshold:.6f} at position {pos}")
+        min_len = min(len(g) for g in gesture_groups.values())
 
-        input_df = fetch_gesture_data(conn, args.gestures, [pos])
-        if input_df.empty:
-            print("❌ No input gesture data at position", pos)
-            continue
+        row_max_values = []
+        row_avg_values = []
+        pos_new_quats = []
 
-        if args.use_max_threshold:
-            avg_gesture = np.max(aligned_gestures, axis=0)
-        else:
-            avg_gesture = np.mean(aligned_gestures, axis=0)
+        for idx in range(min_len):
+            quats_row = []
+            timestamps_row = []
 
-        if gesture_global_threshold is None:
-            gesture_global_threshold = avg_gesture  # store globally once
+            for gid, group in gesture_groups.items():
+                row = group.iloc[idx]
+                quat = [row['qw'], row['qx'], row['qy'], row['qz']]
+                quats_row.append(quat)
+                timestamps_row.append(row['timestamp'])
 
-        categorized_df = categorize_by_angular_distance(input_df, avg_gesture, threshold)
+            # Calculate average quaternion
+            avg_quat = np.mean(quats_row, axis=0)
+            timestamp = timestamps_row[0]
 
-        if args.actual_matches:
-            categorized_df = assign_actual_matches(categorized_df, args.gestures, args.actual_matches)
-        else:
-            categorized_df['actual_match'] = 1
+            pos_new_quats.append({'position': pos, 'timestamp': timestamp, 'quat': avg_quat})
 
-        aggregated_df.append(categorized_df)
+            # Calculate differences for this row
+            row_diffs = [angular_difference(avg_quat, q) for q in quats_row]
 
-        if args.gen_cm:
-            generate_angular_confusion_matrix(
-                categorized_df,
-                args.ref_gestures,
-                args.gestures,
-                pos,
-                args.output_prefix,
-                args.actual_matches if args.actual_matches else categorized_df['actual_match'].tolist(),
-                args,
-                threshold
-            )
-        agg_threshold[pos] = threshold
+            row_max_values.append(np.max(row_diffs))
+            row_avg_values.append(np.mean(row_diffs))
 
-    pprint(agg_threshold)
+        # Select global threshold per position correctly
+        if method == 'row-max-col-max':
+            pos_global_threshold = np.max(row_max_values)
+        elif method == 'row-max-col-avg':
+            pos_global_threshold = np.mean(row_max_values)
+        elif method == 'row-avg-col-max':
+            pos_global_threshold = np.max(row_avg_values)
+        elif method == 'row-avg-col-avg':
+            pos_global_threshold = np.mean(row_avg_values)
 
-    # Calculate global threshold correctly
-    valid_thresholds = [v for v in agg_threshold.values() if v is not None]
-    if valid_thresholds:
-        global_threshold = np.mean(valid_thresholds)
-    else:
-        global_threshold = None
+        agg_thresholds[pos] = pos_global_threshold
 
-    if args.save_ref_gesture and gesture_global_threshold is not None:
+        new_gesture_data.extend(pos_new_quats)
+
+        print(f"📍 Position {pos}, threshold: {pos_global_threshold:.6f}")
+
+    # Reorder by timestamp
+    new_gesture_data_sorted = sorted(new_gesture_data, key=lambda x: x['timestamp'])
+
+    # if args.save_ref_gesture:
+    #     gesture_name = f"{args.save_ref_gesture}_{method}"
+    #     avg_quats_array = np.array([item['quat'] for item in new_gesture_data_sorted])
+    #     timestamps_df = pd.DataFrame(new_gesture_data_sorted)
+    #     global_threshold = np.max(list(agg_thresholds.values())) if args.use_max_threshold else np.mean(
+    #         list(agg_thresholds.values()))
+    #     store_ref_gesture(conn, gesture_name, avg_quats_array, timestamps_df, global_threshold)
+
+    if args.save_ref_gesture:
         gesture_name = f"{args.save_ref_gesture}_{method}"
-        store_ref_gesture(conn, gesture_name, gesture_global_threshold, first_gesture_df, global_threshold)
+        avg_quats_array = np.array([item['quat'] for item in new_gesture_data_sorted])
 
-    if aggregated_df:
-        aggregated_df = pd.concat(aggregated_df, ignore_index=True)
+        # Zde přidáme 'gesture_id' ze vstupních referenčních gest
+        timestamps_df = pd.DataFrame(new_gesture_data_sorted)
+        timestamps_df['gesture_id'] = args.ref_gestures[0]  # Příklad použití prvního referenčního gesta
 
-        y_true = aggregated_df['actual_match']
-        y_pred = aggregated_df['matched']
+        global_threshold = np.max(list(agg_thresholds.values())) if args.use_max_threshold else np.mean(
+            list(agg_thresholds.values()))
+        store_ref_gesture(conn, gesture_name, avg_quats_array, timestamps_df, global_threshold)
 
-        final_cm = confusion_matrix(y_true, y_pred, labels=[0, 1])
-        print(classification_report(y_true, y_pred, labels=[0, 1]))
+    print("✅ Aggregated Thresholds:")
+    for pos, thr in agg_thresholds.items():
+        print(f"Position {pos}: Threshold {thr:.6f}")
 
-        gesture_out_dir_path = os.path.join(
-            f"out_ref_gestures_{'_'.join(map(str, args.ref_gestures))}_in_gestures_{'_'.join(map(str, args.gestures))}_{threshold:.6f}",
-            "final"
-        )
-        final_out_path = os.path.join(gesture_out_dir_path, "final_confusion_matrix.png")
+    return agg_thresholds
 
-        os.makedirs(gesture_out_dir_path, exist_ok=True)
-        plt.figure(figsize=(4, 3))
-        sns.heatmap(final_cm, annot=True, fmt='d', cmap='Blues', xticklabels=[0, 1], yticklabels=[0, 1])
-        plt.title("Final Confusion Matrix")
-        plt.xlabel("Predicted")
-        plt.ylabel("Actual")
-        plt.tight_layout()
-        plt.savefig(final_out_path)
-        plt.close()
-
-        if args.gen_cm:
-            print(f"✅ Saved final confusion matrix: {final_out_path}")
-        # print(f"nautilus {gesture_out_dir_path} & disown")
-
-        if args.gen_cm:
-            os.system(f"nautilus {gesture_out_dir_path} & disown")
-    return agg_threshold
 
 def single2(args, conn):
     global pos, ref_df, avg_ref, threshold, input_df, categorized_df, gesture_id, gesture_match_flags, positions

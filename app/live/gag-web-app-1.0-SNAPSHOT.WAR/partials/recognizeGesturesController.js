@@ -27,8 +27,6 @@ angular.module('app').controller(
         // WSTools.init();
         $scope.vis.numberOfHandsPairs = 1;
 
-
-
         $scope.lastRecognizedGesture = {id: null, count: 0};
 
           $scope.recognitionResults = {};
@@ -307,10 +305,11 @@ angular.module('app').controller(
         // $scope.fakeLoopModifier = 1.0;
         // $scope.fakeLoopModifier = 0.5;
         // $scope.fakeLoopModifier = 0.25;
-        $scope.fakeLoopModifier = 0.1;
+        $scope.fakeLoopModifier = 0.01;
+        // $scope.fakeLoopModifier = 0.1;
         // $scope.fakeLoopModifier = 0.-5;
 
-        $scope.fakingLoop = function (curIndex) {
+        $scope.fakingLoop = async function (curIndex) {
           if ($scope.isBLEIdle()) {
             return;
           }
@@ -328,10 +327,24 @@ angular.module('app').controller(
 
           if (typeof $scope.fakeData[curIndex + 1] !== "undefined") {
             var second = $scope.fakeData[curIndex + 1];
-            var delay = (second.t - first.t) * $scope.fakeLoopModifier;
-            console.log("delay");
-            console.log(delay);
-            var res = setTimeout($scope.fakingLoop, delay, curIndex + 1);
+            // var delay = (second.t - first.t) * $scope.fakeLoopModifier;
+            var MIN_DELAY = 1; // Minimum effective delay in milliseconds
+            var rawDelay = second.t - first.t;
+            var delay = Math.max(rawDelay * $scope.fakeLoopModifier, MIN_DELAY);
+            // console.log("delay");
+            // console.log(second.t);
+            // console.log(first.t);
+            // console.log(delay);
+            // console.log("delay modified");
+
+            const delayFun = ms => new Promise(resolve => setTimeout(resolve, ms));
+            await delayFun(delay);
+
+            // var res = setTimeout($scope.fakingLoop, delay, curIndex + 1);
+            // var res = setTimeout($scope.fakingLoop, delay, curIndex + 1);
+            // var res = setTimeout($scope.fakingLoop, 1, curIndex + 1);
+            $scope.fakingLoop(curIndex + 1);
+
           }
 
         };
@@ -532,6 +545,8 @@ angular.module('app').controller(
 
         let defaultDelay = 250;
         let defaultDelay2 = 500;
+        // let defaultDelay = 1000;
+        // let defaultDelay2 = 1000;
 
         $scope.runMultipleAutomatedTests = async function () {
           log("Starting recognition: " + $location.search().refGestureIds + " against " + $location.search().inputGestureIds);
