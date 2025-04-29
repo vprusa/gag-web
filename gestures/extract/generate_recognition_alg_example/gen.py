@@ -94,6 +94,32 @@ def fetch_gesture_data(conn, gesture_ids, positions):
     cursor.execute(query, gesture_ids + positions)
     return pd.DataFrame(cursor.fetchall())
 
+def to_latex_table(df, args, delay, threshold):
+    formatted_time = df['timestamp'][0].strftime('%Y-%m-%d %H:%M')
+
+    latex = """\\begin{table}[ht]
+    \\centering
+    \\resizebox{\\textwidth}{!}{%
+    \\begin{tabular}{c c c c c c c}
+        \\toprule
+        Čas (""" +formatted_time+ """) & qw & qx & qy & qz & Index shody & Částečná shody \\\\
+        \\midrule
+"""
+    for _, row in df.iterrows():
+        formatted_time = row['timestamp'].strftime('%Y-%m-%d %H:%M')
+        formatted_seconds = f"{row['timestamp'].second}.{int(row['timestamp'].microsecond / 1000):03d}"
+        matched_refs = ','.join(map(str, row['matched_refs'])) if row['matched_refs'] else '-'
+        partial_matches = ','.join(row['partial_matches']) if row['partial_matches'] else '-'
+        latex += f"        {formatted_seconds} & {row['qw']:.6f} & {row['qx']:.6f} & {row['qy']:.6f} & {row['qz']:.6f} & {matched_refs} & {partial_matches} \\\\ \n"
+    latex += ("""        \\bottomrule
+    \\end{tabular}%
+    }
+    \\caption{Příklad rozpoznání gesta """+str(args.ref_gest)+""" proti gestu """ + str(args.in_gest) + """ s hraniční hodnotou """
+              + str(threshold) + """ rad a čekáním na dalšího rozpoznávání """ + str(delay) + """ sekund}
+    \\label{tab:gesture_recognition_results_""" + str(args.ref_gest) + "_" + str(args.in_gest) + """}
+\\end{table}""")
+    return latex
+
 # Main entry point
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -104,6 +130,7 @@ if __name__ == "__main__":
     parser.add_argument("--password", type=str, required=True)
     parser.add_argument("--database", type=str, required=True)
     parser.add_argument("--threshold", type=float, default=0.141197)
+    parser.add_argument("--delay", type=float, default=None)
     parser.add_argument("--ref-gest-quat-order", type=str, default="axyz")
     parser.add_argument("-v", "--verbose", action="store_true")
     args = parser.parse_args()
@@ -114,7 +141,8 @@ if __name__ == "__main__":
     ref_quats_df = ref_quats_df.rename(columns={'qw':'a', 'qx':'x', 'qy':'y', 'qz':'z'})
     ref_quats = ref_quats_df[list(args.ref_gest_quat_order)].values
 
-    gesture_delay = ref_quats_df['delay'].iloc[0] if 'delay' in ref_quats_df else 0
+    gesture_delay = args.delay if args.delay is not None else (ref_quats_df['delay'].iloc[0] if 'delay' in ref_quats_df else 0)
+    threshold = args.threshold if args.threshold is not None else (ref_quats_df['shouldMatch'].iloc[0] if 'shouldMatch' in ref_quats_df else 0)
 
-    results_df = recognize_gestures(input_quats, ref_quats, args.threshold, gesture_delay, args.verbose)
-    print(results_df)
+    results_df = recognize_gestures(input_quats, ref_quats, threshold, gesture_delay, args.verbose)
+    print(to_latex_table(results_df, args, gesture_delay, threshold))
