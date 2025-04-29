@@ -100,9 +100,9 @@ def to_latex_table(df, args, delay, threshold):
     latex = """\\begin{table}[ht]
     \\centering
     \\resizebox{\\textwidth}{!}{%
-    \\begin{tabular}{c c c c c c c}
+    \\begin{tabular}{c c c c c c c c}
         \\toprule
-        Čas (""" +formatted_time+ """) & qw & qx & qy & qz & Index shody & Částečná shody \\\\
+        Čas (""" +formatted_time+ """) ss:ms & qw & qx & qy & qz & Index shody & Částečná shody \\\\
         \\midrule
 """
     for _, row in df.iterrows():
@@ -110,7 +110,7 @@ def to_latex_table(df, args, delay, threshold):
         formatted_seconds = f"{row['timestamp'].second}.{int(row['timestamp'].microsecond / 1000):03d}"
         matched_refs = ','.join(map(str, row['matched_refs'])) if row['matched_refs'] else '-'
         partial_matches = ','.join(row['partial_matches']) if row['partial_matches'] else '-'
-        latex += f"        {formatted_seconds} & {row['qw']:.6f} & {row['qx']:.6f} & {row['qy']:.6f} & {row['qz']:.6f} & {matched_refs} & {partial_matches} \\\\ \n"
+        latex += f"        {row['id']} & {formatted_seconds} & {row['qw']:.6f} & {row['qx']:.6f} & {row['qy']:.6f} & {row['qz']:.6f} & {matched_refs} & {partial_matches} \\\\ \n"
     latex += ("""        \\bottomrule
     \\end{tabular}%
     }
