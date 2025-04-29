@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import mysql.connector
 import argparse
+from datetime import timedelta
 
 # Quaternion similarity measure (angle between quaternions)
 def quaternion_angle(q1, q2):
@@ -13,13 +14,15 @@ def quaternion_angle(q1, q2):
 def normalize_quat(q):
     return q / np.linalg.norm(q)
 
-# Corrected recognition algorithm
-def recognize_gestures(input_quats, ref_quats, threshold_rad, verbose=False):
+# Recognition algorithm with delay consideration
+def recognize_gestures(input_quats, ref_quats, threshold_rad, gesture_delay, verbose=False):
     recognition_results = []
     partial_matches = []
     partial_match_counter = 0
 
     ref_quats = np.array([normalize_quat(q) for q in ref_quats])
+
+    last_gesture_start = None
 
     for idx, row in input_quats.iterrows():
         input_quat = normalize_quat(row[['qw', 'qx', 'qy', 'qz']].values)
@@ -46,9 +49,11 @@ def recognize_gestures(input_quats, ref_quats, threshold_rad, verbose=False):
                 if verbose:
                     print(f"Partial match id {match['id']} did not advance at {timestamp}, angle: {angle_diff:.6f}")
 
+        can_start_new_match = (last_gesture_start is None) or (timestamp - last_gesture_start >= timedelta(seconds=gesture_delay))
         angle_diff_first_ref = quaternion_angle(input_quat, ref_quats[0])
-        if angle_diff_first_ref <= threshold_rad:
+        if angle_diff_first_ref <= threshold_rad and can_start_new_match:
             updated_partial_matches.append({'id': partial_match_counter, 'ref_idx': 1, 'start_time': timestamp})
+            last_gesture_start = timestamp
             if verbose:
                 print(f"New partial match id {partial_match_counter} started at {timestamp}")
             partial_match_counter += 1
@@ -77,7 +82,7 @@ def fetch_gesture_data(conn, gesture_ids, positions):
     query = f"""
     SELECT dl.id, dl.position, dl.timestamp,
            fdl.quatA AS qw, fdl.quatX AS qx, fdl.quatY AS qy, fdl.quatZ AS qz,
-           dl.gesture_id, g.shouldMatch, g.userAlias
+           dl.gesture_id, g.shouldMatch, g.userAlias, g.delay
     FROM FingerDataLine fdl
     JOIN DataLine dl ON fdl.id = dl.id
     LEFT JOIN Gesture g on dl.gesture_id = g.id 
@@ -89,27 +94,7 @@ def fetch_gesture_data(conn, gesture_ids, positions):
     cursor.execute(query, gesture_ids + positions)
     return pd.DataFrame(cursor.fetchall())
 
-def to_latex_table(df):
-    latex = """\\begin{table}[ht]
-    \\centering
-    \\resizebox{\\textwidth}{!}{%
-    \\begin{tabular}{c c c c c c c c}
-        \\toprule
-        Timestamp & qw & qx & qy & qz & Matched Refs & Match Counts & Partial Matches \\
-        \\midrule
-"""
-    for _, row in df.iterrows():
-        matched_refs = ','.join(map(str, row['matched_refs'])) if row['matched_refs'] else '-'
-        partial_matches = ','.join(row['partial_matches']) if row['partial_matches'] else '-'
-        latex += f"{row['timestamp']} & {row['qw']:.6f} & {row['qx']:.6f} & {row['qy']:.6f} & {row['qz']:.6f} & {matched_refs} & {row['match_counts']} & {partial_matches} \\\\ \n"
-    latex += """        \\bottomrule
-    \\end{tabular}%
-    }
-    \\caption{Gesture Recognition Results}
-    \\label{tab:gesture_recognition_results}
-\\end{table}"""
-    return latex
-
+# Main entry point
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--in-gest", type=int, required=True)
@@ -129,5 +114,7 @@ if __name__ == "__main__":
     ref_quats_df = ref_quats_df.rename(columns={'qw':'a', 'qx':'x', 'qy':'y', 'qz':'z'})
     ref_quats = ref_quats_df[list(args.ref_gest_quat_order)].values
 
-    results_df = recognize_gestures(input_quats, ref_quats, args.threshold, args.verbose)
-    print(to_latex_table(results_df))
+    gesture_delay = ref_quats_df['delay'].iloc[0] if 'delay' in ref_quats_df else 0
+
+    results_df = recognize_gestures(input_quats, ref_quats, args.threshold, gesture_delay, args.verbose)
+    print(results_df)

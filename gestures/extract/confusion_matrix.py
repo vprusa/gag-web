@@ -153,7 +153,7 @@ def store_ref_gesture(conn, name, avg_quats, ref_df, threshold):
         dataline_id = cursor.lastrowid
 
         cursor.execute(
-            "INSERT INTO FingerDataLine (accX, accY, accZ, quatA, quatX, quatY, quatZ, id) VALUES (0, 0, 0, %s, %s, %s, %s, %s)",
+            "INSERT INTO FingerDataLine (accX, accY, accZ, quatX, quatY, quatZ, quatA, id) VALUES (0, 0, 0, %s, %s, %s, %s, %s)",
             (float(quat[3]), float(quat[0]), float(quat[1]), float(quat[2]), int(dataline_id))
         )
 
@@ -499,6 +499,13 @@ def single(args, conn):
     # Reorder by timestamp
     new_gesture_data_sorted = sorted(new_gesture_data, key=lambda x: x['timestamp'])
 
+    print("\n🚩 Generated Averaged Gesture:")
+    for data in new_gesture_data_sorted:
+        ts = data['timestamp']
+        pos = data['position']
+        quat = data['quat']
+        print(f"Timestamp: {ts}, Position: {pos}, Quaternion: {quat}")
+    # pprint(new_gesture_data_sorted)
     # if args.save_ref_gesture:
     #     gesture_name = f"{args.save_ref_gesture}_{method}"
     #     avg_quats_array = np.array([item['quat'] for item in new_gesture_data_sorted])
