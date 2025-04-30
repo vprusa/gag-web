@@ -331,18 +331,10 @@ angular.module('app').controller(
             var MIN_DELAY = 1; // Minimum effective delay in milliseconds
             var rawDelay = second.t - first.t;
             var delay = Math.max(rawDelay * $scope.fakeLoopModifier, MIN_DELAY);
-            // console.log("delay");
-            // console.log(second.t);
-            // console.log(first.t);
-            // console.log(delay);
-            // console.log("delay modified");
 
             const delayFun = ms => new Promise(resolve => setTimeout(resolve, ms));
             await delayFun(delay);
 
-            // var res = setTimeout($scope.fakingLoop, delay, curIndex + 1);
-            // var res = setTimeout($scope.fakingLoop, delay, curIndex + 1);
-            // var res = setTimeout($scope.fakingLoop, 1, curIndex + 1);
             $scope.fakingLoop(curIndex + 1);
 
           }
@@ -358,10 +350,6 @@ angular.module('app').controller(
                 $scope.fakingLoop(0);
               });
         };
-
-        // $scope.stopFakingBLE = function () {
-        //   $scope.fakingState = fakingStates.IDLE;
-        // };
 
         $scope.isBLEFaking = function () {
           return $scope.fakingState == fakingStates.FAKING;
@@ -469,10 +457,6 @@ angular.module('app').controller(
               return e;
             });
             if (changed) {
-              // TODO why is the program get here when  recognition is running && startFaking is clicked?
-              // I have some idea and the problem may have to be solved for visualization of recognized sensor
-              // console.log("");
-              // console.log($scope.gestures);
               $scope.$apply();
             }
             // }
@@ -507,9 +491,6 @@ angular.module('app').controller(
         };
 
         // auto test
-        // http://localhost:8080/gagweb/#!/recognize?refGestureIds=75,76,77&inputGestureIds=41,42,43,44,45,46,47,48,49,50
-        // http://localhost:8080/gagweb/#!/recognize?refGestureIds=85,86,87&inputGestureIds=41,42,43,44,45,46,47,48,49,50
-
         $scope.recognitionConfig = {
           refGestureIds: ($location.search().refGestureIds || "").split(",").map(Number),
           inputGestureIds: ($location.search().inputGestureIds || "").split(",").map(Number)
@@ -545,8 +526,6 @@ angular.module('app').controller(
 
         let defaultDelay = 250;
         let defaultDelay2 = 500;
-        // let defaultDelay = 1000;
-        // let defaultDelay2 = 1000;
 
         $scope.runMultipleAutomatedTests = async function () {
           log("Starting recognition: " + $location.search().refGestureIds + " against " + $location.search().inputGestureIds);
@@ -702,66 +681,6 @@ angular.module('app').controller(
         $scope.min_count = 0;
         $scope.max_count = 0;
         $scope.groupedConfusionMatrix = [];
-
-/*
-
-        $scope.generateGroupedConfusionMatrix = function () {
-          console.log("generateGroupedConfusionMatrix");
-          if (!$scope.group_regex) {
-            $scope.groupedConfusionMatrix = [];
-            return;
-          }
-
-          const regex = new RegExp($scope.group_regex);
-          const inputGroups = {};
-          // Group input gestures by regex
-          $scope.recognitionConfig.inputGestureIds.forEach(id => {
-            const gesture = $scope.gestures.find(g => g.id === id);
-            const match = gesture.userAlias.match(regex);
-            if (match) {
-              const key = match[1];
-              inputGroups[key] = inputGroups[key] || [];
-              inputGroups[key].push(id);
-            }
-          });
-          console.log(inputGroups);
-          const headers = [].concat(Object.keys(inputGroups));
-          const matrix = [headers];
-
-          $scope.recognitionConfig.refGestureIds.forEach(refId => {
-            const refGesture = $scope.gestures.find(g => g.id === refId);
-            const row = [`${refGesture.id}: ${refGesture.userAlias}`];
-
-            Object.keys(inputGroups).forEach(groupKey => {
-              const gestureIds = inputGroups[groupKey];
-              const counts = gestureIds.map(inputId =>
-                  ($scope.recognitionResults[refId] && $scope.recognitionResults[refId][inputId])
-                      ? $scope.recognitionResults[refId][inputId].count
-                      : 0
-              );
-
-              let aggregatedCount = 0;
-              if ($scope.cm_selector === "all") {
-                aggregatedCount = counts.every(c => c >= $scope.cm_count_limit) ? 1 : 0;
-              } else if ($scope.cm_selector === "any") {
-                aggregatedCount = counts.some(c => c >= $scope.cm_count_limit) ? 1 : 0;
-              } else if ($scope.cm_selector === "none") {
-                aggregatedCount = counts.every(c => c < $scope.cm_count_limit) ? 1 : 0;
-              }
-
-              row.push(aggregatedCount);
-            });
-
-            matrix.push(row);
-          });
-
-          console.log(matrix);
-
-          $scope.groupedConfusionMatrix = matrix;
-        };
-*/
-
-
         $scope.generateGroupedConfusionMatrix = function () {
           if (!$scope.group_regex) {
             $scope.groupedConfusionMatrix = [];
