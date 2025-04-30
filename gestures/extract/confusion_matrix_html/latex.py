@@ -1,5 +1,6 @@
 import pandas as pd
 import argparse
+import numpy as np
 
 gesture_mapping = {
     'T-R-INDEX-U-D': 'INDEX',
@@ -14,29 +15,40 @@ gesture_mapping = {
     'Z-R-VICTORIA': 'VICT'
 }
 
-def calculate_statistics(conf_matrix):
-    diagonal = conf_matrix.values.diagonal()
-    precision = diagonal / conf_matrix.sum(axis=0)
-    recall = diagonal / conf_matrix.sum(axis=1)
-    f1_score = 2 * (precision * recall) / (precision + recall)
+def calculate_metrics(conf_matrix):
+    gestures = conf_matrix.index
+    n = len(gestures)
 
-    precision, recall, f1_score = [x.fillna(0) for x in [precision, recall, f1_score]]
+    TP = np.diag(conf_matrix)
+    FP = conf_matrix.sum(axis=0) - TP
+    FN = conf_matrix.sum(axis=1) - TP
+    TN = conf_matrix.values.sum() - (TP + FP + FN)
 
-    global_accuracy = diagonal.sum() / conf_matrix.values.sum()
+    accuracy = ((TP + TN) / (TP + TN + FP + FN)).round(6)
+    precision = (TP / (TP + FP)).fillna(0).round(6)
+    recall = (TP / (TP + FN)).fillna(0).round(6)
+    f1_score = (2 * precision * recall / (precision + recall)).fillna(0).round(6)
+
+    global_accuracy = accuracy.mean().round(6)
+    global_precision = precision.mean().round(6)
+    global_recall = recall.mean().round(6)
+    global_f1 = f1_score.mean().round(6)
+
     global_stats = pd.DataFrame([{
         'Gesto': 'Globální',
-        'Přesnost': round(global_accuracy, 6),
-        'Preciznost': round(precision.mean(), 6),
-        'Odezva': round(recall.mean(), 6),
-        'F1-skóre': round(f1_score.mean(), 6)
+        'Přesnost': global_accuracy,
+        'Preciznost': global_precision,
+        'Odezva': global_recall,
+        'F1-skóre': global_f1
     }])
 
     stats_df = pd.DataFrame({
-        'Gesto': conf_matrix.index,
-        'Přesnost': ['-'] * len(conf_matrix),
-        'Preciznost': precision.round(6),
-        'Odezva': recall.round(6),
-        'F1-skóre': f1_score.round(6)
+        'Gesto': gestures,
+        #'Přesnost': ['-'] * n,
+        'Přesnost': accuracy.round(6),
+        'Preciznost': precision,
+        'Odezva': recall,
+        'F1-skóre': f1_score
     })
 
     return pd.concat([global_stats, stats_df], ignore_index=True)
@@ -61,7 +73,7 @@ def main(csv_file):
         conf_matrix.index = conf_matrix.index.map(gesture_mapping)
         conf_matrix.columns = conf_matrix.columns.map(gesture_mapping)
 
-        stats_df = calculate_statistics(conf_matrix)
+        stats_df = calculate_metrics(conf_matrix)
 
         latex_conf_matrix = conf_matrix.to_latex(
             caption=f'Matice záměn při hraniční hodnotě {suffix}',
