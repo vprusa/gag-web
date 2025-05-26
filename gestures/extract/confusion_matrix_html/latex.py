@@ -2,18 +2,32 @@ import pandas as pd
 import argparse
 import numpy as np
 
+# gesture_mapping = {
+#     'T-R-INDEX-U-D': 'INDEX',
+#     'T-R-EACH-FINGER-U-D': 'EACH',
+#     'Z-R-WAVE-L45-M-R45-M': 'WAVE',
+#     'Z-R-SWITCH-Y180': 'SW',
+#     'Z-R-OK': 'OK',
+#     'Z-R-SWITCH-AND-BACK': 'SW-BACK',
+#     'Z-R-FIST': 'FIST',
+#     'Z-R-SWITCH-FIST': 'SW-FIST',
+#     'Z-R-MAYBE-L-M-R-M': 'MAYBE',
+#     'Z-R-VICTORIA': 'VICT'
+# }
+
 gesture_mapping = {
-    'T-R-INDEX-U-D': 'INDEX',
     'T-R-EACH-FINGER-U-D': 'EACH',
-    'Z-R-WAVE-L45-M-R45-M': 'WAVE',
-    'Z-R-SWITCH-Y180': 'SW',
+    'T-R-INDEX-U-D': 'INDEX',
+    'Z-R-FIST': 'FIST',
+    'Z-R-MAYBE-L-M-R-M': 'MAYBE',
     'Z-R-OK': 'OK',
     'Z-R-SWITCH-AND-BACK': 'SW-BACK',
-    'Z-R-FIST': 'FIST',
     'Z-R-SWITCH-FIST': 'SW-FIST',
-    'Z-R-MAYBE-L-M-R-M': 'MAYBE',
-    'Z-R-VICTORIA': 'VICT'
+    'Z-R-SWITCH-Y180': 'SW',
+    'Z-R-VICTORIA': 'VICT',
+    'Z-R-WAVE-L45-M-R45-M': 'WAVE'
 }
+
 
 def calculate_metrics(conf_matrix):
     gestures = conf_matrix.index
