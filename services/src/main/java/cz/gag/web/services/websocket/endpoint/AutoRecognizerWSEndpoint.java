@@ -62,7 +62,7 @@ public class AutoRecognizerWSEndpoint {
             recognizer.start(currentUser);
 
             // Load and stream sensor data for the gesture to be replayed
-            List<DataLine> replayData = dataLineService.findByGestureIdOrdered(gestureIdToReplay);
+            List<DataLine> replayData = dataLineService.findByGestureId(gestureIdToReplay);
 
             for (DataLine dl : replayData) {
                 List<MultiSensorGestureMatcher> results = recognizer.recognize(dl);

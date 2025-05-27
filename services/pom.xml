@@ -32,11 +32,11 @@
 			<artifactId>gag-web-persistence</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
-		<dependency>
+		<!--<dependency>
 			<groupId>cz.muni.fi.gag.web.scala</groupId>
 			<artifactId>gag-web-scala_2.11</artifactId>
 			<version>1.0-SNAPSHOT</version>
-		</dependency>
+		</dependency>-->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>

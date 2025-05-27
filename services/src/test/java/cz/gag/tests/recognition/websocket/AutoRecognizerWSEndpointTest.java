@@ -5,6 +5,8 @@ import cz.gag.tests.common.FileLogger;
 import cz.gag.tests.endpoint.GestureEndpointTest;
 import cz.gag.tests.endpoint.websocket.WSEndpointTestBase;
 import cz.gag.web.persistence.entity.Gesture;
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
@@ -14,7 +16,7 @@ import org.junit.runner.RunWith;
 
 import javax.websocket.*;
 import java.net.URI;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -23,12 +25,13 @@ import java.util.logging.Logger;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(Arquillian.class)
-public class AutoRecognizerWSEndpointTest extends WSEndpointTestBase {
+public class AutoRecognizerWSEndpointTest extends WSRecognitionEndpointTest /*WSEndpointTestBase*/ {
 
     private static final Logger log = FileLogger.getLogger(AutoRecognizerWSEndpointTest.class.getSimpleName());
     private static final String TESTED_ENDPOINT = "ws://" + URL_NO_PROTOCOL + "gagweb/ws/autoRecognizer";
 
-    @Deployment
+    @Deployment(name = "autoRecognizerDeployment")
+//    @Deployment
     public static WebArchive deployment() {
         return getDeployment(AutoRecognizerWSEndpointTest.class);
     }
@@ -61,14 +64,16 @@ public class AutoRecognizerWSEndpointTest extends WSEndpointTestBase {
             return response;
         }
     }
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
     @RunAsClient
     public void testAutoGestureRecognition() throws Exception {
         // Use same gesture as both target and replay to guarantee match
         Long gestureId = 79L;
+        HttpClient httpClient = new DefaultHttpClient();
 
-        Gesture gRef = GestureEndpointTest.getGesture(gestureId, basicLoginClient(), basicLogin());
+        Gesture gRef = GestureEndpointTest.getGesture(gestureId, httpClient, basicLogin());
         assertNotNull("Gesture must not be null", gRef);
 
         CountDownLatch latch = new CountDownLatch(1);
@@ -79,11 +84,12 @@ public class AutoRecognizerWSEndpointTest extends WSEndpointTestBase {
         ClientEndpointConfig config = getEndpointConfig();
         container.connectToServer(client, config, uri);
 
-        ObjectMapper mapper = new ObjectMapper();
-        String payload = mapper.writeValueAsString(Map.of(
-                "targetGestureId", gestureId,
-                "gestureToReplayId", gestureId
-        ));
+
+        HashMap map = new HashMap();
+        map.put("targetGestureId", gestureId);
+        map.put("gestureToReplayId", gestureId);
+
+        String payload = objectMapper.writeValueAsString(map);
 
         log.info("Sending recognition request: " + payload);
         client.sendText(payload);
