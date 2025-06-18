@@ -1,8 +1,13 @@
 <div class="row">
     <div class="card" style="max-height: 500px; overflow: scroll;">
         <div class="card-header card-header-primary">
-            <h4 class="card-title ">Log</h4>
-            <p class="card-category"></p>
+            <h4 class="card-title "
+                style="padding-top: 25px; float: left; display: inline-block;">Log</h4>
+<!--            <p class="card-category"></p>-->
+            <button id="clearLogsButton" class="btn btn-danger"
+                    style="margin-top: 2px; float: right; display: inline-block;">
+                Clear
+            </button>
         </div>
         <div class="card-body" id="LogMessages">
             <!--<table>
@@ -11,4 +16,11 @@
             <span></span>
         </div>
     </div>
+    <script>
+        $(document).ready(function() {
+            $('#clearLogsButton').click(function() {
+                $('#LogMessages').html('<span></span>');
+            });
+        });
+    </script>
 </div>

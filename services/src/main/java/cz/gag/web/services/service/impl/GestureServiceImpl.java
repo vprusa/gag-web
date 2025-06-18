@@ -53,4 +53,11 @@ public class GestureServiceImpl extends GenericCRUDServiceImpl<Gesture, GestureD
         return getDao().findActive(u);
     }
 
+    @Override
+    public Gesture deactivateAllExcept(Gesture g) {
+        Gesture g2 = getDao().deactivateAllExcept(g);
+        g2.setActive(true);
+        return g2;
+    }
+
 }

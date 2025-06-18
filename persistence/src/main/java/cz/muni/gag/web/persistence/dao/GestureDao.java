@@ -20,4 +20,6 @@ public interface GestureDao extends GenericDao<Gesture> {
     Gesture findRefById(Long u);
 
     List<Gesture> findActive(User u);
+
+    Gesture deactivateAllExcept(Gesture g);
 }

@@ -153,8 +153,10 @@ def store_ref_gesture(conn, name, avg_quats, ref_df, threshold):
         dataline_id = cursor.lastrowid
 
         cursor.execute(
-            "INSERT INTO FingerDataLine (accX, accY, accZ, quatX, quatY, quatZ, quatA, id) VALUES (0, 0, 0, %s, %s, %s, %s, %s)",
-            (float(quat[3]), float(quat[0]), float(quat[1]), float(quat[2]), int(dataline_id))
+            # "INSERT INTO FingerDataLine (accX, accY, accZ, quatX, quatY, quatZ, quatA, id) VALUES (0, 0, 0, %s, %s, %s, %s, %s)",
+            "INSERT INTO FingerDataLine (accX, accY, accZ, quatA, quatX, quatY, quatZ, id) VALUES (0, 0, 0, %s, %s, %s, %s, %s)",
+            # (float(quat[3]), float(quat[0]), float(quat[1]), float(quat[2]), int(dataline_id))
+            (float(quat[0]), float(quat[1]), float(quat[2]), float(quat[3]), int(dataline_id))
         )
 
         if int(position) == 5:

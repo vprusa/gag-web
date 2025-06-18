@@ -24,4 +24,6 @@ public interface GestureService extends GenericCRUDService<Gesture, GestureDao> 
 
     <T extends DataLine> Stream<T> getDataStream();
     List<Gesture> findActive(User u);
+
+    Gesture deactivateAllExcept(Gesture g);
 }

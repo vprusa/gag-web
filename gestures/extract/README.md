@@ -315,6 +315,10 @@ T-R-OK-3s
 453,452,541,540,449,448,447,446,445,444
 
 
+python gesture_data_extractor.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id 50 --threshold-extraction 0.01 --threshold-recognition 0.8 --position 1 --start --end | tee logs/gesture_data_extractor.py.`now_str`.log
+
+
+
 
 
 # T-R-INDEX-U-D-3s
@@ -3143,6 +3147,7 @@ Z-R-WAVE-L45-M-R45-M &        - &        0.33 &    1.00 &      0.49 \\
 
 
 
+
 \begin{table}
 \centering
 \caption{Matice záměn pro deset padesátkrát zaznamenaných gest, hraniční hodnota: 0.4}
@@ -3387,3 +3392,757 @@ Z-R-WAVE-L45-M-R45-M &        - &        0.33 &    0.86 &      0.48 \\
 \end{tabular}
 \end{table}
 
+
+
+
+####
+
+python gesture_data_extractor.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id 50 --threshold-extraction 0.01 --threshold-recognition 0.8 --position 1 --start --end | tee logs/gesture_data_extractor.py.`now_str`.log
+
+
+python gesture_data_extractor.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --gesture_id 50 --threshold-extraction 0.01 --threshold-recognition 0.8 --position 1 --start --end | tee logs/gesture_data_extractor.py.`now_str`.log
+
+
+T-R-EACH-FINGER-U-D,
+T-R-INDEX-U-D,
+Z-R-FIST,
+Z-R-MAYBE-L-M-R-M,
+Z-R-OK,
+Z-R-SWITCH-AND-BACK,
+Z-R-SWITCH-FIST,
+Z-R-SWITCH-Y180,
+Z-R-VICTORIAZ-R-WAVE-L45-M-R45-M,
+
+
+##
+
+
+
+gesture_groups=(
+"T-R-EACH-FINGER-U-D"
+"T-R-INDEX-U-D"
+"Z-R-FIST"
+"Z-R-MAYBE-L-M-R-M"
+"Z-R-OK"
+"Z-R-SWITCH-AND-BACK"
+"Z-R-SWITCH-FIST"
+"Z-R-SWITCH-Y180"
+"Z-R-VICTORIAZ-R-WAVE-L45-M-R45-M"
+)
+
+for prefix in "${gesture_groups[@]}"; do
+  echo "First 5 gestures for group: $prefix"
+  mysql -u gagweb --password=password gagweb -e "SELECT id, userAlias FROM Gesture WHERE userAlias LIKE '${prefix}%' ORDER BY userAlias ASC LIMIT 5;"
+done
+
+
+gesture_groups=(
+"T-R-EACH-FINGER-U-D"
+"T-R-INDEX-U-D"
+"Z-R-FIST"
+"Z-R-MAYBE-L-M-R-M"
+"Z-R-OK"
+"Z-R-SWITCH-AND-BACK"
+"Z-R-SWITCH-FIST"
+"Z-R-SWITCH-Y180"
+"Z-R-VICTORIAZ-R-WAVE-L45-M-R45-M"
+)
+for prefix in "${gesture_groups[@]}"; do
+  echo "First 5 unique gestures for group: $prefix"
+  mysql -u gagweb --password=password gagweb -e "SELECT id, userAlias FROM Gesture g1 WHERE userAlias REGEXP '^${prefix}_[0-9]+$' AND id = (SELECT MAX(id) FROM Gesture g2 WHERE g2.userAlias = g1.userAlias) ORDER BY CAST(SUBSTRING_INDEX(userAlias, '_', -1) AS UNSIGNED) ASC LIMIT 5;"
+done
+
+
+# to check duplicates by id 
+
+gesture_groups=(
+"T-R-EACH-FINGER-U-D"
+"T-R-INDEX-U-D"
+"Z-R-FIST"
+"Z-R-MAYBE-L-M-R-M"
+"Z-R-OK"
+"Z-R-SWITCH-AND-BACK"
+"Z-R-SWITCH-FIST"
+"Z-R-SWITCH-Y180"
+"Z-R-VICTORIAZ-R-WAVE-L45-M-R45-M"
+)
+
+for prefix in "${gesture_groups[@]}"; do
+  echo "First 5 unique gestures for group: $prefix"
+  mysql -u gagweb --password=password gagweb -e "SELECT id, userAlias FROM Gesture g1 WHERE userAlias REGEXP '^${prefix}_[0-9]+$' AND id = (SELECT MAX(id) FROM Gesture g2 WHERE g2.userAlias = g1.userAlias) ORDER BY CAST(SUBSTRING_INDEX(userAlias, '_', -1) AS UNSIGNED) ASC LIMIT 5;"
+  
+  echo "Duplicate userAliases for group: $prefix"
+  mysql -u gagweb --password=password gagweb -e "
+    SELECT 
+      userAlias, 
+      COUNT(*) AS count, 
+      GROUP_CONCAT(id ORDER BY id) AS ids 
+    FROM Gesture 
+    WHERE userAlias REGEXP '^${prefix}_[0-9]+$' 
+    GROUP BY userAlias 
+    HAVING count > 1 
+    ORDER BY CAST(SUBSTRING_INDEX(userAlias, '_', -1) AS UNSIGNED) ASC;
+  "
+  
+  echo ""
+done
+
+###
+
+gesture_groups=(
+"T-R-EACH-FINGER-U-D"
+"T-R-INDEX-U-D"
+"Z-R-FIST"
+"Z-R-MAYBE-L-M-R-M"
+"Z-R-OK"
+"Z-R-SWITCH-AND-BACK"
+"Z-R-SWITCH-FIST"
+"Z-R-SWITCH-Y180"
+"Z-R-VICTORIAZ-R-WAVE-L45-M-R45-M"
+)
+
+for prefix in "${gesture_groups[@]}"; do
+  mysql -u gagweb --password=password gagweb -N -e \
+    "SELECT id FROM Gesture g1 WHERE userAlias REGEXP '^${prefix}_[0-9]+$' AND id = (SELECT MAX(id) FROM Gesture g2 WHERE g2.userAlias = g1.userAlias) ORDER BY CAST(SUBSTRING_INDEX(userAlias, '_', -1) AS UNSIGNED) ASC LIMIT 5;" | \
+  awk -v pfx="$prefix" 'BEGIN { ids="" } { ids = ids ? ids "," $1 : $1 } END { if(ids) print pfx "," ids; else print pfx }'
+done
+
+
+
+gesture_groups=(
+"T-R-EACH-FINGER-U-D"
+"T-R-INDEX-U-D"
+"Z-R-FIST"
+"Z-R-MAYBE-L-M-R-M"
+"Z-R-OK"
+"Z-R-SWITCH-AND-BACK"
+"Z-R-SWITCH-FIST"
+"Z-R-SWITCH-Y180"
+"Z-R-VICTORIA"
+"Z-R-WAVE-L45-M-R45-M"
+)
+
+for prefix in "${gesture_groups[@]}"; do
+  mysql -u gagweb --password=password gagweb -N -e \
+    "SELECT id FROM Gesture g1 WHERE userAlias REGEXP '^${prefix}_[0-9]+$' AND id = (SELECT MAX(id) FROM Gesture g2 WHERE g2.userAlias = g1.userAlias) ORDER BY CAST(SUBSTRING_INDEX(userAlias, '_', -1) AS UNSIGNED) ASC LIMIT 5;" | \
+  awk -v pfx="$prefix" 'BEGIN { ids="" } { ids = ids ? ids "," $1 : $1 } END { if(ids) print pfx "," ids }'
+done
+
+
+T-R-EACH-FINGER-U-D,515,516,517,518,519
+T-R-INDEX-U-D,465,466,467,468,469
+Z-R-FIST,806,807,808,809,810
+Z-R-MAYBE-L-M-R-M,916,917,918,919,920
+Z-R-OK,689,690,691,692,693
+Z-R-SWITCH-AND-BACK,739,740,741,742,743
+Z-R-SWITCH-FIST,866,867,868,869,870
+Z-R-SWITCH-Y180,635,636,637,638,639
+Z-R-VICTORIA,968,969,970,971,972
+Z-R-WAVE-L45-M-R45-M,566,567,570,571,572
+
+
+
+T-R-EACH-FINGER-U-D,515,516,517,518,519
+T-R-INDEX-U-D,465,466,467,468,469
+Z-R-FIST,806,807,808,809,810
+Z-R-MAYBE-L-M-R-M,916,917,918,919,920
+Z-R-OK,689,690,691,692,693
+Z-R-SWITCH-AND-BACK,739,740,741,742,743
+Z-R-SWITCH-FIST,866,867,868,869,870
+Z-R-SWITCH-Y180,635,636,637,638,639
+
+
+
+T-R-EACH-FINGER-U-D:515,516,517,518,519
+T-R-INDEX-U-D:465,466,467,468,469
+Z-R-FIST:806,807,808,809,810
+Z-R-MAYBE-L-M-R-M:916,917,918,919,920
+Z-R-OK:689,690,691,692,693
+Z-R-SWITCH-AND-BACK:739,740,741,742,743
+Z-R-SWITCH-FIST:866,867,868,869,870
+Z-R-SWITCH-Y180:635,636,637,638,639
+###
+
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 635 636 637 638 639 --positions 1 --calc-all-thresholds -v --save-ref-gesture Z-R-SWITCH-Y180_635-639
+
+
+awk -F'[: ,]+' '
+NF > 1 {
+  group = $1;
+  min = $(2);
+  max = $(NF);
+  ids = "";
+  for(i=2;i<=NF;i++) if($i!="") ids = ids" "$i;
+  print "python utils.py --host \"localhost\" --user \"gagweb\" --password \"password\" --database \"gagweb\" --ref-gestures" ids " --positions 1 --calc-all-thresholds -v --save-ref-gesture " group "_" min "-" max
+}' group_ids.txt
+
+
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 515 516 517 518 519 --positions 1 --calc-all-thresholds -v --save-ref-gesture T-R-EACH-FINGER-U-D_515-519
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 465 466 467 468 469 --positions 1 --calc-all-thresholds -v --save-ref-gesture T-R-INDEX-U-D_465-469
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 806 807 808 809 810 --positions 1 --calc-all-thresholds -v --save-ref-gesture Z-R-FIST_806-810
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 916 917 918 919 920 --positions 1 --calc-all-thresholds -v --save-ref-gesture Z-R-MAYBE-L-M-R-M_916-920
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 689 690 691 692 693 --positions 1 --calc-all-thresholds -v --save-ref-gesture Z-R-OK_689-693
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 739 740 741 742 743 --positions 1 --calc-all-thresholds -v --save-ref-gesture Z-R-SWITCH-AND-BACK_739-743
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 866 867 868 869 870 --positions 1 --calc-all-thresholds -v --save-ref-gesture Z-R-SWITCH-FIST_866-870
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 635 636 637 638 639 --positions 1 --calc-all-thresholds -v --save-ref-gesture Z-R-SWITCH-Y180_635-639
+
+
+
+
+
+
+
+gesture_groups=(
+"T-R-EACH-FINGER-U-D"
+"T-R-INDEX-U-D"
+"Z-R-FIST"
+"Z-R-MAYBE-L-M-R-M"
+"Z-R-OK"
+"Z-R-SWITCH-AND-BACK"
+"Z-R-SWITCH-FIST"
+"Z-R-SWITCH-Y180"
+"Z-R-VICTORIA"
+"Z-R-WAVE-L45-M-R45-M"
+)
+
+for prefix in "${gesture_groups[@]}"; do
+  mysql -u gagweb --password=password gagweb -N -e \
+    "SELECT id FROM Gesture g1 WHERE userAlias REGEXP '^${prefix}_[0-9]+$' AND id = (SELECT MAX(id) FROM Gesture g2 WHERE g2.userAlias = g1.userAlias) ORDER BY CAST(SUBSTRING_INDEX(userAlias, '_', -1) AS UNSIGNED) ASC LIMIT 5;" | \
+  awk -v pfx="$prefix" 'BEGIN { ids="" } { ids = ids ? ids "," $1 : $1 } END { if(ids) print pfx "," ids }'
+done
+
+
+T-R-EACH-FINGER-U-D,515,516,517,518,519
+T-R-INDEX-U-D,465,466,467,468,469
+Z-R-FIST,806,807,808,809,810
+Z-R-MAYBE-L-M-R-M,916,917,918,919,920
+Z-R-OK,689,690,691,692,693
+Z-R-SWITCH-AND-BACK,739,740,741,742,743
+Z-R-SWITCH-FIST,866,867,868,869,870
+Z-R-SWITCH-Y180,635,636,637,638,639
+Z-R-VICTORIA,968,969,970,971,972
+Z-R-WAVE-L45-M-R45-M,566,567,570,571,572
+
+
+gesture_groups=(
+"T-R-EACH-FINGER-U-D"
+"T-R-INDEX-U-D"
+"Z-R-FIST"
+"Z-R-MAYBE-L-M-R-M"
+"Z-R-OK"
+"Z-R-SWITCH-AND-BACK"
+"Z-R-SWITCH-FIST"
+"Z-R-SWITCH-Y180"
+"Z-R-VICTORIA"
+"Z-R-WAVE-L45-M-R45-M"
+)
+
+for prefix in "${gesture_groups[@]}"; do
+  mysql -u gagweb --password=password gagweb -N -e \
+    "SELECT id FROM Gesture g1 WHERE userAlias REGEXP '^${prefix}_[0-9]+$' AND id = (SELECT MAX(id) FROM Gesture g2 WHERE g2.userAlias = g1.userAlias) ORDER BY CAST(SUBSTRING_INDEX(userAlias, '_', -1) AS UNSIGNED) ASC LIMIT 5;" | \
+  awk -v pfx="$prefix" '
+    BEGIN { ids="" }
+    { ids = ids ? ids "," $1 : $1 }
+    END {
+      if (ids) {
+        n=split(ids, a, ",");
+        min=a[1];
+        max=a[n];
+        gsub(",", " ", ids); # for --ref-gestures
+        print "python utils.py --host \"localhost\" --user \"gagweb\" --password \"password\" --database \"gagweb\" --ref-gestures" ids " --positions 1 --calc-all-thresholds -v --save-ref-gesture " pfx "_" min "-" max
+      }
+    }
+  '
+done
+
+
+
+gesture_groups=(
+"T-R-EACH-FINGER-U-D"
+"T-R-INDEX-U-D"
+"Z-R-FIST"
+"Z-R-MAYBE-L-M-R-M"
+"Z-R-OK"
+"Z-R-SWITCH-AND-BACK"
+"Z-R-SWITCH-FIST"
+"Z-R-SWITCH-Y180"
+"Z-R-VICTORIA"
+"Z-R-WAVE-L45-M-R45-M"
+)
+
+for prefix in "${gesture_groups[@]}"; do
+  mysql -u gagweb --password=password gagweb -N -e \
+    "SELECT id FROM Gesture g1 WHERE userAlias REGEXP '^${prefix}_[0-9]+$' AND id = (SELECT MAX(id) FROM Gesture g2 WHERE g2.userAlias = g1.userAlias) ORDER BY CAST(SUBSTRING_INDEX(userAlias, '_', -1) AS UNSIGNED) ASC LIMIT 5;" | \
+  awk -v pfx="$prefix" '
+    BEGIN { ids="" }
+    { ids = ids ? ids "," $1 : $1 }
+    END {
+      if (ids) {
+        n=split(ids, a, ",");
+        min=a[1];
+        max=a[n];
+        gsub(",", " ", ids); # for --ref-gestures
+        print "python utils.py --host \"localhost\" --user \"gagweb\" --password \"password\" --database \"gagweb\" --ref-gestures" ids " --positions 1 --calc-all-thresholds -v --save-ref-gesture " pfx "_" min "-" max
+      }
+    }
+  '
+done
+
+
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 515 516 517 518 519 --positions 0 1 2 3 4 5 --calc-all-thresholds -v --save-ref-gesture T-R-EACH-FINGER-U-D_515-519
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 465 466 467 468 469 --positions 0 1 2 3 4 5 --calc-all-thresholds -v --save-ref-gesture T-R-INDEX-U-D_465-469
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 806 807 808 809 810 --positions 0 1 2 3 4 5 --calc-all-thresholds -v --save-ref-gesture Z-R-FIST_806-810
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 916 917 918 919 920 --positions 0 1 2 3 4 5 --calc-all-thresholds -v --save-ref-gesture Z-R-MAYBE-L-M-R-M_916-920
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 689 690 691 692 693 --positions 0 1 2 3 4 5 --calc-all-thresholds -v --save-ref-gesture Z-R-OK_689-693
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 739 740 741 742 743 --positions 0 1 2 3 4 5 --calc-all-thresholds -v --save-ref-gesture Z-R-SWITCH-AND-BACK_739-743
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 866 867 868 869 870 --positions 0 1 2 3 4 5 --calc-all-thresholds -v --save-ref-gesture Z-R-SWITCH-FIST_866-870
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 635 636 637 638 639 --positions 0 1 2 3 4 5 --calc-all-thresholds -v --save-ref-gesture Z-R-SWITCH-Y180_635-639
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 968 969 970 971 972 --positions 0 1 2 3 4 5 --calc-all-thresholds -v --save-ref-gesture Z-R-VICTORIA_968-972
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 566 567 570 571 572 --positions 0 1 2 3 4 5 --calc-all-thresholds -v --save-ref-gesture Z-R-WAVE-L45-M-R45-M_566-572
+
+
+
+
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 515 516 517 518 519 --positions 1 --calc-all-thresholds -v
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 465 466 467 468 469 --positions 1 --calc-all-thresholds -v
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 806 807 808 809 810 --positions 1 --calc-all-thresholds -v
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 916 917 918 919 920 --positions 1 --calc-all-thresholds -v
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 689 690 691 692 693 --positions 1 --calc-all-thresholds -v
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 739 740 741 742 743 --positions 1 --calc-all-thresholds -v
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 866 867 868 869 870 --positions 1 --calc-all-thresholds -v
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 635 636 637 638 639 --positions 1 --calc-all-thresholds -v
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 968 969 970 971 972 --positions 1 --calc-all-thresholds -v
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 566 567 570 571 572 --positions 1 --calc-all-thresholds -v
+
+
+1084..1123
+
+
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=1040,1050,1042,1043,1044,1045,1046,1047&inputGestureIds=515,516,517,518,519,520,521,522,523,524,525,526,527,528,529,530,531,532,533,534,535,536,537,538,539,540,541,542,543,544,545,546,547,548,549,550,551,552,553,554,555,556,557,558,559,560,561,562,563,564,465,466,467,468,469,470,471,472,473,474,475,476,477,478,479,480,481,482,483,484,485,486,487,488,489,490,491,492,493,494,495,496,497,498,499,500,501,502,503,504,505,506,507,508,509,510,511,512,513,514,806,807,808,809,810,811,812,813,814,815,816,817,818,819,820,821,822,823,824,825,826,827,828,829,830,831,832,833,834,835,836,837,838,839,840,841,842,843,844,845,846,847,848,849,850,851,852,853,854,855,916,917,918,919,920,921,922,923,924,925,926,927,928,929,930,931,932,933,934,935,936,937,938,939,940,941,942,943,944,945,946,947,948,949,950,951,952,953,954,955,956,957,958,959,960,961,962,963,964,965,689,690,691,692,693,694,695,696,697,698,699,700,701,702,703,704,705,706,707,708,709,710,711,712,713,714,715,716,717,718,719,720,721,722,723,724,725,726,727,728,729,730,731,732,733,734,735,736,737,738,739,740,741,742,743,744,745,746,747,748,749,750,751,752,753,754,755,756,757,758,766,767,768,769,770,771,772,773,774,775,776,777,778,779,780,781,782,783,784,785,786,787,788,789,790,791,792,793,794,795,866,867,868,869,870,871,872,873,874,875,876,877,878,879,880,881,882,883,884,885,886,887,888,889,890,891,892,893,894,895,896,897,898,899,900,901,902,903,904,905,906,907,908,909,910,911,912,913,914,915,635,636,637,638,639,640,641,642,643,644,645,646,647,648,649,650,651,652,653,654,659,660,661,662,663,664,665,666,667,668,669,670,671,672,673,674,675,676,677,678,679,680,681,682,683,684,685,686,687,688,968,969,970,971,972,973,974,975,976,977,978,979,980,981,982,983,984,985,986,987,988,989,990,991,992,993,994,995,996,997,998,999,1000,1001,1002,1003,1004,1005,1006,1007,1008,1009,1010,1011,1012,1013,1014,1015,1016,1017,566,567,570,571,572,573,577,578,581,582,583,584,585,586,587,588,589,593,594,595,596,597,598,599,600,601,605,606,607,610,611,612,613,614,615,616,617,618,619,620,621,622,623,624,625,626,627,628,629,630
+
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=1040,1050,1042,1043,1044,1045,1046,1047&inputGestureIds=515,516,517,518,519,520,521,522,523,524,525,526,527,528,529,530,531,532,533,534,535,536,537,538,539,540,541,542,543,544,545,546,547,548,549,550,551,552,553,554,555,556,557,558,559,560,561,562,563,564,465,466,467,468,469,470,471,472,473,474,475,476,477,478,479,480,481,482,483,484,485,486,487,488,489,490,491,492,493,494,495,496,497,498,499,500,501,502,503,504,505,506,507,508,509,510,511,512,513,514,806,807,808,809,810,811,812,813,814,815,816,817,818,819,820,821,822,823,824,825,826,827,828,829,830,831,832,833,834,835,836,837,838,839,840,841,842,843,844,845,846,847,848,849,850,851,852,853,854,855,916,917,918,919,920,921,922,923,924,925,926,927,928,929,930,931,932,933,934,935,936,937,938,939,940,941,942,943,944,945,946,947,948,949,950,951,952,953,954,955,956,957,958,959,960,961,962,963,964,965,689,690,691,692,693,694,695,696,697,698,699,700,701,702,703,704,705,706,707,708,709,710,711,712,713,714,715,716,717,718,719,720,721,722,723,724,725,726,727,728,729,730,731,732,733,734,735,736,737,738,739,740,741,742,743,744,745,746,747,748,749,750,751,752,753,754,755,756,757,758,766,767,768,769,770,771,772,773,774,775,776,777,778,779,780,781,782,783,784,785,786,787,788,789,790,791,792,793,794,795,866,867,868,869,870,871,872,873,874,875,876,877,878,879,880,881,882,883,884,885,886,887,888,889,890,891,892,893,894,895,896,897,898,899,900,901,902,903,904,905,906,907,908,909,910,911,912,913,914,915,635,636,637,638,639,640,641,642,643,644,645,646,647,648,649,650,651,652,653,654,659,660,661,662,663,664,665,666,667,668,669,670,671,672,673,674,675,676,677,678,679,680,681,682,683,684,685,686,687,688,968,969,970,971,972,973,974,975,976,977,978,979,980,981,982,983,984,985,986,987,988,989,990,991,992,993,994,995,996,997,998,999,1000,1001,1002,1003,1004,1005,1006,1007,1008,1009,1010,1011,1012,1013,1014,1015,1016,1017,566,567,570,571,572,573,577,578,581,582,583,584,585,586,587,588,589,593,594,595,596,597,598,599,600,601,605,606,607,610,611,612,613,614,615,616,617,618,619,620,621,622,623,624,625,626,627,628,629,630
+
+for i in {1084..1123} ; do echo $i ; done
+
+for i in {1084..1123} ; do echo $i ; done | tr '\n' ','
+1084,1085,1086,1087,1088,1089,1090,1091,1092,1093,1094,1095,1096,1097,1098,1099,1100,1101,1102,1103,1104,1105,1106,1107,1108,1109,1110,1111,1112,1113,1114,1115,1116,1117,1118,1119,1120,1121,1122,1123,
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=1084,1085,1086,1087,1088,1089,1090,1091,1092,1093,1094,1095,1096,1097,1098,1099,1100,1101,1102,1103,1104,1105,1106,1107,1108,1109,1110,1111,1112,1113,1114,1115,1116,1117,1118,1119,1120,1121,1122,1123&inputGestureIds=515,516,517,518,519,520,521,522,523,524,525,526,527,528,529,530,531,532,533,534,535,536,537,538,539,540,541,542,543,544,545,546,547,548,549,550,551,552,553,554,555,556,557,558,559,560,561,562,563,564,465,466,467,468,469,470,471,472,473,474,475,476,477,478,479,480,481,482,483,484,485,486,487,488,489,490,491,492,493,494,495,496,497,498,499,500,501,502,503,504,505,506,507,508,509,510,511,512,513,514,806,807,808,809,810,811,812,813,814,815,816,817,818,819,820,821,822,823,824,825,826,827,828,829,830,831,832,833,834,835,836,837,838,839,840,841,842,843,844,845,846,847,848,849,850,851,852,853,854,855,916,917,918,919,920,921,922,923,924,925,926,927,928,929,930,931,932,933,934,935,936,937,938,939,940,941,942,943,944,945,946,947,948,949,950,951,952,953,954,955,956,957,958,959,960,961,962,963,964,965,689,690,691,692,693,694,695,696,697,698,699,700,701,702,703,704,705,706,707,708,709,710,711,712,713,714,715,716,717,718,719,720,721,722,723,724,725,726,727,728,729,730,731,732,733,734,735,736,737,738,739,740,741,742,743,744,745,746,747,748,749,750,751,752,753,754,755,756,757,758,766,767,768,769,770,771,772,773,774,775,776,777,778,779,780,781,782,783,784,785,786,787,788,789,790,791,792,793,794,795,866,867,868,869,870,871,872,873,874,875,876,877,878,879,880,881,882,883,884,885,886,887,888,889,890,891,892,893,894,895,896,897,898,899,900,901,902,903,904,905,906,907,908,909,910,911,912,913,914,915,635,636,637,638,639,640,641,642,643,644,645,646,647,648,649,650,651,652,653,654,659,660,661,662,663,664,665,666,667,668,669,670,671,672,673,674,675,676,677,678,679,680,681,682,683,684,685,686,687,688,968,969,970,971,972,973,974,975,976,977,978,979,980,981,982,983,984,985,986,987,988,989,990,991,992,993,994,995,996,997,998,999,1000,1001,1002,1003,1004,1005,1006,1007,1008,1009,1010,1011,1012,1013,1014,1015,1016,1017,566,567,570,571,572,573,577,578,581,582,583,584,585,586,587,588,589,593,594,595,596,597,598,599,600,601,605,606,607,610,611,612,613,614,615,616,617,618,619,620,621,622,623,624,625,626,627,628,629,630
+
+
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=1084,1085,1086,1087&inputGestureIds=515,516,517,518,519,520,521,522,523,524,525,526,527,528,529,530,531,532,533,534,535,536,537,538,539,540,541,542,543,544,545,546,547,548,549,550,551,552,553,554,555,556,557,558,559,560,561,562,563,564,465,466,467,468,469,470,471,472,473,474,475,476,477,478,479,480,481,482,483,484,485,486,487,488,489,490,491,492,493,494,495,496,497,498,499,500,501,502,503,504,505,506,507,508,509,510,511,512,513,514,806,807,808,809,810,811,812,813,814,815,816,817,818,819,820,821,822,823,824,825,826,827,828,829,830,831,832,833,834,835,836,837,838,839,840,841,842,843,844,845,846,847,848,849,850,851,852,853,854,855,916,917,918,919,920,921,922,923,924,925,926,927,928,929,930,931,932,933,934,935,936,937,938,939,940,941,942,943,944,945,946,947,948,949,950,951,952,953,954,955,956,957,958,959,960,961,962,963,964,965,689,690,691,692,693,694,695,696,697,698,699,700,701,702,703,704,705,706,707,708,709,710,711,712,713,714,715,716,717,718,719,720,721,722,723,724,725,726,727,728,729,730,731,732,733,734,735,736,737,738,739,740,741,742,743,744,745,746,747,748,749,750,751,752,753,754,755,756,757,758,766,767,768,769,770,771,772,773,774,775,776,777,778,779,780,781,782,783,784,785,786,787,788,789,790,791,792,793,794,795,866,867,868,869,870,871,872,873,874,875,876,877,878,879,880,881,882,883,884,885,886,887,888,889,890,891,892,893,894,895,896,897,898,899,900,901,902,903,904,905,906,907,908,909,910,911,912,913,914,915,635,636,637,638,639,640,641,642,643,644,645,646,647,648,649,650,651,652,653,654,659,660,661,662,663,664,665,666,667,668,669,670,671,672,673,674,675,676,677,678,679,680,681,682,683,684,685,686,687,688,968,969,970,971,972,973,974,975,976,977,978,979,980,981,982,983,984,985,986,987,988,989,990,991,992,993,994,995,996,997,998,999,1000,1001,1002,1003,1004,1005,1006,1007,1008,1009,1010,1011,1012,1013,1014,1015,1016,1017,566,567,570,571,572,573,577,578,581,582,583,584,585,586,587,588,589,593,594,595,596,597,598,599,600,601,605,606,607,610,611,612,613,614,615,616,617,618,619,620,621,622,623,624,625,626,627,628,629,630
+
+
+
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 515 516 517 518 519 --positions 0 1 2 3 4 5 --calc-all-thresholds -v --save-ref-gesture T-R-EACH-FINGER-U-D_515-519
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 465 466 467 468 469 --positions 0 1 2 3 4 5 --calc-all-thresholds -v --save-ref-gesture T-R-INDEX-U-D_465-469
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 806 807 808 809 810 --positions 0 1 2 3 4 5 --calc-all-thresholds -v --save-ref-gesture Z-R-FIST_806-810
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 916 917 918 919 920 --positions 0 1 2 3 4 5 --calc-all-thresholds -v --save-ref-gesture Z-R-MAYBE-L-M-R-M_916-920
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 689 690 691 692 693 --positions 0 1 2 3 4 5 --calc-all-thresholds -v --save-ref-gesture Z-R-OK_689-693
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 739 740 741 742 743 --positions 0 1 2 3 4 5 --calc-all-thresholds -v --save-ref-gesture Z-R-SWITCH-AND-BACK_739-743
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 866 867 868 869 870 --positions 0 1 2 3 4 5 --calc-all-thresholds -v --save-ref-gesture Z-R-SWITCH-FIST_866-870
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 635 636 637 638 639 --positions 0 1 2 3 4 5 --calc-all-thresholds -v --save-ref-gesture Z-R-SWITCH-Y180_635-639
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 968 969 970 971 972 --positions 0 1 2 3 4 5 --calc-all-thresholds -v --save-ref-gesture Z-R-VICTORIA_968-972
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 566 567 570 571 572 --positions 0 1 2 3 4 5 --calc-all-thresholds -v --save-ref-gesture Z-R-WAVE-L45-M-R45-M_566-572
+
+
+for i in {1124..1163} ; do echo $i ; done | tr '\n' ','
+1124,1125,1126,1127,1128,1129,1130,1131,1132,1133,1134,1135,1136,1137,1138,1139,1140,1141,1142,1143,1144,1145,1146,1147,1148,1149,1150,1151,1152,1153,1154,1155,1156,1157,1158,1159,1160,1161,1162,1163
+
+
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=1124,1125,1126,1127&inputGestureIds=515,516,517,518,519,520,521,522,523,524,525,526,527,528,529,530,531,532,533,534,535,536,537,538,539,540,541,542,543,544,545,546,547,548,549,550,551,552,553,554,555,556,557,558,559,560,561,562,563,564,465,466,467,468,469,470,471,472,473,474,475,476,477,478,479,480,481,482,483,484,485,486,487,488,489,490,491,492,493,494,495,496,497,498,499,500,501,502,503,504,505,506,507,508,509,510,511,512,513,514,806,807,808,809,810,811,812,813,814,815,816,817,818,819,820,821,822,823,824,825,826,827,828,829,830,831,832,833,834,835,836,837,838,839,840,841,842,843,844,845,846,847,848,849,850,851,852,853,854,855,916,917,918,919,920,921,922,923,924,925,926,927,928,929,930,931,932,933,934,935,936,937,938,939,940,941,942,943,944,945,946,947,948,949,950,951,952,953,954,955,956,957,958,959,960,961,962,963,964,965,689,690,691,692,693,694,695,696,697,698,699,700,701,702,703,704,705,706,707,708,709,710,711,712,713,714,715,716,717,718,719,720,721,722,723,724,725,726,727,728,729,730,731,732,733,734,735,736,737,738,739,740,741,742,743,744,745,746,747,748,749,750,751,752,753,754,755,756,757,758,766,767,768,769,770,771,772,773,774,775,776,777,778,779,780,781,782,783,784,785,786,787,788,789,790,791,792,793,794,795,866,867,868,869,870,871,872,873,874,875,876,877,878,879,880,881,882,883,884,885,886,887,888,889,890,891,892,893,894,895,896,897,898,899,900,901,902,903,904,905,906,907,908,909,910,911,912,913,914,915,635,636,637,638,639,640,641,642,643,644,645,646,647,648,649,650,651,652,653,654,659,660,661,662,663,664,665,666,667,668,669,670,671,672,673,674,675,676,677,678,679,680,681,682,683,684,685,686,687,688,968,969,970,971,972,973,974,975,976,977,978,979,980,981,982,983,984,985,986,987,988,989,990,991,992,993,994,995,996,997,998,999,1000,1001,1002,1003,1004,1005,1006,1007,1008,1009,1010,1011,1012,1013,1014,1015,1016,1017,566,567,570,571,572,573,577,578,581,582,583,584,585,586,587,588,589,593,594,595,596,597,598,599,600,601,605,606,607,610,611,612,613,614,615,616,617,618,619,620,621,622,623,624,625,626,627,628,629,630
+gesture_groups=(
+"T-R-EACH-FINGER-U-D"
+"T-R-INDEX-U-D"
+"Z-R-FIST"
+"Z-R-MAYBE-L-M-R-M"
+"Z-R-OK"
+"Z-R-SWITCH-AND-BACK"
+"Z-R-SWITCH-FIST"
+"Z-R-SWITCH-Y180"
+"T-R-VICTORIA"
+"Z-R-WAVE-L45-M-R45-M"
+)
+
+# --- DB login info ---
+DBHOST="localhost"
+DBUSER="gagweb"
+DBPASS="password"
+DBNAME="gagweb"
+
+POSITIONS="0 1 2 3 4 5"
+THRESHOLD_EXTRACTION=0.01
+THRESHOLD_RECOGNITION=0.8
+
+for prefix in "${gesture_groups[@]}"; do
+  # 1. Get first 5 gesture ids for the group
+  gesture_ids=$(mysql -u $DBUSER --password=$DBPASS $DBNAME -N -e \
+    "SELECT id FROM Gesture g1 WHERE userAlias REGEXP '^${prefix}_[0-9]+$' AND id = (SELECT MAX(id) FROM Gesture g2 WHERE g2.userAlias = g1.userAlias) ORDER BY CAST(SUBSTRING_INDEX(userAlias, '_', -1) AS UNSIGNED) ASC LIMIT 5;")
+  
+  if [[ -z "$gesture_ids" ]]; then
+    echo "No gestures found for group: $prefix"
+    continue
+  fi
+
+  echo "Processing group: $prefix   Original IDs: $gesture_ids"
+
+  new_gesture_ids=()
+  # 2. For each gesture id, create processed gesture and collect new IDs
+  for gid in $gesture_ids; do
+    # Suffix for each processed gesture
+    newsuffix="${prefix}_$gid"
+    # Run gesture_data_extractor.2.py and capture the new gesture id from its output
+    new_id=$(python gesture_data_extractor.2.py \
+      --host "$DBHOST" \
+      --user "$DBUSER" \
+      --password "$DBPASS" \
+      --database "$DBNAME" \
+      --gesture_id $gid \
+      --threshold-extraction $THRESHOLD_EXTRACTION \
+      --threshold-recognition $THRESHOLD_RECOGNITION \
+      --position $POSITIONS \
+      --suffix "$newsuffix" \
+      --start --end \
+      --align "xnth:4" \
+      --align-find "top" | \
+      grep -oP 'extracted points under new gesture ID: \K[0-9]+')
+    if [[ -n "$new_id" ]]; then
+      new_gesture_ids+=("$new_id")
+      echo "  Processed $gid -> New ID $new_id"
+    else
+      echo "  Processing $gid failed or did not create new gesture."
+    fi
+  done
+
+  # If less than 2 processed gestures, skip
+  if (( ${#new_gesture_ids[@]} < 2 )); then
+    echo "Not enough processed gestures for group: $prefix"
+    continue
+  fi
+
+  # 3. Build suffix for referential gesture
+  min_new=${new_gesture_ids[0]}
+  max_new=${new_gesture_ids[-1]}
+  save_suffix="${prefix}_p_all_xnth3_wswe_${min_new}__${max_new}"
+
+  # 4. Call utils.py to create referential gesture
+  echo "Creating referential gesture for group $prefix:"
+  echo "python utils.py --host \"$DBHOST\" --user \"$DBUSER\" --password \"$DBPASS\" --database \"$DBNAME\" --ref-gestures ${new_gesture_ids[*]} --positions $POSITIONS --calc-all -v --save-ref-gesture $save_suffix"
+  python utils.py --host "$DBHOST" --user "$DBUSER" --password "$DBPASS" --database "$DBNAME" \
+    --ref-gestures ${new_gesture_ids[*]} \
+    --positions $POSITIONS \
+    --calc-all -v \
+    --save-ref-gesture "$save_suffix"
+done
+
+
+
+
+mysql -u gagweb --password=password gagweb -e "UPDATE Gesture SET isActive=0;"
+
+
+1179,1180,1181,1182
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=1179,1180,1181,1182&inputGestureIds=515,516,517,518,519,520,521,522,523,524,525,526,527,528,529,530,531,532,533,534,535,536,537,538,539,540,541,542,543,544,545,546,547,548,549,550,551,552,553,554,555,556,557,558,559,560,561,562,563,564,465,466,467,468,469,470,471,472,473,474,475,476,477,478,479,480,481,482,483,484,485,486,487,488,489,490,491,492,493,494,495,496,497,498,499,500,501,502,503,504,505,506,507,508,509,510,511,512,513,514,806,807,808,809,810,811,812,813,814,815,816,817,818,819,820,821,822,823,824,825,826,827,828,829,830,831,832,833,834,835,836,837,838,839,840,841,842,843,844,845,846,847,848,849,850,851,852,853,854,855,916,917,918,919,920,921,922,923,924,925,926,927,928,929,930,931,932,933,934,935,936,937,938,939,940,941,942,943,944,945,946,947,948,949,950,951,952,953,954,955,956,957,958,959,960,961,962,963,964,965,689,690,691,692,693,694,695,696,697,698,699,700,701,702,703,704,705,706,707,708,709,710,711,712,713,714,715,716,717,718,719,720,721,722,723,724,725,726,727,728,729,730,731,732,733,734,735,736,737,738,739,740,741,742,743,744,745,746,747,748,749,750,751,752,753,754,755,756,757,758,766,767,768,769,770,771,772,773,774,775,776,777,778,779,780,781,782,783,784,785,786,787,788,789,790,791,792,793,794,795,866,867,868,869,870,871,872,873,874,875,876,877,878,879,880,881,882,883,884,885,886,887,888,889,890,891,892,893,894,895,896,897,898,899,900,901,902,903,904,905,906,907,908,909,910,911,912,913,914,915,635,636,637,638,639,640,641,642,643,644,645,646,647,648,649,650,651,652,653,654,659,660,661,662,663,664,665,666,667,668,669,670,671,672,673,674,675,676,677,678,679,680,681,682,683,684,685,686,687,688,968,969,970,971,972,973,974,975,976,977,978,979,980,981,982,983,984,985,986,987,988,989,990,991,992,993,994,995,996,997,998,999,1000,1001,1002,1003,1004,1005,1006,1007,1008,1009,1010,1011,1012,1013,1014,1015,1016,1017,566,567,570,571,572,573,577,578,581,582,583,584,585,586,587,588,589,593,594,595,596,597,598,599,600,601,605,606,607,610,611,612,613,614,615,616,617,618,619,620,621,622,623,624,625,626,627,628,629,630
+
+
+159708-159679
+
+1186,1187,1188,1189
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=1186,1187,1188,1189&inputGestureIds=515,516,517,518,519,520,521,522,523,524,525,526,527,528,529,530,531,532,533,534,535,536,537,538,539,540,541,542,543,544,545,546,547,548,549,550,551,552,553,554,555,556,557,558,559,560,561,562,563,564,465,466,467,468,469,470,471,472,473,474,475,476,477,478,479,480,481,482,483,484,485,486,487,488,489,490,491,492,493,494,495,496,497,498,499,500,501,502,503,504,505,506,507,508,509,510,511,512,513,514,806,807,808,809,810,811,812,813,814,815,816,817,818,819,820,821,822,823,824,825,826,827,828,829,830,831,832,833,834,835,836,837,838,839,840,841,842,843,844,845,846,847,848,849,850,851,852,853,854,855,916,917,918,919,920,921,922,923,924,925,926,927,928,929,930,931,932,933,934,935,936,937,938,939,940,941,942,943,944,945,946,947,948,949,950,951,952,953,954,955,956,957,958,959,960,961,962,963,964,965,689,690,691,692,693,694,695,696,697,698,699,700,701,702,703,704,705,706,707,708,709,710,711,712,713,714,715,716,717,718,719,720,721,722,723,724,725,726,727,728,729,730,731,732,733,734,735,736,737,738,739,740,741,742,743,744,745,746,747,748,749,750,751,752,753,754,755,756,757,758,766,767,768,769,770,771,772,773,774,775,776,777,778,779,780,781,782,783,784,785,786,787,788,789,790,791,792,793,794,795,866,867,868,869,870,871,872,873,874,875,876,877,878,879,880,881,882,883,884,885,886,887,888,889,890,891,892,893,894,895,896,897,898,899,900,901,902,903,904,905,906,907,908,909,910,911,912,913,914,915,635,636,637,638,639,640,641,642,643,644,645,646,647,648,649,650,651,652,653,654,659,660,661,662,663,664,665,666,667,668,669,670,671,672,673,674,675,676,677,678,679,680,681,682,683,684,685,686,687,688,968,969,970,971,972,973,974,975,976,977,978,979,980,981,982,983,984,985,986,987,988,989,990,991,992,993,994,995,996,997,998,999,1000,1001,1002,1003,1004,1005,1006,1007,1008,1009,1010,1011,1012,1013,1014,1015,1016,1017,566,567,570,571,572,573,577,578,581,582,583,584,585,586,587,588,589,593,594,595,596,597,598,599,600,601,605,606,607,610,611,612,613,614,615,616,617,618,619,620,621,622,623,624,625,626,627,628,629,630
+
+
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=1186,1187,1188,1189&inputGestureIds=465,466,467,468,469,470,471,472,473,474,475,476,477,478,479,480,481,482,483,484,485,486,487,488,489,490,491,492,493,494,495,496,497,498,499,500,501,502,503,504,505,506,507,508,509,510,511,512,513,514,515,516,517,518,519,520,521,522,523,524,525,526,527,528,529,530,531,532,533,534,535,536,537,538,539,540,541,542,543,544,545,546,547,548,549,550,551,552,553,554,555,556,557,558,559,560,561,562,563,564,806,807,808,809,810,811,812,813,814,815,816,817,818,819,820,821,822,823,824,825,826,827,828,829,830,831,832,833,834,835,836,837,838,839,840,841,842,843,844,845,846,847,848,849,850,851,852,853,854,855,916,917,918,919,920,921,922,923,924,925,926,927,928,929,930,931,932,933,934,935,936,937,938,939,940,941,942,943,944,945,946,947,948,949,950,951,952,953,954,955,956,957,958,959,960,961,962,963,964,965,689,690,691,692,693,694,695,696,697,698,699,700,701,702,703,704,705,706,707,708,709,710,711,712,713,714,715,716,717,718,719,720,721,722,723,724,725,726,727,728,729,730,731,732,733,734,735,736,737,738,739,740,741,742,743,744,745,746,747,748,749,750,751,752,753,754,755,756,757,758,766,767,768,769,770,771,772,773,774,775,776,777,778,779,780,781,782,783,784,785,786,787,788,789,790,791,792,793,794,795,866,867,868,869,870,871,872,873,874,875,876,877,878,879,880,881,882,883,884,885,886,887,888,889,890,891,892,893,894,895,896,897,898,899,900,901,902,903,904,905,906,907,908,909,910,911,912,913,914,915,635,636,637,638,639,640,641,642,643,644,645,646,647,648,649,650,651,652,653,654,659,660,661,662,663,664,665,666,667,668,669,670,671,672,673,674,675,676,677,678,679,680,681,682,683,684,685,686,687,688,968,969,970,971,972,973,974,975,976,977,978,979,980,981,982,983,984,985,986,987,988,989,990,991,992,993,994,995,996,997,998,999,1000,1001,1002,1003,1004,1005,1006,1007,1008,1009,1010,1011,1012,1013,1014,1015,1016,1017,566,567,570,571,572,573,577,578,581,582,583,584,585,586,587,588,589,593,594,595,596,597,598,599,600,601,605,606,607,610,611,612,613,614,615,616,617,618,619,620,621,622,623,624,625,626,627,628,629,630
+
+
+1196,1195,1194,1193
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=1196,1195,1194,1193&inputGestureIds=465,466,467,468,469,470,471,472,473,474,475,476,477,478,479,480,481,482,483,484,485,486,487,488,489,490,491,492,493,494,495,496,497,498,499,500,501,502,503,504,505,506,507,508,509,510,511,512,513,514,515,516,517,518,519,520,521,522,523,524,525,526,527,528,529,530,531,532,533,534,535,536,537,538,539,540,541,542,543,544,545,546,547,548,549,550,551,552,553,554,555,556,557,558,559,560,561,562,563,564,806,807,808,809,810,811,812,813,814,815,816,817,818,819,820,821,822,823,824,825,826,827,828,829,830,831,832,833,834,835,836,837,838,839,840,841,842,843,844,845,846,847,848,849,850,851,852,853,854,855,916,917,918,919,920,921,922,923,924,925,926,927,928,929,930,931,932,933,934,935,936,937,938,939,940,941,942,943,944,945,946,947,948,949,950,951,952,953,954,955,956,957,958,959,960,961,962,963,964,965,689,690,691,692,693,694,695,696,697,698,699,700,701,702,703,704,705,706,707,708,709,710,711,712,713,714,715,716,717,718,719,720,721,722,723,724,725,726,727,728,729,730,731,732,733,734,735,736,737,738,739,740,741,742,743,744,745,746,747,748,749,750,751,752,753,754,755,756,757,758,766,767,768,769,770,771,772,773,774,775,776,777,778,779,780,781,782,783,784,785,786,787,788,789,790,791,792,793,794,795,866,867,868,869,870,871,872,873,874,875,876,877,878,879,880,881,882,883,884,885,886,887,888,889,890,891,892,893,894,895,896,897,898,899,900,901,902,903,904,905,906,907,908,909,910,911,912,913,914,915,635,636,637,638,639,640,641,642,643,644,645,646,647,648,649,650,651,652,653,654,659,660,661,662,663,664,665,666,667,668,669,670,671,672,673,674,675,676,677,678,679,680,681,682,683,684,685,686,687,688,968,969,970,971,972,973,974,975,976,977,978,979,980,981,982,983,984,985,986,987,988,989,990,991,992,993,994,995,996,997,998,999,1000,1001,1002,1003,1004,1005,1006,1007,1008,1009,1010,1011,1012,1013,1014,1015,1016,1017,566,567,570,571,572,573,577,578,581,582,583,584,585,586,587,588,589,593,594,595,596,597,598,599,600,601,605,606,607,610,611,612,613,614,615,616,617,618,619,620,621,622,623,624,625,626,627,628,629,630
+
+
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=1196,1195,1194,1193&inputGestureIds=465,466,467,468,469
+
+
+1196,1195,1194,1193,1192,1191,1190
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=1196,1195,1194,1193,1192,1191,1190&inputGestureIds=465,466,467,468,469
+
+
+160099
+
+
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=1196,1195,1194,1193,1192,1191,1190&inputGestureIds=465,466,467,468,469
+
+1202
+#
+1197,1198,1199,1200,1201,1202,
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=1197,1198,1199,1200,1201,1202&inputGestureIds=465,466,467,468,469
+
+
+
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=1206,1207,1208,1209,1210,1211,1212&inputGestureIds=465,466,467,468,469
+
+
+
+1206,1207,1208,1209,1210,1211,1212,
+
+
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=1213,1214,1215,1216,1217,1218&inputGestureIds=465,466,467,468,469
+
+
+1206,1207,1208,1209,1210,1211,1212,
+
+
+,
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=1219,1220,1221,1222,1223,1224&inputGestureIds=465,466,467,468,469
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=1225,1224,1223,1222,1221,1220,1219&inputGestureIds=465,466,467,468,469
+
+#
+
+mysql -u gagweb --password=password gagweb -e "UPDATE Gesture SET isActive=0;"
+
+
+,
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=1228,1232,1231,1230,1229,1227,1226&inputGestureIds=465,466,467,468,469
+
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=1228,1232,1231,1230,1229,1227,1226&inputGestureIds=470,468,469
+
+
+,
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=1246,1245,1244,1243,1242,1241,1240&inputGestureIds=470,468,469
+
+
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=1246,1245,1244,1243,1242,1241,1240&inputGestureIds=470,468,469
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=1246,1245,1244,1243,1242,1241,1240&inputGestureIds=465,466,467,468,469,470,471,472,473,474,475,476,477,478,479,480,481,482,483,484,485,486,487,488,489,490,491,492,493,494,495,496,497,498,499,500,501,502,503,504,505,506,507,508,509,510,511,512,513,514,515,516,517,518,519,520,521,522,523,524,525,526,527,528,529,530,531,532,533,534,535,536,537,538,539,540,541,542,543,544,545,546,547,548,549,550,551,552,553,554,555,556,557,558,559,560,561,562,563,564
+
+
+
+
+
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 515 516 517 518 519 --positions 0 1 2 3 4 5 --calc-all-thresholds --use-max-threshold -v --save-ref-gesture T-R-EACH-FINGER-U-D_515-519
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 465 466 467 468 469 --positions 0 1 2 3 4 5 --calc-all-thresholds --use-max-threshold -v --save-ref-gesture T-R-INDEX-U-D_465-469
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 806 807 808 809 810 --positions 0 1 2 3 4 5 --calc-all-thresholds --use-max-threshold -v --save-ref-gesture Z-R-FIST_806-810
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 916 917 918 919 920 --positions 0 1 2 3 4 5 --calc-all-thresholds --use-max-threshold -v --save-ref-gesture Z-R-MAYBE-L-M-R-M_916-920
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 689 690 691 692 693 --positions 0 1 2 3 4 5 --calc-all-thresholds --use-max-threshold -v --save-ref-gesture Z-R-OK_689-693
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 739 740 741 742 743 --positions 0 1 2 3 4 5 --calc-all-thresholds --use-max-threshold -v --save-ref-gesture Z-R-SWITCH-AND-BACK_739-743
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 866 867 868 869 870 --positions 0 1 2 3 4 5 --calc-all-thresholds --use-max-threshold -v --save-ref-gesture Z-R-SWITCH-FIST_866-870
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 635 636 637 638 639 --positions 0 1 2 3 4 5 --calc-all-thresholds --use-max-threshold -v --save-ref-gesture Z-R-SWITCH-Y180_635-639
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 968 969 970 971 972 --positions 0 1 2 3 4 5 --calc-all-thresholds --use-max-threshold -v --save-ref-gesture Z-R-VICTORIA_968-972
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 566 567 570 571 572 --positions 0 1 2 3 4 5 --calc-all-thresholds --use-max-threshold -v --save-ref-gesture Z-R-WAVE-L45-M-R45-M_566-572
+
+
+
+
+
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 515 516 517 --positions 0 1 2 3 4 5 --calc-all-thresholds --use-max-threshold -v --save-ref-gesture T-R-EACH-FINGER-U-D_515-517
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 465 466 467 --positions 0 1 2 3 4 5 --calc-all-thresholds --use-max-threshold -v --save-ref-gesture T-R-INDEX-U-D_465-467
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 806 807 808 --positions 0 1 2 3 4 5 --calc-all-thresholds --use-max-threshold -v --save-ref-gesture Z-R-FIST_806-808
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 916 917 918 --positions 0 1 2 3 4 5 --calc-all-thresholds --use-max-threshold -v --save-ref-gesture Z-R-MAYBE-L-M-R-M_916-918
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 689 690 691 --positions 0 1 2 3 4 5 --calc-all-thresholds --use-max-threshold -v --save-ref-gesture Z-R-OK_689-691
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 739 740 741 --positions 0 1 2 3 4 5 --calc-all-thresholds --use-max-threshold -v --save-ref-gesture Z-R-SWITCH-AND-BACK_739-741
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 866 867 868 --positions 0 1 2 3 4 5 --calc-all-thresholds --use-max-threshold -v --save-ref-gesture Z-R-SWITCH-FIST_866-868
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 635 636 637 --positions 0 1 2 3 4 5 --calc-all-thresholds --use-max-threshold -v --save-ref-gesture Z-R-SWITCH-Y180_635-637
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 968 969 970 --positions 0 1 2 3 4 5 --calc-all-thresholds --use-max-threshold -v --save-ref-gesture Z-R-VICTORIA_968-970
+python utils.py --host "localhost" --user "gagweb" --password "password" --database "gagweb" --ref-gestures 566 567 570 --positions 0 1 2 3 4 5 --calc-all-thresholds --use-max-threshold -v --save-ref-gesture Z-R-WAVE-L45-M-R45-M_566-570
+
+
+
+515 516 517 518 519
+465 466 467 468 469
+806 807 808 809 810
+916 917 918 919 920
+689 690 691 692 693
+739 740 741 742 743
+866 867 868 869 870
+635 636 637 638 639
+968 969 970 971 972
+566 567 570 571 572
+
+
+"T-R-EACH-FINGER-U-D"
+"T-R-INDEX-U-D"
+"Z-R-FIST"
+"Z-R-MAYBE-L-M-R-M"
+"Z-R-OK"
+"Z-R-SWITCH-AND-BACK"
+"Z-R-SWITCH-FIST"
+"Z-R-SWITCH-Y180"
+"Z-R-VICTORIA"
+"Z-R-WAVE-L45-M-R45-M"
+
+"515 516 517"
+"465 466 467"
+"806 807 808"
+"916 917 918"
+"689 690 691"
+"739 740 741"
+"866 867 868"
+"635 636 637"
+"968 969 970"
+"566 567 570"
+
+
+
+
+1320
+
+1251
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=1246,1245,1244,1243,1242,1241,1240&inputGestureIds=465,466,467,468,469,470,471,472,473,474,475,476,477,478,479,480,481,482,483,484,485,486,487,488,489,490,491,492,493,494,495,496,497,498,499,500,501,502,503,504,505,506,507,508,509,510,511,512,513,514,515,516,517,518,519,520,521,522,523,524,525,526,527,528,529,530,531,532,533,534,535,536,537,538,539,540,541,542,543,544,545,546,547,548,549,550,551,552,553,554,555,556,557,558,559,560,561,562,563,564
+
+
+1251..1320
+
+
+
+
+for i in {1251..1320} ; do echo $i, ; done | tr -d '\n'
+1251,1252,1253,1254,1255,1256,1257,1258,1259,1260,1261,1262,1263,1264,1265,1266,1267,1268,1269,1270,1271,1272,1273,1274,1275,1276,1277,1278,1279,1280,1281,1282,1283,1284,1285,1286,1287,1288,1289,1290,1291,1292,1293,1294,1295,1296,1297,1298,1299,1300,1301,1302,1303,1304,1305,1306,1307,1308,1309,1310,1311,1312,1313,1314,1315,1316,1317,1318,1319,1320,[ble: EOF]     
+
+
+
+
+start=1251
+end=1320
+
+i=$start
+while [ $i -le $end ]; do
+  # Print the triplet if we are at an even triplet (0, 2, 4, ...)
+  echo -n "$i,$((i+1)),$((i+2)),"
+  # Skip the next three
+  i=$((i+6))
+done
+echo
+
+
+
+1251,1252,1253,1257,1258,1259,1263,1264,1265,1269,1270,1271,1275,1276,1277,1281,1282,1283,1287,1288,1289,1293,1294,1295,1299,1300,1301,1305,1306,1307,1311,1312,1313,1317,1318,1319,
+
+
+
+1251,1252,1253,1257,1258,1259,1263,1264,1265,1269,1270,1271,1275,1276,1277,1281,1282,1283,1287,1288,1289,1293,1294,1295,1299,1300,1301,1305,1306,1307,1311,1312,1313,1317,1318,1319
+
+
+
+
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=1254,1255,1256,1257,1261,1262,1263,1264,1268,1269,1270,1271,1275,1276,1277,1278,1282,1283,1284,1285,1289,1290,1291,1292,1296,1297,1298,1299,1303,1304,1305,1306,1310,1311,1312,1313,1317,1318,1319,1320,&inputGestureIds=515,516,517
+
+
+ for i in {1254..1320} ; do echo $i, ; done | tr -d '\n'
+1254,1255,1256,1257,1258,1259,1260,1261,1262,1263,1264,1265,1266,1267,1268,1269,1270,1271,1272,1273,1274,1275,1276,1277,1278,1279,1280,1281,1282,1283,1284,1285,1286,1287,1288,1289,1290,1291,1292,1293,1294,1295,1296,1297,1298,1299,1300,1301,1302,1303,1304,1305,1306,1307,1308,1309,1310,1311,1312,1313,1314,1315,1316,1317,1318,1319,1320
+
+
+start=1254
+end=1320
+
+i=$start
+while [ $i -le $end ]; do
+  # Print the triplet if we are at an even triplet (0, 2, 4, ...)
+  echo -n "$i,$((i+1)),$((i+2)),"
+  # Skip the next three
+  i=$((i+6))
+done
+echo
+
+
+
+1254,1255,1256,1260,1261,1262,1266,1267,1268,1272,1273,1274,1278,1279,1280,1284,1285,1286,1290,1291,1292,1296,1297,1298,1302,1303,1304,1308,1309,1310,1314,1315,1316,1320,1321,1322,
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=1254,1255,1256,1257,1261,1262,1263,1264,1268,1269,1270,1271,1275,1276,1277,1278,1282,1283,1284,1285,1289,1290,1291,1292,1296,1297,1298,1299,1303,1304,1305,1306,1310,1311,1312,1313,1317,1318,1319,1320,&inputGestureIds=515,516,517
+
+
+start=1254
+end=1320
+i=$start
+while [ $i -le $end ]; do
+  # Print the triplet if we are at an even triplet (0, 2, 4, ...)
+  echo -n "$i,$((i+1)),$((i+2)),$((i+3)),"
+  # Skip the next three
+  i=$((i+7))
+done
+echo
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=1254,1255,1256,1257,1261,1262,1263,1264,1268,1269,1270,1271,1275,1276,1277,1278,1282,1283,1284,1285,1289,1290,1291,1292,1296,1297,1298,1299,1303,1304,1305,1306,1310,1311,1312,1313,1317,1318,1319,1320&inputGestureIds=515,516,517
+
+
+start=1254
+end=1320
+i=$start
+while [ $i -le $end ]; do
+  # Print the triplet if we are at an even triplet (0, 2, 4, ...)
+  echo -n "$i,$((i+1)),$((i+2)),$((i+3)),"
+  # Skip the next three
+  i=$((i+7))
+done
+echo
+
+
+start=1251
+end=1320
+i=$start
+while [ $i -le $end ]; do
+  echo -n "$i,$((i+1)),$((i+2)),"
+  i=$((i+7))
+done
+echo
+
+
+1251,1252,1253,1258,1259,1260,1265,1266,1267,1272,1273,1274,1279,1280,1281,1286,1287,1288,1293,1294,1295,1300,1301,1302,1307,1308,1309,1314,1315,1316
+
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=1251,1252,1253,1258,1259,1260,1265,1266,1267,1272,1273,1274,1279,1280,1281,1286,1287,1288,1293,1294,1295,1300,1301,1302,1307,1308,1309,1314,1315,1316&inputGestureIds=515,516,517
+
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=1254,1255,1256,1257,1261,1262,1263,1264,1268,1269,1270,1271,1275,1276,1277,1278,1282,1283,1284,1285,1289,1290,1291,1292,1296,1297,1298,1299,1303,1304,1305,1306,1310,1311,1312,1313,1317,1318,1319,1320&inputGestureIds=1251,1252,1253,1258,1259,1260,1265,1266,1267,1272,1273,1274,1279,1280,1281,1286,1287,1288,1293,1294,1295,1300,1301,1302,1307,1308,1309,1314,1315,1316
+
+
+
+
+
+
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=1254,1255,1256,1257,1261,1262,1263,1264,1268,1269,1270,1271,1275,1276,1277,1278,1282,1283,1284,1285,1289,1290,1291,1292,1296,1297,1298,1299,1303,1304,1305,1306,1310,1311,1312,1313,1317,1318,1319,1320&inputGestureIds=1035,1036,1037,1038,1039,1040,1050,1042,1043,1044,1045,1046,1047&inputGestureIds=515,516,517,518,519,520,521,522,523,524,525,526,527,528,529,530,531,532,533,534,535,536,537,538,539,540,541,542,543,544,545,546,547,548,549,550,551,552,553,554,555,556,557,558,559,560,561,562,563,564,465,466,467,468,469,470,471,472,473,474,475,476,477,478,479,480,481,482,483,484,485,486,487,488,489,490,491,492,493,494,495,496,497,498,499,500,501,502,503,504,505,506,507,508,509,510,511,512,513,514,806,807,808,809,810,811,812,813,814,815,816,817,818,819,820,821,822,823,824,825,826,827,828,829,830,831,832,833,834,835,836,837,838,839,840,841,842,843,844,845,846,847,848,849,850,851,852,853,854,855,916,917,918,919,920,921,922,923,924,925,926,927,928,929,930,931,932,933,934,935,936,937,938,939,940,941,942,943,944,945,946,947,948,949,950,951,952,953,954,955,956,957,958,959,960,961,962,963,964,965,689,690,691,692,693,694,695,696,697,698,699,700,701,702,703,704,705,706,707,708,709,710,711,712,713,714,715,716,717,718,719,720,721,722,723,724,725,726,727,728,729,730,731,732,733,734,735,736,737,738,739,740,741,742,743,744,745,746,747,748,749,750,751,752,753,754,755,756,757,758,766,767,768,769,770,771,772,773,774,775,776,777,778,779,780,781,782,783,784,785,786,787,788,789,790,791,792,793,794,795,866,867,868,869,870,871,872,873,874,875,876,877,878,879,880,881,882,883,884,885,886,887,888,889,890,891,892,893,894,895,896,897,898,899,900,901,902,903,904,905,906,907,908,909,910,911,912,913,914,915,635,636,637,638,639,640,641,642,643,644,645,646,647,648,649,650,651,652,653,654,659,660,661,662,663,664,665,666,667,668,669,670,671,672,673,674,675,676,677,678,679,680,681,682,683,684,685,686,687,688,968,969,970,971,972,973,974,975,976,977,978,979,980,981,982,983,984,985,986,987,988,989,990,991,992,993,994,995,996,997,998,999,1000,1001,1002,1003,1004,1005,1006,1007,1008,1009,1010,1011,1012,1013,1014,1015,1016,1017,566,567,570,571,572,573,577,578,581,582,583,584,585,586,587,588,589,593,594,595,596,597,598,599,600,601,605,606,607,610,611,612,613,614,615,616,617,618,619,620,621,622,623,624,625,626,627,628,629,630
+
+
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=1254,1255,1256,1257,1261,1262,1263,1264&inputGestureIds=1035,1036,1037,1038,1039,1040,1050,1042,1043,1044,1045,1046,1047&inputGestureIds=515,516,517,518,519,520,521,522,523,524,525,526,527,528,529,530,531,532,533,534,535,536,537,538,539,540,541,542,543,544,545,546,547,548,549,550,551,552,553,554,555,556,557,558,559,560,561,562,563,564,465,466,467,468,469,470,471,472,473,474,475,476,477,478,479,480,481,482,483,484,485,486,487,488,489,490,491,492,493,494,495,496,497,498,499,500,501,502,503,504,505,506,507,508,509,510,511,512,513,514,806,807,808,809,810,811,812,813,814,815,816,817,818,819,820,821,822,823,824,825,826,827,828,829,830,831,832,833,834,835,836,837,838,839,840,841,842,843,844,845,846,847,848,849,850,851,852,853,854,855,916,917,918,919,920,921,922,923,924,925,926,927,928,929,930,931,932,933,934,935,936,937,938,939,940,941,942,943,944,945,946,947,948,949,950,951,952,953,954,955,956,957,958,959,960,961,962,963,964,965,689,690,691,692,693,694,695,696,697,698,699,700,701,702,703,704,705,706,707,708,709,710,711,712,713,714,715,716,717,718,719,720,721,722,723,724,725,726,727,728,729,730,731,732,733,734,735,736,737,738,739,740,741,742,743,744,745,746,747,748,749,750,751,752,753,754,755,756,757,758,766,767,768,769,770,771,772,773,774,775,776,777,778,779,780,781,782,783,784,785,786,787,788,789,790,791,792,793,794,795,866,867,868,869,870,871,872,873,874,875,876,877,878,879,880,881,882,883,884,885,886,887,888,889,890,891,892,893,894,895,896,897,898,899,900,901,902,903,904,905,906,907,908,909,910,911,912,913,914,915,635,636,637,638,639,640,641,642,643,644,645,646,647,648,649,650,651,652,653,654,659,660,661,662,663,664,665,666,667,668,669,670,671,672,673,674,675,676,677,678,679,680,681,682,683,684,685,686,687,688,968,969,970,971,972,973,974,975,976,977,978,979,980,981,982,983,984,985,986,987,988,989,990,991,992,993,994,995,996,997,998,999,1000,1001,1002,1003,1004,1005,1006,1007,1008,1009,1010,1011,1012,1013,1014,1015,1016,1017,566,567,570,571,572,573,577,578,581,582,583,584,585,586,587,588,589,593,594,595,596,597,598,599,600,601,605,606,607,610,611,612,613,614,615,616,617,618,619,620,621,622,623,624,625,626,627,628,629,630
+
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=1254,1255,1256,1257,1261,1262,1263,1264,1268,1269,1270,1271,1275,1276,1277,1278,1282,1283,1284,1285,1289,1290,1291,1292,1296,1297,1298,1299,1303,1304,1305,1306,1310,1311,1312,1313,1317,1318,1319,1320&inputGestureIds=515,516,517,518,519,520,521,522,523,524,525,526,527,528,529,530,531,532,533,534,535,536,537,538,539,540,541,542,543,544,545,546,547,548,549,550,551,552,553,554,555,556,557,558,559,560,561,562,563,564,465,466,467,468,469,470,471,472,473,474,475,476,477,478,479,480,481,482,483,484,485,486,487,488,489,490,491,492,493,494,495,496,497,498,499,500,501,502,503,504,505,506,507,508,509,510,511,512,513,514,806,807,808,809,810,811,812,813,814,815,816,817,818,819,820,821,822,823,824,825,826,827,828,829,830,831,832,833,834,835,836,837,838,839,840,841,842,843,844,845,846,847,848,849,850,851,852,853,854,855,916,917,918,919,920,921,922,923,924,925,926,927,928,929,930,931,932,933,934,935,936,937,938,939,940,941,942,943,944,945,946,947,948,949,950,951,952,953,954,955,956,957,958,959,960,961,962,963,964,965,689,690,691,692,693,694,695,696,697,698,699,700,701,702,703,704,705,706,707,708,709,710,711,712,713,714,715,716,717,718,719,720,721,722,723,724,725,726,727,728,729,730,731,732,733,734,735,736,737,738,739,740,741,742,743,744,745,746,747,748,749,750,751,752,753,754,755,756,757,758,766,767,768,769,770,771,772,773,774,775,776,777,778,779,780,781,782,783,784,785,786,787,788,789,790,791,792,793,794,795,866,867,868,869,870,871,872,873,874,875,876,877,878,879,880,881,882,883,884,885,886,887,888,889,890,891,892,893,894,895,896,897,898,899,900,901,902,903,904,905,906,907,908,909,910,911,912,913,914,915,635,636,637,638,639,640,641,642,643,644,645,646,647,648,649,650,651,652,653,654,659,660,661,662,663,664,665,666,667,668,669,670,671,672,673,674,675,676,677,678,679,680,681,682,683,684,685,686,687,688,968,969,970,971,972,973,974,975,976,977,978,979,980,981,982,983,984,985,986,987,988,989,990,991,992,993,994,995,996,997,998,999,1000,1001,1002,1003,1004,1005,1006,1007,1008,1009,1010,1011,1012,1013,1014,1015,1016,1017,566,567,570,571,572,573,577,578,581,582,583,584,585,586,587,588,589,593,594,595,596,597,598,599,600,601,605,606,607,610,611,612,613,614,615,616,617,618,619,620,621,622,623,624,625,626,627,628,629,630
+
+
+http://localhost:8080/gagweb/#!/recognize?refGestureIds=1254,1255,1256&inputGestureIds=515,516,517
+
+
+
+http://localhost:8080/gagweb/#!/recognize2?refGestureIds=1254,1255,1256,1257,1261,1262,1263,1264,1268,1269,1270,1271,1275,1276,1277,1278,1282,1283,1284,1285,1289,1290,1291,1292,1296,1297,1298,1299,1303,1304,1305,1306,1310,1311,1312,1313,1317,1318,1319,1320&inputGestureIds=515,516,517,518,519,520,521,522,523,524,525,526,527,528,529,530,531,532,533,534,535,536,537,538,539,540,541,542,543,544,545,546,547,548,549,550,551,552,553,554,555,556,557,558,559,560,561,562,563,564,465,466,467,468,469,470,471,472,473,474,475,476,477,478,479,480,481,482,483,484,485,486,487,488,489,490,491,492,493,494,495,496,497,498,499,500,501,502,503,504,505,506,507,508,509,510,511,512,513,514,806,807,808,809,810,811,812,813,814,815,816,817,818,819,820,821,822,823,824,825,826,827,828,829,830,831,832,833,834,835,836,837,838,839,840,841,842,843,844,845,846,847,848,849,850,851,852,853,854,855,916,917,918,919,920,921,922,923,924,925,926,927,928,929,930,931,932,933,934,935,936,937,938,939,940,941,942,943,944,945,946,947,948,949,950,951,952,953,954,955,956,957,958,959,960,961,962,963,964,965,689,690,691,692,693,694,695,696,697,698,699,700,701,702,703,704,705,706,707,708,709,710,711,712,713,714,715,716,717,718,719,720,721,722,723,724,725,726,727,728,729,730,731,732,733,734,735,736,737,738,739,740,741,742,743,744,745,746,747,748,749,750,751,752,753,754,755,756,757,758,766,767,768,769,770,771,772,773,774,775,776,777,778,779,780,781,782,783,784,785,786,787,788,789,790,791,792,793,794,795,866,867,868,869,870,871,872,873,874,875,876,877,878,879,880,881,882,883,884,885,886,887,888,889,890,891,892,893,894,895,896,897,898,899,900,901,902,903,904,905,906,907,908,909,910,911,912,913,914,915,635,636,637,638,639,640,641,642,643,644,645,646,647,648,649,650,651,652,653,654,659,660,661,662,663,664,665,666,667,668,669,670,671,672,673,674,675,676,677,678,679,680,681,682,683,684,685,686,687,688,968,969,970,971,972,973,974,975,976,977,978,979,980,981,982,983,984,985,986,987,988,989,990,991,992,993,994,995,996,997,998,999,1000,1001,1002,1003,1004,1005,1006,1007,1008,1009,1010,1011,1012,1013,1014,1015,1016,1017,566,567,570,571,572,573,577,578,581,582,583,584,585,586,587,588,589,593,594,595,596,597,598,599,600,601,605,606,607,610,611,612,613,614,615,616,617,618,619,620,621,622,623,624,625,626,627,628,629,630
+
+
+
+http://localhost:8080/gagweb/#!/recognize2?refGestureIds=1254,1255&inputGestureIds=515,516
+
+
+
+http://localhost:8080/gagweb/#!/recognize2?refGestureIds=1257,1261,1262,1263,1264,1268,1269,1270,1271,1275,1276,1277,1278,1282,1283,1284,1285,1289,1290,1291,1292,1296,1297,1298,1299,1303,1304,1305,1306,1310,1311,1312,1313,1317,1318,1319,1320&inputGestureIds=515,516,517,518,519,520,521,522,523,524,525,526,527,528,529,530,531,532,533,534,535,536,537,538,539,540,541,542,543,544,545,546,547,548,549,550,551,552,553,554,555,556,557,558,559,560,561,562,563,564,465,466,467,468,469,470,471,472,473,474,475,476,477,478,479,480,481,482,483,484,485,486,487,488,489,490,491,492,493,494,495,496,497,498,499,500,501,502,503,504,505,506,507,508,509,510,511,512,513,514,806,807,808,809,810,811,812,813,814,815,816,817,818,819,820,821,822,823,824,825,826,827,828,829,830,831,832,833,834,835,836,837,838,839,840,841,842,843,844,845,846,847,848,849,850,851,852,853,854,855,916,917,918,919,920,921,922,923,924,925,926,927,928,929,930,931,932,933,934,935,936,937,938,939,940,941,942,943,944,945,946,947,948,949,950,951,952,953,954,955,956,957,958,959,960,961,962,963,964,965,689,690,691,692,693,694,695,696,697,698,699,700,701,702,703,704,705,706,707,708,709,710,711,712,713,714,715,716,717,718,719,720,721,722,723,724,725,726,727,728,729,730,731,732,733,734,735,736,737,738,739,740,741,742,743,744,745,746,747,748,749,750,751,752,753,754,755,756,757,758,766,767,768,769,770,771,772,773,774,775,776,777,778,779,780,781,782,783,784,785,786,787,788,789,790,791,792,793,794,795,866,867,868,869,870,871,872,873,874,875,876,877,878,879,880,881,882,883,884,885,886,887,888,889,890,891,892,893,894,895,896,897,898,899,900,901,902,903,904,905,906,907,908,909,910,911,912,913,914,915,635,636,637,638,639,640,641,642,643,644,645,646,647,648,649,650,651,652,653,654,659,660,661,662,663,664,665,666,667,668,669,670,671,672,673,674,675,676,677,678,679,680,681,682,683,684,685,686,687,688,968,969,970,971,972,973,974,975,976,977,978,979,980,981,982,983,984,985,986,987,988,989,990,991,992,993,994,995,996,997,998,999,1000,1001,1002,1003,1004,1005,1006,1007,1008,1009,1010,1011,1012,1013,1014,1015,1016,1017,566,567,570,571,572,573,577,578,581,582,583,584,585,586,587,588,589,593,594,595,596,597,598,599,600,601,605,606,607,610,611,612,613,614,615,616,617,618,619,620,621,622,623,624,625,626,627,628,629,630
+
+
+
+
+http://localhost:8080/gagweb/#!/recognize2?refGestureIds=1261,1262,1263,1264,1268,1269,1270,1271,1275,1276,1277,1278,1282,1283,1284,1285,1289,1290,1291,1292,1296,1297,1298,1299,1303,1304,1305,1306,1310,1311,1312,1313,1317,1318,1319,1320&inputGestureIds=515,516,517,518,519,520,521,522,523,524,525,526,527,528,529,530,531,532,533,534,535,536,537,538,539,540,541,542,543,544,545,546,547,548,549,550,551,552,553,554,555,556,557,558,559,560,561,562,563,564,465,466,467,468,469,470,471,472,473,474,475,476,477,478,479,480,481,482,483,484,485,486,487,488,489,490,491,492,493,494,495,496,497,498,499,500,501,502,503,504,505,506,507,508,509,510,511,512,513,514,806,807,808,809,810,811,812,813,814,815,816,817,818,819,820,821,822,823,824,825,826,827,828,829,830,831,832,833,834,835,836,837,838,839,840,841,842,843,844,845,846,847,848,849,850,851,852,853,854,855,916,917,918,919,920,921,922,923,924,925,926,927,928,929,930,931,932,933,934,935,936,937,938,939,940,941,942,943,944,945,946,947,948,949,950,951,952,953,954,955,956,957,958,959,960,961,962,963,964,965,689,690,691,692,693,694,695,696,697,698,699,700,701,702,703,704,705,706,707,708,709,710,711,712,713,714,715,716,717,718,719,720,721,722,723,724,725,726,727,728,729,730,731,732,733,734,735,736,737,738,739,740,741,742,743,744,745,746,747,748,749,750,751,752,753,754,755,756,757,758,766,767,768,769,770,771,772,773,774,775,776,777,778,779,780,781,782,783,784,785,786,787,788,789,790,791,792,793,794,795,866,867,868,869,870,871,872,873,874,875,876,877,878,879,880,881,882,883,884,885,886,887,888,889,890,891,892,893,894,895,896,897,898,899,900,901,902,903,904,905,906,907,908,909,910,911,912,913,914,915,635,636,637,638,639,640,641,642,643,644,645,646,647,648,649,650,651,652,653,654,659,660,661,662,663,664,665,666,667,668,669,670,671,672,673,674,675,676,677,678,679,680,681,682,683,684,685,686,687,688,968,969,970,971,972,973,974,975,976,977,978,979,980,981,982,983,984,985,986,987,988,989,990,991,992,993,994,995,996,997,998,999,1000,1001,1002,1003,1004,1005,1006,1007,1008,1009,1010,1011,1012,1013,1014,1015,1016,1017,566,567,570,571,572,573,577,578,581,582,583,584,585,586,587,588,589,593,594,595,596,597,598,599,600,601,605,606,607,610,611,612,613,614,615,616,617,618,619,620,621,622,623,624,625,626,627,628,629,630

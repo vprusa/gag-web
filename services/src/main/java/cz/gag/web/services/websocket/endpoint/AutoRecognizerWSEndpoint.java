@@ -18,6 +18,7 @@ import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 @ServerEndpoint(
         value = "/ws/autoRecognizer",
@@ -25,7 +26,7 @@ import java.util.List;
 )
 public class AutoRecognizerWSEndpoint {
 
-    private static final Log.TypedLogger log = new Log.TypedLogger<>(Log.LoggerTypeWSRecognizer.class);
+    public static final Log.TypedLogger log = new Log.TypedLogger<Log.LoggerTypeWSRecognizer>(Log.LoggerTypeWSRecognizer.class);
 
     @Inject
     private GestureRecognizer recognizer;
@@ -48,17 +49,22 @@ public class AutoRecognizerWSEndpoint {
 
     @OnMessage
     public void onMessage(String message, Session session) {
+        log.info("onMessage");
         try {
+            log.info(message);
             // Parse JSON input with two gesture IDs
             RecognitionRequest req = objectMapper.readValue(message, RecognitionRequest.class);
             long gestureIdToRecognize = req.getTargetGestureId();
             long gestureIdToReplay = req.getGestureToReplayId();
 
+            Optional<cz.gag.web.persistence.entity.Gesture> gestureToRecognize
+                    = gestureService.findById(gestureIdToRecognize);
+
             // Get user from session context
             Principal principal = (Principal) session.getUserProperties().get("UserPrincipal");
             User currentUser = BaseEndpoint.current(principal, userService);
 
-            // Start recognition with the gesture(s) activated for this user
+            gestureService.deactivateAllExcept(gestureToRecognize.get());
             recognizer.start(currentUser);
 
             // Load and stream sensor data for the gesture to be replayed
@@ -72,6 +78,7 @@ public class AutoRecognizerWSEndpoint {
             }
 
             // Optionally send ACK or summary
+            log.info("AutoRecognizerWSEndpoint.done!");
             session.getBasicRemote().sendText("{\"status\": \"done\"}");
             recognizer.stop();
 

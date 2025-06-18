@@ -23,7 +23,7 @@
                     }
                 </style>
                 <select ng-model="data.selectedGesture" ng-change="onSelectChange()"
-                        class="btn btn-info">
+                        class="btn btn-info" style="max-width: 100%;">
                     <option value="" selected style="content: '\e095'; ">New.. or?</option>
                     <option ng-style="{'background-color':(!item.isFiltered ? 'green':'') }"
                             ng-repeat="item in data.gesturesList" value="{{item.id}}">
@@ -48,7 +48,7 @@
                     <tr>
                         <td>{{data.currentGesture.id}}</td>
                         <td><input class="form-control" ng-model="data.currentGesture.userAlias" type="text"
-                                   placeholder="Gesture Name"></td>
+                                   placeholder="Gesture Name" ></td>
                         <td style="text-align:right; vertical-align: top;">
                             <div ng-if="!(data.recordingInfo.isRecording)">
                                 <button ng-disabled="!ble.isConnected" clicktype="button" class="btn btn-info desc"
@@ -90,14 +90,23 @@
                     <h4 class="card-title">Automated Gesture Recording</h4>
                 </div>
                 <div class="card-body">
-                    <table class="table table-hover">
+                    <style>
+                        .breakable-test tr td {
+                            word-wrap: anywhere;
+                        }
+                         td input {
+                            min-width: 50px !important;
+                        }
+                    </style>
+                    <table class="table table-hover breakable-text">
+
                         <tbody>
                         <tr>
-                            <td>Expected Time (seconds)</td>
+                            <td>Rec. Time [s]</td>
                             <td><input type="number" class="form-control" ng-model="autoRecordConfig.expectedTime"></td>
-                            <td>Countdown</td>
+                            <td >Count down</td>
                             <td><input type="number" class="form-control" ng-model="autoRecordState.countdown" readonly></td>
-                            <td>Delay</td>
+                            <td >Delay</td>
                             <td><input type="number" class="form-control" ng-model="autoRecordState.delay"></td>
                         </tr>
                         <tr>
@@ -105,7 +114,7 @@
                             <td><input type="number" class="form-control" ng-model="autoRecordConfig.countTo"></td>
                             <td>Index From</td>
                             <td><input type="number" class="form-control" ng-model="autoRecordConfig.indexFrom"></td>
-                            <td>Current Index</td>
+                            <td>Used Index</td>
                             <td><input type="number" class="form-control" ng-model="autoRecordState.currentIndex"></td>
                         </tr>
                         </tbody>

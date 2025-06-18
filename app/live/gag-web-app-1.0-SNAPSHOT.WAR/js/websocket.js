@@ -9,6 +9,7 @@ angular.module('app').factory('WSTools', function (/*$rootScope*/) {
   ws.endpointRecorder = ws.endpoint + 'recorder';
   ws.endpointReplayer = ws.endpoint + 'replayer';
   ws.endpointRecognizer = ws.endpoint + 'recognizer';
+  ws.endpointRecognizer2 = ws.endpoint + 'autoRecognizer';
 
   ws.selectedEndpoint = ws.endpointRecorder;
 
@@ -37,7 +38,9 @@ angular.module('app').factory('WSTools', function (/*$rootScope*/) {
     STOP: 0,
     RECORD: 1,
     REPLAY: 2,
-    RECOGNIZE: 3
+    RECOGNIZE: 3,
+    RECOGNIZE_AUTO: 4,
+    RECOGNIZE_DONE: 5
   };
 
   ws.innerStates = {
@@ -46,7 +49,9 @@ angular.module('app').factory('WSTools', function (/*$rootScope*/) {
     REPLAYING: 2,
     PREPARE_RECORDING: 3,
     RECORDING: 4,
-    RECOGNIZING: 5
+    RECOGNIZING: 5,
+    RECOGNIZING_AUTO: 6,
+    RECOGNIZING_DONE: 7
   };
   ws.state = ws.innerStates.IDLE;
 
@@ -73,6 +78,9 @@ angular.module('app').factory('WSTools', function (/*$rootScope*/) {
       case ws.reqStates.RECOGNIZE:
         ws.state = ws.innerStates.RECOGNIZING;
         break;
+      case ws.reqStates.RECOGNIZE_DONE:
+        ws.state = ws.innerStates.RECOGNIZING_DONE;
+        break;
       default:
         console.log("WSTools unknown state: ");
         console.log(newState);
@@ -92,11 +100,15 @@ angular.module('app').factory('WSTools', function (/*$rootScope*/) {
   };
 
   ws.sendMessage = function (msg) {
+    console.log("sendMessage");
     if (ws.checkStates.isRecording() || ws.checkStates.isRecognizing()) {
-    // if (ws.checkStates.isRecording()) {
+      // if (ws.checkStates.isRecording()) {
       ws.onSendMessage(msg);
       // console.log("sending message");
       // console.log(msg);
+      ws.websocketSession.send(msg);
+    } else if (msg.includes("targetGestureId")) {
+      console.log("Sending recognition request data, targetGestureId: " + msg);
       ws.websocketSession.send(msg);
     } else if (msg.includes("type")) {
       console.log("Sending Action message: " + msg);
@@ -104,6 +116,7 @@ angular.module('app').factory('WSTools', function (/*$rootScope*/) {
       ws.websocketSession.send(msg);
     } else {
       // visualization callback
+
       ws.onSendMessage(msg);
     }
     //console.log("not sending message");
@@ -118,6 +131,12 @@ angular.module('app').factory('WSTools', function (/*$rootScope*/) {
     },
     isRecognizing: function () {
       return ws.state == ws.innerStates.RECOGNIZING;
+    },
+    isAutoRecognizing: function () {
+      return ws.state == ws.innerStates.RECOGNIZING_AUTO;
+    },
+    isDoneRecognizing: function () {
+      return ws.state == ws.innerStates.RECOGNIZING_DONE;
     }
   };
 
@@ -140,7 +159,7 @@ angular.module('app').factory('WSTools', function (/*$rootScope*/) {
       console.log("init");
       let wsProtocol = window.location.protocol == "https:" ? "wss" : "ws";
       ws.websocketSession = new WebSocket(wsProtocol + '://'
-        + document.location.host + ws.selectedEndpoint);
+          + document.location.host + ws.selectedEndpoint);
       // ws.websocketSession = $rootScope.websocketSession;
       // $rootScope.websocketSession.onmessage = ws.onMessage;
       ws.websocketSession.onmessage = ws.onMessage;

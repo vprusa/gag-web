@@ -52,7 +52,10 @@
                             <td>
                                 <button class="btn btn-info desc"
                                         ng-disabled="player.state != player.states.STOPPED && player.state != player.states.IDLE"
-                                        ng-click='selectGesture(item.id)'>{{item.userAlias}}
+                                        ng-click='selectGesture(item.id)'
+                                        style="line-break: anywhere; max-width: 200px; word-break: break-all;
+                                                white-space: normal;word-wrap: break-word; padding: 5px 10px;">
+                                    {{item.userAlias}}
                                 </button>
                                 <!--                                <br>-->
                                 <!--                                <span class="">-->

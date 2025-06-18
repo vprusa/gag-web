@@ -43,10 +43,25 @@ public class GestureDaoImpl extends AbstractGenericDao<Gesture> implements Gestu
     @Override
     public List<Gesture> findActive(User u) {
 //        return getDao().findActive();
-        TypedQuery<Gesture> q = em.createQuery("SELECT g FROM Gesture g WHERE user_id = :userId AND isActive = 1", Gesture.class)
+        TypedQuery<Gesture> q = em.createQuery("SELECT g FROM Gesture g WHERE " +
+                        "user_id = :userId AND isActive = 1", Gesture.class)
                 .setParameter("userId", u.getId());
         List<Gesture> results = q.getResultList();
         return results;
+    }
+
+    @Override
+    public Gesture deactivateAllExcept(Gesture g) {
+        em.createQuery("UPDATE Gesture ge SET ge.isActive = false WHERE " +
+                        "ge.id <> :gestureId")
+                .setParameter("gestureId", g.getId())
+        .executeUpdate();
+        em.createQuery("UPDATE Gesture ge SET ge.isActive = true WHERE " +
+                        "ge.id = :gestureId")
+                .setParameter("gestureId", g.getId())
+                .executeUpdate();
+        // Optionally, refresh or retrieve the gesture again to reflect the latest database state
+        return em.find(Gesture.class, g.getId());
     }
 
 }
