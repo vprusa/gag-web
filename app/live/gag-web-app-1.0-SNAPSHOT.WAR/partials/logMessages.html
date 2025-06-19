@@ -18,9 +18,18 @@
     </div>
     <script>
         $(document).ready(function() {
-            $('#clearLogsButton').click(function() {
+            const clearLogs = function() {
                 $('#LogMessages').html('<span></span>');
+                console.clear();
+                console.log('%c----- Logs Cleared -----', 'color: red; font-size: 14px;');
+            };
+
+            $('#clearLogsButton').click(function() {
+                $('#clearLogsButton').click(clearLogs);
             });
+
+            const intervalSeconds = 60;
+            setInterval(clearLogs, intervalSeconds * 1000);
         });
     </script>
 </div>

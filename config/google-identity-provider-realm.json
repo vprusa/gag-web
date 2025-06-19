@@ -71,5 +71,16 @@
             "clientSecret": "S8tH7Fk2HiHPMiekpUG1Du8i"
           }
         }
-    ]
+    ],
+    "accessTokenLifespan": 5256000,
+    "ssoSessionIdleTimeout": 5256000,
+    "ssoSessionMaxLifespan": 5256000,
+    "offlineSessionIdleTimeout": 5256000,
+    "offlineSessionMaxLifespan": 5256000,
+    "accessCodeLifespan": 5256000,
+    "accessCodeLifespanLogin": 5256000,
+    "accessCodeLifespanUserAction": 5256000,
+    "ssoSessionIdleTimeoutRememberMe": 5256000,
+    "ssoSessionMaxLifespanRememberMe": 5256000,
+    "accessTokenLifespanForImplicitFlow": 5256000
 }
