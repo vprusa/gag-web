@@ -18,33 +18,52 @@
 #)
 
 
+# gesture_groups=(
+#   "T-R-EACH-FINGER-U-D"
+#   "T-R-INDEX-U-D"
+#   "Z-R-FIST"
+#   "Z-R-MAYBE-L-M-R-M"
+#   "Z-R-OK"
+#   "Z-R-SWITCH-AND-BACK"
+#   "Z-R-SWITCH-FIST"
+#   "Z-R-SWITCH-Y180"
+#   "Z-R-VICTORIA"
+#   "Z-R-WAVE-L45-M-R45-M"
+# )
+
+# REF_GESTURES_CNT=3
+
+
+# GESTURE_IDS=(
+#   "515 516 517"
+#   "465 466 467"
+#   "806 807 808"
+#   "916 917 918"
+#   "689 690 691"
+#   "739 740 741"
+#   "866 867 868"
+#   "635 636 637"
+#   "968 969 970"
+#   "566 567 570"
+# )
+
+
 gesture_groups=(
-  "T-R-EACH-FINGER-U-D"
   "T-R-INDEX-U-D"
-  "Z-R-FIST"
-  "Z-R-MAYBE-L-M-R-M"
-  "Z-R-OK"
-  "Z-R-SWITCH-AND-BACK"
   "Z-R-SWITCH-FIST"
-  "Z-R-SWITCH-Y180"
   "Z-R-VICTORIA"
-  "Z-R-WAVE-L45-M-R45-M"
 )
 
 REF_GESTURES_CNT=3
 
+# 1264: T-R-INDEX-U-D_p_all_xnth3_wswe_1258__1260_row-avg-col-avg 
+# 1299: Z-R-SWITCH-FIST_p_all_xnth3_wswe_1293__1295_row-avg-col-avg 
+# 1313: Z-R-VICTORIA_p_all_xnth3_wswe_1307__1309_row-avg-col-avg 
 
 GESTURE_IDS=(
-  "515 516 517"
-  "465 466 467"
-  "806 807 808"
-  "916 917 918"
-  "689 690 691"
-  "739 740 741"
-  "866 867 868"
-  "635 636 637"
-  "968 969 970"
-  "566 567 570"
+  "467 468 469"
+  "868 870 872"
+  "968 969 974"
 )
 
 DBHOST="localhost"
