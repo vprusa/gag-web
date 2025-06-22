@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regex Table Filter and Sort</title>
+    <script>
+        function filterTable() {
+            const regexInput = document.getElementById('regexInput').value;
+            const orderChecked = document.getElementById('orderCheckbox').checked;
+            const regex = new RegExp(regexInput);
+            const table = document.getElementById('dataTable');
+            const tbody = table.getElementsByTagName('tbody')[0];
+            let rows = Array.from(tbody.getElementsByTagName('tr'));
+
+            rows.forEach(row => {
+                const firstCellText = row.getElementsByTagName('td')[0].innerText;
+                row.style.display = regex.test(firstCellText) ? '' : 'none';
+            });
+
+            if (orderChecked) {
+                rows.sort((a, b) => {
+                    const numA = parseInt(a.cells[0].innerText.match(/^(\d+)/));
+                    const numB = parseInt(b.cells[0].innerText.match(/^(\d+)/));
+                    return numA - numB;
+                });
+                rows.forEach(row => tbody.appendChild(row));
+            }
+        }
+    </script>
+</head>
+<body>
+
+<input type="text" id="regexInput" placeholder="Enter regex">
+<label><input type="checkbox" id="orderCheckbox"> Order by ID</label>
+<button onclick="filterTable()">Filter</button>
+
+<table id="dataTable">
+    <thead>
+        <tr><th>ID</th><th>Data</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>1254: Data A</td><td>Other Info A</td></tr>
+        <tr><td>5678: Data B</td><td>Other Info B</td></tr>
+        <tr><td>1254: Data C</td><td>Other Info C</td></tr>
+        <tr><td>9101: Data D</td><td>Other Info D</td></tr>
+    </tbody>
+</table>
+
+</body>
+</html>
