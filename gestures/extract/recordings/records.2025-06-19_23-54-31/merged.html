@@ -6875,6 +6875,790 @@
   0
   </td>
   </tr>
-  </tbody>
   
   </tbody>  </table>
+
+
+<table>
+
+
+ <thead>
+  <tr>
+  <th>
+  Expected / Recognized (Grouped)
+  </th>
+  <th ng-repeat="header in groupedConfusionMatrix[0]" class="confusion-matrix-header ng-scope">
+  <div class="ng-binding">
+  T-R-EACH-FINGER-U-D
+  </div>
+  </th><th ng-repeat="header in groupedConfusionMatrix[0]" class="confusion-matrix-header ng-scope">
+  <div class="ng-binding">
+  T-R-INDEX-U-D
+  </div>
+  </th><th ng-repeat="header in groupedConfusionMatrix[0]" class="confusion-matrix-header ng-scope">
+  <div class="ng-binding">
+  Z-R-FIST
+  </div>
+  </th><th ng-repeat="header in groupedConfusionMatrix[0]" class="confusion-matrix-header ng-scope">
+  <div class="ng-binding">
+  Z-R-MAYBE-L-M-R-M
+  </div>
+  </th><th ng-repeat="header in groupedConfusionMatrix[0]" class="confusion-matrix-header ng-scope">
+  <div class="ng-binding">
+  Z-R-OK
+  </div>
+  </th><th ng-repeat="header in groupedConfusionMatrix[0]" class="confusion-matrix-header ng-scope">
+  <div class="ng-binding">
+  Z-R-SWITCH-AND-BACK
+  </div>
+  </th><th ng-repeat="header in groupedConfusionMatrix[0]" class="confusion-matrix-header ng-scope">
+  <div class="ng-binding">
+  Z-R-SWITCH-FIST
+  </div>
+  </th><th ng-repeat="header in groupedConfusionMatrix[0]" class="confusion-matrix-header ng-scope">
+  <div class="ng-binding">
+  Z-R-SWITCH-Y180
+  </div>
+  </th><th ng-repeat="header in groupedConfusionMatrix[0]" class="confusion-matrix-header ng-scope">
+  <div class="ng-binding">
+  Z-R-VICTORIA
+  </div>
+  </th><th ng-repeat="header in groupedConfusionMatrix[0]" class="confusion-matrix-header ng-scope">
+  <div class="ng-binding">
+  Z-R-WAVE-L45-M-R45-M
+  </div>
+  </th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr ng-repeat="row in groupedConfusionMatrix.slice(1) track by $index" class="ng-scope">
+  <td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  1345: Z-R-VICTORIA_p_all_xnth3_wswe_1339__1341_row-avg-col-avg
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:lightgreen">
+  3
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td>
+  </tr><tr ng-repeat="row in groupedConfusionMatrix.slice(1) track by $index" class="ng-scope">
+  <td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  1344: Z-R-VICTORIA_p_all_xnth3_wswe_1339__1341_row-avg-col-max
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:lightgreen">
+  38
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td>
+  </tr><tr ng-repeat="row in groupedConfusionMatrix.slice(1) track by $index" class="ng-scope">
+  <td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  1343: Z-R-VICTORIA_p_all_xnth3_wswe_1339__1341_row-max-col-avg
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:lightgreen">
+  10
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td>
+  </tr><tr ng-repeat="row in groupedConfusionMatrix.slice(1) track by $index" class="ng-scope">
+  <td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  1342: Z-R-VICTORIA_p_all_xnth3_wswe_1339__1341_row-max-col-max
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:lightgreen">
+  49
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td>
+  </tr><tr ng-repeat="row in groupedConfusionMatrix.slice(1) track by $index" class="ng-scope">
+  <td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  1338: Z-R-SWITCH-FIST_p_all_xnth3_wswe_1332__1334_row-avg-col-avg
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td>
+  </tr><tr ng-repeat="row in groupedConfusionMatrix.slice(1) track by $index" class="ng-scope">
+  <td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  1337: Z-R-SWITCH-FIST_p_all_xnth3_wswe_1332__1334_row-avg-col-max
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td>
+  </tr><tr ng-repeat="row in groupedConfusionMatrix.slice(1) track by $index" class="ng-scope">
+  <td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  1336: Z-R-SWITCH-FIST_p_all_xnth3_wswe_1332__1334_row-max-col-avg
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td>
+  </tr><tr ng-repeat="row in groupedConfusionMatrix.slice(1) track by $index" class="ng-scope">
+  <td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  1335: Z-R-SWITCH-FIST_p_all_xnth3_wswe_1332__1334_row-max-col-max
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td>
+  </tr><tr ng-repeat="row in groupedConfusionMatrix.slice(1) track by $index" class="ng-scope">
+  <td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  1331: T-R-INDEX-U-D_p_all_xnth3_wswe_1325__1327_row-avg-col-avg
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td>
+  </tr><tr ng-repeat="row in groupedConfusionMatrix.slice(1) track by $index" class="ng-scope">
+  <td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  1330: T-R-INDEX-U-D_p_all_xnth3_wswe_1325__1327_row-avg-col-max
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td>
+  </tr><tr ng-repeat="row in groupedConfusionMatrix.slice(1) track by $index" class="ng-scope">
+  <td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  1329: T-R-INDEX-U-D_p_all_xnth3_wswe_1325__1327_row-max-col-avg
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td>
+  </tr><tr ng-repeat="row in groupedConfusionMatrix.slice(1) track by $index" class="ng-scope">
+  <td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  1328: T-R-INDEX-U-D_p_all_xnth3_wswe_1325__1327_row-max-col-max
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td>
+  </tr>
+  </tbody>
+  
+
+</table>
+
+
+<table>
+
+ <thead>
+  <tr>
+  <th>
+  Expected / Recognized (Grouped)
+  </th>
+  <th ng-repeat="header in groupedConfusionMatrix[0]" class="confusion-matrix-header ng-scope">
+  <div class="ng-binding">
+  T-R-EACH-FINGER-U-D
+  </div>
+  </th><th ng-repeat="header in groupedConfusionMatrix[0]" class="confusion-matrix-header ng-scope">
+  <div class="ng-binding">
+  T-R-INDEX-U-D
+  </div>
+  </th><th ng-repeat="header in groupedConfusionMatrix[0]" class="confusion-matrix-header ng-scope">
+  <div class="ng-binding">
+  Z-R-FIST
+  </div>
+  </th><th ng-repeat="header in groupedConfusionMatrix[0]" class="confusion-matrix-header ng-scope">
+  <div class="ng-binding">
+  Z-R-MAYBE-L-M-R-M
+  </div>
+  </th><th ng-repeat="header in groupedConfusionMatrix[0]" class="confusion-matrix-header ng-scope">
+  <div class="ng-binding">
+  Z-R-OK
+  </div>
+  </th><th ng-repeat="header in groupedConfusionMatrix[0]" class="confusion-matrix-header ng-scope">
+  <div class="ng-binding">
+  Z-R-SWITCH-AND-BACK
+  </div>
+  </th><th ng-repeat="header in groupedConfusionMatrix[0]" class="confusion-matrix-header ng-scope">
+  <div class="ng-binding">
+  Z-R-SWITCH-FIST
+  </div>
+  </th><th ng-repeat="header in groupedConfusionMatrix[0]" class="confusion-matrix-header ng-scope">
+  <div class="ng-binding">
+  Z-R-SWITCH-Y180
+  </div>
+  </th><th ng-repeat="header in groupedConfusionMatrix[0]" class="confusion-matrix-header ng-scope">
+  <div class="ng-binding">
+  Z-R-VICTORIA
+  </div>
+  </th><th ng-repeat="header in groupedConfusionMatrix[0]" class="confusion-matrix-header ng-scope">
+  <div class="ng-binding">
+  Z-R-WAVE-L45-M-R45-M
+  </div>
+  </th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr ng-repeat="row in groupedConfusionMatrix.slice(1) track by $index" class="ng-scope">
+  <td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  1338: Z-R-SWITCH-FIST_p_all_xnth3_wswe_1332__1334_row-avg-col-avg
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:lightgreen">
+  10
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td>
+  </tr><tr ng-repeat="row in groupedConfusionMatrix.slice(1) track by $index" class="ng-scope">
+  <td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  1337: Z-R-SWITCH-FIST_p_all_xnth3_wswe_1332__1334_row-avg-col-max
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:lightgreen">
+  1
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:lightgreen">
+  49
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td>
+  </tr><tr ng-repeat="row in groupedConfusionMatrix.slice(1) track by $index" class="ng-scope">
+  <td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  1336: Z-R-SWITCH-FIST_p_all_xnth3_wswe_1332__1334_row-max-col-avg
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:lightgreen">
+  40
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td>
+  </tr><tr ng-repeat="row in groupedConfusionMatrix.slice(1) track by $index" class="ng-scope">
+  <td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  1335: Z-R-SWITCH-FIST_p_all_xnth3_wswe_1332__1334_row-max-col-max
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:lightgreen">
+  2
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:lightgreen">
+  50
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td>
+  </tr><tr ng-repeat="row in groupedConfusionMatrix.slice(1) track by $index" class="ng-scope">
+  <td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  1331: T-R-INDEX-U-D_p_all_xnth3_wswe_1325__1327_row-avg-col-avg
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td>
+  </tr><tr ng-repeat="row in groupedConfusionMatrix.slice(1) track by $index" class="ng-scope">
+  <td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  1330: T-R-INDEX-U-D_p_all_xnth3_wswe_1325__1327_row-avg-col-max
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td>
+  </tr><tr ng-repeat="row in groupedConfusionMatrix.slice(1) track by $index" class="ng-scope">
+  <td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  1329: T-R-INDEX-U-D_p_all_xnth3_wswe_1325__1327_row-max-col-avg
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td>
+  </tr><tr ng-repeat="row in groupedConfusionMatrix.slice(1) track by $index" class="ng-scope">
+  <td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  1328: T-R-INDEX-U-D_p_all_xnth3_wswe_1325__1327_row-max-col-max
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td>
+  </tr>
+  </tbody>
+  
+</table>
+
+
+<table>
+
+  
+ <thead>
+  <tr>
+  <th>
+  Expected / Recognized (Grouped)
+  </th>
+  <th ng-repeat="header in groupedConfusionMatrix[0]" class="confusion-matrix-header ng-scope">
+  <div class="ng-binding">
+  T-R-EACH-FINGER-U-D
+  </div>
+  </th><th ng-repeat="header in groupedConfusionMatrix[0]" class="confusion-matrix-header ng-scope">
+  <div class="ng-binding">
+  T-R-INDEX-U-D
+  </div>
+  </th><th ng-repeat="header in groupedConfusionMatrix[0]" class="confusion-matrix-header ng-scope">
+  <div class="ng-binding">
+  Z-R-FIST
+  </div>
+  </th><th ng-repeat="header in groupedConfusionMatrix[0]" class="confusion-matrix-header ng-scope">
+  <div class="ng-binding">
+  Z-R-MAYBE-L-M-R-M
+  </div>
+  </th><th ng-repeat="header in groupedConfusionMatrix[0]" class="confusion-matrix-header ng-scope">
+  <div class="ng-binding">
+  Z-R-OK
+  </div>
+  </th><th ng-repeat="header in groupedConfusionMatrix[0]" class="confusion-matrix-header ng-scope">
+  <div class="ng-binding">
+  Z-R-SWITCH-AND-BACK
+  </div>
+  </th><th ng-repeat="header in groupedConfusionMatrix[0]" class="confusion-matrix-header ng-scope">
+  <div class="ng-binding">
+  Z-R-SWITCH-FIST
+  </div>
+  </th><th ng-repeat="header in groupedConfusionMatrix[0]" class="confusion-matrix-header ng-scope">
+  <div class="ng-binding">
+  Z-R-SWITCH-Y180
+  </div>
+  </th><th ng-repeat="header in groupedConfusionMatrix[0]" class="confusion-matrix-header ng-scope">
+  <div class="ng-binding">
+  Z-R-VICTORIA
+  </div>
+  </th><th ng-repeat="header in groupedConfusionMatrix[0]" class="confusion-matrix-header ng-scope">
+  <div class="ng-binding">
+  Z-R-WAVE-L45-M-R45-M
+  </div>
+  </th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr ng-repeat="row in groupedConfusionMatrix.slice(1) track by $index" class="ng-scope">
+  <td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  1335: Z-R-SWITCH-FIST_p_all_xnth3_wswe_1332__1334_row-max-col-max
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:lightgreen">
+  2
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:lightgreen">
+  50
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td>
+  </tr><tr ng-repeat="row in groupedConfusionMatrix.slice(1) track by $index" class="ng-scope">
+  <td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  1331: T-R-INDEX-U-D_p_all_xnth3_wswe_1325__1327_row-avg-col-avg
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:lightgreen">
+  4
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td>
+  </tr><tr ng-repeat="row in groupedConfusionMatrix.slice(1) track by $index" class="ng-scope">
+  <td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  1330: T-R-INDEX-U-D_p_all_xnth3_wswe_1325__1327_row-avg-col-max
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:lightgreen">
+  45
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td>
+  </tr><tr ng-repeat="row in groupedConfusionMatrix.slice(1) track by $index" class="ng-scope">
+  <td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  1329: T-R-INDEX-U-D_p_all_xnth3_wswe_1325__1327_row-max-col-avg
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:lightgreen">
+  6
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td>
+  </tr><tr ng-repeat="row in groupedConfusionMatrix.slice(1) track by $index" class="ng-scope">
+  <td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  1328: T-R-INDEX-U-D_p_all_xnth3_wswe_1325__1327_row-max-col-max
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:lightgreen">
+  50
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:lightgreen">
+  6
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:lightgreen">
+  1
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:lightgreen">
+  6
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td><td ng-repeat="cell in row track by $index" ng-style="{'background-color': (cell * 1 > 0) ? 'lightgreen' : 'transparent'}" class="ng-binding ng-scope" style="background-color:transparent">
+  0
+  </td>
+  </tr>
+  </tbody>
+  
+</table>
+
+
+
+<table>
+</table>
+
+
+
+
+
+
